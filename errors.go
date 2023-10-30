@@ -1,6 +1,4 @@
-package main
-
-import "fmt"
+package zep
 
 type ZepError struct {
 	Message      string
@@ -9,7 +7,7 @@ type ZepError struct {
 }
 
 func (e *ZepError) Error() string {
-	return fmt.Sprintf("ZepError: %s", e.Message)
+	return e.Message
 }
 
 // APIError is a general error returned by the Zep API

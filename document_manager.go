@@ -1,4 +1,4 @@
-package main
+package zep
 
 import (
 	"bytes"
@@ -9,25 +9,28 @@ import (
 )
 
 type DocumentManager struct {
-	Client ZepClient
+	Client Client
 }
 
 // NewDocumentManager creates a new DocumentManager
-func NewDocumentManager(client ZepClient) *DocumentManager {
+func NewDocumentManager(client Client) *DocumentManager {
 	return &DocumentManager{Client: client}
 }
 
-func (d *DocumentManager) AddCollection(params AddCollectionParams) (*DocumentCollectionModel, error) {
+func (d *DocumentManager) AddCollection(params AddCollectionParams) (*DocumentCollection, error) {
 	if params.EmbeddingDimensions <= 0 {
 		return nil, errors.New("embeddingDimensions must be a positive integer")
 	}
 
-	collection := DocumentCollectionModel{
-		Name:                params.Name,
-		Description:         params.Description,
-		Metadata:            params.Metadata,
-		EmbeddingDimensions: &params.EmbeddingDimensions,
-		IsAutoEmbedded:      params.IsAutoEmbedded,
+	collection := DocumentCollection{
+		Client: d.Client,
+		DocumentCollectionModel: DocumentCollectionModel{
+			Name:                params.Name,
+			Description:         params.Description,
+			Metadata:            params.Metadata,
+			EmbeddingDimensions: params.EmbeddingDimensions,
+			IsAutoEmbedded:      params.IsAutoEmbedded,
+		},
 	}
 
 	collectionJSON, err := json.Marshal(collection)
@@ -49,7 +52,7 @@ func (d *DocumentManager) AddCollection(params AddCollectionParams) (*DocumentCo
 	return d.GetCollection(collection.Name)
 }
 
-func (d *DocumentManager) GetCollection(name string) (*DocumentCollectionModel, error) {
+func (d *DocumentManager) GetCollection(name string) (*DocumentCollection, error) {
 	if name == "" {
 		return nil, errors.New("collection name must be provided")
 	}
@@ -70,11 +73,14 @@ func (d *DocumentManager) GetCollection(name string) (*DocumentCollectionModel, 
 		return nil, err
 	}
 
-	return &responseData, nil
+	return &DocumentCollection{
+		Client:                  d.Client,
+		DocumentCollectionModel: responseData,
+	}, nil
 }
 
-func (d *DocumentManager) UpdateCollection(params UpdateCollectionParams) (*DocumentCollectionModel, error) {
-	if params.Description == nil && params.Metadata == nil {
+func (d *DocumentManager) UpdateCollection(params UpdateCollectionParams) (*DocumentCollection, error) {
+	if params.Description == "" && len(params.Metadata) == 0 {
 		return nil, errors.New("either description or metadata must be provided")
 	}
 
@@ -103,7 +109,7 @@ func (d *DocumentManager) UpdateCollection(params UpdateCollectionParams) (*Docu
 	return d.GetCollection(collection.Name)
 }
 
-func (d *DocumentManager) ListCollections() ([]DocumentCollectionModel, error) {
+func (d *DocumentManager) ListCollections() ([]DocumentCollection, error) {
 	request, err := http.NewRequest("GET", d.Client.GetFullURL("/collection"), nil)
 	if err != nil {
 		return nil, err
@@ -120,7 +126,15 @@ func (d *DocumentManager) ListCollections() ([]DocumentCollectionModel, error) {
 		return nil, err
 	}
 
-	return responseData, nil
+	collections := make([]DocumentCollection, len(responseData))
+	for i, collection := range responseData {
+		collections[i] = DocumentCollection{
+			Client:                  d.Client,
+			DocumentCollectionModel: collection,
+		}
+	}
+
+	return collections, nil
 }
 
 func (d *DocumentManager) DeleteCollection(collectionName string) error {
@@ -144,13 +158,13 @@ func (d *DocumentManager) DeleteCollection(collectionName string) error {
 type AddCollectionParams struct {
 	Name                string
 	EmbeddingDimensions int
-	Description         *string
-	Metadata            *map[string]any
-	IsAutoEmbedded      *bool
+	Description         string
+	Metadata            map[string]any
+	IsAutoEmbedded      bool
 }
 
 type UpdateCollectionParams struct {
 	Name        string
-	Description *string
-	Metadata    *map[string]any
+	Description string
+	Metadata    map[string]any
 }

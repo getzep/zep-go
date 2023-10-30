@@ -1,4 +1,4 @@
-package main
+package zep
 
 import (
 	"bytes"
@@ -10,24 +10,20 @@ import (
 	"sync"
 )
 
-const MinDocsToIndex = 10000
 const DefaultBatchSize = 500
 const MaxConcurrentBatches = 5
-const LargeBatchWarningLimit = 1000
-
-var LargeBatchWarning = `Batch size is greater than ` + strconv.Itoa(LargeBatchWarningLimit) + `. This may result in slow performance or out-of-memory failures.`
 
 type DocumentCollection struct {
 	DocumentCollectionModel
-	Client ZepClient
+	Client Client
 }
 
-func NewDocumentCollection(client ZepClient, params DocumentCollectionModel) *DocumentCollection {
+func NewDocumentCollection(client Client, params DocumentCollectionModel) *DocumentCollection {
 	return &DocumentCollection{DocumentCollectionModel: params, Client: client}
 }
 
 func (d *DocumentCollection) Status() string {
-	if d.DocumentCount != nil && d.DocumentEmbeddedCount != nil && *d.DocumentCount == *d.DocumentEmbeddedCount {
+	if d.DocumentCount != 0 && d.DocumentEmbeddedCount != 0 && d.DocumentCount == d.DocumentEmbeddedCount {
 		return "ready"
 	}
 	return "pending"
@@ -48,7 +44,7 @@ func (d *DocumentCollection) AddDocuments(documents []Document) ([]string, error
 	sem := make(chan bool, MaxConcurrentBatches)
 
 	for i := 0; i < len(documents); i += DefaultBatchSize {
-		// Use sem to limit concurrent batches.
+		// Use a semaphore to limit concurrent batches to MaxConcurrentBatches.
 		sem <- true
 		wg.Add(1)
 		go func(i int) {
@@ -115,7 +111,7 @@ func (d *DocumentCollection) UpdateDocument(params UpdateDocumentParams) error {
 		return errors.New("collection name must be provided")
 	}
 	if params.UUID == "" {
-		return errors.New("Document must have a uuid")
+		return errors.New("document must have a uuid")
 	}
 
 	documentJSON, err := json.Marshal(params)
@@ -142,7 +138,7 @@ func (d *DocumentCollection) DeleteDocument(uuid string) error {
 		return errors.New("collection name must be provided")
 	}
 	if uuid == "" {
-		return errors.New("Document must have a uuid")
+		return errors.New("document must have a uuid")
 	}
 
 	request, err := http.NewRequest("DELETE", d.Client.GetFullURL("/collection/"+d.Name+"/document/uuid/"+uuid), nil)
@@ -163,7 +159,7 @@ func (d *DocumentCollection) GetDocument(uuid string) (*Document, error) {
 		return nil, errors.New("collection name must be provided")
 	}
 	if uuid == "" {
-		return nil, errors.New("Document must have a uuid")
+		return nil, errors.New("document must have a uuid")
 	}
 
 	request, err := http.NewRequest("GET", d.Client.GetFullURL("/collection/"+d.Name+"/document/"+uuid), nil)
@@ -222,7 +218,7 @@ func (d *DocumentCollection) SearchReturnQueryVector(query SearchQuery, limit *i
 		return nil, nil, errors.New("collection name must be provided")
 	}
 	if query.Text == nil && query.Embedding == nil && query.Metadata == nil {
-		return nil, nil, errors.New("Search query must have at least one of text, embedding, or metadata")
+		return nil, nil, errors.New("search query must have at least one of text, embedding, or metadata")
 	}
 
 	queryJSON, err := json.Marshal(query)

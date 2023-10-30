@@ -1,4 +1,4 @@
-package main
+package zep
 
 import (
 	"bytes"
@@ -9,10 +9,10 @@ import (
 )
 
 type MemoryManager struct {
-	Client ZepClient
+	Client Client
 }
 
-func NewMemoryManager(client ZepClient) *MemoryManager {
+func NewMemoryManager(client Client) *MemoryManager {
 	return &MemoryManager{Client: client}
 }
 

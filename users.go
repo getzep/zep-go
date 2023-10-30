@@ -1,4 +1,4 @@
-package main
+package zep
 
 import (
 	"encoding/json"
@@ -8,10 +8,10 @@ import (
 )
 
 type UserManager struct {
-	Client ZepClient
+	Client Client
 }
 
-func NewUserManager(client ZepClient) *UserManager {
+func NewUserManager(client Client) *UserManager {
 	return &UserManager{Client: client}
 }
 
@@ -77,18 +77,18 @@ func (u *UserManager) Update(user *UpdateUserRequest) (*User, error) {
 	return &responseData, nil
 }
 
-func (u *UserManager) Delete(userID string) (string, error) {
+func (u *UserManager) Delete(userID string) error {
 	request, err := http.NewRequest("DELETE", u.Client.GetFullURL("/user/"+userID), nil)
 	if err != nil {
-		return "", err
+		return err
 	}
 	_, err = u.Client.HandleRequest(request, fmt.Sprintf("Failed to delete user %s", userID))
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return "User deleted successfully", nil
+	return nil
 }
 
 func (u *UserManager) List(limit *int, cursor *int) ([]User, error) {
