@@ -1,6 +1,7 @@
 package zep
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -16,28 +17,31 @@ func NewUserManager(client Client) *UserManager {
 }
 
 func (u *UserManager) Add(user *CreateUserRequest) (*User, error) {
-	request, err := http.NewRequest("POST", u.Client.GetFullURL("/user"), nil)
+	p, err := json.Marshal(user)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to marshal user %w", err)
+	}
+	request, err := http.NewRequest("POST", u.Client.GetFullURL("user"), bytes.NewBuffer(p))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request for user %s: %w", user.UserID, err)
 	}
 	request.Header.Set("Content-Type", "application/json")
-	response, err := u.Client.HandleRequest(request, fmt.Sprintf("Failed to add user %s", user.UserID))
-
+	response, err := u.Client.HandleRequest(request, fmt.Sprintf("failed to add user %s", user.UserID))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to add user %w", err)
 	}
 
 	var responseData User
 	err = json.NewDecoder(response.Body).Decode(&responseData)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decode response for user %s: %w", user.UserID, err)
 	}
 
 	return &responseData, nil
 }
 
 func (u *UserManager) Get(userID string) (*User, error) {
-	request, err := http.NewRequest("GET", u.Client.GetFullURL("/user/"+userID), nil)
+	request, err := http.NewRequest("GET", u.Client.GetFullURL("user/"+userID), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +61,11 @@ func (u *UserManager) Get(userID string) (*User, error) {
 }
 
 func (u *UserManager) Update(user *UpdateUserRequest) (*User, error) {
-	request, err := http.NewRequest("PATCH", u.Client.GetFullURL("/user/"+user.UserID), nil)
+	p, err := json.Marshal(user)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal user %w", err)
+	}
+	request, err := http.NewRequest("PATCH", u.Client.GetFullURL("user/"+user.UserID), bytes.NewBuffer(p))
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +86,7 @@ func (u *UserManager) Update(user *UpdateUserRequest) (*User, error) {
 }
 
 func (u *UserManager) Delete(userID string) error {
-	request, err := http.NewRequest("DELETE", u.Client.GetFullURL("/user/"+userID), nil)
+	request, err := http.NewRequest("DELETE", u.Client.GetFullURL("user/"+userID), nil)
 	if err != nil {
 		return err
 	}
@@ -92,7 +100,7 @@ func (u *UserManager) Delete(userID string) error {
 }
 
 func (u *UserManager) List(limit *int, cursor *int) ([]User, error) {
-	url := u.Client.GetFullURL("/user")
+	url := u.Client.GetFullURL("user")
 	if limit != nil {
 		url += "?limit=" + strconv.Itoa(*limit)
 	}
@@ -120,7 +128,7 @@ func (u *UserManager) List(limit *int, cursor *int) ([]User, error) {
 }
 
 func (u *UserManager) GetSessions(userID string) ([]Session, error) {
-	request, err := http.NewRequest("GET", u.Client.GetFullURL("/user/"+userID+"/sessions"), nil)
+	request, err := http.NewRequest("GET", u.Client.GetFullURL("user/"+userID+"/sessions"), nil)
 	if err != nil {
 		return nil, err
 	}

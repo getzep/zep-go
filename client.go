@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	APIBasePath           = "/api/v1"
+	APIBasePath           = "api/v1"
 	ServerErrorMessage    = "Failed to connect to Zep server. Please check that the server is running, the API URL is correct, and no other process is using the same port"
 	MinServerVersion      = "0.17.0"
 	MinServerWarningMsg   = "You are using an incompatible Zep server version. Please upgrade to " + MinServerVersion + " or later."
@@ -90,7 +90,7 @@ func (z *DefaultClient) CheckServer() error {
 		return err
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return &ZepError{Message: ServerErrorMessage}
 	}
 
