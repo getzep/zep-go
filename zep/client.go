@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/Masterminds/semver/v3"
 )
 
 const (
