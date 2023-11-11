@@ -2,6 +2,7 @@ package zep
 
 import (
 	"fmt"
+	"github.com/Masterminds/semver/v3"
 	"net/http"
 	"strings"
 	"time"
