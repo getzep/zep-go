@@ -28,7 +28,7 @@ func (u *UserManager) Add(user *CreateUserRequest) (*User, error) {
 	request.Header.Set("Content-Type", "application/json")
 	response, err := u.Client.HandleRequest(request, fmt.Sprintf("failed to add user %s", user.UserID))
 	if err != nil {
-		return nil, fmt.Errorf("failed to add user %w", err)
+		return nil, err
 	}
 
 	var responseData User
