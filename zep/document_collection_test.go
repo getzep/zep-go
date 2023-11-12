@@ -25,6 +25,7 @@ func TestDocumentCollection_AddDocuments(t *testing.T) {
 	documentCollection := NewDocumentCollection(zepClient, documentCollectionModel)
 
 	// TODO: Review test syntax with Daniel. This is a deviation from the other tests, so I want to make sure it's still acceptable.
+	// I can easily refactor these tests if needed.
 	t.Run("Adds one document", func(t *testing.T) {
 		testUUIDS := []string{"testUUID"}
 		*responseFunc = func(rw http.ResponseWriter, req *http.Request) {
@@ -59,5 +60,19 @@ func TestDocumentCollection_AddDocuments(t *testing.T) {
 		uuids, err := documentCollection.AddDocuments(documents)
 		assert.Nil(t, err)
 		assert.Equal(t, testUUIDS, uuids)
+	})
+
+	t.Run("Handles error on upload", func(t *testing.T) {
+		*responseFunc = func(rw http.ResponseWriter, req *http.Request) {
+			rw.WriteHeader(http.StatusInternalServerError)
+		}
+		documents := []Document{
+			{
+				Content: "test content",
+			},
+		}
+		uuids, err := documentCollection.AddDocuments(documents)
+		assert.NotNil(t, err)
+		assert.Nil(t, uuids)
 	})
 }
