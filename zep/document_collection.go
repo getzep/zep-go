@@ -39,7 +39,8 @@ func (d *DocumentCollection) AddDocuments(documents []Document) ([]string, error
 
 	var wg sync.WaitGroup
 	uuids := make(chan string)
-	errs := make(chan error)
+	errSem := make(chan bool, 1)
+	errs := make(chan error, 1)
 	// Limit concurrent batches.
 	sem := make(chan bool, MaxConcurrentBatches)
 
@@ -52,7 +53,12 @@ func (d *DocumentCollection) AddDocuments(documents []Document) ([]string, error
 			batch := documents[i:min(i+DefaultBatchSize, len(documents))]
 			batchUUIDs, err := d.uploadBatch(batch)
 			if err != nil {
-				errs <- err
+				errSem <- true
+				// Only return the first error.
+				if len(errs) == 0 {
+					errs <- err
+				}
+				<-errSem
 				return
 			}
 			for _, uuid := range batchUUIDs {
