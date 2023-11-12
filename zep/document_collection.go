@@ -15,7 +15,7 @@ const MaxConcurrentBatches = 5
 
 type DocumentCollection struct {
 	DocumentCollectionModel
-	Client Client
+	Client Client `json:"-"`
 }
 
 func NewDocumentCollection(client Client, params DocumentCollectionModel) *DocumentCollection {
