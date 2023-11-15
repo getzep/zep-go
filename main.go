@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/getzep/zep-go/zep"
 	"net/http"
 	"strings"
 	"time"
@@ -89,7 +90,7 @@ func (z *DefaultZepClient) CheckServer() error {
 		fmt.Println("Warning: " + MinServerWarningMsg)
 	}
 	if resp.StatusCode != 200 {
-		return &ZepError{Message: ServerErrorMessage}
+		return &zep.ZepError{Message: ServerErrorMessage}
 	}
 
 	return nil
@@ -103,18 +104,18 @@ func (z *DefaultZepClient) CheckServer() error {
 func (z *DefaultZepClient) HandleRequest(requestPromise *http.Request, notFoundMessage string) (*http.Response, error) {
 	response, err := z.Client.Do(requestPromise)
 	if err != nil {
-		return nil, &ZepError{Message: ServerErrorMessage + ": " + err.Error()}
+		return nil, &zep.ZepError{Message: ServerErrorMessage + ": " + err.Error()}
 	}
 
 	switch response.StatusCode {
 	case http.StatusOK:
 		return response, nil
 	case http.StatusNotFound:
-		return nil, &NotFoundError{ZepError: ZepError{Message: notFoundMessage}}
+		return nil, &zep.NotFoundError{ZepError: zep.ZepError{Message: notFoundMessage}}
 	case http.StatusUnauthorized:
-		return nil, &AuthenticationError{ZepError: ZepError{Message: "Authentication failed."}}
+		return nil, &zep.AuthenticationError{ZepError: zep.ZepError{Message: "Authentication failed."}}
 	default:
-		return nil, &APIError{ZepError: ZepError{Message: fmt.Sprintf("Got an unexpected status code: %d", response.StatusCode)}}
+		return nil, &zep.APIError{ZepError: zep.ZepError{Message: fmt.Sprintf("Got an unexpected status code: %d", response.StatusCode)}}
 	}
 }
 

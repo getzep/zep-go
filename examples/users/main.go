@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	zep "github.com/getzep/zep-go"
+	"github.com/getzep/zep-go/zep"
 	"github.com/google/uuid"
 )
 

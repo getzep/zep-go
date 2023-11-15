@@ -23,18 +23,18 @@ func (u *UserManager) Add(user *CreateUserRequest) (*User, error) {
 	}
 	request, err := http.NewRequest("POST", u.Client.GetFullURL("user"), bytes.NewBuffer(p))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request for user %s: %w", user.UserID, err)
+		return nil, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 	response, err := u.Client.HandleRequest(request, fmt.Sprintf("failed to add user %s", user.UserID))
 	if err != nil {
-		return nil, fmt.Errorf("failed to add user %w", err)
+		return nil, err
 	}
 
 	var responseData User
 	err = json.NewDecoder(response.Body).Decode(&responseData)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode response for user %s: %w", user.UserID, err)
+		return nil, err
 	}
 
 	return &responseData, nil
