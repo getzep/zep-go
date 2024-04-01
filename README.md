@@ -39,6 +39,25 @@ response, err := client.Collection.Create(
 )
 ```
 
+## Optionals
+
+This library models optional primitives and enum types as pointers. This is primarily meant to distinguish
+default zero values from explicit values (e.g. `false` for `bool` and `""` for `string`). A collection of
+helper functions are provided to easily map a primitive or enum to its pointer-equivalent (e.g. `zep.Int`).
+
+For example, consider the `client.Search.Get` endpoint usage below:
+
+```go
+response, err := client.Search.Get(
+  context.TODO(),
+  "22337b13-7853-4e1c-a857-d94ea60b3a53",
+  &zep.MemorySearchPayload{
+    Name:       zep.Int(100),
+    SearchType: zep.SearchTypeSimilarity.Ptr(),
+  },
+)
+```
+
 ## Timeouts
 
 Setting a timeout for each individual request is as simple as using the standard
