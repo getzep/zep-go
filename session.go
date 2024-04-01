@@ -3,16 +3,16 @@
 package zep
 
 type ClassifySessionRequest struct {
-	Classes   []string `json:"classes,omitempty" url:"classes,omitempty"`
-	LastN     *int     `json:"last_n,omitempty" url:"last_n,omitempty"`
-	Name      *string  `json:"name,omitempty" url:"name,omitempty"`
-	Persist   *bool    `json:"persist,omitempty" url:"persist,omitempty"`
-	SessionID *string  `json:"session_id,omitempty" url:"session_id,omitempty"`
+	Classes     []string `json:"classes,omitempty" url:"classes,omitempty"`
+	Instruction *string  `json:"instruction,omitempty" url:"instruction,omitempty"`
+	LastN       *int     `json:"last_n,omitempty" url:"last_n,omitempty"`
+	Name        string   `json:"name" url:"name"`
+	Persist     *bool    `json:"persist,omitempty" url:"persist,omitempty"`
 }
 
 type CreateSessionRequest struct {
-	Metadata  map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	SessionID *string                           `json:"session_id,omitempty" url:"session_id,omitempty"`
+	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	SessionID *string                `json:"session_id,omitempty" url:"session_id,omitempty"`
 	// Must be a pointer to allow for null values
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 }
@@ -25,6 +25,6 @@ type SessionListRequest struct {
 }
 
 type UpdateSessionRequest struct {
-	Metadata  map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	SessionID *string                           `json:"session_id,omitempty" url:"session_id,omitempty"`
+	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	SessionID *string                `json:"session_id,omitempty" url:"session_id,omitempty"`
 }

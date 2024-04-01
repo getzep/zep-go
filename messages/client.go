@@ -44,7 +44,7 @@ func (c *Client) List(
 ) ([]*zepgo.Message, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -110,7 +110,7 @@ func (c *Client) Get(
 ) (*zepgo.Message, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -177,7 +177,7 @@ func (c *Client) Update(
 ) (*zepgo.Message, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

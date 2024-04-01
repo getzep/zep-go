@@ -43,7 +43,7 @@ func (c *Client) List(
 ) ([]*zepgo.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -114,7 +114,7 @@ func (c *Client) Create(
 ) (*zepgo.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -179,7 +179,7 @@ func (c *Client) Get(
 ) (*zepgo.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -244,7 +244,7 @@ func (c *Client) Update(
 ) (*zepgo.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -317,7 +317,7 @@ func (c *Client) Classify(
 ) (*zepgo.ClassifySessionResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -382,7 +382,7 @@ func (c *Client) GetSummaries(
 ) (*zepgo.SummaryListResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

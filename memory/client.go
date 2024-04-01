@@ -42,10 +42,10 @@ func (c *Client) Get(
 	sessionID string,
 	request *zepgo.MemoryGetRequest,
 	opts ...option.RequestOption,
-) ([]*zepgo.Memory, error) {
+) (*zepgo.Memory, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -90,7 +90,7 @@ func (c *Client) Get(
 		return apiError
 	}
 
-	var response []*zepgo.Memory
+	var response *zepgo.Memory
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -115,10 +115,10 @@ func (c *Client) Create(
 	sessionID string,
 	request *zepgo.Memory,
 	opts ...option.RequestOption,
-) (string, error) {
+) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -148,7 +148,6 @@ func (c *Client) Create(
 		return apiError
 	}
 
-	var response string
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -158,13 +157,12 @@ func (c *Client) Create(
 			Headers:      headers,
 			Client:       options.HTTPClient,
 			Request:      request,
-			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return "", err
+		return err
 	}
-	return response, nil
+	return nil
 }
 
 // delete memory messages by session id
@@ -176,7 +174,7 @@ func (c *Client) Delete(
 ) (string, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -241,7 +239,7 @@ func (c *Client) SynthesizeQuestion(
 ) (*zepgo.Question, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

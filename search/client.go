@@ -45,7 +45,7 @@ func (c *Client) Get(
 ) ([]*zepgo.MemorySearchResult, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

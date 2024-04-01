@@ -42,7 +42,7 @@ func (c *Client) List(
 ) ([][]*zepgo.DocumentCollectionResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -106,7 +106,7 @@ func (c *Client) Get(
 ) (*zepgo.DocumentCollectionResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -185,7 +185,7 @@ func (c *Client) Create(
 ) (string, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -264,7 +264,7 @@ func (c *Client) Delete(
 ) (string, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -342,7 +342,7 @@ func (c *Client) Update(
 ) (string, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -422,7 +422,7 @@ func (c *Client) CreateIndex(
 ) (string, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://app.getzep.com/api/v2"
+	baseURL := "https://api.getzep.com/api/v2"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

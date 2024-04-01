@@ -9,5 +9,5 @@ package zep
 var Environments = struct {
 	Default string
 }{
-	Default: "https://app.getzep.com/api/v2",
+	Default: "https://api.getzep.com/api/v2",
 }

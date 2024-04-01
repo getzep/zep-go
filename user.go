@@ -3,11 +3,11 @@
 package zep
 
 type CreateUserRequest struct {
-	Email     *string                           `json:"email,omitempty" url:"email,omitempty"`
-	FirstName *string                           `json:"first_name,omitempty" url:"first_name,omitempty"`
-	LastName  *string                           `json:"last_name,omitempty" url:"last_name,omitempty"`
-	Metadata  map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	UserID    *string                           `json:"user_id,omitempty" url:"user_id,omitempty"`
+	Email     *string                `json:"email,omitempty" url:"email,omitempty"`
+	FirstName *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
+	LastName  *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
+	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	UserID    *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
 }
 
 type UserListRequest struct {
@@ -25,10 +25,10 @@ type UserListOrderedRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Email     *string                           `json:"email,omitempty" url:"email,omitempty"`
-	FirstName *string                           `json:"first_name,omitempty" url:"first_name,omitempty"`
-	LastName  *string                           `json:"last_name,omitempty" url:"last_name,omitempty"`
-	Metadata  map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	UserID    *string                           `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UUID      *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Email     *string                `json:"email,omitempty" url:"email,omitempty"`
+	FirstName *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
+	LastName  *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
+	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	UserID    *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UUID      *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 }

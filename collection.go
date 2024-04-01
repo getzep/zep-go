@@ -6,9 +6,9 @@ type CreateDocumentCollectionRequest struct {
 	Description         *string `json:"description,omitempty" url:"description,omitempty"`
 	EmbeddingDimensions int     `json:"embedding_dimensions" url:"embedding_dimensions"`
 	// these needs to be pointers so that we can distinguish between false and unset when validating
-	IsAutoEmbedded bool                              `json:"is_auto_embedded" url:"is_auto_embedded"`
-	Metadata       map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Name           string                            `json:"name" url:"name"`
+	IsAutoEmbedded bool                   `json:"is_auto_embedded" url:"is_auto_embedded"`
+	Metadata       map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Name           string                 `json:"name" url:"name"`
 }
 
 type CollectionCreateIndexRequest struct {
@@ -17,6 +17,6 @@ type CollectionCreateIndexRequest struct {
 }
 
 type UpdateDocumentCollectionRequest struct {
-	Description *string                           `json:"description,omitempty" url:"description,omitempty"`
-	Metadata    map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Description *string                `json:"description,omitempty" url:"description,omitempty"`
+	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 }

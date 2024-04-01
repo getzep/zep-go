@@ -68,10 +68,10 @@ func (c *ClassifySessionResponse) String() string {
 }
 
 type CreateDocumentRequest struct {
-	Content    *string                           `json:"content,omitempty" url:"content,omitempty"`
-	DocumentID *string                           `json:"document_id,omitempty" url:"document_id,omitempty"`
-	Embedding  []float64                         `json:"embedding,omitempty" url:"embedding,omitempty"`
-	Metadata   map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Content    *string                `json:"content,omitempty" url:"content,omitempty"`
+	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
+	Embedding  []float64              `json:"embedding,omitempty" url:"embedding,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -105,16 +105,16 @@ type DocumentCollectionResponse struct {
 	// Number of documents in the collection
 	DocumentCount *int `json:"document_count,omitempty" url:"document_count,omitempty"`
 	// Number of documents with embeddings
-	DocumentEmbeddedCount *int                              `json:"document_embedded_count,omitempty" url:"document_embedded_count,omitempty"`
-	EmbeddingDimensions   *int                              `json:"embedding_dimensions,omitempty" url:"embedding_dimensions,omitempty"`
-	EmbeddingModelName    *string                           `json:"embedding_model_name,omitempty" url:"embedding_model_name,omitempty"`
-	IsAutoEmbedded        *bool                             `json:"is_auto_embedded,omitempty" url:"is_auto_embedded,omitempty"`
-	IsIndexed             *bool                             `json:"is_indexed,omitempty" url:"is_indexed,omitempty"`
-	IsNormalized          *bool                             `json:"is_normalized,omitempty" url:"is_normalized,omitempty"`
-	Metadata              map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Name                  *string                           `json:"name,omitempty" url:"name,omitempty"`
-	UpdatedAt             *string                           `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID                  *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	DocumentEmbeddedCount *int                   `json:"document_embedded_count,omitempty" url:"document_embedded_count,omitempty"`
+	EmbeddingDimensions   *int                   `json:"embedding_dimensions,omitempty" url:"embedding_dimensions,omitempty"`
+	EmbeddingModelName    *string                `json:"embedding_model_name,omitempty" url:"embedding_model_name,omitempty"`
+	IsAutoEmbedded        *bool                  `json:"is_auto_embedded,omitempty" url:"is_auto_embedded,omitempty"`
+	IsIndexed             *bool                  `json:"is_indexed,omitempty" url:"is_indexed,omitempty"`
+	IsNormalized          *bool                  `json:"is_normalized,omitempty" url:"is_normalized,omitempty"`
+	Metadata              map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Name                  *string                `json:"name,omitempty" url:"name,omitempty"`
+	UpdatedAt             *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -143,14 +143,14 @@ func (d *DocumentCollectionResponse) String() string {
 }
 
 type DocumentResponse struct {
-	Content    *string                           `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt  *string                           `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DocumentID *string                           `json:"document_id,omitempty" url:"document_id,omitempty"`
-	Embedding  []float64                         `json:"embedding,omitempty" url:"embedding,omitempty"`
-	IsEmbedded *bool                             `json:"is_embedded,omitempty" url:"is_embedded,omitempty"`
-	Metadata   map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	UpdatedAt  *string                           `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID       *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Content    *string                `json:"content,omitempty" url:"content,omitempty"`
+	CreatedAt  *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
+	Embedding  []float64              `json:"embedding,omitempty" url:"embedding,omitempty"`
+	IsEmbedded *bool                  `json:"is_embedded,omitempty" url:"is_embedded,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	UpdatedAt  *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -179,15 +179,15 @@ func (d *DocumentResponse) String() string {
 }
 
 type DocumentSearchResult struct {
-	Content    *string                           `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt  *string                           `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DocumentID *string                           `json:"document_id,omitempty" url:"document_id,omitempty"`
-	Embedding  []float64                         `json:"embedding,omitempty" url:"embedding,omitempty"`
-	IsEmbedded *bool                             `json:"is_embedded,omitempty" url:"is_embedded,omitempty"`
-	Metadata   map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Score      *float64                          `json:"score,omitempty" url:"score,omitempty"`
-	UpdatedAt  *string                           `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID       *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Content    *string                `json:"content,omitempty" url:"content,omitempty"`
+	CreatedAt  *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
+	Embedding  []float64              `json:"embedding,omitempty" url:"embedding,omitempty"`
+	IsEmbedded *bool                  `json:"is_embedded,omitempty" url:"is_embedded,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Score      *float64               `json:"score,omitempty" url:"score,omitempty"`
+	UpdatedAt  *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -249,9 +249,10 @@ func (d *DocumentSearchResultPage) String() string {
 }
 
 type Memory struct {
-	Messages []*Message                        `json:"messages,omitempty" url:"messages,omitempty"`
-	Metadata map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Summary  *Summary                          `json:"summary,omitempty" url:"summary,omitempty"`
+	Facts    []string               `json:"facts,omitempty" url:"facts,omitempty"`
+	Messages []*Message             `json:"messages,omitempty" url:"messages,omitempty"`
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Summary  *Summary               `json:"summary,omitempty" url:"summary,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -280,11 +281,11 @@ func (m *Memory) String() string {
 }
 
 type MemorySearchResult struct {
-	Embedding []float64                         `json:"embedding,omitempty" url:"embedding,omitempty"`
-	Message   *Message                          `json:"message,omitempty" url:"message,omitempty"`
-	Metadata  map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Score     *float64                          `json:"score,omitempty" url:"score,omitempty"`
-	Summary   *Summary                          `json:"summary,omitempty" url:"summary,omitempty"`
+	Embedding []float64              `json:"embedding,omitempty" url:"embedding,omitempty"`
+	Message   *Message               `json:"message,omitempty" url:"message,omitempty"`
+	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Score     *float64               `json:"score,omitempty" url:"score,omitempty"`
+	Summary   *Summary               `json:"summary,omitempty" url:"summary,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -313,13 +314,14 @@ func (m *MemorySearchResult) String() string {
 }
 
 type Message struct {
-	Content    *string                           `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt  *string                           `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Metadata   map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Role       *string                           `json:"role,omitempty" url:"role,omitempty"`
-	TokenCount *int                              `json:"token_count,omitempty" url:"token_count,omitempty"`
-	UpdatedAt  *string                           `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID       *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Content    *string                `json:"content,omitempty" url:"content,omitempty"`
+	CreatedAt  *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Role       *string                `json:"role,omitempty" url:"role,omitempty"`
+	RoleType   *ModelsRoleType        `json:"role_type,omitempty" url:"role_type,omitempty"`
+	TokenCount *int                   `json:"token_count,omitempty" url:"token_count,omitempty"`
+	UpdatedAt  *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -345,6 +347,40 @@ func (m *Message) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", m)
+}
+
+type ModelsRoleType string
+
+const (
+	ModelsRoleTypeNoRole        ModelsRoleType = "norole"
+	ModelsRoleTypeSystemRole    ModelsRoleType = "system"
+	ModelsRoleTypeAssistantRole ModelsRoleType = "assistant"
+	ModelsRoleTypeUserRole      ModelsRoleType = "user"
+	ModelsRoleTypeFunctionRole  ModelsRoleType = "function"
+	ModelsRoleTypeToolRole      ModelsRoleType = "tool"
+)
+
+func NewModelsRoleTypeFromString(s string) (ModelsRoleType, error) {
+	switch s {
+	case "norole":
+		return ModelsRoleTypeNoRole, nil
+	case "system":
+		return ModelsRoleTypeSystemRole, nil
+	case "assistant":
+		return ModelsRoleTypeAssistantRole, nil
+	case "user":
+		return ModelsRoleTypeUserRole, nil
+	case "function":
+		return ModelsRoleTypeFunctionRole, nil
+	case "tool":
+		return ModelsRoleTypeToolRole, nil
+	}
+	var t ModelsRoleType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (m ModelsRoleType) Ptr() *ModelsRoleType {
+	return &m
 }
 
 type Question struct {
@@ -421,13 +457,15 @@ func (s SearchType) Ptr() *SearchType {
 }
 
 type Session struct {
-	CreatedAt   *string                           `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt   *string                           `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	ID          *int                              `json:"id,omitempty" url:"id,omitempty"`
-	Metadata    map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProjectUUID *string                           `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	SessionID   *string                           `json:"session_id,omitempty" url:"session_id,omitempty"`
-	UpdatedAt   *string                           `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	Classifications map[string]string      `json:"classifications,omitempty" url:"classifications,omitempty"`
+	CreatedAt       *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt       *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	Facts           []string               `json:"facts,omitempty" url:"facts,omitempty"`
+	ID              *int                   `json:"id,omitempty" url:"id,omitempty"`
+	Metadata        map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	ProjectUUID     *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	SessionID       *string                `json:"session_id,omitempty" url:"session_id,omitempty"`
+	UpdatedAt       *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	// Must be a pointer to allow for null values
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 	UUID   *string `json:"uuid,omitempty" url:"uuid,omitempty"`
@@ -459,12 +497,12 @@ func (s *Session) String() string {
 }
 
 type Summary struct {
-	Content             *string                           `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt           *string                           `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Metadata            map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	RelatedMessageUUIDs []string                          `json:"related_message_uuids,omitempty" url:"related_message_uuids,omitempty"`
-	TokenCount          *int                              `json:"token_count,omitempty" url:"token_count,omitempty"`
-	UUID                *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Content             *string                `json:"content,omitempty" url:"content,omitempty"`
+	CreatedAt           *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Metadata            map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	RelatedMessageUUIDs []string               `json:"related_message_uuids,omitempty" url:"related_message_uuids,omitempty"`
+	TokenCount          *int                   `json:"token_count,omitempty" url:"token_count,omitempty"`
+	UUID                *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -524,9 +562,9 @@ func (s *SummaryListResponse) String() string {
 }
 
 type UpdateDocumentListRequest struct {
-	DocumentID *string                           `json:"document_id,omitempty" url:"document_id,omitempty"`
-	Metadata   map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	UUID       string                            `json:"uuid" url:"uuid"`
+	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	UUID       string                 `json:"uuid" url:"uuid"`
 
 	_rawJSON json.RawMessage
 }
@@ -555,18 +593,18 @@ func (u *UpdateDocumentListRequest) String() string {
 }
 
 type User struct {
-	CreatedAt    *string                           `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt    *string                           `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	Email        *string                           `json:"email,omitempty" url:"email,omitempty"`
-	FirstName    *string                           `json:"first_name,omitempty" url:"first_name,omitempty"`
-	ID           *int                              `json:"id,omitempty" url:"id,omitempty"`
-	LastName     *string                           `json:"last_name,omitempty" url:"last_name,omitempty"`
-	Metadata     map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProjectUUID  *string                           `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	SessionCount *int                              `json:"session_count,omitempty" url:"session_count,omitempty"`
-	UpdatedAt    *string                           `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UserID       *string                           `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UUID         *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	CreatedAt    *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt    *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	Email        *string                `json:"email,omitempty" url:"email,omitempty"`
+	FirstName    *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
+	ID           *int                   `json:"id,omitempty" url:"id,omitempty"`
+	LastName     *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
+	Metadata     map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	ProjectUUID  *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	SessionCount *int                   `json:"session_count,omitempty" url:"session_count,omitempty"`
+	UpdatedAt    *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UserID       *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UUID         *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }

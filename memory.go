@@ -2,9 +2,13 @@
 
 package zep
 
+import (
+	fmt "fmt"
+)
+
 type MemoryGetRequest struct {
 	// memoryType: perpetual or message_window
-	MemoryType *string `json:"-" url:"memoryType,omitempty"`
+	MemoryType MemoryGetRequestMemoryType `json:"-" url:"memoryType,omitempty"`
 	// Last N messages. Overrides memory_window configuration
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
@@ -12,4 +16,29 @@ type MemoryGetRequest struct {
 type MemorySynthesizeQuestionRequest struct {
 	// Last N messages
 	LastNMessages *int `json:"-" url:"lastNMessages,omitempty"`
+}
+
+type MemoryGetRequestMemoryType string
+
+const (
+	MemoryGetRequestMemoryTypePerpetual        MemoryGetRequestMemoryType = "perpetual"
+	MemoryGetRequestMemoryTypeSummaryRetriever MemoryGetRequestMemoryType = "summary_retriever"
+	MemoryGetRequestMemoryTypeMessageWindow    MemoryGetRequestMemoryType = "message_window"
+)
+
+func NewMemoryGetRequestMemoryTypeFromString(s string) (MemoryGetRequestMemoryType, error) {
+	switch s {
+	case "perpetual":
+		return MemoryGetRequestMemoryTypePerpetual, nil
+	case "summary_retriever":
+		return MemoryGetRequestMemoryTypeSummaryRetriever, nil
+	case "message_window":
+		return MemoryGetRequestMemoryTypeMessageWindow, nil
+	}
+	var t MemoryGetRequestMemoryType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (m MemoryGetRequestMemoryType) Ptr() *MemoryGetRequestMemoryType {
+	return &m
 }

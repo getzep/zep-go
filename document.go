@@ -9,10 +9,10 @@ type GetDocumentListRequest struct {
 
 type DocumentSearchPayload struct {
 	// Limit the number of returned documents
-	Limit          *int                              `json:"-" url:"limit,omitempty"`
-	CollectionName *string                           `json:"collection_name,omitempty" url:"collection_name,omitempty"`
-	Embedding      []float64                         `json:"embedding,omitempty" url:"embedding,omitempty"`
-	Metadata       map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Limit          *int                   `json:"-" url:"limit,omitempty"`
+	CollectionName *string                `json:"collection_name,omitempty" url:"collection_name,omitempty"`
+	Embedding      []float64              `json:"embedding,omitempty" url:"embedding,omitempty"`
+	Metadata       map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// TODO: implement for documents
 	MinScore   *float64    `json:"min_score,omitempty" url:"min_score,omitempty"`
 	MmrLambda  *float64    `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
@@ -21,6 +21,6 @@ type DocumentSearchPayload struct {
 }
 
 type UpdateDocumentRequest struct {
-	DocumentID *string                           `json:"document_id,omitempty" url:"document_id,omitempty"`
-	Metadata   map[string]map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 }
