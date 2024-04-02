@@ -8,7 +8,7 @@ import (
 
 type MemoryGetRequest struct {
 	// memoryType: perpetual or message_window
-	MemoryType MemoryGetRequestMemoryType `json:"-" url:"memoryType,omitempty"`
+	MemoryType *MemoryGetRequestMemoryType `json:"-" url:"memoryType,omitempty"`
 	// Last N messages. Overrides memory_window configuration
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
