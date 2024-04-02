@@ -42,7 +42,7 @@ func NewRequestOptions(opts ...RequestOption) *RequestOptions {
 // for the request(s).
 func (r *RequestOptions) ToHeader() http.Header {
 	header := r.cloneHeader()
-	header.Set("Authorization", fmt.Sprintf("%v", r.APIKey))
+	header.Set("Authorization", fmt.Sprintf("Api-Key %v", r.APIKey))
 	return header
 }
 
@@ -50,7 +50,7 @@ func (r *RequestOptions) cloneHeader() http.Header {
 	headers := r.HTTPHeader.Clone()
 	headers.Set("X-Fern-Language", "Go")
 	headers.Set("X-Fern-SDK-Name", "github.com/getzep/zep-go")
-	headers.Set("X-Fern-SDK-Version", "v0.0.4")
+	headers.Set("X-Fern-SDK-Version", "v0.0.5")
 	return headers
 }
 
