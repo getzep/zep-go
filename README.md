@@ -1,8 +1,44 @@
 # Zep Go Library
 
-[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen)](https://github.com/fern-api/fern)
+<p align="center">
+  <a href="https://www.getzep.com/">
+    <img src="https://raw.githubusercontent.com/getzep/zep/main/assets/zep-logo-icon-gradient-rgb.svg" width="150" alt="Zep Logo">
+  </a>
+</p>
 
-The Zep Go library provides convenient access to the Zep API from Go.
+<h1 align="center">
+Zep: Long-Term Memory for ‍AI Assistants.
+</h1>
+<h2 align="center">Recall, understand, and extract data from chat histories. Power personalized AI experiences.</h2>
+<br />
+<p align="center">
+  <a href="https://discord.gg/W8Kw6bsgXQ"><img
+    src="https://dcbadge.vercel.app/api/server/W8Kw6bsgXQ?style=flat"
+    alt="Chat on Discord"
+  /></a>
+  <a href="https://twitter.com/intent/follow?screen_name=zep_ai" target="_new"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/zep_ai"></a>
+  <a href="https://pkg.go.dev/github.com/getzep/zep-go"><img alt="getzep/zep-go" src="https://camo.githubusercontent.com/145a593ba47eebe5e332d41cf466ee8bcdc0df25b2bd18d1a2d3c5003be09a3f/68747470733a2f2f706b672e676f2e6465762f62616467652f6769746875622e636f6d2f7374726970652f7374726970652d676f"></a>
+  <img
+  src="https://github.com/getzep/zep-go/actions/workflows/ci.yml/badge.svg"
+  alt="CI"
+  />
+<a href="https://github.com/fern-api/fern">
+    <img
+      src="https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen"
+      alt="CI"
+      />
+</a>
+</p>
+<p align="center">
+<a href="https://help.getzep.com/">Documentation</a> | 
+<a href="https://help.getzep.com/langchain/">LangChain</a> | 
+<a href="https://discord.gg/W8Kw6bsgXQ">Discord</a><br />
+<a href="https://www.getzep.com">www.getzep.com</a>
+</p>
+
+
+
+The Zep Go library provides convenient access to the Zep Cloud API from Go.
 
 ## Requirements
 
