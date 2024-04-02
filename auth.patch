@@ -1,0 +1,15 @@
+diff --git a/core/request_option.go b/core/request_option.go
+index 1df423d..1409b3a 100644
+--- a/core/request_option.go
++++ b/core/request_option.go
+@@ -42,7 +42,9 @@ func NewRequestOptions(opts ...RequestOption) *RequestOptions {
+ // for the request(s).
+ func (r *RequestOptions) ToHeader() http.Header {
+ 	header := r.cloneHeader()
+-	header.Set("Authorization", fmt.Sprintf("Api-Key %v", r.APIKey))
++	if r.APIKey != "" {
++		header.Set("Authorization", fmt.Sprintf("Api-Key %v", r.APIKey))
++	}
+ 	return header
+ }
+ 
