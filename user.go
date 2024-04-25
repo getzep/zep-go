@@ -11,17 +11,17 @@ type CreateUserRequest struct {
 }
 
 type UserListRequest struct {
-	// Page number for pagination, starting from 1
-	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
-	// Number of users to retrieve per page
-	PageSize *int `json:"-" url:"pageSize,omitempty"`
-}
-
-type UserListOrderedRequest struct {
 	// Limit
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Cursor
 	Cursor *int `json:"-" url:"cursor,omitempty"`
+}
+
+type UserListOrderedRequest struct {
+	// Page number for pagination, starting from 1
+	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
+	// Number of users to retrieve per page
+	PageSize *int `json:"-" url:"pageSize,omitempty"`
 }
 
 type UpdateUserRequest struct {
@@ -29,6 +29,4 @@ type UpdateUserRequest struct {
 	FirstName *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
 	LastName  *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
 	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	UserID    *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UUID      *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 }

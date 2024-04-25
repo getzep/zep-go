@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	core "github.com/getzep/zep-go/core"
+	core "github.com/getzep/zep-go/v2/core"
 )
 
 type APIError struct {
@@ -381,6 +381,37 @@ func NewModelsRoleTypeFromString(s string) (ModelsRoleType, error) {
 
 func (m ModelsRoleType) Ptr() *ModelsRoleType {
 	return &m
+}
+
+type ModelsZepDataClass struct {
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	Name        *string `json:"name,omitempty" url:"name,omitempty"`
+	Type        *string `json:"type,omitempty" url:"type,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (m *ModelsZepDataClass) UnmarshalJSON(data []byte) error {
+	type unmarshaler ModelsZepDataClass
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = ModelsZepDataClass(value)
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *ModelsZepDataClass) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
 }
 
 type Question struct {
