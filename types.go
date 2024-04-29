@@ -318,7 +318,7 @@ type Message struct {
 	CreatedAt  *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
 	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	Role       *string                `json:"role,omitempty" url:"role,omitempty"`
-	RoleType   *ModelsRoleType        `json:"role_type,omitempty" url:"role_type,omitempty"`
+	RoleType   *RoleType              `json:"role_type,omitempty" url:"role_type,omitempty"`
 	TokenCount *int                   `json:"token_count,omitempty" url:"token_count,omitempty"`
 	UpdatedAt  *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
@@ -347,40 +347,6 @@ func (m *Message) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", m)
-}
-
-type ModelsRoleType string
-
-const (
-	ModelsRoleTypeNoRole        ModelsRoleType = "norole"
-	ModelsRoleTypeSystemRole    ModelsRoleType = "system"
-	ModelsRoleTypeAssistantRole ModelsRoleType = "assistant"
-	ModelsRoleTypeUserRole      ModelsRoleType = "user"
-	ModelsRoleTypeFunctionRole  ModelsRoleType = "function"
-	ModelsRoleTypeToolRole      ModelsRoleType = "tool"
-)
-
-func NewModelsRoleTypeFromString(s string) (ModelsRoleType, error) {
-	switch s {
-	case "norole":
-		return ModelsRoleTypeNoRole, nil
-	case "system":
-		return ModelsRoleTypeSystemRole, nil
-	case "assistant":
-		return ModelsRoleTypeAssistantRole, nil
-	case "user":
-		return ModelsRoleTypeUserRole, nil
-	case "function":
-		return ModelsRoleTypeFunctionRole, nil
-	case "tool":
-		return ModelsRoleTypeToolRole, nil
-	}
-	var t ModelsRoleType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (m ModelsRoleType) Ptr() *ModelsRoleType {
-	return &m
 }
 
 type ModelsZepDataClass struct {
@@ -441,6 +407,40 @@ func (q *Question) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", q)
+}
+
+type RoleType string
+
+const (
+	RoleTypeNoRole        RoleType = "norole"
+	RoleTypeSystemRole    RoleType = "system"
+	RoleTypeAssistantRole RoleType = "assistant"
+	RoleTypeUserRole      RoleType = "user"
+	RoleTypeFunctionRole  RoleType = "function"
+	RoleTypeToolRole      RoleType = "tool"
+)
+
+func NewRoleTypeFromString(s string) (RoleType, error) {
+	switch s {
+	case "norole":
+		return RoleTypeNoRole, nil
+	case "system":
+		return RoleTypeSystemRole, nil
+	case "assistant":
+		return RoleTypeAssistantRole, nil
+	case "user":
+		return RoleTypeUserRole, nil
+	case "function":
+		return RoleTypeFunctionRole, nil
+	case "tool":
+		return RoleTypeToolRole, nil
+	}
+	var t RoleType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RoleType) Ptr() *RoleType {
+	return &r
 }
 
 type SearchScope string

@@ -923,7 +923,7 @@ func (c *Client) GetSummaries(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/summaries", sessionID)
+	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/summary", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
