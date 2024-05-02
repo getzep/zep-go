@@ -7,7 +7,6 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	fmt "fmt"
 	v2 "github.com/getzep/zep-go/v2"
 	core "github.com/getzep/zep-go/v2/core"
 	option "github.com/getzep/zep-go/v2/option"
@@ -53,7 +52,7 @@ func (c *Client) ListCollections(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := baseURL + "/" + "collections"
+	endpointURL := baseURL + "/collections"
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -117,7 +116,7 @@ func (c *Client) GetCollection(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -196,7 +195,7 @@ func (c *Client) AddCollection(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -275,7 +274,7 @@ func (c *Client) DeleteCollection(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -354,7 +353,7 @@ func (c *Client) UpdateCollection(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -434,7 +433,7 @@ func (c *Client) AddDocuments(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -507,7 +506,7 @@ func (c *Client) BatchDeleteDocuments(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/batchDelete", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchDelete", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -580,7 +579,7 @@ func (c *Client) BatchGetDocuments(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/batchGet", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchGet", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -653,7 +652,7 @@ func (c *Client) BatchUpdateDocuments(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/batchUpdate", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchUpdate", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -727,7 +726,11 @@ func (c *Client) GetsADocumentFromADocumentCollectionByUUID(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/uuid/%v", collectionName, documentUUID)
+	endpointURL := core.EncodeURL(
+		baseURL+"/collections/%v/documents/uuid/%v",
+		collectionName,
+		documentUUID,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -800,7 +803,11 @@ func (c *Client) DeleteDocument(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/uuid/%v", collectionName, documentUUID)
+	endpointURL := core.EncodeURL(
+		baseURL+"/collections/%v/documents/uuid/%v",
+		collectionName,
+		documentUUID,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -881,7 +888,11 @@ func (c *Client) UpdatesADocument(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/uuid/%v", collectionName, documentUUID)
+	endpointURL := core.EncodeURL(
+		baseURL+"/collections/%v/documents/uuid/%v",
+		collectionName,
+		documentUUID,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -961,7 +972,7 @@ func (c *Client) Search(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/search", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/search", collectionName)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {

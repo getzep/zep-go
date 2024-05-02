@@ -7,7 +7,6 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	fmt "fmt"
 	v2 "github.com/getzep/zep-go/v2"
 	core "github.com/getzep/zep-go/v2/core"
 	option "github.com/getzep/zep-go/v2/option"
@@ -54,7 +53,7 @@ func (c *Client) Add(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := baseURL + "/" + "users"
+	endpointURL := baseURL + "/users"
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -118,7 +117,7 @@ func (c *Client) ListOrdered(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := baseURL + "/" + "users-ordered"
+	endpointURL := baseURL + "/users-ordered"
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
@@ -190,7 +189,7 @@ func (c *Client) Get(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v", userID)
+	endpointURL := core.EncodeURL(baseURL+"/users/%v", userID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -254,7 +253,7 @@ func (c *Client) Delete(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v", userID)
+	endpointURL := core.EncodeURL(baseURL+"/users/%v", userID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -319,7 +318,7 @@ func (c *Client) Update(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v", userID)
+	endpointURL := core.EncodeURL(baseURL+"/users/%v", userID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -391,7 +390,7 @@ func (c *Client) GetSessions(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/sessions", userID)
+	endpointURL := core.EncodeURL(baseURL+"/users/%v/sessions", userID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

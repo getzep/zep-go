@@ -7,7 +7,6 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	fmt "fmt"
 	v2 "github.com/getzep/zep-go/v2"
 	core "github.com/getzep/zep-go/v2/core"
 	option "github.com/getzep/zep-go/v2/option"
@@ -54,7 +53,7 @@ func (c *Client) AddSession(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := baseURL + "/" + "sessions"
+	endpointURL := baseURL + "/sessions"
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -118,7 +117,7 @@ func (c *Client) ListSessions(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := baseURL + "/" + "sessions-ordered"
+	endpointURL := baseURL + "/sessions-ordered"
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
@@ -190,7 +189,7 @@ func (c *Client) GetSession(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -255,7 +254,7 @@ func (c *Client) UpdateSession(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -328,7 +327,7 @@ func (c *Client) ClassifySession(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/classify", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/classify", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -394,7 +393,7 @@ func (c *Client) ExtractSessionData(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/extract", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/extract", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -460,7 +459,7 @@ func (c *Client) Get(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/memory", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/memory", sessionID)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
@@ -533,7 +532,7 @@ func (c *Client) Add(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/memory", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/memory", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -591,7 +590,7 @@ func (c *Client) Delete(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/memory", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/memory", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -656,7 +655,7 @@ func (c *Client) GetSessionMessages(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/messages", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/messages", sessionID)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
@@ -730,7 +729,11 @@ func (c *Client) GetSessionMessage(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/messages/%v", sessionID, messageUUID)
+	endpointURL := core.EncodeURL(
+		baseURL+"/sessions/%v/messages/%v",
+		sessionID,
+		messageUUID,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -797,7 +800,11 @@ func (c *Client) UpdateMessageMetadata(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/messages/%v", sessionID, messageUUID)
+	endpointURL := core.EncodeURL(
+		baseURL+"/sessions/%v/messages/%v",
+		sessionID,
+		messageUUID,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -863,7 +870,7 @@ func (c *Client) Search(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/search", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/search", sessionID)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
@@ -936,7 +943,7 @@ func (c *Client) GetSummaries(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/summary", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/summary", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -1001,7 +1008,7 @@ func (c *Client) SynthesizeQuestion(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/synthesize_question", sessionID)
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/synthesize_question", sessionID)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
