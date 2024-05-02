@@ -206,7 +206,7 @@ func (c *Client) CreateMultiple(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/document", collectionName)
+	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
