@@ -6,6 +6,11 @@ import (
 	fmt "fmt"
 )
 
+type AddMemoryRequest struct {
+	Messages           []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	SummaryInstruction *string    `json:"summary_instruction,omitempty" url:"summary_instruction,omitempty"`
+}
+
 type CreateSessionRequest struct {
 	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	SessionID string                 `json:"session_id" url:"session_id"`
@@ -31,6 +36,13 @@ type MemoryGetRequest struct {
 	MemoryType *MemoryGetRequestMemoryType `json:"-" url:"memoryType,omitempty"`
 	// Last N messages. Overrides memory_window configuration
 	Lastn *int `json:"-" url:"lastn,omitempty"`
+}
+
+type MemoryGetSessionMessagesRequest struct {
+	// Limit the number of results returned
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Cursor for pagination
+	Cursor *int `json:"-" url:"cursor,omitempty"`
 }
 
 type MemoryListSessionsRequest struct {

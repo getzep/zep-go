@@ -186,7 +186,7 @@ func (c *Client) AddCollection(
 	collectionName string,
 	request *v2.CreateDocumentCollectionRequest,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -240,6 +240,7 @@ func (c *Client) AddCollection(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -249,12 +250,13 @@ func (c *Client) AddCollection(
 			Headers:      headers,
 			Client:       options.HTTPClient,
 			Request:      request,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // If a collection with the same name already exists, it will be overwritten.
@@ -263,7 +265,7 @@ func (c *Client) DeleteCollection(
 	// Name of the Document Collection
 	collectionName string,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -317,6 +319,7 @@ func (c *Client) DeleteCollection(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -325,21 +328,23 @@ func (c *Client) DeleteCollection(
 			MaxAttempts:  options.MaxAttempts,
 			Headers:      headers,
 			Client:       options.HTTPClient,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
+// Updates a DocumentCollection
 func (c *Client) UpdateCollection(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
 	request *v2.UpdateDocumentCollectionRequest,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -393,6 +398,7 @@ func (c *Client) UpdateCollection(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -402,12 +408,13 @@ func (c *Client) UpdateCollection(
 			Headers:      headers,
 			Client:       options.HTTPClient,
 			Request:      request,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Creates Documents in a specified DocumentCollection and returns their UUIDs.
@@ -490,7 +497,7 @@ func (c *Client) BatchDeleteDocuments(
 	collectionName string,
 	request []string,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -537,6 +544,7 @@ func (c *Client) BatchDeleteDocuments(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -546,12 +554,13 @@ func (c *Client) BatchDeleteDocuments(
 			Headers:      headers,
 			Client:       options.HTTPClient,
 			Request:      request,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Returns Documents from a DocumentCollection specified by UUID or ID.
@@ -561,7 +570,7 @@ func (c *Client) BatchGetDocuments(
 	collectionName string,
 	request *v2.GetDocumentListRequest,
 	opts ...option.RequestOption,
-) ([][]*v2.DocumentResponse, error) {
+) ([]*v2.DocumentResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -608,7 +617,7 @@ func (c *Client) BatchGetDocuments(
 		return apiError
 	}
 
-	var response [][]*v2.DocumentResponse
+	var response []*v2.DocumentResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -634,7 +643,7 @@ func (c *Client) BatchUpdateDocuments(
 	collectionName string,
 	request []*v2.UpdateDocumentListRequest,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -681,6 +690,7 @@ func (c *Client) BatchUpdateDocuments(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -690,12 +700,13 @@ func (c *Client) BatchUpdateDocuments(
 			Headers:      headers,
 			Client:       options.HTTPClient,
 			Request:      request,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Returns specified Document from a DocumentCollection.
@@ -779,7 +790,7 @@ func (c *Client) DeleteDocument(
 	// UUID of the Document to be deleted
 	documentUUID string,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -833,6 +844,7 @@ func (c *Client) DeleteDocument(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -841,15 +853,17 @@ func (c *Client) DeleteDocument(
 			MaxAttempts:  options.MaxAttempts,
 			Headers:      headers,
 			Client:       options.HTTPClient,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
-func (c *Client) UpdatesADocumentInADocumentCollectionByUUID(
+// Updates a Document in a DocumentCollection by UUID
+func (c *Client) UpdatesADocument(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
@@ -857,7 +871,7 @@ func (c *Client) UpdatesADocumentInADocumentCollectionByUUID(
 	documentUUID string,
 	request *v2.UpdateDocumentRequest,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -911,6 +925,7 @@ func (c *Client) UpdatesADocumentInADocumentCollectionByUUID(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -920,12 +935,13 @@ func (c *Client) UpdatesADocumentInADocumentCollectionByUUID(
 			Headers:      headers,
 			Client:       options.HTTPClient,
 			Request:      request,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Searches Documents in a DocumentCollection based on provided search criteria.

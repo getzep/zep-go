@@ -349,6 +349,37 @@ func (m *Message) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+type MessageListResponse struct {
+	Messages   []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	RowCount   *int       `json:"row_count,omitempty" url:"row_count,omitempty"`
+	TotalCount *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler MessageListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MessageListResponse(value)
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MessageListResponse) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
 type ModelsZepDataClass struct {
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
 	Name        *string `json:"name,omitempty" url:"name,omitempty"`
@@ -527,6 +558,35 @@ func (s *Session) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
+type SuccessResponse struct {
+	Message *string `json:"message,omitempty" url:"message,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SuccessResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SuccessResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SuccessResponse(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SuccessResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
 type Summary struct {
 	Content             *string                `json:"content,omitempty" url:"content,omitempty"`
 	CreatedAt           *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
@@ -652,6 +712,37 @@ func (u *User) UnmarshalJSON(data []byte) error {
 }
 
 func (u *User) String() string {
+	if len(u._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
+type UserListResponse struct {
+	RowCount   *int    `json:"row_count,omitempty" url:"row_count,omitempty"`
+	TotalCount *int    `json:"total_count,omitempty" url:"total_count,omitempty"`
+	Users      []*User `json:"users,omitempty" url:"users,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (u *UserListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserListResponse(value)
+	u._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserListResponse) String() string {
 	if len(u._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
 			return value

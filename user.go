@@ -10,13 +10,6 @@ type CreateUserRequest struct {
 	UserID    *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
 }
 
-type UserListRequest struct {
-	// Limit
-	Limit *int `json:"-" url:"limit,omitempty"`
-	// Cursor
-	Cursor *int `json:"-" url:"cursor,omitempty"`
-}
-
 type UserListOrderedRequest struct {
 	// Page number for pagination, starting from 1
 	PageNumber *int `json:"-" url:"pageNumber,omitempty"`

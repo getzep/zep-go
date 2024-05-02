@@ -521,9 +521,9 @@ func (c *Client) Add(
 	ctx context.Context,
 	// Session ID
 	sessionID string,
-	request *v2.Memory,
+	request *v2.AddMemoryRequest,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -556,6 +556,7 @@ func (c *Client) Add(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -565,12 +566,13 @@ func (c *Client) Add(
 			Headers:      headers,
 			Client:       options.HTTPClient,
 			Request:      request,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // delete memory messages by session id
@@ -579,7 +581,7 @@ func (c *Client) Delete(
 	// Session ID
 	sessionID string,
 	opts ...option.RequestOption,
-) error {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -619,6 +621,7 @@ func (c *Client) Delete(
 		return apiError
 	}
 
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -627,12 +630,13 @@ func (c *Client) Delete(
 			MaxAttempts:  options.MaxAttempts,
 			Headers:      headers,
 			Client:       options.HTTPClient,
+			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // get messages by session id
@@ -640,8 +644,9 @@ func (c *Client) GetSessionMessages(
 	ctx context.Context,
 	// Session ID
 	sessionID string,
+	request *v2.MemoryGetSessionMessagesRequest,
 	opts ...option.RequestOption,
-) ([]*v2.Message, error) {
+) (*v2.MessageListResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -653,6 +658,14 @@ func (c *Client) GetSessionMessages(
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"sessions/%v/messages", sessionID)
 
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
+
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
@@ -681,7 +694,7 @@ func (c *Client) GetSessionMessages(
 		return apiError
 	}
 
-	var response []*v2.Message
+	var response *v2.MessageListResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
