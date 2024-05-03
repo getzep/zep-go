@@ -955,7 +955,7 @@ func (c *Client) UpdatesADocument(
 	return response, nil
 }
 
-// Searches Documents in a DocumentCollection based on provided search criteria.
+// Searches over documents in a collection based on provided search criteria. One of text or metadata must be provided. Returns an empty list if no documents are found.
 func (c *Client) Search(
 	ctx context.Context,
 	// Name of the Document Collection

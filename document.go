@@ -14,13 +14,16 @@ type GetDocumentListRequest struct {
 
 type DocumentSearchPayload struct {
 	// Limit the number of returned documents
-	Limit    *int                   `json:"-" url:"limit,omitempty"`
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Document metadata to filter on.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// TODO: implement for documents
-	MinScore   *float64    `json:"min_score,omitempty" url:"min_score,omitempty"`
-	MmrLambda  *float64    `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	MinScore *float64               `json:"min_score,omitempty" url:"min_score,omitempty"`
+	// The lambda parameter for the MMR Reranking Algorithm.
+	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	// The type of search to perform. Defaults to "similarity". Must be one of "similarity" or "mmr".
 	SearchType *SearchType `json:"search_type,omitempty" url:"search_type,omitempty"`
-	Text       *string     `json:"text,omitempty" url:"text,omitempty"`
+	// The search text.
+	Text *string `json:"text,omitempty" url:"text,omitempty"`
 }
 
 type UpdateDocumentCollectionRequest struct {

@@ -3,11 +3,16 @@
 package zep
 
 type CreateUserRequest struct {
-	Email     *string                `json:"email,omitempty" url:"email,omitempty"`
-	FirstName *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
-	LastName  *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
-	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	UserID    *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
+	// The email address of the user.
+	Email *string `json:"email,omitempty" url:"email,omitempty"`
+	// The first name of the user.
+	FirstName *string `json:"first_name,omitempty" url:"first_name,omitempty"`
+	// The last name of the user.
+	LastName *string `json:"last_name,omitempty" url:"last_name,omitempty"`
+	// The metadata associated with the user.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The unique identifier of the user.
+	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 }
 
 type UserListOrderedRequest struct {
@@ -18,8 +23,12 @@ type UserListOrderedRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Email     *string                `json:"email,omitempty" url:"email,omitempty"`
-	FirstName *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
-	LastName  *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
-	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The email address of the user.
+	Email *string `json:"email,omitempty" url:"email,omitempty"`
+	// The first name of the user.
+	FirstName *string `json:"first_name,omitempty" url:"first_name,omitempty"`
+	// The last name of the user.
+	LastName *string `json:"last_name,omitempty" url:"last_name,omitempty"`
+	// The metadata to update
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 }

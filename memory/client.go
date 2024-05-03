@@ -445,7 +445,7 @@ func (c *Client) ExtractSessionData(
 // get memory by session id
 func (c *Client) Get(
 	ctx context.Context,
-	// Session ID
+	// The ID of the session for which to retrieve memory.
 	sessionID string,
 	request *v2.MemoryGetRequest,
 	opts ...option.RequestOption,
@@ -518,7 +518,7 @@ func (c *Client) Get(
 // add memory messages by session id
 func (c *Client) Add(
 	ctx context.Context,
-	// Session ID
+	// The ID of the session to which memory should be added.
 	sessionID string,
 	request *v2.AddMemoryRequest,
 	opts ...option.RequestOption,
@@ -577,7 +577,7 @@ func (c *Client) Add(
 // delete memory messages by session id
 func (c *Client) Delete(
 	ctx context.Context,
-	// Session ID
+	// The ID of the session for which memory should be deleted.
 	sessionID string,
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
@@ -638,7 +638,7 @@ func (c *Client) Delete(
 	return response, nil
 }
 
-// get messages by session id
+// Lists messages for a session, specified by limit and cursor.
 func (c *Client) GetSessionMessages(
 	ctx context.Context,
 	// Session ID
@@ -711,12 +711,12 @@ func (c *Client) GetSessionMessages(
 	return response, nil
 }
 
-// get message by session id and message id
+// Gets a specific message from a session
 func (c *Client) GetSessionMessage(
 	ctx context.Context,
-	// Session ID
+	// The ID of the session.
 	sessionID string,
-	// Message UUID
+	// The UUID of the message.
 	messageUUID string,
 	opts ...option.RequestOption,
 ) (*v2.Message, error) {
@@ -781,12 +781,12 @@ func (c *Client) GetSessionMessage(
 	return response, nil
 }
 
-// update message metadata by session id and message id
+// Updates the metadata of a message.
 func (c *Client) UpdateMessageMetadata(
 	ctx context.Context,
-	// Session ID
+	// The ID of the session.
 	sessionID string,
-	// Message UUID
+	// The UUID of the message.
 	messageUUID string,
 	request *v2.ModelsMessageMetadataUpdate,
 	opts ...option.RequestOption,
@@ -853,10 +853,10 @@ func (c *Client) UpdateMessageMetadata(
 	return response, nil
 }
 
-// search memory messages by session id and query
+// Search memory for the specified session.
 func (c *Client) Search(
 	ctx context.Context,
-	// Session ID
+	// The ID of the session for which memory should be searched.
 	sessionID string,
 	request *v2.MemorySearchPayload,
 	opts ...option.RequestOption,
@@ -991,10 +991,10 @@ func (c *Client) GetSummaries(
 	return response, nil
 }
 
-// synthesize a question by session id
+// Synthesize a question from the last N messages in the chat history.
 func (c *Client) SynthesizeQuestion(
 	ctx context.Context,
-	// Session ID
+	// The ID of the session.
 	sessionID string,
 	request *v2.MemorySynthesizeQuestionRequest,
 	opts ...option.RequestOption,

@@ -249,10 +249,14 @@ func (d *DocumentSearchResultPage) String() string {
 }
 
 type Memory struct {
-	Facts    []string               `json:"facts,omitempty" url:"facts,omitempty"`
-	Messages []*Message             `json:"messages,omitempty" url:"messages,omitempty"`
+	// Most recent list of facts derived from the session. Included only with perpetual memory type.
+	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
+	// A list of message objects, where each message contains a role and content.
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// A dictionary containing metadata associated with the memory.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Summary  *Summary               `json:"summary,omitempty" url:"summary,omitempty"`
+	// A Summary object.
+	Summary *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
 	_rawJSON json.RawMessage
 }

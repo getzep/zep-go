@@ -7,23 +7,32 @@ import (
 )
 
 type AddMemoryRequest struct {
-	Messages           []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	SummaryInstruction *string    `json:"summary_instruction,omitempty" url:"summary_instruction,omitempty"`
+	// A list of message objects, where each message contains a role and content.
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// Additional instruction for generating the summary.
+	SummaryInstruction *string `json:"summary_instruction,omitempty" url:"summary_instruction,omitempty"`
 }
 
 type CreateSessionRequest struct {
-	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	SessionID string                 `json:"session_id" url:"session_id"`
-	// Must be a pointer to allow for null values
+	// The metadata associated with the session.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The unique identifier of the session.
+	SessionID string `json:"session_id" url:"session_id"`
+	// The unique identifier of the user associated with the session
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 }
 
 type ClassifySessionRequest struct {
-	Classes     []string `json:"classes,omitempty" url:"classes,omitempty"`
-	Instruction *string  `json:"instruction,omitempty" url:"instruction,omitempty"`
-	LastN       *int     `json:"last_n,omitempty" url:"last_n,omitempty"`
-	Name        string   `json:"name" url:"name"`
-	Persist     *bool    `json:"persist,omitempty" url:"persist,omitempty"`
+	// The classes to use for classification.
+	Classes []string `json:"classes,omitempty" url:"classes,omitempty"`
+	// Custom instruction to use for classification.
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+	// The number of session messages to consider for classification. Defaults to 4.
+	LastN *int `json:"last_n,omitempty" url:"last_n,omitempty"`
+	// The name of the classifier. Will be used to store the classification in session metadata if persist is True.
+	Name string `json:"name" url:"name"`
+	// Whether to persist the classification to session metadata. Defaults to True.
+	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
 }
 
 type ModelsExtractDataRequest struct {
@@ -32,9 +41,9 @@ type ModelsExtractDataRequest struct {
 }
 
 type MemoryGetRequest struct {
-	// memoryType: perpetual or message_window
+	// The type of memory to retrieve: perpetual, summary_retriever, or message_window. Defaults to perpetual.
 	MemoryType *MemoryGetRequestMemoryType `json:"-" url:"memoryType,omitempty"`
-	// Last N messages. Overrides memory_window configuration
+	// The number of most recent memory entries to retrieve.
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
 
@@ -57,7 +66,7 @@ type MemoryListSessionsRequest struct {
 }
 
 type MemorySearchPayload struct {
-	// Limit the number of results returned
+	// The maximum number of search results to return. Defaults to None (no limit).
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Metadata Filter
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
@@ -69,7 +78,7 @@ type MemorySearchPayload struct {
 }
 
 type MemorySynthesizeQuestionRequest struct {
-	// Last N messages
+	// The number of messages to use for question synthesis.
 	LastNMessages *int `json:"-" url:"lastNMessages,omitempty"`
 }
 

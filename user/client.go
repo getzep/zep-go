@@ -38,7 +38,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// add user by id
+// Add a user.
 func (c *Client) Add(
 	ctx context.Context,
 	request *v2.CreateUserRequest,
@@ -173,10 +173,10 @@ func (c *Client) ListOrdered(
 	return response, nil
 }
 
-// get user by id
+// Get a user.
 func (c *Client) Get(
 	ctx context.Context,
-	// User ID
+	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
 ) (*v2.User, error) {
@@ -301,7 +301,7 @@ func (c *Client) Delete(
 	return response, nil
 }
 
-// update user by id
+// Update a user.
 func (c *Client) Update(
 	ctx context.Context,
 	// User ID
