@@ -108,6 +108,7 @@ func (m MemoryGetRequestMemoryType) Ptr() *MemoryGetRequestMemoryType {
 }
 
 type ModelsMessageMetadataUpdate struct {
+	// The metadata to update
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 }
 

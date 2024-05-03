@@ -318,14 +318,22 @@ func (m *MemorySearchResult) String() string {
 }
 
 type Message struct {
-	Content    *string                `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt  *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Role       *string                `json:"role,omitempty" url:"role,omitempty"`
-	RoleType   *RoleType              `json:"role_type,omitempty" url:"role_type,omitempty"`
-	TokenCount *int                   `json:"token_count,omitempty" url:"token_count,omitempty"`
-	UpdatedAt  *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The content of the message.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The timestamp of when the message was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The metadata associated with the message.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The role of the sender of the message (e.g., "user", "assistant").
+	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	// The type of the role (e.g., "user", "system").
+	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
+	// The number of tokens in the message.
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	// The timestamp of when the message was last updated.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The unique identifier of the message.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -354,9 +362,12 @@ func (m *Message) String() string {
 }
 
 type MessageListResponse struct {
-	Messages   []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	RowCount   *int       `json:"row_count,omitempty" url:"row_count,omitempty"`
-	TotalCount *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
+	// A list of message objects.
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// The number of messages returned.
+	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
+	// The total number of messages.
+	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -592,12 +603,16 @@ func (s *SuccessResponse) String() string {
 }
 
 type Summary struct {
-	Content             *string                `json:"content,omitempty" url:"content,omitempty"`
+	// The content of the summary.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The timestamp of when the summary was created.
 	CreatedAt           *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
 	Metadata            map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	RelatedMessageUUIDs []string               `json:"related_message_uuids,omitempty" url:"related_message_uuids,omitempty"`
-	TokenCount          *int                   `json:"token_count,omitempty" url:"token_count,omitempty"`
-	UUID                *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The number of tokens in the summary.
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	// The unique identifier of the summary.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }

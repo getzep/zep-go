@@ -38,7 +38,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// add session by id
+// Create New Session
 func (c *Client) AddSession(
 	ctx context.Context,
 	request *v2.CreateSessionRequest,
@@ -237,7 +237,7 @@ func (c *Client) GetSession(
 	return response, nil
 }
 
-// add session by id
+// Update Session Metadata
 func (c *Client) UpdateSession(
 	ctx context.Context,
 	// Session ID
@@ -515,7 +515,7 @@ func (c *Client) Get(
 	return response, nil
 }
 
-// add memory messages by session id
+// Add memory to the specified session.
 func (c *Client) Add(
 	ctx context.Context,
 	// The ID of the session to which memory should be added.
