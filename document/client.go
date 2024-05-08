@@ -7,12 +7,12 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	fmt "fmt"
 	zepgo "github.com/getzep/zep-go"
 	core "github.com/getzep/zep-go/core"
 	option "github.com/getzep/zep-go/option"
 	io "io"
 	http "net/http"
+	os "os"
 )
 
 type Client struct {
@@ -23,6 +23,9 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
+	if options.APIKey == "" {
+		options.APIKey = os.Getenv("ZEP_API_KEY")
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller: core.NewCaller(
@@ -35,15 +38,11 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-func (c *Client) Update(
+// Returns a list of all DocumentCollections.
+func (c *Client) ListCollections(
 	ctx context.Context,
-	// Name of the Document Collection
-	collectionName string,
-	// UUID of the Document to be updated
-	documentUUID string,
-	request *zepgo.UpdateDocumentRequest,
 	opts ...option.RequestOption,
-) (string, error) {
+) ([][]*zepgo.DocumentCollectionResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -53,7 +52,71 @@ func (c *Client) Update(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"api/v2/collections/%v/documents/uuid/%v", collectionName, documentUUID)
+	endpointURL := baseURL + "/collections"
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	errorDecoder := func(statusCode int, body io.Reader) error {
+		raw, err := io.ReadAll(body)
+		if err != nil {
+			return err
+		}
+		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		switch statusCode {
+		case 401:
+			value := new(zepgo.UnauthorizedError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 500:
+			value := new(zepgo.InternalServerError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		}
+		return apiError
+	}
+
+	var response [][]*zepgo.DocumentCollectionResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:          endpointURL,
+			Method:       http.MethodGet,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
+			Response:     &response,
+			ErrorDecoder: errorDecoder,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// Returns a DocumentCollection if it exists.
+func (c *Client) GetCollection(
+	ctx context.Context,
+	// Name of the Document Collection
+	collectionName string,
+	opts ...option.RequestOption,
+) (*zepgo.DocumentCollectionResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.getzep.com/api/v2"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -97,34 +160,32 @@ func (c *Client) Update(
 		return apiError
 	}
 
-	var response string
+	var response *zepgo.DocumentCollectionResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:          endpointURL,
-			Method:       http.MethodPatch,
+			Method:       http.MethodGet,
 			MaxAttempts:  options.MaxAttempts,
 			Headers:      headers,
 			Client:       options.HTTPClient,
-			Request:      request,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return "", err
+		return nil, err
 	}
 	return response, nil
 }
 
-// Returns specified Document from a DocumentCollection.
-func (c *Client) Get(
+// If a collection with the same name already exists, an error will be returned.
+func (c *Client) AddCollection(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
-	// UUID of the Document to be updated
-	documentUUID string,
+	request *zepgo.CreateDocumentCollectionRequest,
 	opts ...option.RequestOption,
-) (*zepgo.DocumentResponse, error) {
+) (*zepgo.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -134,7 +195,7 @@ func (c *Client) Get(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collection/%v/documents/uuid/%v", collectionName, documentUUID)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -160,6 +221,13 @@ func (c *Client) Get(
 				return apiError
 			}
 			return value
+		case 404:
+			value := new(zepgo.NotFoundError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
 		case 500:
 			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
@@ -171,12 +239,91 @@ func (c *Client) Get(
 		return apiError
 	}
 
-	var response *zepgo.DocumentResponse
+	var response *zepgo.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:          endpointURL,
-			Method:       http.MethodGet,
+			Method:       http.MethodPost,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
+			Request:      request,
+			Response:     &response,
+			ErrorDecoder: errorDecoder,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// If a collection with the same name already exists, it will be overwritten.
+func (c *Client) DeleteCollection(
+	ctx context.Context,
+	// Name of the Document Collection
+	collectionName string,
+	opts ...option.RequestOption,
+) (*zepgo.SuccessResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.getzep.com/api/v2"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	errorDecoder := func(statusCode int, body io.Reader) error {
+		raw, err := io.ReadAll(body)
+		if err != nil {
+			return err
+		}
+		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		switch statusCode {
+		case 400:
+			value := new(zepgo.BadRequestError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 401:
+			value := new(zepgo.UnauthorizedError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 404:
+			value := new(zepgo.NotFoundError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 500:
+			value := new(zepgo.InternalServerError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		}
+		return apiError
+	}
+
+	var response *zepgo.SuccessResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:          endpointURL,
+			Method:       http.MethodDelete,
 			MaxAttempts:  options.MaxAttempts,
 			Headers:      headers,
 			Client:       options.HTTPClient,
@@ -189,8 +336,88 @@ func (c *Client) Get(
 	return response, nil
 }
 
+// Updates a DocumentCollection
+func (c *Client) UpdateCollection(
+	ctx context.Context,
+	// Name of the Document Collection
+	collectionName string,
+	request *zepgo.UpdateDocumentCollectionRequest,
+	opts ...option.RequestOption,
+) (*zepgo.SuccessResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.getzep.com/api/v2"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	errorDecoder := func(statusCode int, body io.Reader) error {
+		raw, err := io.ReadAll(body)
+		if err != nil {
+			return err
+		}
+		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		switch statusCode {
+		case 400:
+			value := new(zepgo.BadRequestError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 401:
+			value := new(zepgo.UnauthorizedError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 404:
+			value := new(zepgo.NotFoundError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 500:
+			value := new(zepgo.InternalServerError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		}
+		return apiError
+	}
+
+	var response *zepgo.SuccessResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:          endpointURL,
+			Method:       http.MethodPatch,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
+			Request:      request,
+			Response:     &response,
+			ErrorDecoder: errorDecoder,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 // Creates Documents in a specified DocumentCollection and returns their UUIDs.
-func (c *Client) CreateMultiple(
+func (c *Client) AddDocuments(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
@@ -206,7 +433,7 @@ func (c *Client) CreateMultiple(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/document", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -263,13 +490,13 @@ func (c *Client) CreateMultiple(
 }
 
 // Deletes specified Documents from a DocumentCollection.
-func (c *Client) BatchDelete(
+func (c *Client) BatchDeleteDocuments(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
 	request []string,
 	opts ...option.RequestOption,
-) (string, error) {
+) (*zepgo.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -279,7 +506,7 @@ func (c *Client) BatchDelete(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/batchDelete", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchDelete", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -316,7 +543,7 @@ func (c *Client) BatchDelete(
 		return apiError
 	}
 
-	var response string
+	var response *zepgo.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -330,19 +557,19 @@ func (c *Client) BatchDelete(
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return "", err
+		return nil, err
 	}
 	return response, nil
 }
 
 // Returns Documents from a DocumentCollection specified by UUID or ID.
-func (c *Client) BatchGet(
+func (c *Client) BatchGetDocuments(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
 	request *zepgo.GetDocumentListRequest,
 	opts ...option.RequestOption,
-) ([][]*zepgo.DocumentResponse, error) {
+) ([]*zepgo.DocumentResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -352,7 +579,7 @@ func (c *Client) BatchGet(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/batchGet", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchGet", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -389,7 +616,7 @@ func (c *Client) BatchGet(
 		return apiError
 	}
 
-	var response [][]*zepgo.DocumentResponse
+	var response []*zepgo.DocumentResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -409,13 +636,13 @@ func (c *Client) BatchGet(
 }
 
 // Updates Documents in a specified DocumentCollection.
-func (c *Client) BatchUpdate(
+func (c *Client) BatchUpdateDocuments(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
 	request []*zepgo.UpdateDocumentListRequest,
 	opts ...option.RequestOption,
-) (string, error) {
+) (*zepgo.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -425,7 +652,7 @@ func (c *Client) BatchUpdate(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/batchUpdate", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchUpdate", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -462,7 +689,7 @@ func (c *Client) BatchUpdate(
 		return apiError
 	}
 
-	var response string
+	var response *zepgo.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -476,20 +703,20 @@ func (c *Client) BatchUpdate(
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return "", err
+		return nil, err
 	}
 	return response, nil
 }
 
-// Delete specified Document from a DocumentCollection.
-func (c *Client) Delete(
+// Returns specified Document from a DocumentCollection.
+func (c *Client) GetsADocumentFromADocumentCollectionByUUID(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
-	// UUID of the Document to be deleted
+	// UUID of the Document to be updated
 	documentUUID string,
 	opts ...option.RequestOption,
-) (string, error) {
+) (*zepgo.DocumentResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -499,7 +726,88 @@ func (c *Client) Delete(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/documents/uuid/%v", collectionName, documentUUID)
+	endpointURL := core.EncodeURL(
+		baseURL+"/collections/%v/documents/uuid/%v",
+		collectionName,
+		documentUUID,
+	)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	errorDecoder := func(statusCode int, body io.Reader) error {
+		raw, err := io.ReadAll(body)
+		if err != nil {
+			return err
+		}
+		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		switch statusCode {
+		case 400:
+			value := new(zepgo.BadRequestError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 401:
+			value := new(zepgo.UnauthorizedError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 500:
+			value := new(zepgo.InternalServerError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		}
+		return apiError
+	}
+
+	var response *zepgo.DocumentResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:          endpointURL,
+			Method:       http.MethodGet,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
+			Response:     &response,
+			ErrorDecoder: errorDecoder,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// Delete specified Document from a DocumentCollection.
+func (c *Client) DeleteDocument(
+	ctx context.Context,
+	// Name of the Document Collection
+	collectionName string,
+	// UUID of the Document to be deleted
+	documentUUID string,
+	opts ...option.RequestOption,
+) (*zepgo.SuccessResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.getzep.com/api/v2"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(
+		baseURL+"/collections/%v/documents/uuid/%v",
+		collectionName,
+		documentUUID,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -543,7 +851,7 @@ func (c *Client) Delete(
 		return apiError
 	}
 
-	var response string
+	var response *zepgo.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -556,12 +864,98 @@ func (c *Client) Delete(
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return "", err
+		return nil, err
 	}
 	return response, nil
 }
 
-// Searches Documents in a DocumentCollection based on provided search criteria.
+// Updates a Document in a DocumentCollection by UUID
+func (c *Client) UpdatesADocument(
+	ctx context.Context,
+	// Name of the Document Collection
+	collectionName string,
+	// UUID of the Document to be updated
+	documentUUID string,
+	request *zepgo.UpdateDocumentRequest,
+	opts ...option.RequestOption,
+) (*zepgo.SuccessResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.getzep.com/api/v2"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(
+		baseURL+"/collections/%v/documents/uuid/%v",
+		collectionName,
+		documentUUID,
+	)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	errorDecoder := func(statusCode int, body io.Reader) error {
+		raw, err := io.ReadAll(body)
+		if err != nil {
+			return err
+		}
+		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		switch statusCode {
+		case 400:
+			value := new(zepgo.BadRequestError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 401:
+			value := new(zepgo.UnauthorizedError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 404:
+			value := new(zepgo.NotFoundError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 500:
+			value := new(zepgo.InternalServerError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		}
+		return apiError
+	}
+
+	var response *zepgo.SuccessResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:          endpointURL,
+			Method:       http.MethodPatch,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
+			Request:      request,
+			Response:     &response,
+			ErrorDecoder: errorDecoder,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// Searches over documents in a collection based on provided search criteria. One of text or metadata must be provided. Returns an empty list if no documents are found.
 func (c *Client) Search(
 	ctx context.Context,
 	// Name of the Document Collection
@@ -578,7 +972,7 @@ func (c *Client) Search(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"collections/%v/search", collectionName)
+	endpointURL := core.EncodeURL(baseURL+"/collections/%v/search", collectionName)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {

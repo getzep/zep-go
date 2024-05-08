@@ -249,10 +249,14 @@ func (d *DocumentSearchResultPage) String() string {
 }
 
 type Memory struct {
-	Facts    []string               `json:"facts,omitempty" url:"facts,omitempty"`
-	Messages []*Message             `json:"messages,omitempty" url:"messages,omitempty"`
+	// Most recent list of facts derived from the session. Included only with perpetual memory type.
+	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
+	// A list of message objects, where each message contains a role and content.
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// A dictionary containing metadata associated with the memory.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Summary  *Summary               `json:"summary,omitempty" url:"summary,omitempty"`
+	// A Summary object.
+	Summary *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -314,14 +318,22 @@ func (m *MemorySearchResult) String() string {
 }
 
 type Message struct {
-	Content    *string                `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt  *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Role       *string                `json:"role,omitempty" url:"role,omitempty"`
-	RoleType   *ModelsRoleType        `json:"role_type,omitempty" url:"role_type,omitempty"`
-	TokenCount *int                   `json:"token_count,omitempty" url:"token_count,omitempty"`
-	UpdatedAt  *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The content of the message.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The timestamp of when the message was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The metadata associated with the message.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The role of the sender of the message (e.g., "user", "assistant").
+	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	// The type of the role (e.g., "user", "system").
+	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
+	// The number of tokens in the message.
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	// The timestamp of when the message was last updated.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The unique identifier of the message.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -349,38 +361,69 @@ func (m *Message) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
-type ModelsRoleType string
+type MessageListResponse struct {
+	// A list of message objects.
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// The number of messages returned.
+	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
+	// The total number of messages.
+	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
 
-const (
-	ModelsRoleTypeNoRole        ModelsRoleType = "norole"
-	ModelsRoleTypeSystemRole    ModelsRoleType = "system"
-	ModelsRoleTypeAssistantRole ModelsRoleType = "assistant"
-	ModelsRoleTypeUserRole      ModelsRoleType = "user"
-	ModelsRoleTypeFunctionRole  ModelsRoleType = "function"
-	ModelsRoleTypeToolRole      ModelsRoleType = "tool"
-)
-
-func NewModelsRoleTypeFromString(s string) (ModelsRoleType, error) {
-	switch s {
-	case "norole":
-		return ModelsRoleTypeNoRole, nil
-	case "system":
-		return ModelsRoleTypeSystemRole, nil
-	case "assistant":
-		return ModelsRoleTypeAssistantRole, nil
-	case "user":
-		return ModelsRoleTypeUserRole, nil
-	case "function":
-		return ModelsRoleTypeFunctionRole, nil
-	case "tool":
-		return ModelsRoleTypeToolRole, nil
-	}
-	var t ModelsRoleType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
+	_rawJSON json.RawMessage
 }
 
-func (m ModelsRoleType) Ptr() *ModelsRoleType {
-	return &m
+func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler MessageListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MessageListResponse(value)
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MessageListResponse) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type ModelsZepDataClass struct {
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	Name        *string `json:"name,omitempty" url:"name,omitempty"`
+	Type        *string `json:"type,omitempty" url:"type,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (m *ModelsZepDataClass) UnmarshalJSON(data []byte) error {
+	type unmarshaler ModelsZepDataClass
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = ModelsZepDataClass(value)
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *ModelsZepDataClass) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
 }
 
 type Question struct {
@@ -410,6 +453,40 @@ func (q *Question) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", q)
+}
+
+type RoleType string
+
+const (
+	RoleTypeNoRole        RoleType = "norole"
+	RoleTypeSystemRole    RoleType = "system"
+	RoleTypeAssistantRole RoleType = "assistant"
+	RoleTypeUserRole      RoleType = "user"
+	RoleTypeFunctionRole  RoleType = "function"
+	RoleTypeToolRole      RoleType = "tool"
+)
+
+func NewRoleTypeFromString(s string) (RoleType, error) {
+	switch s {
+	case "norole":
+		return RoleTypeNoRole, nil
+	case "system":
+		return RoleTypeSystemRole, nil
+	case "assistant":
+		return RoleTypeAssistantRole, nil
+	case "user":
+		return RoleTypeUserRole, nil
+	case "function":
+		return RoleTypeFunctionRole, nil
+	case "tool":
+		return RoleTypeToolRole, nil
+	}
+	var t RoleType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RoleType) Ptr() *RoleType {
+	return &r
 }
 
 type SearchScope string
@@ -496,13 +573,77 @@ func (s *Session) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
+type SessionListResponse struct {
+	ResponseCount *int       `json:"response_count,omitempty" url:"response_count,omitempty"`
+	Sessions      []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
+	TotalCount    *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SessionListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SessionListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SessionListResponse(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SessionListResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SuccessResponse struct {
+	Message *string `json:"message,omitempty" url:"message,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SuccessResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SuccessResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SuccessResponse(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SuccessResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
 type Summary struct {
-	Content             *string                `json:"content,omitempty" url:"content,omitempty"`
+	// The content of the summary.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The timestamp of when the summary was created.
 	CreatedAt           *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
 	Metadata            map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	RelatedMessageUUIDs []string               `json:"related_message_uuids,omitempty" url:"related_message_uuids,omitempty"`
-	TokenCount          *int                   `json:"token_count,omitempty" url:"token_count,omitempty"`
-	UUID                *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The number of tokens in the summary.
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	// The unique identifier of the summary.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -621,6 +762,37 @@ func (u *User) UnmarshalJSON(data []byte) error {
 }
 
 func (u *User) String() string {
+	if len(u._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
+type UserListResponse struct {
+	RowCount   *int    `json:"row_count,omitempty" url:"row_count,omitempty"`
+	TotalCount *int    `json:"total_count,omitempty" url:"total_count,omitempty"`
+	Users      []*User `json:"users,omitempty" url:"users,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (u *UserListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserListResponse(value)
+	u._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserListResponse) String() string {
 	if len(u._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
 			return value

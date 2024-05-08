@@ -6,15 +6,79 @@ import (
 	fmt "fmt"
 )
 
+type AddMemoryRequest struct {
+	// A list of message objects, where each message contains a role and content.
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// Additional instruction for generating the summary.
+	SummaryInstruction *string `json:"summary_instruction,omitempty" url:"summary_instruction,omitempty"`
+}
+
+type CreateSessionRequest struct {
+	// The metadata associated with the session.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The unique identifier of the session.
+	SessionID string `json:"session_id" url:"session_id"`
+	// The unique identifier of the user associated with the session
+	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+}
+
+type ClassifySessionRequest struct {
+	// The classes to use for classification.
+	Classes []string `json:"classes,omitempty" url:"classes,omitempty"`
+	// Custom instruction to use for classification.
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+	// The number of session messages to consider for classification. Defaults to 4.
+	LastN *int `json:"last_n,omitempty" url:"last_n,omitempty"`
+	// The name of the classifier. Will be used to store the classification in session metadata if persist is True.
+	Name string `json:"name" url:"name"`
+	// Whether to persist the classification to session metadata. Defaults to True.
+	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
+}
+
+type ModelsExtractDataRequest struct {
+	LastNMessages  *int                  `json:"last_n_messages,omitempty" url:"last_n_messages,omitempty"`
+	ZepDataClasses []*ModelsZepDataClass `json:"zep_data_classes,omitempty" url:"zep_data_classes,omitempty"`
+}
+
 type MemoryGetRequest struct {
-	// memoryType: perpetual or message_window
+	// The type of memory to retrieve: perpetual, summary_retriever, or message_window. Defaults to perpetual.
 	MemoryType *MemoryGetRequestMemoryType `json:"-" url:"memoryType,omitempty"`
-	// Last N messages. Overrides memory_window configuration
+	// The number of most recent memory entries to retrieve.
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
 
+type MemoryGetSessionMessagesRequest struct {
+	// Limit the number of results returned
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Cursor for pagination
+	Cursor *int `json:"-" url:"cursor,omitempty"`
+}
+
+type MemoryListSessionsRequest struct {
+	// Page number for pagination, starting from 1
+	PageNumber *int `json:"-" url:"page_number,omitempty"`
+	// Number of sessions to retrieve per page
+	PageSize *int `json:"-" url:"page_size,omitempty"`
+	// Field to order the results by: created_at, updated_at, user_id, session_id
+	OrderBy *string `json:"-" url:"order_by,omitempty"`
+	// Order direction: true for ascending, false for descending
+	Asc *bool `json:"-" url:"asc,omitempty"`
+}
+
+type MemorySearchPayload struct {
+	// The maximum number of search results to return. Defaults to None (no limit).
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Metadata Filter
+	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	MinScore    *float64               `json:"min_score,omitempty" url:"min_score,omitempty"`
+	MmrLambda   *float64               `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	SearchScope *SearchScope           `json:"search_scope,omitempty" url:"search_scope,omitempty"`
+	SearchType  *SearchType            `json:"search_type,omitempty" url:"search_type,omitempty"`
+	Text        *string                `json:"text,omitempty" url:"text,omitempty"`
+}
+
 type MemorySynthesizeQuestionRequest struct {
-	// Last N messages
+	// The number of messages to use for question synthesis.
 	LastNMessages *int `json:"-" url:"lastNMessages,omitempty"`
 }
 
@@ -41,4 +105,14 @@ func NewMemoryGetRequestMemoryTypeFromString(s string) (MemoryGetRequestMemoryTy
 
 func (m MemoryGetRequestMemoryType) Ptr() *MemoryGetRequestMemoryType {
 	return &m
+}
+
+type ModelsMessageMetadataUpdate struct {
+	// The metadata to update
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+}
+
+type UpdateSessionRequest struct {
+	// The metadata to update
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 }

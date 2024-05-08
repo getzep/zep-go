@@ -7,6 +7,7 @@ import (
 	core "github.com/getzep/zep-go/core"
 )
 
+// Bad Request
 type BadRequestError struct {
 	*core.APIError
 	Body *APIError
@@ -30,6 +31,7 @@ func (b *BadRequestError) Unwrap() error {
 	return b.APIError
 }
 
+// Internal Server Error
 type InternalServerError struct {
 	*core.APIError
 	Body *APIError
@@ -53,6 +55,7 @@ func (i *InternalServerError) Unwrap() error {
 	return i.APIError
 }
 
+// Not Found
 type NotFoundError struct {
 	*core.APIError
 	Body *APIError
@@ -76,6 +79,7 @@ func (n *NotFoundError) Unwrap() error {
 	return n.APIError
 }
 
+// Unauthorized
 type UnauthorizedError struct {
 	*core.APIError
 	Body *APIError

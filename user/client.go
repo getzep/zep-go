@@ -7,12 +7,12 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	fmt "fmt"
 	zepgo "github.com/getzep/zep-go"
 	core "github.com/getzep/zep-go/core"
 	option "github.com/getzep/zep-go/option"
 	io "io"
 	http "net/http"
+	os "os"
 )
 
 type Client struct {
@@ -23,6 +23,9 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
+	if options.APIKey == "" {
+		options.APIKey = os.Getenv("ZEP_API_KEY")
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller: core.NewCaller(
@@ -35,79 +38,8 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// List all users with pagination.
-func (c *Client) List(
-	ctx context.Context,
-	request *zepgo.UserListRequest,
-	opts ...option.RequestOption,
-) ([]*zepgo.User, error) {
-	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := baseURL + "/" + "user"
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return nil, err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(zepgo.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
-			}
-			return value
-		case 500:
-			value := new(zepgo.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
-			}
-			return value
-		}
-		return apiError
-	}
-
-	var response []*zepgo.User
-	if err := c.caller.Call(
-		ctx,
-		&core.CallParams{
-			URL:          endpointURL,
-			Method:       http.MethodGet,
-			MaxAttempts:  options.MaxAttempts,
-			Headers:      headers,
-			Client:       options.HTTPClient,
-			Response:     &response,
-			ErrorDecoder: errorDecoder,
-		},
-	); err != nil {
-		return nil, err
-	}
-	return response, nil
-}
-
-// add user by id
-func (c *Client) Create(
+// Add a user.
+func (c *Client) Add(
 	ctx context.Context,
 	request *zepgo.CreateUserRequest,
 	opts ...option.RequestOption,
@@ -121,7 +53,7 @@ func (c *Client) Create(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := baseURL + "/" + "user"
+	endpointURL := baseURL + "/users"
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -170,12 +102,12 @@ func (c *Client) Create(
 	return response, nil
 }
 
-// list all users
+// List all users with pagination.
 func (c *Client) ListOrdered(
 	ctx context.Context,
 	request *zepgo.UserListOrderedRequest,
 	opts ...option.RequestOption,
-) ([][]*zepgo.User, error) {
+) (*zepgo.UserListResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -185,7 +117,7 @@ func (c *Client) ListOrdered(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := baseURL + "/" + "users-ordered"
+	endpointURL := baseURL + "/users-ordered"
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
@@ -223,7 +155,7 @@ func (c *Client) ListOrdered(
 		return apiError
 	}
 
-	var response [][]*zepgo.User
+	var response *zepgo.UserListResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -241,10 +173,10 @@ func (c *Client) ListOrdered(
 	return response, nil
 }
 
-// get user by id
+// Get a user.
 func (c *Client) Get(
 	ctx context.Context,
-	// User ID
+	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
 ) (*zepgo.User, error) {
@@ -257,7 +189,7 @@ func (c *Client) Get(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v", userID)
+	endpointURL := core.EncodeURL(baseURL+"/users/%v", userID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -311,7 +243,7 @@ func (c *Client) Delete(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (string, error) {
+) (*zepgo.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -321,7 +253,7 @@ func (c *Client) Delete(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v", userID)
+	endpointURL := core.EncodeURL(baseURL+"/users/%v", userID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -351,7 +283,7 @@ func (c *Client) Delete(
 		return apiError
 	}
 
-	var response string
+	var response *zepgo.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -364,12 +296,12 @@ func (c *Client) Delete(
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
-		return "", err
+		return nil, err
 	}
 	return response, nil
 }
 
-// update user by id
+// Update a user.
 func (c *Client) Update(
 	ctx context.Context,
 	// User ID
@@ -386,7 +318,7 @@ func (c *Client) Update(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v", userID)
+	endpointURL := core.EncodeURL(baseURL+"/users/%v", userID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -443,7 +375,7 @@ func (c *Client) Update(
 }
 
 // list all sessions for a user by user id
-func (c *Client) ListSessions(
+func (c *Client) GetSessions(
 	ctx context.Context,
 	// User ID
 	userID string,
@@ -458,7 +390,7 @@ func (c *Client) ListSessions(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/sessions", userID)
+	endpointURL := core.EncodeURL(baseURL+"/users/%v/sessions", userID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
