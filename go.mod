@@ -1,4 +1,4 @@
-module github.com/getzep/zep-go/v2
+module github.com/getzep/zep-go
 
 go 1.13
 

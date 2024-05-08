@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	core "github.com/getzep/zep-go/v2/core"
+	core "github.com/getzep/zep-go/core"
 )
 
 type APIError struct {

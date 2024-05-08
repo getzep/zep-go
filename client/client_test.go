@@ -3,7 +3,7 @@
 package client
 
 import (
-	option "github.com/getzep/zep-go/v2/option"
+	option "github.com/getzep/zep-go/option"
 	assert "github.com/stretchr/testify/assert"
 	http "net/http"
 	testing "testing"

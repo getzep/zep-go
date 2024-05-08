@@ -7,9 +7,9 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	option "github.com/getzep/zep-go/v2/option"
+	zepgo "github.com/getzep/zep-go"
+	core "github.com/getzep/zep-go/core"
+	option "github.com/getzep/zep-go/option"
 	io "io"
 	http "net/http"
 	os "os"
@@ -41,9 +41,9 @@ func NewClient(opts ...option.RequestOption) *Client {
 // Create New Session
 func (c *Client) AddSession(
 	ctx context.Context,
-	request *v2.CreateSessionRequest,
+	request *zepgo.CreateSessionRequest,
 	opts ...option.RequestOption,
-) (*v2.Session, error) {
+) (*zepgo.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -66,14 +66,14 @@ func (c *Client) AddSession(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(v2.BadRequestError)
+			value := new(zepgo.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -83,7 +83,7 @@ func (c *Client) AddSession(
 		return apiError
 	}
 
-	var response *v2.Session
+	var response *zepgo.Session
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -105,9 +105,9 @@ func (c *Client) AddSession(
 // Get all sessions with optional page number, page size, order by field and order direction for pagination.
 func (c *Client) ListSessions(
 	ctx context.Context,
-	request *v2.MemoryListSessionsRequest,
+	request *zepgo.MemoryListSessionsRequest,
 	opts ...option.RequestOption,
-) ([]*v2.Session, error) {
+) ([]*zepgo.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -138,14 +138,14 @@ func (c *Client) ListSessions(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(v2.BadRequestError)
+			value := new(zepgo.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -155,7 +155,7 @@ func (c *Client) ListSessions(
 		return apiError
 	}
 
-	var response []*v2.Session
+	var response []*zepgo.Session
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -179,7 +179,7 @@ func (c *Client) GetSession(
 	// Session ID
 	sessionID string,
 	opts ...option.RequestOption,
-) (*v2.Session, error) {
+) (*zepgo.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -202,14 +202,14 @@ func (c *Client) GetSession(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -219,7 +219,7 @@ func (c *Client) GetSession(
 		return apiError
 	}
 
-	var response *v2.Session
+	var response *zepgo.Session
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -242,9 +242,9 @@ func (c *Client) UpdateSession(
 	ctx context.Context,
 	// Session ID
 	sessionID string,
-	request *v2.UpdateSessionRequest,
+	request *zepgo.UpdateSessionRequest,
 	opts ...option.RequestOption,
-) (*v2.Session, error) {
+) (*zepgo.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -267,21 +267,21 @@ func (c *Client) UpdateSession(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(v2.BadRequestError)
+			value := new(zepgo.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -291,7 +291,7 @@ func (c *Client) UpdateSession(
 		return apiError
 	}
 
-	var response *v2.Session
+	var response *zepgo.Session
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -315,9 +315,9 @@ func (c *Client) ClassifySession(
 	ctx context.Context,
 	// Session ID
 	sessionID string,
-	request *v2.ClassifySessionRequest,
+	request *zepgo.ClassifySessionRequest,
 	opts ...option.RequestOption,
-) (*v2.ClassifySessionResponse, error) {
+) (*zepgo.ClassifySessionResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -340,14 +340,14 @@ func (c *Client) ClassifySession(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -357,7 +357,7 @@ func (c *Client) ClassifySession(
 		return apiError
 	}
 
-	var response *v2.ClassifySessionResponse
+	var response *zepgo.ClassifySessionResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -381,7 +381,7 @@ func (c *Client) ExtractSessionData(
 	ctx context.Context,
 	// Session ID
 	sessionID string,
-	request *v2.ModelsExtractDataRequest,
+	request *zepgo.ModelsExtractDataRequest,
 	opts ...option.RequestOption,
 ) (map[string]string, error) {
 	options := core.NewRequestOptions(opts...)
@@ -406,14 +406,14 @@ func (c *Client) ExtractSessionData(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -442,14 +442,14 @@ func (c *Client) ExtractSessionData(
 	return response, nil
 }
 
-// get memory by session id
+// Returns a memory (latest summary, list of messages and facts for models.MemoryTypePerpetual) for a given session
 func (c *Client) Get(
 	ctx context.Context,
 	// The ID of the session for which to retrieve memory.
 	sessionID string,
-	request *v2.MemoryGetRequest,
+	request *zepgo.MemoryGetRequest,
 	opts ...option.RequestOption,
-) (*v2.Memory, error) {
+) (*zepgo.Memory, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -480,14 +480,14 @@ func (c *Client) Get(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -497,7 +497,7 @@ func (c *Client) Get(
 		return apiError
 	}
 
-	var response *v2.Memory
+	var response *zepgo.Memory
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -520,9 +520,9 @@ func (c *Client) Add(
 	ctx context.Context,
 	// The ID of the session to which memory should be added.
 	sessionID string,
-	request *v2.AddMemoryRequest,
+	request *zepgo.AddMemoryRequest,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*zepgo.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -545,7 +545,7 @@ func (c *Client) Add(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -555,7 +555,7 @@ func (c *Client) Add(
 		return apiError
 	}
 
-	var response *v2.SuccessResponse
+	var response *zepgo.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -580,7 +580,7 @@ func (c *Client) Delete(
 	// The ID of the session for which memory should be deleted.
 	sessionID string,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*zepgo.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -603,14 +603,14 @@ func (c *Client) Delete(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -620,7 +620,7 @@ func (c *Client) Delete(
 		return apiError
 	}
 
-	var response *v2.SuccessResponse
+	var response *zepgo.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -643,9 +643,9 @@ func (c *Client) GetSessionMessages(
 	ctx context.Context,
 	// Session ID
 	sessionID string,
-	request *v2.MemoryGetSessionMessagesRequest,
+	request *zepgo.MemoryGetSessionMessagesRequest,
 	opts ...option.RequestOption,
-) (*v2.MessageListResponse, error) {
+) (*zepgo.MessageListResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -676,14 +676,14 @@ func (c *Client) GetSessionMessages(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -693,7 +693,7 @@ func (c *Client) GetSessionMessages(
 		return apiError
 	}
 
-	var response *v2.MessageListResponse
+	var response *zepgo.MessageListResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -719,7 +719,7 @@ func (c *Client) GetSessionMessage(
 	// The UUID of the message.
 	messageUUID string,
 	opts ...option.RequestOption,
-) (*v2.Message, error) {
+) (*zepgo.Message, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -746,14 +746,14 @@ func (c *Client) GetSessionMessage(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -763,7 +763,7 @@ func (c *Client) GetSessionMessage(
 		return apiError
 	}
 
-	var response *v2.Message
+	var response *zepgo.Message
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -788,9 +788,9 @@ func (c *Client) UpdateMessageMetadata(
 	sessionID string,
 	// The UUID of the message.
 	messageUUID string,
-	request *v2.ModelsMessageMetadataUpdate,
+	request *zepgo.ModelsMessageMetadataUpdate,
 	opts ...option.RequestOption,
-) (*v2.Message, error) {
+) (*zepgo.Message, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -817,14 +817,14 @@ func (c *Client) UpdateMessageMetadata(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -834,7 +834,7 @@ func (c *Client) UpdateMessageMetadata(
 		return apiError
 	}
 
-	var response *v2.Message
+	var response *zepgo.Message
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -858,9 +858,9 @@ func (c *Client) Search(
 	ctx context.Context,
 	// The ID of the session for which memory should be searched.
 	sessionID string,
-	request *v2.MemorySearchPayload,
+	request *zepgo.MemorySearchPayload,
 	opts ...option.RequestOption,
-) ([]*v2.MemorySearchResult, error) {
+) ([]*zepgo.MemorySearchResult, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -891,14 +891,14 @@ func (c *Client) Search(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -908,7 +908,7 @@ func (c *Client) Search(
 		return apiError
 	}
 
-	var response []*v2.MemorySearchResult
+	var response []*zepgo.MemorySearchResult
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -933,7 +933,7 @@ func (c *Client) GetSummaries(
 	// Session ID
 	sessionID string,
 	opts ...option.RequestOption,
-) (*v2.SummaryListResponse, error) {
+) (*zepgo.SummaryListResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -956,14 +956,14 @@ func (c *Client) GetSummaries(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -973,7 +973,7 @@ func (c *Client) GetSummaries(
 		return apiError
 	}
 
-	var response *v2.SummaryListResponse
+	var response *zepgo.SummaryListResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -996,9 +996,9 @@ func (c *Client) SynthesizeQuestion(
 	ctx context.Context,
 	// The ID of the session.
 	sessionID string,
-	request *v2.MemorySynthesizeQuestionRequest,
+	request *zepgo.MemorySynthesizeQuestionRequest,
 	opts ...option.RequestOption,
-) (*v2.Question, error) {
+) (*zepgo.Question, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -1029,14 +1029,14 @@ func (c *Client) SynthesizeQuestion(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(v2.NotFoundError)
+			value := new(zepgo.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(v2.InternalServerError)
+			value := new(zepgo.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -1046,7 +1046,7 @@ func (c *Client) SynthesizeQuestion(
 		return apiError
 	}
 
-	var response *v2.Question
+	var response *zepgo.Question
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{

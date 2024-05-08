@@ -3,11 +3,11 @@
 package client
 
 import (
-	core "github.com/getzep/zep-go/v2/core"
-	document "github.com/getzep/zep-go/v2/document"
-	memory "github.com/getzep/zep-go/v2/memory"
-	option "github.com/getzep/zep-go/v2/option"
-	user "github.com/getzep/zep-go/v2/user"
+	core "github.com/getzep/zep-go/core"
+	document "github.com/getzep/zep-go/document"
+	memory "github.com/getzep/zep-go/memory"
+	option "github.com/getzep/zep-go/option"
+	user "github.com/getzep/zep-go/user"
 	http "net/http"
 	os "os"
 )
