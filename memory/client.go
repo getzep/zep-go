@@ -107,7 +107,7 @@ func (c *Client) ListSessions(
 	ctx context.Context,
 	request *zepgo.MemoryListSessionsRequest,
 	opts ...option.RequestOption,
-) ([]*zepgo.Session, error) {
+) (*zepgo.SessionListResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -155,7 +155,7 @@ func (c *Client) ListSessions(
 		return apiError
 	}
 
-	var response []*zepgo.Session
+	var response *zepgo.SessionListResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{

@@ -573,6 +573,37 @@ func (s *Session) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
+type SessionListResponse struct {
+	ResponseCount *int       `json:"response_count,omitempty" url:"response_count,omitempty"`
+	Sessions      []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
+	TotalCount    *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SessionListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SessionListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SessionListResponse(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SessionListResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
 type SuccessResponse struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
 
