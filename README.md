@@ -52,7 +52,7 @@ Run the following command to use the Zep Go library in your module:
 go get github.com/getzep/zep-go
 ```
 
-## Usage
+## Initialize Client
 
 ```go
 import (
@@ -64,15 +64,28 @@ import (
 client := zepclient.NewClient(
   option.WithAPIKey("<YOUR_API_KEY>"),
 )
+```
 
-response, err := client.Collection.Create(
-  context.TODO(),
-  "collectionName",
-  &zep.CreateDocumentCollectionRequest{
-    Name:                "documentCollectionName",
-    EmbeddingDimensions: 3,
-  },
-)
+## Add Memory
+
+```go
+_, err = client.Memory.Add(ctx, "session_id", &zep.AddMemoryRequest{
+    Messages: []*zep.Message{
+        {
+            Role:     zep.String("customer"),
+            Content:  zep.String("Hello, can I buy some shoes?"),
+            RoleType: zep.RoleTypeUserRole.Ptr(),
+        },
+    },
+})
+```
+
+## Get Memory
+
+```go
+memory, err := client.Memory.Get(ctx, "session_id", &zep.MemoryGetRequest{
+    MemoryType: zep.MemoryGetRequestMemoryTypePerpetual.Ptr(),
+})
 ```
 
 ## Optionals
@@ -80,39 +93,6 @@ response, err := client.Collection.Create(
 This library models optional primitives and enum types as pointers. This is primarily meant to distinguish
 default zero values from explicit values (e.g. `false` for `bool` and `""` for `string`). A collection of
 helper functions are provided to easily map a primitive or enum to its pointer-equivalent (e.g. `zep.Int`).
-
-For example, consider the `client.Search.Get` endpoint usage below:
-
-```go
-response, err := client.Search.Get(
-  context.TODO(),
-  "22337b13-7853-4e1c-a857-d94ea60b3a53",
-  &zep.MemorySearchPayload{
-    Name:       zep.Int(100),
-    SearchType: zep.SearchTypeSimilarity.Ptr(),
-  },
-)
-```
-
-## Timeouts
-
-Setting a timeout for each individual request is as simple as using the standard
-`context` library. Setting a one second timeout for an individual API call looks
-like the following:
-
-```go
-ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
-defer cancel()
-
-response, err := client.Collection.Create(
-  ctx,
-  "collectionName",
-  &zep.CreateDocumentCollectionRequest{
-    Name:                "documentCollectionName",
-    EmbeddingDimensions: 3,
-  },
-)
-```
 
 ## Request Options
 
@@ -135,15 +115,7 @@ These request options can either be specified on the client so that they're appl
 request (shown above), or for an individual request like so:
 
 ```go
-response, err := client.Collection.Create(
-  ctx,
-  "collectionName",
-  &zep.CreateDocumentCollectionRequest{
-    Name:                "documentCollectionName",
-    EmbeddingDimensions: 3,
-  },
-  option.WithAPIKey("<YOUR_API_KEY>"),
-)
+_, _ = client.Memory.Get(ctx, "session_id", &zep.MemoryGetRequest{}, option.WithAPIKey("<YOUR_API_KEY>"))
 ```
 
 > Providing your own `*http.Client` is recommended. Otherwise, the `http.DefaultClient` will be used,
@@ -176,15 +148,7 @@ client := zepclient.NewClient(
 This can be done for an individual request, too:
 
 ```go
-response, err := client.Collection.Create(
-  ctx,
-  "collectionName",
-  &zep.CreateDocumentCollectionRequest{
-    Name:                "documentCollectionName",
-    EmbeddingDimensions: 3,
-  },
-  option.WithMaxAttempts(1),
-)
+_, _ = client.Memory.Get(ctx, "session_id", &zep.MemoryGetRequest{}, option.WithMaxAttempts(1))
 ```
 
 ## Errors
@@ -193,14 +157,7 @@ Structured error types are returned from API calls that return non-success statu
 you can check if the error was due to a bad request (i.e. status code 400) with the following:
 
 ```go
-response, err := client.Collection.Create(
-  ctx,
-  "collectionName",
-  &zep.CreateDocumentCollectionRequest{
-    Name:                "documentCollectionName",
-    EmbeddingDimensions: 3,
-  },
-)
+_, err := client.Memory.Get(ctx, "session_id", &zep.MemoryGetRequest{})
 if err != nil {
   if badRequestErr, ok := err.(*zep.BadRequestError);
     // Do something with the bad request ...
@@ -213,14 +170,7 @@ These errors are also compatible with the `errors.Is` and `errors.As` APIs, so y
 like so:
 
 ```go
-response, err := client.Collection.Create(
-  ctx,
-  "collectionName",
-  &zep.CreateDocumentCollectionRequest{
-    Name:                "documentCollectionName",
-    EmbeddingDimensions: 3,
-  },
-)
+_, err := client.Memory.Get(ctx, "session_id", &zep.MemoryGetRequest{})
 if err != nil {
   var badRequestErr *zep.BadRequestError
   if errors.As(err, badRequestErr) {
@@ -234,16 +184,9 @@ If you'd like to wrap the errors with additional information and still retain th
 to access the type with `errors.Is` and `errors.As`, you can use the `%w` directive:
 
 ```go
-response, err := client.Collection.Create(
-  ctx,
-  "collectionName",
-  &zep.CreateDocumentCollectionRequest{
-    Name:                "documentCollectionName",
-    EmbeddingDimensions: 3,
-  },
-)
+_, err := client.Memory.Get(ctx, "session_id", &zep.MemoryGetRequest{})
 if err != nil {
-  return fmt.Errorf("failed to create collection: %w", err)
+  return fmt.Errorf("failed to get memory: %w", err)
 }
 ```
 
