@@ -537,6 +537,7 @@ type Session struct {
 	Classifications map[string]string      `json:"classifications,omitempty" url:"classifications,omitempty"`
 	CreatedAt       *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
 	DeletedAt       *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	EndedAt         *string                `json:"ended_at,omitempty" url:"ended_at,omitempty"`
 	Facts           []string               `json:"facts,omitempty" url:"facts,omitempty"`
 	ID              *int                   `json:"id,omitempty" url:"id,omitempty"`
 	Metadata        map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
