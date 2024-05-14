@@ -37,6 +37,10 @@ type ClassifySessionRequest struct {
 	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
 }
 
+type EndSessionRequest struct {
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+}
+
 type ModelsExtractDataRequest struct {
 	LastNMessages  *int                  `json:"last_n_messages,omitempty" url:"last_n_messages,omitempty"`
 	ZepDataClasses []*ModelsZepDataClass `json:"zep_data_classes,omitempty" url:"zep_data_classes,omitempty"`
