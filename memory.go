@@ -7,6 +7,8 @@ import (
 )
 
 type AddMemoryRequest struct {
+	// Additional instruction for generating the facts.
+	FactInstruction *string `json:"fact_instruction,omitempty" url:"fact_instruction,omitempty"`
 	// A list of message objects, where each message contains a role and content.
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
 	// Additional instruction for generating the summary.
