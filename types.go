@@ -255,6 +255,8 @@ type Memory struct {
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
 	// A dictionary containing metadata associated with the memory.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Summary list result from Summary Retriever Memory Type.
+	RelevantSummaries []*Summary `json:"relevant_summaries,omitempty" url:"relevant_summaries,omitempty"`
 	// A Summary object.
 	Summary *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
