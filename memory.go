@@ -24,26 +24,14 @@ type CreateSessionRequest struct {
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 }
 
-type ClassifySessionRequest struct {
-	// The classes to use for classification.
-	Classes []string `json:"classes,omitempty" url:"classes,omitempty"`
-	// Custom instruction to use for classification.
-	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
-	// The number of session messages to consider for classification. Defaults to 4.
-	LastN *int `json:"last_n,omitempty" url:"last_n,omitempty"`
-	// The name of the classifier. Will be used to store the classification in session metadata if persist is True.
-	Name string `json:"name" url:"name"`
-	// Whether to persist the classification to session metadata. Defaults to True.
-	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
-}
-
 type EndSessionRequest struct {
-	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+	Classify    *ClassifySessionRequest `json:"classify,omitempty" url:"classify,omitempty"`
+	Instruction *string                 `json:"instruction,omitempty" url:"instruction,omitempty"`
 }
 
-type ModelsExtractDataRequest struct {
-	LastNMessages  *int                  `json:"last_n_messages,omitempty" url:"last_n_messages,omitempty"`
-	ZepDataClasses []*ModelsZepDataClass `json:"zep_data_classes,omitempty" url:"zep_data_classes,omitempty"`
+type EndSessionsRequest struct {
+	Instruction *string  `json:"instruction,omitempty" url:"instruction,omitempty"`
+	SessionIDs  []string `json:"session_ids,omitempty" url:"session_ids,omitempty"`
 }
 
 type MemoryGetRequest struct {
@@ -81,6 +69,21 @@ type MemorySearchPayload struct {
 	SearchScope *SearchScope           `json:"search_scope,omitempty" url:"search_scope,omitempty"`
 	SearchType  *SearchType            `json:"search_type,omitempty" url:"search_type,omitempty"`
 	Text        *string                `json:"text,omitempty" url:"text,omitempty"`
+}
+
+type SessionSearchQuery struct {
+	// The maximum number of search results to return. Defaults to None (no limit).
+	Limit     *int     `json:"-" url:"limit,omitempty"`
+	MinScore  *float64 `json:"min_score,omitempty" url:"min_score,omitempty"`
+	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	// filter on the metadata
+	RecordFilter map[string]interface{} `json:"record_filter,omitempty" url:"record_filter,omitempty"`
+	SearchScope  *SearchScope           `json:"search_scope,omitempty" url:"search_scope,omitempty"`
+	SearchType   *SearchType            `json:"search_type,omitempty" url:"search_type,omitempty"`
+	// the session ids to search
+	SessionIDs []string `json:"session_ids,omitempty" url:"session_ids,omitempty"`
+	Text       *string  `json:"text,omitempty" url:"text,omitempty"`
+	UserID     *string  `json:"user_id,omitempty" url:"user_id,omitempty"`
 }
 
 type MemorySynthesizeQuestionRequest struct {
