@@ -37,6 +37,44 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type ClassifySessionRequest struct {
+	// The classes to use for classification.
+	Classes []string `json:"classes,omitempty" url:"classes,omitempty"`
+	// Custom instruction to use for classification.
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+	// The number of session messages to consider for classification. Defaults to 4.
+	LastN *int `json:"last_n,omitempty" url:"last_n,omitempty"`
+	// The name of the classifier. Will be used to store the classification in session metadata if persist is True.
+	Name string `json:"name" url:"name"`
+	// Whether to persist the classification to session metadata. Defaults to True.
+	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (c *ClassifySessionRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ClassifySessionRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ClassifySessionRequest(value)
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ClassifySessionRequest) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 type ClassifySessionResponse struct {
 	Class *string `json:"class,omitempty" url:"class,omitempty"`
 	Name  *string `json:"name,omitempty" url:"name,omitempty"`
@@ -68,9 +106,8 @@ func (c *ClassifySessionResponse) String() string {
 }
 
 type CreateDocumentRequest struct {
-	Content    *string                `json:"content,omitempty" url:"content,omitempty"`
+	Content    string                 `json:"content" url:"content"`
 	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
-	Embedding  []float64              `json:"embedding,omitempty" url:"embedding,omitempty"`
 	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 
 	_rawJSON json.RawMessage
@@ -248,6 +285,65 @@ func (d *DocumentSearchResultPage) String() string {
 	return fmt.Sprintf("%#v", d)
 }
 
+type EndSessionResponse struct {
+	Classification *ClassifySessionResponse `json:"classification,omitempty" url:"classification,omitempty"`
+	Session        *Session                 `json:"session,omitempty" url:"session,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (e *EndSessionResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler EndSessionResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EndSessionResponse(value)
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EndSessionResponse) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EndSessionsResponse struct {
+	Sessions []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (e *EndSessionsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler EndSessionsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EndSessionsResponse(value)
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EndSessionsResponse) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
 type Memory struct {
 	// Most recent list of facts derived from the session. Included only with perpetual memory type.
 	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
@@ -287,11 +383,10 @@ func (m *Memory) String() string {
 }
 
 type MemorySearchResult struct {
-	Embedding []float64              `json:"embedding,omitempty" url:"embedding,omitempty"`
-	Message   *Message               `json:"message,omitempty" url:"message,omitempty"`
-	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Score     *float64               `json:"score,omitempty" url:"score,omitempty"`
-	Summary   *Summary               `json:"summary,omitempty" url:"summary,omitempty"`
+	Message  *Message               `json:"message,omitempty" url:"message,omitempty"`
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Score    *float64               `json:"score,omitempty" url:"score,omitempty"`
+	Summary  *Summary               `json:"summary,omitempty" url:"summary,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -386,37 +481,6 @@ func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
 }
 
 func (m *MessageListResponse) String() string {
-	if len(m._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(m); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", m)
-}
-
-type ModelsZepDataClass struct {
-	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	Name        *string `json:"name,omitempty" url:"name,omitempty"`
-	Type        *string `json:"type,omitempty" url:"type,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (m *ModelsZepDataClass) UnmarshalJSON(data []byte) error {
-	type unmarshaler ModelsZepDataClass
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*m = ModelsZepDataClass(value)
-	m._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (m *ModelsZepDataClass) String() string {
 	if len(m._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
 			return value
@@ -596,6 +660,67 @@ func (s *SessionListResponse) UnmarshalJSON(data []byte) error {
 }
 
 func (s *SessionListResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SessionSearchResponse struct {
+	Results []*SessionSearchResult `json:"results,omitempty" url:"results,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SessionSearchResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SessionSearchResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SessionSearchResponse(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SessionSearchResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SessionSearchResult struct {
+	Message   *Message `json:"message,omitempty" url:"message,omitempty"`
+	Score     *float64 `json:"score,omitempty" url:"score,omitempty"`
+	SessionID *string  `json:"session_id,omitempty" url:"session_id,omitempty"`
+	Summary   *Summary `json:"summary,omitempty" url:"summary,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SessionSearchResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler SessionSearchResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SessionSearchResult(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SessionSearchResult) String() string {
 	if len(s._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
 			return value
