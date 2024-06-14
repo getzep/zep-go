@@ -37,8 +37,6 @@ type EndSessionsRequest struct {
 type ExtractDataRequest struct {
 	// Your current date and time in ISO 8601 format including timezone. This is used for determining relative dates.
 	CurrentDateTime *string `json:"current_date_time,omitempty" url:"current_date_time,omitempty"`
-	// The artifact from which to extract data. "messages" or "facts". default: "messages"
-	// ExtractArtifact ExtractArtifact `json:"extract_artifact" validate:"required"`
 	// The number of messages in the chat history from which to extract data
 	LastN int `json:"last_n" url:"last_n"`
 	// The schema describing the data to be extracted. See Zep's SDKs for more details.
