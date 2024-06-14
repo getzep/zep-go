@@ -344,6 +344,37 @@ func (e *EndSessionsResponse) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type Fact struct {
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Fact      *string `json:"fact,omitempty" url:"fact,omitempty"`
+	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (f *Fact) UnmarshalJSON(data []byte) error {
+	type unmarshaler Fact
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = Fact(value)
+	f._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *Fact) String() string {
+	if len(f._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
 type Memory struct {
 	// Most recent list of facts derived from the session. Included only with perpetual memory type.
 	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
@@ -560,6 +591,7 @@ type SearchScope string
 const (
 	SearchScopeMessages SearchScope = "messages"
 	SearchScopeSummary  SearchScope = "summary"
+	SearchScopeFacts    SearchScope = "facts"
 )
 
 func NewSearchScopeFromString(s string) (SearchScope, error) {
@@ -568,6 +600,8 @@ func NewSearchScopeFromString(s string) (SearchScope, error) {
 		return SearchScopeMessages, nil
 	case "summary":
 		return SearchScopeSummary, nil
+	case "facts":
+		return SearchScopeFacts, nil
 	}
 	var t SearchScope
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -604,6 +638,7 @@ type Session struct {
 	CreatedAt       *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
 	DeletedAt       *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
 	EndedAt         *string                `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	FactVersionUUID *string                `json:"fact_version_uuid,omitempty" url:"fact_version_uuid,omitempty"`
 	Facts           []string               `json:"facts,omitempty" url:"facts,omitempty"`
 	ID              *int                   `json:"id,omitempty" url:"id,omitempty"`
 	Metadata        map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
@@ -701,6 +736,7 @@ func (s *SessionSearchResponse) String() string {
 }
 
 type SessionSearchResult struct {
+	Fact      *Fact    `json:"fact,omitempty" url:"fact,omitempty"`
 	Message   *Message `json:"message,omitempty" url:"message,omitempty"`
 	Score     *float64 `json:"score,omitempty" url:"score,omitempty"`
 	SessionID *string  `json:"session_id,omitempty" url:"session_id,omitempty"`
