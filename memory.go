@@ -2,10 +2,6 @@
 
 package zep
 
-import (
-	fmt "fmt"
-)
-
 type AddMemoryRequest struct {
 	// Additional instruction for generating the facts.
 	FactInstruction *string `json:"fact_instruction,omitempty" url:"fact_instruction,omitempty"`
@@ -48,7 +44,7 @@ type ExtractDataRequest struct {
 
 type MemoryGetRequest struct {
 	// The type of memory to retrieve: perpetual, summary_retriever, or message_window. Defaults to perpetual.
-	MemoryType *MemoryGetRequestMemoryType `json:"-" url:"memoryType,omitempty"`
+	MemoryType *MemoryType `json:"-" url:"memoryType,omitempty"`
 	// The number of most recent memory entries to retrieve.
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
@@ -101,31 +97,6 @@ type SessionSearchQuery struct {
 type MemorySynthesizeQuestionRequest struct {
 	// The number of messages to use for question synthesis.
 	LastNMessages *int `json:"-" url:"lastNMessages,omitempty"`
-}
-
-type MemoryGetRequestMemoryType string
-
-const (
-	MemoryGetRequestMemoryTypePerpetual        MemoryGetRequestMemoryType = "perpetual"
-	MemoryGetRequestMemoryTypeSummaryRetriever MemoryGetRequestMemoryType = "summary_retriever"
-	MemoryGetRequestMemoryTypeMessageWindow    MemoryGetRequestMemoryType = "message_window"
-)
-
-func NewMemoryGetRequestMemoryTypeFromString(s string) (MemoryGetRequestMemoryType, error) {
-	switch s {
-	case "perpetual":
-		return MemoryGetRequestMemoryTypePerpetual, nil
-	case "summary_retriever":
-		return MemoryGetRequestMemoryTypeSummaryRetriever, nil
-	case "message_window":
-		return MemoryGetRequestMemoryTypeMessageWindow, nil
-	}
-	var t MemoryGetRequestMemoryType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (m MemoryGetRequestMemoryType) Ptr() *MemoryGetRequestMemoryType {
-	return &m
 }
 
 type ModelsMessageMetadataUpdate struct {

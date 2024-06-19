@@ -445,6 +445,31 @@ func (m *MemorySearchResult) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+type MemoryType string
+
+const (
+	MemoryTypePerpetual        MemoryType = "perpetual"
+	MemoryTypeSummaryRetriever MemoryType = "summary_retriever"
+	MemoryTypeMessageWindow    MemoryType = "message_window"
+)
+
+func NewMemoryTypeFromString(s string) (MemoryType, error) {
+	switch s {
+	case "perpetual":
+		return MemoryTypePerpetual, nil
+	case "summary_retriever":
+		return MemoryTypeSummaryRetriever, nil
+	case "message_window":
+		return MemoryTypeMessageWindow, nil
+	}
+	var t MemoryType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (m MemoryType) Ptr() *MemoryType {
+	return &m
+}
+
 type Message struct {
 	// The content of the message.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
