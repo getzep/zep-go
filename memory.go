@@ -34,6 +34,18 @@ type EndSessionsRequest struct {
 	SessionIDs  []string `json:"session_ids,omitempty" url:"session_ids,omitempty"`
 }
 
+type ExtractDataRequest struct {
+	// Your current date and time in ISO 8601 format including timezone. This is used for determining relative dates.
+	CurrentDateTime *string `json:"current_date_time,omitempty" url:"current_date_time,omitempty"`
+	// The number of messages in the chat history from which to extract data
+	LastN int `json:"last_n" url:"last_n"`
+	// The schema describing the data to be extracted. See Zep's SDKs for more details.
+	ModelSchema string `json:"model_schema" url:"model_schema"`
+	// Validate that the extracted data is present in the dialog and correct per the field description.
+	// Mitigates hallucination, but is slower and may result in false negatives.
+	Validate *bool `json:"validate,omitempty" url:"validate,omitempty"`
+}
+
 type MemoryGetRequest struct {
 	// The type of memory to retrieve: perpetual, summary_retriever, or message_window. Defaults to perpetual.
 	MemoryType *MemoryGetRequestMemoryType `json:"-" url:"memoryType,omitempty"`
