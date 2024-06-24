@@ -377,11 +377,13 @@ func (f *Fact) String() string {
 
 type Memory struct {
 	// Most recent list of facts derived from the session. Included only with perpetual memory type.
+	// Deprecated: Facts will be deprecated in future releases and relevant_facts should be used instead.
 	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
 	// A list of message objects, where each message contains a role and content.
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
 	// A dictionary containing metadata associated with the memory.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Metadata      map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	RelevantFacts []*Fact                `json:"relevant_facts,omitempty" url:"relevant_facts,omitempty"`
 	// Summary list result from Summary Retriever Memory Type.
 	RelevantSummaries []*Summary `json:"relevant_summaries,omitempty" url:"relevant_summaries,omitempty"`
 	// A Summary object.
