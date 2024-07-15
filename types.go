@@ -345,9 +345,10 @@ func (e *EndSessionsResponse) String() string {
 }
 
 type Fact struct {
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Fact      *string `json:"fact,omitempty" url:"fact,omitempty"`
-	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	CreatedAt *string  `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Fact      *string  `json:"fact,omitempty" url:"fact,omitempty"`
+	Rating    *float64 `json:"rating,omitempty" url:"rating,omitempty"`
+	UUID      *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -364,6 +365,134 @@ func (f *Fact) UnmarshalJSON(data []byte) error {
 }
 
 func (f *Fact) String() string {
+	if len(f._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
+type FactRatingExamples struct {
+	High   *string `json:"high,omitempty" url:"high,omitempty"`
+	Low    *string `json:"low,omitempty" url:"low,omitempty"`
+	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (f *FactRatingExamples) UnmarshalJSON(data []byte) error {
+	type unmarshaler FactRatingExamples
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = FactRatingExamples(value)
+	f._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *FactRatingExamples) String() string {
+	if len(f._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
+type FactRatingInstruction struct {
+	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
+	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
+	// based on relevance to a trip planning application, your examples might be:
+	// High: "Joe's dream vacation is Bali"
+	// Medium: "Joe has a fear of flying",
+	// Low: "Joe's favorite food is Japanese",
+	Examples *FactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
+	// A string describing how to rate facts as they apply to your application. A trip planning application may
+	// use something like "relevancy to planning a trip, the user's preferences when traveling,
+	// or the user's travel history."
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (f *FactRatingInstruction) UnmarshalJSON(data []byte) error {
+	type unmarshaler FactRatingInstruction
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = FactRatingInstruction(value)
+	f._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *FactRatingInstruction) String() string {
+	if len(f._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
+type FactResponse struct {
+	Fact *Fact `json:"fact,omitempty" url:"fact,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (f *FactResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler FactResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = FactResponse(value)
+	f._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *FactResponse) String() string {
+	if len(f._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
+type FactsResponse struct {
+	Facts []*Fact `json:"facts,omitempty" url:"facts,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (f *FactsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler FactsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = FactsResponse(value)
+	f._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *FactsResponse) String() string {
 	if len(f._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
 			return value
@@ -661,17 +790,18 @@ func (s SearchType) Ptr() *SearchType {
 }
 
 type Session struct {
-	Classifications map[string]string      `json:"classifications,omitempty" url:"classifications,omitempty"`
-	CreatedAt       *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt       *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	EndedAt         *string                `json:"ended_at,omitempty" url:"ended_at,omitempty"`
-	FactVersionUUID *string                `json:"fact_version_uuid,omitempty" url:"fact_version_uuid,omitempty"`
-	Facts           []string               `json:"facts,omitempty" url:"facts,omitempty"`
-	ID              *int                   `json:"id,omitempty" url:"id,omitempty"`
-	Metadata        map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProjectUUID     *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	SessionID       *string                `json:"session_id,omitempty" url:"session_id,omitempty"`
-	UpdatedAt       *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	Classifications       map[string]string      `json:"classifications,omitempty" url:"classifications,omitempty"`
+	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt             *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	EndedAt               *string                `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	FactVersionUUID       *string                `json:"fact_version_uuid,omitempty" url:"fact_version_uuid,omitempty"`
+	Facts                 []string               `json:"facts,omitempty" url:"facts,omitempty"`
+	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
+	Metadata              map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	ProjectUUID           *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	SessionID             *string                `json:"session_id,omitempty" url:"session_id,omitempty"`
+	UpdatedAt             *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	// Must be a pointer to allow for null values
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 	UUID   *string `json:"uuid,omitempty" url:"uuid,omitempty"`
