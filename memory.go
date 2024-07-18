@@ -12,6 +12,8 @@ type AddMemoryRequest struct {
 }
 
 type CreateSessionRequest struct {
+	// Optional instruction to use for fact rating.
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
 	// The metadata associated with the session.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// The unique identifier of the session.
@@ -47,6 +49,13 @@ type MemoryGetRequest struct {
 	MemoryType *MemoryType `json:"-" url:"memoryType,omitempty"`
 	// The number of most recent memory entries to retrieve.
 	Lastn *int `json:"-" url:"lastn,omitempty"`
+	// The minimum rating by which to filter facts
+	MinRating *float64 `json:"-" url:"minRating,omitempty"`
+}
+
+type MemoryGetSessionFactsRequest struct {
+	// Minimum rating by which to filter facts
+	MinRating *float64 `json:"-" url:"minRating,omitempty"`
 }
 
 type MemoryGetSessionMessagesRequest struct {
@@ -71,19 +80,21 @@ type MemorySearchPayload struct {
 	// The maximum number of search results to return. Defaults to None (no limit).
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Metadata Filter
-	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	MinScore    *float64               `json:"min_score,omitempty" url:"min_score,omitempty"`
-	MmrLambda   *float64               `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
-	SearchScope *SearchScope           `json:"search_scope,omitempty" url:"search_scope,omitempty"`
-	SearchType  *SearchType            `json:"search_type,omitempty" url:"search_type,omitempty"`
-	Text        *string                `json:"text,omitempty" url:"text,omitempty"`
+	Metadata      map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	MinFactRating *float64               `json:"min_fact_rating,omitempty" url:"min_fact_rating,omitempty"`
+	MinScore      *float64               `json:"min_score,omitempty" url:"min_score,omitempty"`
+	MmrLambda     *float64               `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	SearchScope   *SearchScope           `json:"search_scope,omitempty" url:"search_scope,omitempty"`
+	SearchType    *SearchType            `json:"search_type,omitempty" url:"search_type,omitempty"`
+	Text          *string                `json:"text,omitempty" url:"text,omitempty"`
 }
 
 type SessionSearchQuery struct {
 	// The maximum number of search results to return. Defaults to None (no limit).
-	Limit     *int     `json:"-" url:"limit,omitempty"`
-	MinScore  *float64 `json:"min_score,omitempty" url:"min_score,omitempty"`
-	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	Limit         *int     `json:"-" url:"limit,omitempty"`
+	MinFactRating *float64 `json:"min_fact_rating,omitempty" url:"min_fact_rating,omitempty"`
+	MinScore      *float64 `json:"min_score,omitempty" url:"min_score,omitempty"`
+	MmrLambda     *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
 	// filter on the metadata
 	RecordFilter map[string]interface{} `json:"record_filter,omitempty" url:"record_filter,omitempty"`
 	SearchScope  *SearchScope           `json:"search_scope,omitempty" url:"search_scope,omitempty"`
@@ -105,6 +116,9 @@ type ModelsMessageMetadataUpdate struct {
 }
 
 type UpdateSessionRequest struct {
+	// Optional instruction to use for fact rating.
+	// Fact rating instructions can not be unset.
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
 	// The metadata to update
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 }
