@@ -879,11 +879,30 @@ func (f *FactsResponse) String() string {
 	return fmt.Sprintf("%#v", f)
 }
 
-type GraphDataTypeJSON = interface{}
+type GraphDataType string
 
-type GraphDataTypeMessage = interface{}
+const (
+	GraphDataTypeText    GraphDataType = "text"
+	GraphDataTypeJSON    GraphDataType = "json"
+	GraphDataTypeMessage GraphDataType = "message"
+)
 
-type GraphDataTypeText = interface{}
+func NewGraphDataTypeFromString(s string) (GraphDataType, error) {
+	switch s {
+	case "text":
+		return GraphDataTypeText, nil
+	case "json":
+		return GraphDataTypeJSON, nil
+	case "message":
+		return GraphDataTypeMessage, nil
+	}
+	var t GraphDataType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphDataType) Ptr() *GraphDataType {
+	return &g
+}
 
 type GraphSearchResults struct {
 	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
@@ -1216,31 +1235,6 @@ func (m *MessageListResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", m)
-}
-
-type ModelsGraphDataType string
-
-const (
-	ModelsGraphDataTypeText    ModelsGraphDataType = "text"
-	ModelsGraphDataTypeJSON    ModelsGraphDataType = "json"
-	ModelsGraphDataTypeMessage ModelsGraphDataType = "message"
-)
-
-func NewModelsGraphDataTypeFromString(s string) (ModelsGraphDataType, error) {
-	switch s {
-	case "text":
-		return ModelsGraphDataTypeText, nil
-	case "json":
-		return ModelsGraphDataTypeJSON, nil
-	case "message":
-		return ModelsGraphDataTypeMessage, nil
-	}
-	var t ModelsGraphDataType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (m ModelsGraphDataType) Ptr() *ModelsGraphDataType {
-	return &m
 }
 
 type NewFact struct {
