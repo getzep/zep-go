@@ -3,13 +3,13 @@
 package zep
 
 type CreateGroupRequest struct {
-	Description *string  `json:"description,omitempty" url:"description,omitempty"`
-	GroupID     *string  `json:"group_id,omitempty" url:"group_id,omitempty"`
-	Name        *string  `json:"name,omitempty" url:"name,omitempty"`
-	UserIDs     []string `json:"user_ids,omitempty" url:"user_ids,omitempty"`
+	Description *string  `json:"description,omitempty" url:"-"`
+	GroupID     *string  `json:"group_id,omitempty" url:"-"`
+	Name        *string  `json:"name,omitempty" url:"-"`
+	UserIDs     []string `json:"user_ids,omitempty" url:"-"`
 }
 
 type UpdateGroupRequest struct {
-	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	Name        *string `json:"name,omitempty" url:"name,omitempty"`
+	Description *string `json:"description,omitempty" url:"-"`
+	Name        *string `json:"name,omitempty" url:"-"`
 }

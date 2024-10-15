@@ -11,7 +11,12 @@ import (
 type APIError struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *APIError) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
 }
 
 func (a *APIError) UnmarshalJSON(data []byte) error {
@@ -21,6 +26,13 @@ func (a *APIError) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = APIError(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
 	a._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -49,7 +61,12 @@ type ApidataDocument struct {
 	UpdatedAt  *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *ApidataDocument) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
 }
 
 func (a *ApidataDocument) UnmarshalJSON(data []byte) error {
@@ -59,6 +76,13 @@ func (a *ApidataDocument) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataDocument(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
 	a._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -90,7 +114,12 @@ type ApidataDocumentCollection struct {
 	UpdatedAt             *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *ApidataDocumentCollection) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
 }
 
 func (a *ApidataDocumentCollection) UnmarshalJSON(data []byte) error {
@@ -100,6 +129,13 @@ func (a *ApidataDocumentCollection) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataDocumentCollection(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
 	a._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -123,7 +159,12 @@ type ApidataDocumentSearchResponse struct {
 	Results     []*ApidataDocumentWithScore `json:"results,omitempty" url:"results,omitempty"`
 	TotalPages  *int                        `json:"total_pages,omitempty" url:"total_pages,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *ApidataDocumentSearchResponse) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
 }
 
 func (a *ApidataDocumentSearchResponse) UnmarshalJSON(data []byte) error {
@@ -133,6 +174,13 @@ func (a *ApidataDocumentSearchResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataDocumentSearchResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
 	a._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -160,7 +208,12 @@ type ApidataDocumentWithScore struct {
 	UpdatedAt  *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *ApidataDocumentWithScore) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
 }
 
 func (a *ApidataDocumentWithScore) UnmarshalJSON(data []byte) error {
@@ -170,6 +223,13 @@ func (a *ApidataDocumentWithScore) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataDocumentWithScore(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
 	a._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -198,7 +258,12 @@ type ClassifySessionRequest struct {
 	// Whether to persist the classification to session metadata. Defaults to True.
 	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *ClassifySessionRequest) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
 }
 
 func (c *ClassifySessionRequest) UnmarshalJSON(data []byte) error {
@@ -208,6 +273,13 @@ func (c *ClassifySessionRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*c = ClassifySessionRequest(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
 	c._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -233,7 +305,12 @@ type CreateDocumentRequest struct {
 	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
 	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CreateDocumentRequest) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
 }
 
 func (c *CreateDocumentRequest) UnmarshalJSON(data []byte) error {
@@ -243,6 +320,13 @@ func (c *CreateDocumentRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*c = CreateDocumentRequest(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
 	c._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -271,7 +355,12 @@ type EndSessionResponse struct {
 	Classification *SessionClassification `json:"classification,omitempty" url:"classification,omitempty"`
 	Session        *Session               `json:"session,omitempty" url:"session,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EndSessionResponse) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
 }
 
 func (e *EndSessionResponse) UnmarshalJSON(data []byte) error {
@@ -281,6 +370,13 @@ func (e *EndSessionResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = EndSessionResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
 	e._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -300,7 +396,12 @@ func (e *EndSessionResponse) String() string {
 type EndSessionsResponse struct {
 	Sessions []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EndSessionsResponse) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
 }
 
 func (e *EndSessionsResponse) UnmarshalJSON(data []byte) error {
@@ -310,6 +411,13 @@ func (e *EndSessionsResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = EndSessionsResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
 	e._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -348,7 +456,12 @@ type EntityEdge struct {
 	// Datetime of when the fact became true
 	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EntityEdge) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
 }
 
 func (e *EntityEdge) UnmarshalJSON(data []byte) error {
@@ -358,6 +471,13 @@ func (e *EntityEdge) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = EntityEdge(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
 	e._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -386,7 +506,12 @@ type EntityNode struct {
 	// UUID of the node
 	UUID string `json:"uuid" url:"uuid"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EntityNode) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
 }
 
 func (e *EntityNode) UnmarshalJSON(data []byte) error {
@@ -396,6 +521,13 @@ func (e *EntityNode) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = EntityNode(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
 	e._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -420,7 +552,12 @@ type Episode struct {
 	SourceDescription string      `json:"source_description" url:"source_description"`
 	UUID              string      `json:"uuid" url:"uuid"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *Episode) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
 }
 
 func (e *Episode) UnmarshalJSON(data []byte) error {
@@ -430,6 +567,13 @@ func (e *Episode) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = Episode(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
 	e._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -449,7 +593,12 @@ func (e *Episode) String() string {
 type EpisodeResponse struct {
 	Episodes []*Episode `json:"episodes,omitempty" url:"episodes,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EpisodeResponse) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
 }
 
 func (e *EpisodeResponse) UnmarshalJSON(data []byte) error {
@@ -459,6 +608,13 @@ func (e *EpisodeResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = EpisodeResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
 	e._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -509,7 +665,12 @@ type Fact struct {
 	TargetNodeName *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
 	UUID           *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (f *Fact) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
 }
 
 func (f *Fact) UnmarshalJSON(data []byte) error {
@@ -519,6 +680,13 @@ func (f *Fact) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = Fact(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+
 	f._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -540,7 +708,12 @@ type FactRatingExamples struct {
 	Low    *string `json:"low,omitempty" url:"low,omitempty"`
 	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (f *FactRatingExamples) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
 }
 
 func (f *FactRatingExamples) UnmarshalJSON(data []byte) error {
@@ -550,6 +723,13 @@ func (f *FactRatingExamples) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = FactRatingExamples(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+
 	f._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -579,7 +759,12 @@ type FactRatingInstruction struct {
 	// or the user's travel history."
 	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (f *FactRatingInstruction) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
 }
 
 func (f *FactRatingInstruction) UnmarshalJSON(data []byte) error {
@@ -589,6 +774,13 @@ func (f *FactRatingInstruction) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = FactRatingInstruction(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+
 	f._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -608,7 +800,12 @@ func (f *FactRatingInstruction) String() string {
 type FactResponse struct {
 	Fact *Fact `json:"fact,omitempty" url:"fact,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (f *FactResponse) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
 }
 
 func (f *FactResponse) UnmarshalJSON(data []byte) error {
@@ -618,6 +815,13 @@ func (f *FactResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = FactResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+
 	f._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -637,7 +841,12 @@ func (f *FactResponse) String() string {
 type FactsResponse struct {
 	Facts []*Fact `json:"facts,omitempty" url:"facts,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (f *FactsResponse) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
 }
 
 func (f *FactsResponse) UnmarshalJSON(data []byte) error {
@@ -647,6 +856,13 @@ func (f *FactsResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = FactsResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+
 	f._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -673,7 +889,12 @@ type GraphSearchResults struct {
 	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
 	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
 }
 
 func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
@@ -683,6 +904,13 @@ func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*g = GraphSearchResults(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+
 	g._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -730,7 +958,12 @@ type Group struct {
 	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
 	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (g *Group) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
 }
 
 func (g *Group) UnmarshalJSON(data []byte) error {
@@ -740,6 +973,13 @@ func (g *Group) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*g = Group(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+
 	g._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -769,7 +1009,12 @@ type Memory struct {
 	// The most recent summary before last nth message. (cloud only)
 	Summary *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *Memory) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
 }
 
 func (m *Memory) UnmarshalJSON(data []byte) error {
@@ -779,6 +1024,13 @@ func (m *Memory) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*m = Memory(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
 	m._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -801,7 +1053,12 @@ type MemorySearchResult struct {
 	Score    *float64               `json:"score,omitempty" url:"score,omitempty"`
 	Summary  *Summary               `json:"summary,omitempty" url:"summary,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *MemorySearchResult) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
 }
 
 func (m *MemorySearchResult) UnmarshalJSON(data []byte) error {
@@ -811,6 +1068,13 @@ func (m *MemorySearchResult) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*m = MemorySearchResult(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
 	m._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -870,7 +1134,12 @@ type Message struct {
 	// The unique identifier of the message.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *Message) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
 }
 
 func (m *Message) UnmarshalJSON(data []byte) error {
@@ -880,6 +1149,13 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*m = Message(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
 	m._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -904,7 +1180,12 @@ type MessageListResponse struct {
 	// The total number of messages.
 	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
 }
 
 func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
@@ -914,6 +1195,13 @@ func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*m = MessageListResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
 	m._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -958,7 +1246,12 @@ func (m ModelsGraphDataType) Ptr() *ModelsGraphDataType {
 type NewFact struct {
 	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (n *NewFact) GetExtraProperties() map[string]interface{} {
+	return n.extraProperties
 }
 
 func (n *NewFact) UnmarshalJSON(data []byte) error {
@@ -968,6 +1261,13 @@ func (n *NewFact) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*n = NewFact(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *n)
+	if err != nil {
+		return err
+	}
+	n.extraProperties = extraProperties
+
 	n._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -987,7 +1287,12 @@ func (n *NewFact) String() string {
 type Question struct {
 	Question *string `json:"question,omitempty" url:"question,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (q *Question) GetExtraProperties() map[string]interface{} {
+	return q.extraProperties
 }
 
 func (q *Question) UnmarshalJSON(data []byte) error {
@@ -997,6 +1302,13 @@ func (q *Question) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*q = Question(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *q)
+	if err != nil {
+		return err
+	}
+	q.extraProperties = extraProperties
+
 	q._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1138,7 +1450,12 @@ type Session struct {
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 	UUID   *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *Session) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *Session) UnmarshalJSON(data []byte) error {
@@ -1148,6 +1465,13 @@ func (s *Session) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = Session(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1168,7 +1492,12 @@ type SessionClassification struct {
 	Class *string `json:"class,omitempty" url:"class,omitempty"`
 	Label *string `json:"label,omitempty" url:"label,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionClassification) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *SessionClassification) UnmarshalJSON(data []byte) error {
@@ -1178,6 +1507,13 @@ func (s *SessionClassification) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SessionClassification(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1199,7 +1535,12 @@ type SessionFactRatingExamples struct {
 	Low    *string `json:"low,omitempty" url:"low,omitempty"`
 	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionFactRatingExamples) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *SessionFactRatingExamples) UnmarshalJSON(data []byte) error {
@@ -1209,6 +1550,13 @@ func (s *SessionFactRatingExamples) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SessionFactRatingExamples(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1238,7 +1586,12 @@ type SessionFactRatingInstruction struct {
 	// or the user's travel history."
 	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionFactRatingInstruction) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *SessionFactRatingInstruction) UnmarshalJSON(data []byte) error {
@@ -1248,6 +1601,13 @@ func (s *SessionFactRatingInstruction) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SessionFactRatingInstruction(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1269,7 +1629,12 @@ type SessionListResponse struct {
 	Sessions      []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
 	TotalCount    *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionListResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *SessionListResponse) UnmarshalJSON(data []byte) error {
@@ -1279,6 +1644,13 @@ func (s *SessionListResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SessionListResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1298,7 +1670,12 @@ func (s *SessionListResponse) String() string {
 type SessionSearchResponse struct {
 	Results []*SessionSearchResult `json:"results,omitempty" url:"results,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionSearchResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *SessionSearchResponse) UnmarshalJSON(data []byte) error {
@@ -1308,6 +1685,13 @@ func (s *SessionSearchResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SessionSearchResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1331,7 +1715,12 @@ type SessionSearchResult struct {
 	SessionID *string  `json:"session_id,omitempty" url:"session_id,omitempty"`
 	Summary   *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionSearchResult) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *SessionSearchResult) UnmarshalJSON(data []byte) error {
@@ -1341,6 +1730,13 @@ func (s *SessionSearchResult) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SessionSearchResult(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1360,7 +1756,12 @@ func (s *SessionSearchResult) String() string {
 type SuccessResponse struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SuccessResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *SuccessResponse) UnmarshalJSON(data []byte) error {
@@ -1370,6 +1771,13 @@ func (s *SuccessResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SuccessResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1398,7 +1806,12 @@ type Summary struct {
 	// The unique identifier of the summary.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *Summary) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *Summary) UnmarshalJSON(data []byte) error {
@@ -1408,6 +1821,13 @@ func (s *Summary) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = Summary(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1429,7 +1849,12 @@ type SummaryListResponse struct {
 	Summaries  []*Summary `json:"summaries,omitempty" url:"summaries,omitempty"`
 	TotalCount *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SummaryListResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
 }
 
 func (s *SummaryListResponse) UnmarshalJSON(data []byte) error {
@@ -1439,6 +1864,13 @@ func (s *SummaryListResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SummaryListResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1460,7 +1892,12 @@ type UpdateDocumentListRequest struct {
 	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	UUID       string                 `json:"uuid" url:"uuid"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (u *UpdateDocumentListRequest) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
 }
 
 func (u *UpdateDocumentListRequest) UnmarshalJSON(data []byte) error {
@@ -1470,6 +1907,13 @@ func (u *UpdateDocumentListRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*u = UpdateDocumentListRequest(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+
 	u._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1500,7 +1944,12 @@ type User struct {
 	UserID       *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
 	UUID         *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (u *User) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
 }
 
 func (u *User) UnmarshalJSON(data []byte) error {
@@ -1510,6 +1959,13 @@ func (u *User) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*u = User(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+
 	u._rawJSON = json.RawMessage(data)
 	return nil
 }
@@ -1531,7 +1987,12 @@ type UserListResponse struct {
 	TotalCount *int    `json:"total_count,omitempty" url:"total_count,omitempty"`
 	Users      []*User `json:"users,omitempty" url:"users,omitempty"`
 
-	_rawJSON json.RawMessage
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (u *UserListResponse) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
 }
 
 func (u *UserListResponse) UnmarshalJSON(data []byte) error {
@@ -1541,6 +2002,13 @@ func (u *UserListResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*u = UserListResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+
 	u._rawJSON = json.RawMessage(data)
 	return nil
 }
