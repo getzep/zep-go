@@ -37,8 +37,6 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AddMemoryRequest = interface{}
-
 type AddedFact = interface{}
 
 type ApidataDocument struct {
@@ -665,6 +663,12 @@ func (f *FactsResponse) String() string {
 	return fmt.Sprintf("%#v", f)
 }
 
+type GraphDataTypeJSON = interface{}
+
+type GraphDataTypeMessage = interface{}
+
+type GraphDataTypeText = interface{}
+
 type GraphSearchResults struct {
 	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
 	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
@@ -850,7 +854,7 @@ func (m MemoryType) Ptr() *MemoryType {
 
 type Message struct {
 	// The content of the message.
-	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	Content string `json:"content" url:"content"`
 	// The timestamp of when the message was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The metadata associated with the message.
@@ -858,7 +862,7 @@ type Message struct {
 	// The role of the sender of the message (e.g., "user", "assistant").
 	Role *string `json:"role,omitempty" url:"role,omitempty"`
 	// The type of the role (e.g., "user", "system").
-	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
+	RoleType RoleType `json:"role_type" url:"role_type"`
 	// The number of tokens in the message.
 	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
 	// The timestamp of when the message was last updated.

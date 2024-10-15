@@ -1010,7 +1010,7 @@ func (c *Client) Add(
 	ctx context.Context,
 	// The ID of the session to which memory should be added.
 	sessionID string,
-	request *v2.ApidataAddMemoryRequest,
+	request *v2.AddMemoryRequest,
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)

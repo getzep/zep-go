@@ -2,7 +2,7 @@
 
 package zep
 
-type ApidataAddMemoryRequest struct {
+type AddMemoryRequest struct {
 	// Additional instruction for generating the facts. Zep Cloud Only, will be ignored on Community Edition.
 	FactInstruction *string `json:"fact_instruction,omitempty" url:"fact_instruction,omitempty"`
 	// A list of message objects, where each message contains a role and content.
