@@ -191,7 +191,7 @@ func (c *Client) Get(
 	// Episode UUID
 	_uuid string,
 	opts ...option.RequestOption,
-) (*v2.EpisodeResponse, error) {
+) (*v2.Episode, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -231,7 +231,7 @@ func (c *Client) Get(
 		return apiError
 	}
 
-	var response *v2.EpisodeResponse
+	var response *v2.Episode
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
