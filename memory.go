@@ -2,12 +2,12 @@
 
 package zep
 
-type AddMemoryRequest struct {
-	// Additional instruction for generating the facts.
+type ApidataAddMemoryRequest struct {
+	// Additional instruction for generating the facts. Zep Cloud Only, will be ignored on Community Edition.
 	FactInstruction *string `json:"fact_instruction,omitempty" url:"fact_instruction,omitempty"`
 	// A list of message objects, where each message contains a role and content.
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	// Additional instruction for generating the summary.
+	// Additional instruction for generating the summary. Zep Cloud Only, will be ignored on Community Edition.
 	SummaryInstruction *string `json:"summary_instruction,omitempty" url:"summary_instruction,omitempty"`
 }
 
@@ -20,6 +20,10 @@ type CreateSessionRequest struct {
 	SessionID string `json:"session_id" url:"session_id"`
 	// The unique identifier of the user associated with the session
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+}
+
+type AddFactsRequest struct {
+	Facts []*NewFact `json:"facts,omitempty" url:"facts,omitempty"`
 }
 
 type EndSessionRequest struct {
@@ -45,8 +49,6 @@ type ExtractDataRequest struct {
 }
 
 type MemoryGetRequest struct {
-	// The type of memory to retrieve: perpetual, summary_retriever, or message_window. Defaults to perpetual.
-	MemoryType *MemoryType `json:"-" url:"memoryType,omitempty"`
 	// The number of most recent memory entries to retrieve.
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 	// The minimum rating by which to filter facts
@@ -54,7 +56,7 @@ type MemoryGetRequest struct {
 }
 
 type MemoryGetSessionFactsRequest struct {
-	// Minimum rating by which to filter facts
+	// Minimum rating by which to filter facts (Zep Cloud only)
 	MinRating *float64 `json:"-" url:"minRating,omitempty"`
 }
 
@@ -91,18 +93,25 @@ type MemorySearchPayload struct {
 
 type SessionSearchQuery struct {
 	// The maximum number of search results to return. Defaults to None (no limit).
-	Limit         *int     `json:"-" url:"limit,omitempty"`
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// The minimum fact rating to filter on. Only supported on cloud. Will be ignored on Community Edition.
 	MinFactRating *float64 `json:"min_fact_rating,omitempty" url:"min_fact_rating,omitempty"`
-	MinScore      *float64 `json:"min_score,omitempty" url:"min_score,omitempty"`
-	MmrLambda     *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
-	// filter on the metadata
+	// The minimum score for search results. Only supported on cloud. Will be ignored on Community Edition.
+	MinScore *float64 `json:"min_score,omitempty" url:"min_score,omitempty"`
+	// The lambda parameter for the MMR Reranking Algorithm. Only supported on cloud. Will be ignored on Community Edition.
+	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	// Record filter on the metadata. Only supported on cloud. Will be ignored on Community Edition.
 	RecordFilter map[string]interface{} `json:"record_filter,omitempty" url:"record_filter,omitempty"`
-	SearchScope  *SearchScope           `json:"search_scope,omitempty" url:"search_scope,omitempty"`
-	SearchType   *SearchType            `json:"search_type,omitempty" url:"search_type,omitempty"`
+	// Search scope. Only supported on cloud. On Community Edition the search scope is always "facts".
+	SearchScope *SearchScope `json:"search_scope,omitempty" url:"search_scope,omitempty"`
+	// Search type. Only supported on cloud. Will be ignored on Community Edition.
+	SearchType *SearchType `json:"search_type,omitempty" url:"search_type,omitempty"`
 	// the session ids to search
 	SessionIDs []string `json:"session_ids,omitempty" url:"session_ids,omitempty"`
-	Text       *string  `json:"text,omitempty" url:"text,omitempty"`
-	UserID     *string  `json:"user_id,omitempty" url:"user_id,omitempty"`
+	// The search text.
+	Text *string `json:"text,omitempty" url:"text,omitempty"`
+	// User ID used to determine which sessions to search. Required on Community Edition.
+	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 }
 
 type MemorySynthesizeQuestionRequest struct {

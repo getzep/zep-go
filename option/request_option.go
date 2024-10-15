@@ -3,7 +3,7 @@
 package option
 
 import (
-	core "github.com/getzep/zep-go/core"
+	core "github.com/getzep/zep-go/v2/core"
 	http "net/http"
 )
 
