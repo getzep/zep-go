@@ -301,7 +301,7 @@ func (c *Client) ListSessions(
 	return response, nil
 }
 
-// End multiple sessions by their IDs
+// End multiple sessions by their IDs.
 func (c *Client) EndSessions(
 	ctx context.Context,
 	request *zepgo.EndSessionsRequest,
@@ -581,14 +581,14 @@ func (c *Client) UpdateSession(
 	return response, nil
 }
 
-// classify a session by session id
+// classify a session by session id.
 func (c *Client) ClassifySession(
 	ctx context.Context,
 	// Session ID
 	sessionID string,
 	request *zepgo.ClassifySessionRequest,
 	opts ...option.RequestOption,
-) (*zepgo.ClassifySessionResponse, error) {
+) (*zepgo.SessionClassification, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -628,7 +628,7 @@ func (c *Client) ClassifySession(
 		return apiError
 	}
 
-	var response *zepgo.ClassifySessionResponse
+	var response *zepgo.SessionClassification
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -647,7 +647,7 @@ func (c *Client) ClassifySession(
 	return response, nil
 }
 
-// End a session by ID
+// End a session by ID.
 func (c *Client) EndSession(
 	ctx context.Context,
 	// Session ID
@@ -866,7 +866,73 @@ func (c *Client) GetSessionFacts(
 	return response, nil
 }
 
-// Returns a memory (latest summary, list of messages and facts for models.MemoryTypePerpetual) for a given session
+// Adds facts to a session
+func (c *Client) AddSessionFacts(
+	ctx context.Context,
+	// Session ID
+	sessionID string,
+	request *zepgo.AddFactsRequest,
+	opts ...option.RequestOption,
+) (*zepgo.SuccessResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.getzep.com/api/v2"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/facts", sessionID)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	errorDecoder := func(statusCode int, body io.Reader) error {
+		raw, err := io.ReadAll(body)
+		if err != nil {
+			return err
+		}
+		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		switch statusCode {
+		case 404:
+			value := new(zepgo.NotFoundError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		case 500:
+			value := new(zepgo.InternalServerError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		}
+		return apiError
+	}
+
+	var response *zepgo.SuccessResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:          endpointURL,
+			Method:       http.MethodPost,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
+			Request:      request,
+			Response:     &response,
+			ErrorDecoder: errorDecoder,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// Returns a memory (latest summary, list of messages and facts) for a given session
 func (c *Client) Get(
 	ctx context.Context,
 	// The ID of the session for which to retrieve memory.
@@ -944,7 +1010,7 @@ func (c *Client) Add(
 	ctx context.Context,
 	// The ID of the session to which memory should be added.
 	sessionID string,
-	request *zepgo.AddMemoryRequest,
+	request *zepgo.ApidataAddMemoryRequest,
 	opts ...option.RequestOption,
 ) (*zepgo.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
@@ -1277,7 +1343,7 @@ func (c *Client) UpdateMessageMetadata(
 	return response, nil
 }
 
-// Search memory for the specified session.
+// Search memory for the specified session. Deprecated, please use search_sessions method instead
 func (c *Client) Search(
 	ctx context.Context,
 	// The ID of the session for which memory should be searched.

@@ -42,7 +42,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) ListCollections(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) ([][]*zepgo.DocumentCollectionResponse, error) {
+) ([][]*zepgo.ApidataDocumentCollection, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -82,7 +82,7 @@ func (c *Client) ListCollections(
 		return apiError
 	}
 
-	var response [][]*zepgo.DocumentCollectionResponse
+	var response [][]*zepgo.ApidataDocumentCollection
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -106,7 +106,7 @@ func (c *Client) GetCollection(
 	// Name of the Document Collection
 	collectionName string,
 	opts ...option.RequestOption,
-) (*zepgo.DocumentCollectionResponse, error) {
+) (*zepgo.ApidataDocumentCollection, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -160,7 +160,7 @@ func (c *Client) GetCollection(
 		return apiError
 	}
 
-	var response *zepgo.DocumentCollectionResponse
+	var response *zepgo.ApidataDocumentCollection
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -423,7 +423,7 @@ func (c *Client) AddDocuments(
 	collectionName string,
 	request []*zepgo.CreateDocumentRequest,
 	opts ...option.RequestOption,
-) ([]string, error) {
+) ([][]string, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -470,7 +470,7 @@ func (c *Client) AddDocuments(
 		return apiError
 	}
 
-	var response []string
+	var response [][]string
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -569,7 +569,7 @@ func (c *Client) BatchGetDocuments(
 	collectionName string,
 	request *zepgo.GetDocumentListRequest,
 	opts ...option.RequestOption,
-) ([]*zepgo.DocumentResponse, error) {
+) ([][]*zepgo.ApidataDocument, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -616,7 +616,7 @@ func (c *Client) BatchGetDocuments(
 		return apiError
 	}
 
-	var response []*zepgo.DocumentResponse
+	var response [][]*zepgo.ApidataDocument
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -709,14 +709,14 @@ func (c *Client) BatchUpdateDocuments(
 }
 
 // Returns specified Document from a DocumentCollection.
-func (c *Client) GetsADocumentFromADocumentCollectionByUUID(
+func (c *Client) GetsADocumentFromADocumentCollectionByUUIDCloudOnly(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
 	// UUID of the Document to be updated
 	documentUUID string,
 	opts ...option.RequestOption,
-) (*zepgo.DocumentResponse, error) {
+) (*zepgo.ApidataDocument, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -767,7 +767,7 @@ func (c *Client) GetsADocumentFromADocumentCollectionByUUID(
 		return apiError
 	}
 
-	var response *zepgo.DocumentResponse
+	var response *zepgo.ApidataDocument
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -870,7 +870,7 @@ func (c *Client) DeleteDocument(
 }
 
 // Updates a Document in a DocumentCollection by UUID
-func (c *Client) UpdatesADocument(
+func (c *Client) UpdatesADocumentCloudOnly(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
@@ -962,7 +962,7 @@ func (c *Client) Search(
 	collectionName string,
 	request *zepgo.DocumentSearchPayload,
 	opts ...option.RequestOption,
-) (*zepgo.DocumentSearchResultPage, error) {
+) (*zepgo.ApidataDocumentSearchResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -1017,7 +1017,7 @@ func (c *Client) Search(
 		return apiError
 	}
 
-	var response *zepgo.DocumentSearchResultPage
+	var response *zepgo.ApidataDocumentSearchResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{

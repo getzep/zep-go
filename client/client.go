@@ -5,6 +5,8 @@ package client
 import (
 	core "github.com/getzep/zep-go/core"
 	document "github.com/getzep/zep-go/document"
+	graphclient "github.com/getzep/zep-go/graph/client"
+	group "github.com/getzep/zep-go/group"
 	memory "github.com/getzep/zep-go/memory"
 	option "github.com/getzep/zep-go/option"
 	user "github.com/getzep/zep-go/user"
@@ -19,6 +21,8 @@ type Client struct {
 
 	Document *document.Client
 	Memory   *memory.Client
+	Graph    *graphclient.Client
+	Group    *group.Client
 	User     *user.Client
 }
 
@@ -38,6 +42,8 @@ func NewClient(opts ...option.RequestOption) *Client {
 		header:   options.ToHeader(),
 		Document: document.NewClient(opts...),
 		Memory:   memory.NewClient(opts...),
+		Graph:    graphclient.NewClient(opts...),
+		Group:    group.NewClient(opts...),
 		User:     user.NewClient(opts...),
 	}
 }
