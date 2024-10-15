@@ -21,7 +21,7 @@ type GraphSearchQuery struct {
 	// weighting for maximal marginal relevance
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
 	// The string to search for (required)
-	Query *string `json:"query,omitempty" url:"query,omitempty"`
+	Query string `json:"query" url:"query"`
 	// Defaults to RRF
 	Reranker *Reranker `json:"reranker,omitempty" url:"reranker,omitempty"`
 	// Defaults to Edges. Nodes and Communities will be added in the future.

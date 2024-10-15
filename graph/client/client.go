@@ -7,12 +7,12 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	zepgo "github.com/getzep/zep-go"
-	core "github.com/getzep/zep-go/core"
-	edge "github.com/getzep/zep-go/graph/edge"
-	episode "github.com/getzep/zep-go/graph/episode"
-	node "github.com/getzep/zep-go/graph/node"
-	option "github.com/getzep/zep-go/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	edge "github.com/getzep/zep-go/v2/graph/edge"
+	episode "github.com/getzep/zep-go/v2/graph/episode"
+	node "github.com/getzep/zep-go/v2/graph/node"
+	option "github.com/getzep/zep-go/v2/option"
 	io "io"
 	http "net/http"
 	os "os"
@@ -51,9 +51,9 @@ func NewClient(opts ...option.RequestOption) *Client {
 // Add data to the graph
 func (c *Client) Add(
 	ctx context.Context,
-	request *zepgo.AddDataRequest,
+	request *v2.AddDataRequest,
 	opts ...option.RequestOption,
-) (*zepgo.SuccessResponse, error) {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -76,14 +76,14 @@ func (c *Client) Add(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(zepgo.BadRequestError)
+			value := new(v2.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -93,7 +93,7 @@ func (c *Client) Add(
 		return apiError
 	}
 
-	var response *zepgo.SuccessResponse
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -115,9 +115,9 @@ func (c *Client) Add(
 // Perform a graph search query
 func (c *Client) Search(
 	ctx context.Context,
-	request *zepgo.GraphSearchQuery,
+	request *v2.GraphSearchQuery,
 	opts ...option.RequestOption,
-) (*zepgo.GraphSearchResults, error) {
+) (*v2.GraphSearchResults, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -140,14 +140,14 @@ func (c *Client) Search(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(zepgo.BadRequestError)
+			value := new(v2.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -157,7 +157,7 @@ func (c *Client) Search(
 		return apiError
 	}
 
-	var response *zepgo.GraphSearchResults
+	var response *v2.GraphSearchResults
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{

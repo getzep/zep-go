@@ -7,9 +7,9 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	zepgo "github.com/getzep/zep-go"
-	core "github.com/getzep/zep-go/core"
-	option "github.com/getzep/zep-go/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	option "github.com/getzep/zep-go/v2/option"
 	io "io"
 	http "net/http"
 	os "os"
@@ -41,9 +41,9 @@ func NewClient(opts ...option.RequestOption) *Client {
 // Create a new user group
 func (c *Client) Add(
 	ctx context.Context,
-	request *zepgo.CreateGroupRequest,
+	request *v2.CreateGroupRequest,
 	opts ...option.RequestOption,
-) (*zepgo.Group, error) {
+) (*v2.Group, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -66,14 +66,14 @@ func (c *Client) Add(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(zepgo.BadRequestError)
+			value := new(v2.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -83,7 +83,7 @@ func (c *Client) Add(
 		return apiError
 	}
 
-	var response *zepgo.Group
+	var response *v2.Group
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -107,9 +107,9 @@ func (c *Client) Update(
 	ctx context.Context,
 	// Group ID
 	groupID string,
-	request *zepgo.UpdateGroupRequest,
+	request *v2.UpdateGroupRequest,
 	opts ...option.RequestOption,
-) (*zepgo.Group, error) {
+) (*v2.Group, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -132,21 +132,21 @@ func (c *Client) Update(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(zepgo.BadRequestError)
+			value := new(v2.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 404:
-			value := new(zepgo.NotFoundError)
+			value := new(v2.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -156,7 +156,7 @@ func (c *Client) Update(
 		return apiError
 	}
 
-	var response *zepgo.Group
+	var response *v2.Group
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{

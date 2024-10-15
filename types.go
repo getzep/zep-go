@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	core "github.com/getzep/zep-go/core"
+	core "github.com/getzep/zep-go/v2/core"
 )
 
 type APIError struct {
@@ -330,23 +330,23 @@ func (e *EndSessionsResponse) String() string {
 
 type EntityEdge struct {
 	// Creation time of the edge
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreatedAt string `json:"created_at" url:"created_at"`
 	// List of episode ids that reference these entity edges
 	Episodes []string `json:"episodes,omitempty" url:"episodes,omitempty"`
 	// Datetime of when the node was invalidated
 	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
 	// Fact representing the edge and nodes that it connects
-	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	Fact string `json:"fact" url:"fact"`
 	// Datetime of when the fact stopped being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// Name of the edge, relation name
-	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	Name string `json:"name" url:"name"`
 	// UUID of the source node
-	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
 	// UUID of the target node
-	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	TargetNodeUUID string `json:"target_node_uuid" url:"target_node_uuid"`
 	// UUID of the edge
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	UUID string `json:"uuid" url:"uuid"`
 	// Datetime of when the fact became true
 	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
@@ -378,15 +378,15 @@ func (e *EntityEdge) String() string {
 
 type EntityNode struct {
 	// Creation time of the node
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreatedAt string `json:"created_at" url:"created_at"`
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
 	// Name of the node
-	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	Name string `json:"name" url:"name"`
 	// Regional summary of surrounding edges
-	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	Summary string `json:"summary" url:"summary"`
 	// UUID of the node
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	UUID string `json:"uuid" url:"uuid"`
 
 	_rawJSON json.RawMessage
 }
@@ -415,12 +415,12 @@ func (e *EntityNode) String() string {
 }
 
 type Episode struct {
-	Content           *string      `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt         *string      `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Name              *string      `json:"name,omitempty" url:"name,omitempty"`
-	Source            *EpisodeType `json:"source,omitempty" url:"source,omitempty"`
-	SourceDescription *string      `json:"source_description,omitempty" url:"source_description,omitempty"`
-	UUID              *string      `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Content           string      `json:"content" url:"content"`
+	CreatedAt         string      `json:"created_at" url:"created_at"`
+	Name              string      `json:"name" url:"name"`
+	Source            EpisodeType `json:"source" url:"source"`
+	SourceDescription string      `json:"source_description" url:"source_description"`
+	UUID              string      `json:"uuid" url:"uuid"`
 
 	_rawJSON json.RawMessage
 }

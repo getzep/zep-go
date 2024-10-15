@@ -7,9 +7,9 @@ import (
 	context "context"
 	json "encoding/json"
 	errors "errors"
-	zepgo "github.com/getzep/zep-go"
-	core "github.com/getzep/zep-go/core"
-	option "github.com/getzep/zep-go/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	option "github.com/getzep/zep-go/v2/option"
 	io "io"
 	http "net/http"
 	os "os"
@@ -41,9 +41,9 @@ func NewClient(opts ...option.RequestOption) *Client {
 // Add a user.
 func (c *Client) Add(
 	ctx context.Context,
-	request *zepgo.CreateUserRequest,
+	request *v2.CreateUserRequest,
 	opts ...option.RequestOption,
-) (*zepgo.User, error) {
+) (*v2.User, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -66,14 +66,14 @@ func (c *Client) Add(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(zepgo.BadRequestError)
+			value := new(v2.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -83,7 +83,7 @@ func (c *Client) Add(
 		return apiError
 	}
 
-	var response *zepgo.User
+	var response *v2.User
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -105,9 +105,9 @@ func (c *Client) Add(
 // List all users with pagination.
 func (c *Client) ListOrdered(
 	ctx context.Context,
-	request *zepgo.UserListOrderedRequest,
+	request *v2.UserListOrderedRequest,
 	opts ...option.RequestOption,
-) (*zepgo.UserListResponse, error) {
+) (*v2.UserListResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -138,14 +138,14 @@ func (c *Client) ListOrdered(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(zepgo.BadRequestError)
+			value := new(v2.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -155,7 +155,7 @@ func (c *Client) ListOrdered(
 		return apiError
 	}
 
-	var response *zepgo.UserListResponse
+	var response *v2.UserListResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -179,7 +179,7 @@ func (c *Client) Get(
 	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
-) (*zepgo.User, error) {
+) (*v2.User, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -202,14 +202,14 @@ func (c *Client) Get(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(zepgo.NotFoundError)
+			value := new(v2.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -219,7 +219,7 @@ func (c *Client) Get(
 		return apiError
 	}
 
-	var response *zepgo.User
+	var response *v2.User
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -243,7 +243,7 @@ func (c *Client) Delete(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (*zepgo.SuccessResponse, error) {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -266,14 +266,14 @@ func (c *Client) Delete(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(zepgo.NotFoundError)
+			value := new(v2.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -283,7 +283,7 @@ func (c *Client) Delete(
 		return apiError
 	}
 
-	var response *zepgo.SuccessResponse
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -306,9 +306,9 @@ func (c *Client) Update(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *zepgo.UpdateUserRequest,
+	request *v2.UpdateUserRequest,
 	opts ...option.RequestOption,
-) (*zepgo.User, error) {
+) (*v2.User, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -331,21 +331,21 @@ func (c *Client) Update(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 400:
-			value := new(zepgo.BadRequestError)
+			value := new(v2.BadRequestError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 404:
-			value := new(zepgo.NotFoundError)
+			value := new(v2.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -355,7 +355,7 @@ func (c *Client) Update(
 		return apiError
 	}
 
-	var response *zepgo.User
+	var response *v2.User
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -380,7 +380,7 @@ func (c *Client) GetFacts(
 	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
-) (*zepgo.FactsResponse, error) {
+) (*v2.FactsResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -403,14 +403,14 @@ func (c *Client) GetFacts(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 404:
-			value := new(zepgo.NotFoundError)
+			value := new(v2.NotFoundError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
 			}
 			return value
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -420,7 +420,7 @@ func (c *Client) GetFacts(
 		return apiError
 	}
 
-	var response *zepgo.FactsResponse
+	var response *v2.FactsResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -444,7 +444,7 @@ func (c *Client) GetSessions(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) ([][]*zepgo.Session, error) {
+) ([][]*v2.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -467,7 +467,7 @@ func (c *Client) GetSessions(
 		decoder := json.NewDecoder(bytes.NewReader(raw))
 		switch statusCode {
 		case 500:
-			value := new(zepgo.InternalServerError)
+			value := new(v2.InternalServerError)
 			value.APIError = apiError
 			if err := decoder.Decode(value); err != nil {
 				return apiError
@@ -477,7 +477,7 @@ func (c *Client) GetSessions(
 		return apiError
 	}
 
-	var response [][]*zepgo.Session
+	var response [][]*v2.Session
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
