@@ -250,9 +250,3 @@ func main() {
 	}
 	fmt.Printf("%+v\n", userFacts.Facts)
 }
-
-type Message struct {
-	Role     string `json:"role"`
-	RoleType string `json:"role_type"`
-	Content  string `json:"content"`
-}
