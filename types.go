@@ -658,12 +658,15 @@ func (e EpisodeType) Ptr() *EpisodeType {
 
 type Fact struct {
 	CreatedAt      *string  `json:"created_at,omitempty" url:"created_at,omitempty"`
+	ExpiredAt      *string  `json:"expired_at,omitempty" url:"expired_at,omitempty"`
 	Fact           *string  `json:"fact,omitempty" url:"fact,omitempty"`
+	InvalidAt      *string  `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	Name           *string  `json:"name,omitempty" url:"name,omitempty"`
 	Rating         *float64 `json:"rating,omitempty" url:"rating,omitempty"`
 	SourceNodeName *string  `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
 	TargetNodeName *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
 	UUID           *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
+	ValidAt        *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
