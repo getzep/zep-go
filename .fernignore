@@ -3,5 +3,5 @@
 README.md
 
 .gitignore
-/examples
+examples/
 LICENSE
