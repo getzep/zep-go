@@ -2,4 +2,6 @@
 
 README.md
 
+.gitignore
+examples/
 LICENSE

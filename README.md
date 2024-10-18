@@ -83,9 +83,7 @@ _, err = client.Memory.Add(ctx, "session_id", &zep.AddMemoryRequest{
 ## Get Memory
 
 ```go
-memory, err := client.Memory.Get(ctx, "session_id", &zep.MemoryGetRequest{
-    MemoryType: zep.MemoryGetRequestMemoryTypePerpetual.Ptr(),
-})
+memory, err := client.Memory.Get(ctx, "session_id", nil)
 ```
 
 ## Optionals

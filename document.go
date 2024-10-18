@@ -3,35 +3,35 @@
 package zep
 
 type CreateDocumentCollectionRequest struct {
-	Description *string                `json:"description,omitempty" url:"description,omitempty"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Description *string                `json:"description,omitempty" url:"-"`
+	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }
 
 type GetDocumentListRequest struct {
-	DocumentIDs []string `json:"document_ids,omitempty" url:"document_ids,omitempty"`
-	UUIDs       []string `json:"uuids,omitempty" url:"uuids,omitempty"`
+	DocumentIDs []string `json:"document_ids,omitempty" url:"-"`
+	UUIDs       []string `json:"uuids,omitempty" url:"-"`
 }
 
 type DocumentSearchPayload struct {
 	// Limit the number of returned documents
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Document metadata to filter on.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	MinScore *float64               `json:"min_score,omitempty" url:"min_score,omitempty"`
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
+	MinScore *float64               `json:"min_score,omitempty" url:"-"`
 	// The lambda parameter for the MMR Reranking Algorithm.
-	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
 	// The type of search to perform. Defaults to "similarity". Must be one of "similarity" or "mmr".
-	SearchType *SearchType `json:"search_type,omitempty" url:"search_type,omitempty"`
+	SearchType *SearchType `json:"search_type,omitempty" url:"-"`
 	// The search text.
-	Text *string `json:"text,omitempty" url:"text,omitempty"`
+	Text *string `json:"text,omitempty" url:"-"`
 }
 
 type UpdateDocumentCollectionRequest struct {
-	Description *string                `json:"description,omitempty" url:"description,omitempty"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Description *string                `json:"description,omitempty" url:"-"`
+	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }
 
 type UpdateDocumentRequest struct {
-	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
-	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	DocumentID *string                `json:"document_id,omitempty" url:"-"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }
