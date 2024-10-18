@@ -19,7 +19,7 @@ type CreateSessionRequest struct {
 	// The unique identifier of the session.
 	SessionID string `json:"session_id" url:"-"`
 	// The unique identifier of the user associated with the session
-	UserID *string `json:"user_id,omitempty" url:"-"`
+	UserID string `json:"user_id" url:"-"`
 }
 
 type AddFactsRequest struct {
@@ -109,7 +109,7 @@ type SessionSearchQuery struct {
 	// the session ids to search
 	SessionIDs []string `json:"session_ids,omitempty" url:"-"`
 	// The search text.
-	Text *string `json:"text,omitempty" url:"-"`
+	Text string `json:"text" url:"-"`
 	// User ID used to determine which sessions to search. Required on Community Edition.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }

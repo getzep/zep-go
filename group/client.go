@@ -104,14 +104,13 @@ func (c *Client) Add(
 	return response, nil
 }
 
-// Update group information
-func (c *Client) Update(
+// Delete group
+func (c *Client) Delete(
 	ctx context.Context,
 	// Group ID
 	groupID string,
-	request *v2.UpdateGroupRequest,
 	opts ...option.RequestOption,
-) (*v2.Group, error) {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -158,18 +157,17 @@ func (c *Client) Update(
 		return apiError
 	}
 
-	var response *v2.Group
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:             endpointURL,
-			Method:          http.MethodPatch,
+			Method:          http.MethodDelete,
 			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
-			Request:         request,
 			Response:        &response,
 			ErrorDecoder:    errorDecoder,
 		},

@@ -545,12 +545,12 @@ func (e *EntityNode) String() string {
 }
 
 type Episode struct {
-	Content           string      `json:"content" url:"content"`
-	CreatedAt         string      `json:"created_at" url:"created_at"`
-	Name              string      `json:"name" url:"name"`
-	Source            EpisodeType `json:"source" url:"source"`
-	SourceDescription string      `json:"source_description" url:"source_description"`
-	UUID              string      `json:"uuid" url:"uuid"`
+	Content           *string        `json:"content,omitempty" url:"content,omitempty"`
+	CreatedAt         *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Name              *string        `json:"name,omitempty" url:"name,omitempty"`
+	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
+	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
+	UUID              *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -631,30 +631,7 @@ func (e *EpisodeResponse) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type EpisodeType string
-
-const (
-	EpisodeTypeMessage EpisodeType = "message"
-	EpisodeTypeText    EpisodeType = "text"
-	EpisodeTypeJSON    EpisodeType = "JSON"
-)
-
-func NewEpisodeTypeFromString(s string) (EpisodeType, error) {
-	switch s {
-	case "message":
-		return EpisodeTypeMessage, nil
-	case "text":
-		return EpisodeTypeText, nil
-	case "JSON":
-		return EpisodeTypeJSON, nil
-	}
-	var t EpisodeType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (e EpisodeType) Ptr() *EpisodeType {
-	return &e
-}
+type EpisodeType = interface{}
 
 type Fact struct {
 	CreatedAt      string   `json:"created_at" url:"created_at"`
@@ -1926,6 +1903,8 @@ func (u *UpdateDocumentListRequest) String() string {
 	}
 	return fmt.Sprintf("%#v", u)
 }
+
+type UpdateGroupRequest = interface{}
 
 type User struct {
 	CreatedAt    *string                `json:"created_at,omitempty" url:"created_at,omitempty"`

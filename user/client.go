@@ -456,7 +456,7 @@ func (c *Client) GetSessions(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) ([][]*v2.Session, error) {
+) ([]*v2.Session, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -489,7 +489,7 @@ func (c *Client) GetSessions(
 		return apiError
 	}
 
-	var response [][]*v2.Session
+	var response []*v2.Session
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
