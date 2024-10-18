@@ -545,12 +545,12 @@ func (e *EntityNode) String() string {
 }
 
 type Episode struct {
-	Content           *string        `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt         *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Content           string         `json:"content" url:"content"`
+	CreatedAt         string         `json:"created_at" url:"created_at"`
 	Name              *string        `json:"name,omitempty" url:"name,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
-	UUID              *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	UUID              string         `json:"uuid" url:"uuid"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
