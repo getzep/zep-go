@@ -17,8 +17,7 @@ Zep: Long-Term Memory for ‍AI Assistants.
     alt="Chat on Discord"
   /></a>
   <a href="https://twitter.com/intent/follow?screen_name=zep_ai" target="_new"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/zep_ai"></a>
-  <a href="https://pkg.go.dev/github.com/getzep/zep-go"><img alt="getzep/zep-go" src="https://camo.githubusercontent.com/145a593ba47eebe5e332d41cf466ee8bcdc0df25b2bd18d1a2d3c5003be09a3f/68747470733a2f2f706b672e676f2e6465762f62616467652f6769746875622e636f6d2f7374726970652f7374726970652d676f"></a>
-  <img
+  <a href="https://pkg.go.dev/github.com/getzep/zep-go"><img src="https://pkg.go.dev/badge/github.com/getzep/zep-go.svg" alt="Go Reference"></a>  <img
   src="https://github.com/getzep/zep-go/actions/workflows/ci.yml/badge.svg"
   alt="CI"
   />
