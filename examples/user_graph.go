@@ -102,7 +102,7 @@ func main() {
 	fmt.Printf("%+v\n", episodeResult.Episodes)
 
 	if len(episodeResult.Episodes) > 0 {
-		episode, err := client.Graph.Episode.Get(ctx, episodeResult.Episodes[0].UUID)
+		episode, err := client.Graph.Episode.Get(ctx, *episodeResult.Episodes[0].UUID)
 		if err != nil {
 			fmt.Printf("Error getting episode: %v\n", err)
 			return
