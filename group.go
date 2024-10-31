@@ -4,6 +4,8 @@ package zep
 
 type CreateGroupRequest struct {
 	Description *string `json:"description,omitempty" url:"-"`
-	GroupID     *string `json:"group_id,omitempty" url:"-"`
-	Name        *string `json:"name,omitempty" url:"-"`
+	// UserIDs     []string `json:"user_ids"`
+	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
+	GroupID               *string                       `json:"group_id,omitempty" url:"-"`
+	Name                  *string                       `json:"name,omitempty" url:"-"`
 }

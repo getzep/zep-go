@@ -110,7 +110,7 @@ func (c *Client) DeleteFact(
 	// Fact UUID
 	factUUID string,
 	opts ...option.RequestOption,
-) (string, error) {
+) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -150,7 +150,7 @@ func (c *Client) DeleteFact(
 		return apiError
 	}
 
-	var response string
+	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -165,7 +165,7 @@ func (c *Client) DeleteFact(
 			ErrorDecoder:    errorDecoder,
 		},
 	); err != nil {
-		return "", err
+		return nil, err
 	}
 	return response, nil
 }
