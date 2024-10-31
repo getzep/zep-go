@@ -5,6 +5,8 @@ package zep
 type CreateUserRequest struct {
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
+	// Optional instruction to use for fact rating.
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	// The first name of the user.
 	FirstName *string `json:"first_name,omitempty" url:"-"`
 	// The last name of the user.
@@ -25,6 +27,8 @@ type UserListOrderedRequest struct {
 type UpdateUserRequest struct {
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
+	// Optional instruction to use for fact rating.
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	// The first name of the user.
 	FirstName *string `json:"first_name,omitempty" url:"-"`
 	// The last name of the user.

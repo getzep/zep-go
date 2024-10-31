@@ -246,6 +246,100 @@ func (a *ApidataDocumentWithScore) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type ApidataFactRatingExamples struct {
+	High   *string `json:"high,omitempty" url:"high,omitempty"`
+	Low    *string `json:"low,omitempty" url:"low,omitempty"`
+	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *ApidataFactRatingExamples) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *ApidataFactRatingExamples) UnmarshalJSON(data []byte) error {
+	type unmarshaler ApidataFactRatingExamples
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = ApidataFactRatingExamples(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *ApidataFactRatingExamples) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type ApidataFactRatingInstruction struct {
+	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
+	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
+	// based on relevance to a trip planning application, your examples might be:
+	// High: "Joe's dream vacation is Bali"
+	// Medium: "Joe has a fear of flying",
+	// Low: "Joe's favorite food is Japanese",
+	Examples *ApidataFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
+	// A string describing how to rate facts as they apply to your application. A trip planning application may
+	// use something like "relevancy to planning a trip, the user's preferences when traveling,
+	// or the user's travel history."
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *ApidataFactRatingInstruction) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *ApidataFactRatingInstruction) UnmarshalJSON(data []byte) error {
+	type unmarshaler ApidataFactRatingInstruction
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = ApidataFactRatingInstruction(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *ApidataFactRatingInstruction) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 type ClassifySessionRequest struct {
 	// The classes to use for classification.
 	Classes []string `json:"classes,omitempty" url:"classes,omitempty"`
@@ -634,8 +728,10 @@ func (e *EpisodeResponse) String() string {
 type EpisodeType = interface{}
 
 type Fact struct {
-	CreatedAt      string   `json:"created_at" url:"created_at"`
-	ExpiredAt      *string  `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	Content   string  `json:"content" url:"content"`
+	CreatedAt string  `json:"created_at" url:"created_at"`
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// Deprecated. This field will be removed in the future, please use `content` instead.
 	Fact           string   `json:"fact" url:"fact"`
 	InvalidAt      *string  `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	Name           *string  `json:"name,omitempty" url:"name,omitempty"`
@@ -952,6 +1048,7 @@ type Group struct {
 	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
 	ExternalID  *string `json:"external_id,omitempty" url:"external_id,omitempty"`
+	// TODO deprecate
 	ID          *int    `json:"id,omitempty" url:"id,omitempty"`
 	Name        *string `json:"name,omitempty" url:"name,omitempty"`
 	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
@@ -1413,13 +1510,14 @@ type Session struct {
 	CreatedAt             *string                       `json:"created_at,omitempty" url:"created_at,omitempty"`
 	DeletedAt             *string                       `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
 	EndedAt               *string                       `json:"ended_at,omitempty" url:"ended_at,omitempty"`
-	FactRatingInstruction *SessionFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
 	Facts                 []string                      `json:"facts,omitempty" url:"facts,omitempty"`
-	ID                    *int                          `json:"id,omitempty" url:"id,omitempty"`
-	Metadata              map[string]interface{}        `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProjectUUID           *string                       `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	SessionID             *string                       `json:"session_id,omitempty" url:"session_id,omitempty"`
-	UpdatedAt             *string                       `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// TODO deprecate
+	ID          *int                   `json:"id,omitempty" url:"id,omitempty"`
+	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	SessionID   *string                `json:"session_id,omitempty" url:"session_id,omitempty"`
+	UpdatedAt   *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	// Must be a pointer to allow for null values
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 	UUID   *string `json:"uuid,omitempty" url:"uuid,omitempty"`
@@ -1504,99 +1602,9 @@ func (s *SessionClassification) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
-type SessionFactRatingExamples struct {
-	High   *string `json:"high,omitempty" url:"high,omitempty"`
-	Low    *string `json:"low,omitempty" url:"low,omitempty"`
-	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
+type SessionFactRatingExamples = interface{}
 
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (s *SessionFactRatingExamples) GetExtraProperties() map[string]interface{} {
-	return s.extraProperties
-}
-
-func (s *SessionFactRatingExamples) UnmarshalJSON(data []byte) error {
-	type unmarshaler SessionFactRatingExamples
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*s = SessionFactRatingExamples(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *s)
-	if err != nil {
-		return err
-	}
-	s.extraProperties = extraProperties
-
-	s._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (s *SessionFactRatingExamples) String() string {
-	if len(s._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(s); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", s)
-}
-
-type SessionFactRatingInstruction struct {
-	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
-	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
-	// based on relevance to a trip planning application, your examples might be:
-	// High: "Joe's dream vacation is Bali"
-	// Medium: "Joe has a fear of flying",
-	// Low: "Joe's favorite food is Japanese",
-	Examples *SessionFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
-	// A string describing how to rate facts as they apply to your application. A trip planning application may
-	// use something like "relevancy to planning a trip, the user's preferences when traveling,
-	// or the user's travel history."
-	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (s *SessionFactRatingInstruction) GetExtraProperties() map[string]interface{} {
-	return s.extraProperties
-}
-
-func (s *SessionFactRatingInstruction) UnmarshalJSON(data []byte) error {
-	type unmarshaler SessionFactRatingInstruction
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*s = SessionFactRatingInstruction(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *s)
-	if err != nil {
-		return err
-	}
-	s.extraProperties = extraProperties
-
-	s._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (s *SessionFactRatingInstruction) String() string {
-	if len(s._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(s); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", s)
-}
+type SessionFactRatingInstruction = interface{}
 
 type SessionListResponse struct {
 	ResponseCount *int       `json:"response_count,omitempty" url:"response_count,omitempty"`
