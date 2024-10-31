@@ -61,7 +61,10 @@ import (
 )
 
 client := zepclient.NewClient(
+  // this api key is `api_secret` line from zep.yaml of your local server or your Zep cloud api-key
   option.WithAPIKey("<YOUR_API_KEY>"),
+  // use this to connect to your Zep server locally, not necessary for Zep Cloud
+  option.WithBaseURL("http://localhost:8000/api/v2"), 
 )
 ```
 
