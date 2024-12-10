@@ -2,6 +2,12 @@
 
 package zep
 
+import (
+	json "encoding/json"
+	fmt "fmt"
+	core "github.com/getzep/zep-go/v2/core"
+)
+
 type AddDataRequest struct {
 	Data    *string        `json:"data,omitempty" url:"-"`
 	GroupID *string        `json:"group_id,omitempty" url:"-"`
@@ -14,7 +20,7 @@ type GraphSearchQuery struct {
 	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
 	// one of user_id or group_id must be provided
 	GroupID *string `json:"group_id,omitempty" url:"-"`
-	// The maximum number of facts to retrieve
+	// The maximum number of facts to retrieve. Defaults to 10. Limited to 50.
 	Limit *int `json:"limit,omitempty" url:"-"`
 	// minimum similarity score for a result to be returned
 	MinScore *float64 `json:"min_score,omitempty" url:"-"`
@@ -24,8 +30,103 @@ type GraphSearchQuery struct {
 	Query string `json:"query" url:"-"`
 	// Defaults to RRF
 	Reranker *Reranker `json:"reranker,omitempty" url:"-"`
-	// Defaults to Edges. Nodes and Communities will be added in the future.
+	// Defaults to Edges. Communities will be added in the future.
 	Scope *GraphSearchScope `json:"scope,omitempty" url:"-"`
 	// one of user_id or group_id must be provided
 	UserID *string `json:"user_id,omitempty" url:"-"`
+}
+
+type GraphSearchResults struct {
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphSearchResults
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphSearchResults(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+
+	g._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphSearchResults) String() string {
+	if len(g._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(g._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphSearchScope string
+
+const (
+	GraphSearchScopeEdges GraphSearchScope = "edges"
+	GraphSearchScopeNodes GraphSearchScope = "nodes"
+)
+
+func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
+	switch s {
+	case "edges":
+		return GraphSearchScopeEdges, nil
+	case "nodes":
+		return GraphSearchScopeNodes, nil
+	}
+	var t GraphSearchScope
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphSearchScope) Ptr() *GraphSearchScope {
+	return &g
+}
+
+type Reranker string
+
+const (
+	RerankerRrf             Reranker = "rrf"
+	RerankerMmr             Reranker = "mmr"
+	RerankerNodeDistance    Reranker = "node_distance"
+	RerankerEpisodeMentions Reranker = "episode_mentions"
+	RerankerCrossEncoder    Reranker = "cross_encoder"
+)
+
+func NewRerankerFromString(s string) (Reranker, error) {
+	switch s {
+	case "rrf":
+		return RerankerRrf, nil
+	case "mmr":
+		return RerankerMmr, nil
+	case "node_distance":
+		return RerankerNodeDistance, nil
+	case "episode_mentions":
+		return RerankerEpisodeMentions, nil
+	case "cross_encoder":
+		return RerankerCrossEncoder, nil
+	}
+	var t Reranker
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r Reranker) Ptr() *Reranker {
+	return &r
 }
