@@ -127,24 +127,24 @@ type MemorySynthesizeQuestionRequest struct {
 	LastNMessages *int `json:"-" url:"lastNMessages,omitempty"`
 }
 
-type ApidataAddMemoryResponse struct {
+type AddMemoryResponse struct {
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
 }
 
-func (a *ApidataAddMemoryResponse) GetExtraProperties() map[string]interface{} {
+func (a *AddMemoryResponse) GetExtraProperties() map[string]interface{} {
 	return a.extraProperties
 }
 
-func (a *ApidataAddMemoryResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataAddMemoryResponse
+func (a *AddMemoryResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddMemoryResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataAddMemoryResponse(value)
+	*a = AddMemoryResponse(value)
 
 	extraProperties, err := core.ExtractExtraProperties(data, *a)
 	if err != nil {
@@ -156,7 +156,7 @@ func (a *ApidataAddMemoryResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *ApidataAddMemoryResponse) String() string {
+func (a *AddMemoryResponse) String() string {
 	if len(a._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
 			return value

@@ -1048,7 +1048,7 @@ func (c *Client) Add(
 	sessionID string,
 	request *v2.AddMemoryRequest,
 	opts ...option.RequestOption,
-) (*v2.ApidataAddMemoryResponse, error) {
+) (*v2.AddMemoryResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -1082,7 +1082,7 @@ func (c *Client) Add(
 		return apiError
 	}
 
-	var response *v2.ApidataAddMemoryResponse
+	var response *v2.AddMemoryResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
