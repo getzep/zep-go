@@ -2,11 +2,19 @@
 
 package zep
 
+import (
+	json "encoding/json"
+	fmt "fmt"
+	core "github.com/getzep/zep-go/v2/core"
+)
+
 type AddMemoryRequest struct {
 	// Additional instruction for generating the facts. Zep Cloud Only, will be ignored on Community Edition.
 	FactInstruction *string `json:"fact_instruction,omitempty" url:"-"`
 	// A list of message objects, where each message contains a role and content.
 	Messages []*Message `json:"messages,omitempty" url:"-"`
+	// Optionally return memory context relevant to the most recent messages.
+	ReturnContext *bool `json:"return_context,omitempty" url:"-"`
 	// Additional instruction for generating the summary. Zep Cloud Only, will be ignored on Community Edition.
 	SummaryInstruction *string `json:"summary_instruction,omitempty" url:"-"`
 }
@@ -117,6 +125,825 @@ type SessionSearchQuery struct {
 type MemorySynthesizeQuestionRequest struct {
 	// The number of messages to use for question synthesis.
 	LastNMessages *int `json:"-" url:"lastNMessages,omitempty"`
+}
+
+type AddMemoryResponse struct {
+	Context *string `json:"context,omitempty" url:"context,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AddMemoryResponse) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AddMemoryResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddMemoryResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddMemoryResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddMemoryResponse) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type ClassifySessionRequest struct {
+	// The classes to use for classification.
+	Classes []string `json:"classes,omitempty" url:"classes,omitempty"`
+	// Custom instruction to use for classification.
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+	// The number of session messages to consider for classification. Defaults to 4.
+	LastN *int `json:"last_n,omitempty" url:"last_n,omitempty"`
+	// The name of the classifier. Will be used to store the classification in session metadata if persist is True.
+	Name string `json:"name" url:"name"`
+	// Whether to persist the classification to session metadata. Defaults to True.
+	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *ClassifySessionRequest) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *ClassifySessionRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ClassifySessionRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ClassifySessionRequest(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ClassifySessionRequest) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+type EndSessionResponse struct {
+	Classification *SessionClassification `json:"classification,omitempty" url:"classification,omitempty"`
+	Session        *Session               `json:"session,omitempty" url:"session,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EndSessionResponse) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EndSessionResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler EndSessionResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EndSessionResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EndSessionResponse) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EndSessionsResponse struct {
+	Sessions []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EndSessionsResponse) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EndSessionsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler EndSessionsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EndSessionsResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EndSessionsResponse) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type FactResponse struct {
+	Fact *Fact `json:"fact,omitempty" url:"fact,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (f *FactResponse) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
+}
+
+func (f *FactResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler FactResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = FactResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+
+	f._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *FactResponse) String() string {
+	if len(f._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
+type Memory struct {
+	// Memory context containing relevant facts and entities for the session. Can be put into the prompt directly.
+	Context *string `json:"context,omitempty" url:"context,omitempty"`
+	// Most recent list of facts derived from the session. (cloud only)
+	// Deprecated: Facts will be deprecated in future releases and relevant_facts should be used instead.
+	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
+	// A list of message objects, where each message contains a role and content. Only last_n messages will be returned
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// A dictionary containing metadata associated with the memory.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Most relevant facts to the recent messages in the session.
+	RelevantFacts []*Fact `json:"relevant_facts,omitempty" url:"relevant_facts,omitempty"`
+	// The most recent summary before last nth message. (cloud only)
+	Summary *Summary `json:"summary,omitempty" url:"summary,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *Memory) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *Memory) UnmarshalJSON(data []byte) error {
+	type unmarshaler Memory
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = Memory(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *Memory) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type MemorySearchResult struct {
+	Message  *Message               `json:"message,omitempty" url:"message,omitempty"`
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Score    *float64               `json:"score,omitempty" url:"score,omitempty"`
+	Summary  *Summary               `json:"summary,omitempty" url:"summary,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *MemorySearchResult) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *MemorySearchResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler MemorySearchResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MemorySearchResult(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MemorySearchResult) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type Message struct {
+	// The content of the message.
+	Content string `json:"content" url:"content"`
+	// The timestamp of when the message was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The metadata associated with the message.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The role of the sender of the message (e.g., "user", "assistant").
+	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	// The type of the role (e.g., "user", "system").
+	RoleType RoleType `json:"role_type" url:"role_type"`
+	// The number of tokens in the message.
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	// The timestamp of when the message was last updated.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The unique identifier of the message.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *Message) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *Message) UnmarshalJSON(data []byte) error {
+	type unmarshaler Message
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = Message(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *Message) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type MessageListResponse struct {
+	// A list of message objects.
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// The number of messages returned.
+	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
+	// The total number of messages.
+	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler MessageListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MessageListResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MessageListResponse) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type NewFact struct {
+	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (n *NewFact) GetExtraProperties() map[string]interface{} {
+	return n.extraProperties
+}
+
+func (n *NewFact) UnmarshalJSON(data []byte) error {
+	type unmarshaler NewFact
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NewFact(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *n)
+	if err != nil {
+		return err
+	}
+	n.extraProperties = extraProperties
+
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NewFact) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type Question struct {
+	Question *string `json:"question,omitempty" url:"question,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (q *Question) GetExtraProperties() map[string]interface{} {
+	return q.extraProperties
+}
+
+func (q *Question) UnmarshalJSON(data []byte) error {
+	type unmarshaler Question
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*q = Question(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *q)
+	if err != nil {
+		return err
+	}
+	q.extraProperties = extraProperties
+
+	q._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (q *Question) String() string {
+	if len(q._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(q._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(q); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", q)
+}
+
+type RoleType string
+
+const (
+	RoleTypeNoRole        RoleType = "norole"
+	RoleTypeSystemRole    RoleType = "system"
+	RoleTypeAssistantRole RoleType = "assistant"
+	RoleTypeUserRole      RoleType = "user"
+	RoleTypeFunctionRole  RoleType = "function"
+	RoleTypeToolRole      RoleType = "tool"
+)
+
+func NewRoleTypeFromString(s string) (RoleType, error) {
+	switch s {
+	case "norole":
+		return RoleTypeNoRole, nil
+	case "system":
+		return RoleTypeSystemRole, nil
+	case "assistant":
+		return RoleTypeAssistantRole, nil
+	case "user":
+		return RoleTypeUserRole, nil
+	case "function":
+		return RoleTypeFunctionRole, nil
+	case "tool":
+		return RoleTypeToolRole, nil
+	}
+	var t RoleType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RoleType) Ptr() *RoleType {
+	return &r
+}
+
+type SearchScope string
+
+const (
+	SearchScopeMessages SearchScope = "messages"
+	SearchScopeSummary  SearchScope = "summary"
+	SearchScopeFacts    SearchScope = "facts"
+)
+
+func NewSearchScopeFromString(s string) (SearchScope, error) {
+	switch s {
+	case "messages":
+		return SearchScopeMessages, nil
+	case "summary":
+		return SearchScopeSummary, nil
+	case "facts":
+		return SearchScopeFacts, nil
+	}
+	var t SearchScope
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SearchScope) Ptr() *SearchScope {
+	return &s
+}
+
+type SessionClassification struct {
+	Class *string `json:"class,omitempty" url:"class,omitempty"`
+	Label *string `json:"label,omitempty" url:"label,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionClassification) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SessionClassification) UnmarshalJSON(data []byte) error {
+	type unmarshaler SessionClassification
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SessionClassification(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SessionClassification) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SessionListResponse struct {
+	ResponseCount *int       `json:"response_count,omitempty" url:"response_count,omitempty"`
+	Sessions      []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
+	TotalCount    *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionListResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SessionListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SessionListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SessionListResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SessionListResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SessionSearchResponse struct {
+	Results []*SessionSearchResult `json:"results,omitempty" url:"results,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionSearchResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SessionSearchResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SessionSearchResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SessionSearchResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SessionSearchResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SessionSearchResult struct {
+	Fact      *Fact    `json:"fact,omitempty" url:"fact,omitempty"`
+	Message   *Message `json:"message,omitempty" url:"message,omitempty"`
+	Score     *float64 `json:"score,omitempty" url:"score,omitempty"`
+	SessionID *string  `json:"session_id,omitempty" url:"session_id,omitempty"`
+	Summary   *Summary `json:"summary,omitempty" url:"summary,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SessionSearchResult) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SessionSearchResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler SessionSearchResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SessionSearchResult(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SessionSearchResult) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type Summary struct {
+	// The content of the summary.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The timestamp of when the summary was created.
+	CreatedAt           *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Metadata            map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	RelatedMessageUUIDs []string               `json:"related_message_uuids,omitempty" url:"related_message_uuids,omitempty"`
+	// The number of tokens in the summary.
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	// The unique identifier of the summary.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *Summary) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *Summary) UnmarshalJSON(data []byte) error {
+	type unmarshaler Summary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = Summary(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *Summary) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SummaryListResponse struct {
+	RowCount   *int       `json:"row_count,omitempty" url:"row_count,omitempty"`
+	Summaries  []*Summary `json:"summaries,omitempty" url:"summaries,omitempty"`
+	TotalCount *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SummaryListResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SummaryListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SummaryListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SummaryListResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SummaryListResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
 }
 
 type ModelsMessageMetadataUpdate struct {

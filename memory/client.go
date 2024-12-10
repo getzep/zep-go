@@ -188,6 +188,7 @@ func (c *Client) AddSession(
 	endpointURL := baseURL + "/sessions"
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -327,6 +328,7 @@ func (c *Client) EndSessions(
 	endpointURL := baseURL + "/sessions/end"
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -408,6 +410,7 @@ func (c *Client) SearchSessions(
 	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -535,6 +538,7 @@ func (c *Client) UpdateSession(
 	endpointURL := core.EncodeURL(baseURL+"/sessions/%v", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -617,6 +621,7 @@ func (c *Client) ClassifySession(
 	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/classify", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -685,6 +690,7 @@ func (c *Client) EndSession(
 	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/end", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -760,6 +766,7 @@ func (c *Client) ExtractData(
 	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/extract", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -910,6 +917,7 @@ func (c *Client) AddSessionFacts(
 	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/facts", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -1040,7 +1048,7 @@ func (c *Client) Add(
 	sessionID string,
 	request *v2.AddMemoryRequest,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v2.AddMemoryResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.getzep.com/api/v2"
@@ -1053,6 +1061,7 @@ func (c *Client) Add(
 	endpointURL := core.EncodeURL(baseURL+"/sessions/%v/memory", sessionID)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -1073,7 +1082,7 @@ func (c *Client) Add(
 		return apiError
 	}
 
-	var response *v2.SuccessResponse
+	var response *v2.AddMemoryResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -1333,6 +1342,7 @@ func (c *Client) UpdateMessageMetadata(
 	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -1409,6 +1419,7 @@ func (c *Client) Search(
 	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)

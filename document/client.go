@@ -202,6 +202,7 @@ func (c *Client) AddCollection(
 	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -364,6 +365,7 @@ func (c *Client) UpdateCollection(
 	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -446,6 +448,7 @@ func (c *Client) AddDocuments(
 	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -521,6 +524,7 @@ func (c *Client) BatchDeleteDocuments(
 	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchDelete", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -596,6 +600,7 @@ func (c *Client) BatchGetDocuments(
 	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchGet", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -671,6 +676,7 @@ func (c *Client) BatchUpdateDocuments(
 	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchUpdate", collectionName)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -917,6 +923,7 @@ func (c *Client) UpdatesADocumentCloudOnly(
 	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -1007,6 +1014,7 @@ func (c *Client) Search(
 	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)

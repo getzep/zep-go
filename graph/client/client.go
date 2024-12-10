@@ -66,6 +66,7 @@ func (c *Client) Add(
 	endpointURL := baseURL + "/graph"
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -114,7 +115,7 @@ func (c *Client) Add(
 	return response, nil
 }
 
-// Perform a graph search query
+// Perform a graph search query.
 func (c *Client) Search(
 	ctx context.Context,
 	request *v2.GraphSearchQuery,
@@ -132,6 +133,7 @@ func (c *Client) Search(
 	endpointURL := baseURL + "/graph/search"
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers.Set("Content-Type", "application/json")
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
