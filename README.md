@@ -50,16 +50,16 @@ This module requires Go version >= 1.13.
 Run the following command to use the Zep Go library in your module:
 
 ```sh
-go get github.com/getzep/zep-go
+go get github.com/getzep/zep-go/v2
 ```
 
 ## Initialize Client
 
 ```go
 import (
-  "github.com/getzep/zep-go"
-  zepclient "github.com/getzep/zep-go/client"
-  "github.com/getzep/zep-go/option"
+  "github.com/getzep/zep-go/v2"
+  zepclient "github.com/getzep/zep-go/v2/client"
+  "github.com/getzep/zep-go/v2/option"
 )
 
 client := zepclient.NewClient(
