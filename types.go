@@ -118,69 +118,6 @@ func (a *ApidataFactRatingExamples) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ApidataFactRatingInstruction struct {
-	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
-	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
-	// based on relevance to a trip planning application, your examples might be:
-	// High: "Joe's dream vacation is Bali"
-	// Medium: "Joe has a fear of flying",
-	// Low: "Joe's favorite food is Japanese",
-	Examples *ApidataFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
-	// A string describing how to rate facts as they apply to your application. A trip planning application may
-	// use something like "relevancy to planning a trip, the user's preferences when traveling,
-	// or the user's travel history."
-	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataFactRatingInstruction) GetExamples() *ApidataFactRatingExamples {
-	if a == nil {
-		return nil
-	}
-	return a.Examples
-}
-
-func (a *ApidataFactRatingInstruction) GetInstruction() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Instruction
-}
-
-func (a *ApidataFactRatingInstruction) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataFactRatingInstruction) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataFactRatingInstruction
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataFactRatingInstruction(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataFactRatingInstruction) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
 type ClassifySessionResponse = interface{}
 
 type CommunityNode = interface{}
@@ -909,12 +846,12 @@ func (s SearchType) Ptr() *SearchType {
 }
 
 type Session struct {
-	Classifications       map[string]string             `json:"classifications,omitempty" url:"classifications,omitempty"`
-	CreatedAt             *string                       `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt             *string                       `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	EndedAt               *string                       `json:"ended_at,omitempty" url:"ended_at,omitempty"`
-	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	Facts                 []string                      `json:"facts,omitempty" url:"facts,omitempty"`
+	Classifications       map[string]string      `json:"classifications,omitempty" url:"classifications,omitempty"`
+	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt             *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	EndedAt               *string                `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	Facts                 []string               `json:"facts,omitempty" url:"facts,omitempty"`
 	// TODO deprecate
 	ID          *int                   `json:"id,omitempty" url:"id,omitempty"`
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
@@ -957,7 +894,7 @@ func (s *Session) GetEndedAt() *string {
 	return s.EndedAt
 }
 
-func (s *Session) GetFactRatingInstruction() *ApidataFactRatingInstruction {
+func (s *Session) GetFactRatingInstruction() *FactRatingInstruction {
 	if s == nil {
 		return nil
 	}

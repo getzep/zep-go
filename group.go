@@ -11,9 +11,9 @@ import (
 type CreateGroupRequest struct {
 	Description *string `json:"description,omitempty" url:"-"`
 	// UserIDs     []string `json:"user_ids"`
-	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
-	GroupID               string                        `json:"group_id" url:"-"`
-	Name                  *string                       `json:"name,omitempty" url:"-"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
+	GroupID               string                 `json:"group_id" url:"-"`
+	Name                  *string                `json:"name,omitempty" url:"-"`
 }
 
 type GetGroupsOrderedRequest struct {
@@ -23,74 +23,12 @@ type GetGroupsOrderedRequest struct {
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
 }
 
-type ApidataGroupListResponse struct {
-	Groups     []*Group `json:"groups,omitempty" url:"groups,omitempty"`
-	RowCount   *int     `json:"row_count,omitempty" url:"row_count,omitempty"`
-	TotalCount *int     `json:"total_count,omitempty" url:"total_count,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataGroupListResponse) GetGroups() []*Group {
-	if a == nil {
-		return nil
-	}
-	return a.Groups
-}
-
-func (a *ApidataGroupListResponse) GetRowCount() *int {
-	if a == nil {
-		return nil
-	}
-	return a.RowCount
-}
-
-func (a *ApidataGroupListResponse) GetTotalCount() *int {
-	if a == nil {
-		return nil
-	}
-	return a.TotalCount
-}
-
-func (a *ApidataGroupListResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataGroupListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataGroupListResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataGroupListResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataGroupListResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
 type Group struct {
-	CreatedAt             *string                       `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Description           *string                       `json:"description,omitempty" url:"description,omitempty"`
-	ExternalID            *string                       `json:"external_id,omitempty" url:"external_id,omitempty"`
-	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	GroupID               *string                       `json:"group_id,omitempty" url:"group_id,omitempty"`
+	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Description           *string                `json:"description,omitempty" url:"description,omitempty"`
+	ExternalID            *string                `json:"external_id,omitempty" url:"external_id,omitempty"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	GroupID               *string                `json:"group_id,omitempty" url:"group_id,omitempty"`
 	// TODO deprecate
 	ID          *int    `json:"id,omitempty" url:"id,omitempty"`
 	Name        *string `json:"name,omitempty" url:"name,omitempty"`
@@ -122,7 +60,7 @@ func (g *Group) GetExternalID() *string {
 	return g.ExternalID
 }
 
-func (g *Group) GetFactRatingInstruction() *ApidataFactRatingInstruction {
+func (g *Group) GetFactRatingInstruction() *FactRatingInstruction {
 	if g == nil {
 		return nil
 	}
@@ -185,6 +123,68 @@ func (g *Group) UnmarshalJSON(data []byte) error {
 }
 
 func (g *Group) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GroupListResponse struct {
+	Groups     []*Group `json:"groups,omitempty" url:"groups,omitempty"`
+	RowCount   *int     `json:"row_count,omitempty" url:"row_count,omitempty"`
+	TotalCount *int     `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GroupListResponse) GetGroups() []*Group {
+	if g == nil {
+		return nil
+	}
+	return g.Groups
+}
+
+func (g *GroupListResponse) GetRowCount() *int {
+	if g == nil {
+		return nil
+	}
+	return g.RowCount
+}
+
+func (g *GroupListResponse) GetTotalCount() *int {
+	if g == nil {
+		return nil
+	}
+	return g.TotalCount
+}
+
+func (g *GroupListResponse) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GroupListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler GroupListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GroupListResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GroupListResponse) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value

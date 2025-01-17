@@ -92,7 +92,7 @@ func (c *Client) ListAllGroups(
 	ctx context.Context,
 	request *v2.GetGroupsOrderedRequest,
 	opts ...option.RequestOption,
-) (*v2.ApidataGroupListResponse, error) {
+) (*v2.GroupListResponse, error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -124,7 +124,7 @@ func (c *Client) ListAllGroups(
 		},
 	}
 
-	var response *v2.ApidataGroupListResponse
+	var response *v2.GroupListResponse
 	if err := c.caller.Call(
 		ctx,
 		&internal.CallParams{
