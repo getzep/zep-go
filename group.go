@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
 )
 
 type CreateGroupRequest struct {
@@ -16,10 +16,81 @@ type CreateGroupRequest struct {
 	Name                  *string                       `json:"name,omitempty" url:"-"`
 }
 
+type GetGroupsOrderedRequest struct {
+	// Page number for pagination, starting from 1
+	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
+	// Number of groups to retrieve per page
+	PageSize *int `json:"-" url:"pageSize,omitempty"`
+}
+
+type ApidataGroupListResponse struct {
+	Groups     []*Group `json:"groups,omitempty" url:"groups,omitempty"`
+	RowCount   *int     `json:"row_count,omitempty" url:"row_count,omitempty"`
+	TotalCount *int     `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *ApidataGroupListResponse) GetGroups() []*Group {
+	if a == nil {
+		return nil
+	}
+	return a.Groups
+}
+
+func (a *ApidataGroupListResponse) GetRowCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.RowCount
+}
+
+func (a *ApidataGroupListResponse) GetTotalCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.TotalCount
+}
+
+func (a *ApidataGroupListResponse) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *ApidataGroupListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ApidataGroupListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = ApidataGroupListResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *ApidataGroupListResponse) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 type Group struct {
-	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	ExternalID  *string `json:"external_id,omitempty" url:"external_id,omitempty"`
+	CreatedAt             *string                       `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Description           *string                       `json:"description,omitempty" url:"description,omitempty"`
+	ExternalID            *string                       `json:"external_id,omitempty" url:"external_id,omitempty"`
+	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	GroupID               *string                       `json:"group_id,omitempty" url:"group_id,omitempty"`
 	// TODO deprecate
 	ID          *int    `json:"id,omitempty" url:"id,omitempty"`
 	Name        *string `json:"name,omitempty" url:"name,omitempty"`
@@ -27,7 +98,70 @@ type Group struct {
 	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (g *Group) GetCreatedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedAt
+}
+
+func (g *Group) GetDescription() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Description
+}
+
+func (g *Group) GetExternalID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ExternalID
+}
+
+func (g *Group) GetFactRatingInstruction() *ApidataFactRatingInstruction {
+	if g == nil {
+		return nil
+	}
+	return g.FactRatingInstruction
+}
+
+func (g *Group) GetGroupID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.GroupID
+}
+
+func (g *Group) GetID() *int {
+	if g == nil {
+		return nil
+	}
+	return g.ID
+}
+
+func (g *Group) GetName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Name
+}
+
+func (g *Group) GetProjectUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ProjectUUID
+}
+
+func (g *Group) GetUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUID
 }
 
 func (g *Group) GetExtraProperties() map[string]interface{} {
@@ -41,24 +175,22 @@ func (g *Group) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*g = Group(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *g)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
 	if err != nil {
 		return err
 	}
 	g.extraProperties = extraProperties
-
-	g._rawJSON = json.RawMessage(data)
+	g.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (g *Group) String() string {
-	if len(g._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(g._rawJSON); err == nil {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(g); err == nil {
+	if value, err := internal.StringifyJSON(g); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", g)

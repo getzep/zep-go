@@ -7,6 +7,7 @@ import (
 	document "github.com/getzep/zep-go/v2/document"
 	graphclient "github.com/getzep/zep-go/v2/graph/client"
 	group "github.com/getzep/zep-go/v2/group"
+	internal "github.com/getzep/zep-go/v2/internal"
 	memory "github.com/getzep/zep-go/v2/memory"
 	option "github.com/getzep/zep-go/v2/option"
 	user "github.com/getzep/zep-go/v2/user"
@@ -16,7 +17,7 @@ import (
 
 type Client struct {
 	baseURL string
-	caller  *core.Caller
+	caller  *internal.Caller
 	header  http.Header
 
 	Document *document.Client
@@ -33,8 +34,8 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 	return &Client{
 		baseURL: options.BaseURL,
-		caller: core.NewCaller(
-			&core.CallerParams{
+		caller: internal.NewCaller(
+			&internal.CallerParams{
 				Client:      options.HTTPClient,
 				MaxAttempts: options.MaxAttempts,
 			},
