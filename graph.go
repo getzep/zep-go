@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
 )
 
 type AddDataRequest struct {
@@ -41,7 +41,21 @@ type GraphSearchResults struct {
 	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphSearchResults) GetEdges() []*EntityEdge {
+	if g == nil {
+		return nil
+	}
+	return g.Edges
+}
+
+func (g *GraphSearchResults) GetNodes() []*EntityNode {
+	if g == nil {
+		return nil
+	}
+	return g.Nodes
 }
 
 func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
@@ -55,24 +69,22 @@ func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*g = GraphSearchResults(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *g)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
 	if err != nil {
 		return err
 	}
 	g.extraProperties = extraProperties
-
-	g._rawJSON = json.RawMessage(data)
+	g.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (g *GraphSearchResults) String() string {
-	if len(g._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(g._rawJSON); err == nil {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(g); err == nil {
+	if value, err := internal.StringifyJSON(g); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", g)

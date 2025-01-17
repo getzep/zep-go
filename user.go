@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
 )
 
 type CreateUserRequest struct {
@@ -46,7 +46,98 @@ type User struct {
 	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (u *User) GetCreatedAt() *string {
+	if u == nil {
+		return nil
+	}
+	return u.CreatedAt
+}
+
+func (u *User) GetDeletedAt() *string {
+	if u == nil {
+		return nil
+	}
+	return u.DeletedAt
+}
+
+func (u *User) GetEmail() *string {
+	if u == nil {
+		return nil
+	}
+	return u.Email
+}
+
+func (u *User) GetFactRatingInstruction() *FactRatingInstruction {
+	if u == nil {
+		return nil
+	}
+	return u.FactRatingInstruction
+}
+
+func (u *User) GetFirstName() *string {
+	if u == nil {
+		return nil
+	}
+	return u.FirstName
+}
+
+func (u *User) GetID() *int {
+	if u == nil {
+		return nil
+	}
+	return u.ID
+}
+
+func (u *User) GetLastName() *string {
+	if u == nil {
+		return nil
+	}
+	return u.LastName
+}
+
+func (u *User) GetMetadata() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
+	return u.Metadata
+}
+
+func (u *User) GetProjectUUID() *string {
+	if u == nil {
+		return nil
+	}
+	return u.ProjectUUID
+}
+
+func (u *User) GetSessionCount() *int {
+	if u == nil {
+		return nil
+	}
+	return u.SessionCount
+}
+
+func (u *User) GetUpdatedAt() *string {
+	if u == nil {
+		return nil
+	}
+	return u.UpdatedAt
+}
+
+func (u *User) GetUserID() *string {
+	if u == nil {
+		return nil
+	}
+	return u.UserID
+}
+
+func (u *User) GetUUID() *string {
+	if u == nil {
+		return nil
+	}
+	return u.UUID
 }
 
 func (u *User) GetExtraProperties() map[string]interface{} {
@@ -60,24 +151,22 @@ func (u *User) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*u = User(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *u)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
 	if err != nil {
 		return err
 	}
 	u.extraProperties = extraProperties
-
-	u._rawJSON = json.RawMessage(data)
+	u.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (u *User) String() string {
-	if len(u._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(u); err == nil {
+	if value, err := internal.StringifyJSON(u); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", u)
@@ -89,7 +178,28 @@ type UserListResponse struct {
 	Users      []*User `json:"users,omitempty" url:"users,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (u *UserListResponse) GetRowCount() *int {
+	if u == nil {
+		return nil
+	}
+	return u.RowCount
+}
+
+func (u *UserListResponse) GetTotalCount() *int {
+	if u == nil {
+		return nil
+	}
+	return u.TotalCount
+}
+
+func (u *UserListResponse) GetUsers() []*User {
+	if u == nil {
+		return nil
+	}
+	return u.Users
 }
 
 func (u *UserListResponse) GetExtraProperties() map[string]interface{} {
@@ -103,24 +213,22 @@ func (u *UserListResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*u = UserListResponse(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *u)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
 	if err != nil {
 		return err
 	}
 	u.extraProperties = extraProperties
-
-	u._rawJSON = json.RawMessage(data)
+	u.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (u *UserListResponse) String() string {
-	if len(u._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(u); err == nil {
+	if value, err := internal.StringifyJSON(u); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", u)

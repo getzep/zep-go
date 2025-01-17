@@ -5,14 +5,21 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
 )
 
 type APIError struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (a *APIError) GetMessage() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Message
 }
 
 func (a *APIError) GetExtraProperties() map[string]interface{} {
@@ -26,24 +33,22 @@ func (a *APIError) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = APIError(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
 	}
 	a.extraProperties = extraProperties
-
-	a._rawJSON = json.RawMessage(data)
+	a.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (a *APIError) String() string {
-	if len(a._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(a); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
@@ -57,7 +62,28 @@ type ApidataFactRatingExamples struct {
 	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (a *ApidataFactRatingExamples) GetHigh() *string {
+	if a == nil {
+		return nil
+	}
+	return a.High
+}
+
+func (a *ApidataFactRatingExamples) GetLow() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Low
+}
+
+func (a *ApidataFactRatingExamples) GetMedium() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Medium
 }
 
 func (a *ApidataFactRatingExamples) GetExtraProperties() map[string]interface{} {
@@ -71,75 +97,22 @@ func (a *ApidataFactRatingExamples) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataFactRatingExamples(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
 	}
 	a.extraProperties = extraProperties
-
-	a._rawJSON = json.RawMessage(data)
+	a.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (a *ApidataFactRatingExamples) String() string {
-	if len(a._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
-type ApidataFactRatingInstruction struct {
-	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
-	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
-	// based on relevance to a trip planning application, your examples might be:
-	// High: "Joe's dream vacation is Bali"
-	// Medium: "Joe has a fear of flying",
-	// Low: "Joe's favorite food is Japanese",
-	Examples *ApidataFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
-	// A string describing how to rate facts as they apply to your application. A trip planning application may
-	// use something like "relevancy to planning a trip, the user's preferences when traveling,
-	// or the user's travel history."
-	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (a *ApidataFactRatingInstruction) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataFactRatingInstruction) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataFactRatingInstruction
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataFactRatingInstruction(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-
-	a._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataFactRatingInstruction) String() string {
-	if len(a._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(a); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
@@ -180,7 +153,77 @@ type EntityEdge struct {
 	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (e *EntityEdge) GetCreatedAt() string {
+	if e == nil {
+		return ""
+	}
+	return e.CreatedAt
+}
+
+func (e *EntityEdge) GetEpisodes() []string {
+	if e == nil {
+		return nil
+	}
+	return e.Episodes
+}
+
+func (e *EntityEdge) GetExpiredAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ExpiredAt
+}
+
+func (e *EntityEdge) GetFact() string {
+	if e == nil {
+		return ""
+	}
+	return e.Fact
+}
+
+func (e *EntityEdge) GetInvalidAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.InvalidAt
+}
+
+func (e *EntityEdge) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+func (e *EntityEdge) GetSourceNodeUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.SourceNodeUUID
+}
+
+func (e *EntityEdge) GetTargetNodeUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.TargetNodeUUID
+}
+
+func (e *EntityEdge) GetUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.UUID
+}
+
+func (e *EntityEdge) GetValidAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ValidAt
 }
 
 func (e *EntityEdge) GetExtraProperties() map[string]interface{} {
@@ -194,24 +237,22 @@ func (e *EntityEdge) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = EntityEdge(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
 	}
 	e.extraProperties = extraProperties
-
-	e._rawJSON = json.RawMessage(data)
+	e.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (e *EntityEdge) String() string {
-	if len(e._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(e); err == nil {
+	if value, err := internal.StringifyJSON(e); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", e)
@@ -230,7 +271,42 @@ type EntityNode struct {
 	UUID string `json:"uuid" url:"uuid"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (e *EntityNode) GetCreatedAt() string {
+	if e == nil {
+		return ""
+	}
+	return e.CreatedAt
+}
+
+func (e *EntityNode) GetLabels() []string {
+	if e == nil {
+		return nil
+	}
+	return e.Labels
+}
+
+func (e *EntityNode) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+func (e *EntityNode) GetSummary() string {
+	if e == nil {
+		return ""
+	}
+	return e.Summary
+}
+
+func (e *EntityNode) GetUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.UUID
 }
 
 func (e *EntityNode) GetExtraProperties() map[string]interface{} {
@@ -244,24 +320,22 @@ func (e *EntityNode) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = EntityNode(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
 	}
 	e.extraProperties = extraProperties
-
-	e._rawJSON = json.RawMessage(data)
+	e.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (e *EntityNode) String() string {
-	if len(e._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(e); err == nil {
+	if value, err := internal.StringifyJSON(e); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", e)
@@ -276,7 +350,49 @@ type Episode struct {
 	UUID              string         `json:"uuid" url:"uuid"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (e *Episode) GetContent() string {
+	if e == nil {
+		return ""
+	}
+	return e.Content
+}
+
+func (e *Episode) GetCreatedAt() string {
+	if e == nil {
+		return ""
+	}
+	return e.CreatedAt
+}
+
+func (e *Episode) GetName() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Name
+}
+
+func (e *Episode) GetSource() *GraphDataType {
+	if e == nil {
+		return nil
+	}
+	return e.Source
+}
+
+func (e *Episode) GetSourceDescription() *string {
+	if e == nil {
+		return nil
+	}
+	return e.SourceDescription
+}
+
+func (e *Episode) GetUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.UUID
 }
 
 func (e *Episode) GetExtraProperties() map[string]interface{} {
@@ -290,24 +406,22 @@ func (e *Episode) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = Episode(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
 	}
 	e.extraProperties = extraProperties
-
-	e._rawJSON = json.RawMessage(data)
+	e.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (e *Episode) String() string {
-	if len(e._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(e); err == nil {
+	if value, err := internal.StringifyJSON(e); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", e)
@@ -317,7 +431,14 @@ type EpisodeResponse struct {
 	Episodes []*Episode `json:"episodes,omitempty" url:"episodes,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeResponse) GetEpisodes() []*Episode {
+	if e == nil {
+		return nil
+	}
+	return e.Episodes
 }
 
 func (e *EpisodeResponse) GetExtraProperties() map[string]interface{} {
@@ -331,24 +452,22 @@ func (e *EpisodeResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*e = EpisodeResponse(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
 	}
 	e.extraProperties = extraProperties
-
-	e._rawJSON = json.RawMessage(data)
+	e.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (e *EpisodeResponse) String() string {
-	if len(e._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(e); err == nil {
+	if value, err := internal.StringifyJSON(e); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", e)
@@ -371,7 +490,84 @@ type Fact struct {
 	ValidAt        *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (f *Fact) GetContent() string {
+	if f == nil {
+		return ""
+	}
+	return f.Content
+}
+
+func (f *Fact) GetCreatedAt() string {
+	if f == nil {
+		return ""
+	}
+	return f.CreatedAt
+}
+
+func (f *Fact) GetExpiredAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.ExpiredAt
+}
+
+func (f *Fact) GetFact() string {
+	if f == nil {
+		return ""
+	}
+	return f.Fact
+}
+
+func (f *Fact) GetInvalidAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.InvalidAt
+}
+
+func (f *Fact) GetName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Name
+}
+
+func (f *Fact) GetRating() *float64 {
+	if f == nil {
+		return nil
+	}
+	return f.Rating
+}
+
+func (f *Fact) GetSourceNodeName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.SourceNodeName
+}
+
+func (f *Fact) GetTargetNodeName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.TargetNodeName
+}
+
+func (f *Fact) GetUUID() string {
+	if f == nil {
+		return ""
+	}
+	return f.UUID
+}
+
+func (f *Fact) GetValidAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.ValidAt
 }
 
 func (f *Fact) GetExtraProperties() map[string]interface{} {
@@ -385,24 +581,22 @@ func (f *Fact) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = Fact(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
 	if err != nil {
 		return err
 	}
 	f.extraProperties = extraProperties
-
-	f._rawJSON = json.RawMessage(data)
+	f.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (f *Fact) String() string {
-	if len(f._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(f); err == nil {
+	if value, err := internal.StringifyJSON(f); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", f)
@@ -414,7 +608,28 @@ type FactRatingExamples struct {
 	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (f *FactRatingExamples) GetHigh() *string {
+	if f == nil {
+		return nil
+	}
+	return f.High
+}
+
+func (f *FactRatingExamples) GetLow() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Low
+}
+
+func (f *FactRatingExamples) GetMedium() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Medium
 }
 
 func (f *FactRatingExamples) GetExtraProperties() map[string]interface{} {
@@ -428,24 +643,22 @@ func (f *FactRatingExamples) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = FactRatingExamples(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
 	if err != nil {
 		return err
 	}
 	f.extraProperties = extraProperties
-
-	f._rawJSON = json.RawMessage(data)
+	f.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (f *FactRatingExamples) String() string {
-	if len(f._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(f); err == nil {
+	if value, err := internal.StringifyJSON(f); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", f)
@@ -465,7 +678,21 @@ type FactRatingInstruction struct {
 	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (f *FactRatingInstruction) GetExamples() *FactRatingExamples {
+	if f == nil {
+		return nil
+	}
+	return f.Examples
+}
+
+func (f *FactRatingInstruction) GetInstruction() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Instruction
 }
 
 func (f *FactRatingInstruction) GetExtraProperties() map[string]interface{} {
@@ -479,24 +706,22 @@ func (f *FactRatingInstruction) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = FactRatingInstruction(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
 	if err != nil {
 		return err
 	}
 	f.extraProperties = extraProperties
-
-	f._rawJSON = json.RawMessage(data)
+	f.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (f *FactRatingInstruction) String() string {
-	if len(f._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(f); err == nil {
+	if value, err := internal.StringifyJSON(f); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", f)
@@ -506,7 +731,14 @@ type FactsResponse struct {
 	Facts []*Fact `json:"facts,omitempty" url:"facts,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (f *FactsResponse) GetFacts() []*Fact {
+	if f == nil {
+		return nil
+	}
+	return f.Facts
 }
 
 func (f *FactsResponse) GetExtraProperties() map[string]interface{} {
@@ -520,24 +752,22 @@ func (f *FactsResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*f = FactsResponse(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *f)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
 	if err != nil {
 		return err
 	}
 	f.extraProperties = extraProperties
-
-	f._rawJSON = json.RawMessage(data)
+	f.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (f *FactsResponse) String() string {
-	if len(f._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(f._rawJSON); err == nil {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(f); err == nil {
+	if value, err := internal.StringifyJSON(f); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", f)
@@ -616,12 +846,12 @@ func (s SearchType) Ptr() *SearchType {
 }
 
 type Session struct {
-	Classifications       map[string]string             `json:"classifications,omitempty" url:"classifications,omitempty"`
-	CreatedAt             *string                       `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt             *string                       `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	EndedAt               *string                       `json:"ended_at,omitempty" url:"ended_at,omitempty"`
-	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	Facts                 []string                      `json:"facts,omitempty" url:"facts,omitempty"`
+	Classifications       map[string]string      `json:"classifications,omitempty" url:"classifications,omitempty"`
+	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt             *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	EndedAt               *string                `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	Facts                 []string               `json:"facts,omitempty" url:"facts,omitempty"`
 	// TODO deprecate
 	ID          *int                   `json:"id,omitempty" url:"id,omitempty"`
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
@@ -633,7 +863,98 @@ type Session struct {
 	UUID   *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (s *Session) GetClassifications() map[string]string {
+	if s == nil {
+		return nil
+	}
+	return s.Classifications
+}
+
+func (s *Session) GetCreatedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.CreatedAt
+}
+
+func (s *Session) GetDeletedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.DeletedAt
+}
+
+func (s *Session) GetEndedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.EndedAt
+}
+
+func (s *Session) GetFactRatingInstruction() *FactRatingInstruction {
+	if s == nil {
+		return nil
+	}
+	return s.FactRatingInstruction
+}
+
+func (s *Session) GetFacts() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Facts
+}
+
+func (s *Session) GetID() *int {
+	if s == nil {
+		return nil
+	}
+	return s.ID
+}
+
+func (s *Session) GetMetadata() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.Metadata
+}
+
+func (s *Session) GetProjectUUID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.ProjectUUID
+}
+
+func (s *Session) GetSessionID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.SessionID
+}
+
+func (s *Session) GetUpdatedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.UpdatedAt
+}
+
+func (s *Session) GetUserID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.UserID
+}
+
+func (s *Session) GetUUID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.UUID
 }
 
 func (s *Session) GetExtraProperties() map[string]interface{} {
@@ -647,24 +968,22 @@ func (s *Session) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = Session(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
 	if err != nil {
 		return err
 	}
 	s.extraProperties = extraProperties
-
-	s._rawJSON = json.RawMessage(data)
+	s.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (s *Session) String() string {
-	if len(s._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(s); err == nil {
+	if value, err := internal.StringifyJSON(s); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
@@ -678,7 +997,14 @@ type SuccessResponse struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (s *SuccessResponse) GetMessage() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Message
 }
 
 func (s *SuccessResponse) GetExtraProperties() map[string]interface{} {
@@ -692,24 +1018,22 @@ func (s *SuccessResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*s = SuccessResponse(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
 	if err != nil {
 		return err
 	}
 	s.extraProperties = extraProperties
-
-	s._rawJSON = json.RawMessage(data)
+	s.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (s *SuccessResponse) String() string {
-	if len(s._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(s); err == nil {
+	if value, err := internal.StringifyJSON(s); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)

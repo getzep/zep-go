@@ -3,21 +3,18 @@
 package document
 
 import (
-	bytes "bytes"
 	context "context"
-	json "encoding/json"
-	errors "errors"
 	v2 "github.com/getzep/zep-go/v2"
 	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
 	option "github.com/getzep/zep-go/v2/option"
-	io "io"
 	http "net/http"
 	os "os"
 )
 
 type Client struct {
 	baseURL string
-	caller  *core.Caller
+	caller  *internal.Caller
 	header  http.Header
 }
 
@@ -28,8 +25,8 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 	return &Client{
 		baseURL: options.BaseURL,
-		caller: core.NewCaller(
-			&core.CallerParams{
+		caller: internal.NewCaller(
+			&internal.CallerParams{
 				Client:      options.HTTPClient,
 				MaxAttempts: options.MaxAttempts,
 			},
@@ -44,57 +41,42 @@ func (c *Client) ListCollections(
 	opts ...option.RequestOption,
 ) ([][]*v2.ApidataDocumentCollection, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
 	endpointURL := baseURL + "/collections"
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response [][]*v2.ApidataDocumentCollection
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodGet,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -110,71 +92,55 @@ func (c *Client) GetCollection(
 	opts ...option.RequestOption,
 ) (*v2.ApidataDocumentCollection, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v",
+		collectionName,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 404:
-			value := new(v2.NotFoundError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.ApidataDocumentCollection
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodGet,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -191,73 +157,57 @@ func (c *Client) AddCollection(
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v",
+		collectionName,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
 	headers.Set("Content-Type", "application/json")
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 404:
-			value := new(v2.NotFoundError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodPost,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -273,71 +223,55 @@ func (c *Client) DeleteCollection(
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v",
+		collectionName,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 404:
-			value := new(v2.NotFoundError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodDelete,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -354,73 +288,57 @@ func (c *Client) UpdateCollection(
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v", collectionName)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v",
+		collectionName,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
 	headers.Set("Content-Type", "application/json")
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 404:
-			value := new(v2.NotFoundError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodPatch,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -437,66 +355,52 @@ func (c *Client) AddDocuments(
 	opts ...option.RequestOption,
 ) ([][]string, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents", collectionName)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v/documents",
+		collectionName,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
 	headers.Set("Content-Type", "application/json")
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response [][]string
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodPost,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -513,66 +417,52 @@ func (c *Client) BatchDeleteDocuments(
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchDelete", collectionName)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v/documents/batchDelete",
+		collectionName,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
 	headers.Set("Content-Type", "application/json")
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodPost,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -589,66 +479,52 @@ func (c *Client) BatchGetDocuments(
 	opts ...option.RequestOption,
 ) ([][]*v2.ApidataDocument, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchGet", collectionName)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v/documents/batchGet",
+		collectionName,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
 	headers.Set("Content-Type", "application/json")
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response [][]*v2.ApidataDocument
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodPost,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -665,66 +541,52 @@ func (c *Client) BatchUpdateDocuments(
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v/documents/batchUpdate", collectionName)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v/documents/batchUpdate",
+		collectionName,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
 	headers.Set("Content-Type", "application/json")
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodPatch,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -742,68 +604,51 @@ func (c *Client) GetsADocumentFromADocumentCollectionByUUIDCloudOnly(
 	opts ...option.RequestOption,
 ) (*v2.ApidataDocument, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
 		baseURL+"/collections/%v/documents/uuid/%v",
 		collectionName,
 		documentUUID,
 	)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.ApidataDocument
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodGet,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -821,75 +666,56 @@ func (c *Client) DeleteDocument(
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
 		baseURL+"/collections/%v/documents/uuid/%v",
 		collectionName,
 		documentUUID,
 	)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 404:
-			value := new(v2.NotFoundError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodDelete,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -908,77 +734,58 @@ func (c *Client) UpdatesADocumentCloudOnly(
 	opts ...option.RequestOption,
 ) (*v2.SuccessResponse, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
 		baseURL+"/collections/%v/documents/uuid/%v",
 		collectionName,
 		documentUUID,
 	)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
 	headers.Set("Content-Type", "application/json")
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 404:
-			value := new(v2.NotFoundError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.SuccessResponse
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodPatch,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err
@@ -995,74 +802,59 @@ func (c *Client) Search(
 	opts ...option.RequestOption,
 ) (*v2.ApidataDocumentSearchResponse, error) {
 	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://api.getzep.com/api/v2"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(baseURL+"/collections/%v/search", collectionName)
-
-	queryParams, err := core.QueryValues(request)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/collections/%v/search",
+		collectionName,
+	)
+	queryParams, err := internal.QueryValues(request)
 	if err != nil {
 		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
 	headers.Set("Content-Type", "application/json")
-
-	errorDecoder := func(statusCode int, body io.Reader) error {
-		raw, err := io.ReadAll(body)
-		if err != nil {
-			return err
-		}
-		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		switch statusCode {
-		case 400:
-			value := new(v2.BadRequestError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
 			}
-			return value
-		case 401:
-			value := new(v2.UnauthorizedError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		401: func(apiError *core.APIError) error {
+			return &v2.UnauthorizedError{
+				APIError: apiError,
 			}
-			return value
-		case 500:
-			value := new(v2.InternalServerError)
-			value.APIError = apiError
-			if err := decoder.Decode(value); err != nil {
-				return apiError
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
 			}
-			return value
-		}
-		return apiError
+		},
 	}
 
 	var response *v2.ApidataDocumentSearchResponse
 	if err := c.caller.Call(
 		ctx,
-		&core.CallParams{
+		&internal.CallParams{
 			URL:             endpointURL,
 			Method:          http.MethodPost,
-			MaxAttempts:     options.MaxAttempts,
 			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    errorDecoder,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
 	); err != nil {
 		return nil, err

@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
 )
 
 type CreateDocumentCollectionRequest struct {
@@ -43,7 +43,63 @@ type ApidataDocument struct {
 	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (a *ApidataDocument) GetContent() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Content
+}
+
+func (a *ApidataDocument) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *ApidataDocument) GetDocumentID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.DocumentID
+}
+
+func (a *ApidataDocument) GetEmbedding() []float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Embedding
+}
+
+func (a *ApidataDocument) GetIsEmbedded() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.IsEmbedded
+}
+
+func (a *ApidataDocument) GetMetadata() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *ApidataDocument) GetUpdatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UpdatedAt
+}
+
+func (a *ApidataDocument) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
 }
 
 func (a *ApidataDocument) GetExtraProperties() map[string]interface{} {
@@ -57,24 +113,22 @@ func (a *ApidataDocument) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataDocument(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
 	}
 	a.extraProperties = extraProperties
-
-	a._rawJSON = json.RawMessage(data)
+	a.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (a *ApidataDocument) String() string {
-	if len(a._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(a); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
@@ -96,7 +150,98 @@ type ApidataDocumentCollection struct {
 	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (a *ApidataDocumentCollection) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *ApidataDocumentCollection) GetDescription() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Description
+}
+
+func (a *ApidataDocumentCollection) GetDocumentCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.DocumentCount
+}
+
+func (a *ApidataDocumentCollection) GetDocumentEmbeddedCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.DocumentEmbeddedCount
+}
+
+func (a *ApidataDocumentCollection) GetEmbeddingDimensions() *int {
+	if a == nil {
+		return nil
+	}
+	return a.EmbeddingDimensions
+}
+
+func (a *ApidataDocumentCollection) GetEmbeddingModelName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EmbeddingModelName
+}
+
+func (a *ApidataDocumentCollection) GetIsAutoEmbedded() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.IsAutoEmbedded
+}
+
+func (a *ApidataDocumentCollection) GetIsIndexed() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.IsIndexed
+}
+
+func (a *ApidataDocumentCollection) GetIsNormalized() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.IsNormalized
+}
+
+func (a *ApidataDocumentCollection) GetMetadata() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *ApidataDocumentCollection) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *ApidataDocumentCollection) GetUpdatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UpdatedAt
+}
+
+func (a *ApidataDocumentCollection) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
 }
 
 func (a *ApidataDocumentCollection) GetExtraProperties() map[string]interface{} {
@@ -110,24 +255,22 @@ func (a *ApidataDocumentCollection) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataDocumentCollection(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
 	}
 	a.extraProperties = extraProperties
-
-	a._rawJSON = json.RawMessage(data)
+	a.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (a *ApidataDocumentCollection) String() string {
-	if len(a._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(a); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
@@ -141,7 +284,42 @@ type ApidataDocumentSearchResponse struct {
 	TotalPages  *int                        `json:"total_pages,omitempty" url:"total_pages,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (a *ApidataDocumentSearchResponse) GetCurrentPage() *int {
+	if a == nil {
+		return nil
+	}
+	return a.CurrentPage
+}
+
+func (a *ApidataDocumentSearchResponse) GetQueryVector() []float64 {
+	if a == nil {
+		return nil
+	}
+	return a.QueryVector
+}
+
+func (a *ApidataDocumentSearchResponse) GetResultCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.ResultCount
+}
+
+func (a *ApidataDocumentSearchResponse) GetResults() []*ApidataDocumentWithScore {
+	if a == nil {
+		return nil
+	}
+	return a.Results
+}
+
+func (a *ApidataDocumentSearchResponse) GetTotalPages() *int {
+	if a == nil {
+		return nil
+	}
+	return a.TotalPages
 }
 
 func (a *ApidataDocumentSearchResponse) GetExtraProperties() map[string]interface{} {
@@ -155,24 +333,22 @@ func (a *ApidataDocumentSearchResponse) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataDocumentSearchResponse(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
 	}
 	a.extraProperties = extraProperties
-
-	a._rawJSON = json.RawMessage(data)
+	a.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (a *ApidataDocumentSearchResponse) String() string {
-	if len(a._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(a); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
@@ -190,7 +366,70 @@ type ApidataDocumentWithScore struct {
 	UUID       *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (a *ApidataDocumentWithScore) GetContent() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Content
+}
+
+func (a *ApidataDocumentWithScore) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *ApidataDocumentWithScore) GetDocumentID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.DocumentID
+}
+
+func (a *ApidataDocumentWithScore) GetEmbedding() []float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Embedding
+}
+
+func (a *ApidataDocumentWithScore) GetIsEmbedded() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.IsEmbedded
+}
+
+func (a *ApidataDocumentWithScore) GetMetadata() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *ApidataDocumentWithScore) GetScore() *float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Score
+}
+
+func (a *ApidataDocumentWithScore) GetUpdatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UpdatedAt
+}
+
+func (a *ApidataDocumentWithScore) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
 }
 
 func (a *ApidataDocumentWithScore) GetExtraProperties() map[string]interface{} {
@@ -204,24 +443,22 @@ func (a *ApidataDocumentWithScore) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = ApidataDocumentWithScore(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
 	}
 	a.extraProperties = extraProperties
-
-	a._rawJSON = json.RawMessage(data)
+	a.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (a *ApidataDocumentWithScore) String() string {
-	if len(a._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(a); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
@@ -233,7 +470,28 @@ type CreateDocumentRequest struct {
 	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (c *CreateDocumentRequest) GetContent() string {
+	if c == nil {
+		return ""
+	}
+	return c.Content
+}
+
+func (c *CreateDocumentRequest) GetDocumentID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.DocumentID
+}
+
+func (c *CreateDocumentRequest) GetMetadata() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.Metadata
 }
 
 func (c *CreateDocumentRequest) GetExtraProperties() map[string]interface{} {
@@ -247,24 +505,22 @@ func (c *CreateDocumentRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*c = CreateDocumentRequest(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
 	if err != nil {
 		return err
 	}
 	c.extraProperties = extraProperties
-
-	c._rawJSON = json.RawMessage(data)
+	c.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (c *CreateDocumentRequest) String() string {
-	if len(c._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(c); err == nil {
+	if value, err := internal.StringifyJSON(c); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", c)
@@ -276,7 +532,28 @@ type UpdateDocumentListRequest struct {
 	UUID       string                 `json:"uuid" url:"uuid"`
 
 	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
+	rawJSON         json.RawMessage
+}
+
+func (u *UpdateDocumentListRequest) GetDocumentID() *string {
+	if u == nil {
+		return nil
+	}
+	return u.DocumentID
+}
+
+func (u *UpdateDocumentListRequest) GetMetadata() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
+	return u.Metadata
+}
+
+func (u *UpdateDocumentListRequest) GetUUID() string {
+	if u == nil {
+		return ""
+	}
+	return u.UUID
 }
 
 func (u *UpdateDocumentListRequest) GetExtraProperties() map[string]interface{} {
@@ -290,24 +567,22 @@ func (u *UpdateDocumentListRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*u = UpdateDocumentListRequest(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *u)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
 	if err != nil {
 		return err
 	}
 	u.extraProperties = extraProperties
-
-	u._rawJSON = json.RawMessage(data)
+	u.rawJSON = json.RawMessage(data)
 	return nil
 }
 
 func (u *UpdateDocumentListRequest) String() string {
-	if len(u._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := core.StringifyJSON(u); err == nil {
+	if value, err := internal.StringifyJSON(u); err == nil {
 		return value
 	}
 	return fmt.Sprintf("%#v", u)
