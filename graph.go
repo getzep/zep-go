@@ -15,6 +15,37 @@ type AddDataRequest struct {
 	UserID  *string        `json:"user_id,omitempty" url:"-"`
 }
 
+type AddTripleRequest struct {
+	// The timestamp of the message
+	CreatedAt *string `json:"created_at,omitempty" url:"-"`
+	// The time (if any) at which the edge expires
+	ExpiredAt *string `json:"expired_at,omitempty" url:"-"`
+	// The fact relating the two nodes that this edge represents
+	Fact string `json:"fact" url:"-"`
+	// The name of the edge to add. Should be all caps using snake case (eg RELATES_TO)
+	FactName string `json:"fact_name" url:"-"`
+	// The uuid of the edge to add
+	FactUUID *string `json:"fact_uuid,omitempty" url:"-"`
+	GroupID  *string `json:"group_id,omitempty" url:"-"`
+	// The time (if any) at which the fact stops being true
+	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
+	// The name of the source node to add
+	SourceNodeName *string `json:"source_node_name,omitempty" url:"-"`
+	// The summary of the source node to add
+	SourceNodeSummary *string `json:"source_node_summary,omitempty" url:"-"`
+	// The source node uuid
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"-"`
+	// The name of the target node to add
+	TargetNodeName string `json:"target_node_name" url:"-"`
+	// The summary of the target node to add
+	TargetNodeSummary *string `json:"target_node_summary,omitempty" url:"-"`
+	// The target node uuid
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"-"`
+	UserID         *string `json:"user_id,omitempty" url:"-"`
+	// The time at which the fact becomes true
+	ValidAt *string `json:"valid_at,omitempty" url:"-"`
+}
+
 type GraphSearchQuery struct {
 	// Node to rerank around for node distance reranking
 	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
@@ -34,6 +65,68 @@ type GraphSearchQuery struct {
 	Scope *GraphSearchScope `json:"scope,omitempty" url:"-"`
 	// one of user_id or group_id must be provided
 	UserID *string `json:"user_id,omitempty" url:"-"`
+}
+
+type AddTripleResponse struct {
+	Edge       *EntityEdge `json:"edge,omitempty" url:"edge,omitempty"`
+	SourceNode *EntityNode `json:"source_node,omitempty" url:"source_node,omitempty"`
+	TargetNode *EntityNode `json:"target_node,omitempty" url:"target_node,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddTripleResponse) GetEdge() *EntityEdge {
+	if a == nil {
+		return nil
+	}
+	return a.Edge
+}
+
+func (a *AddTripleResponse) GetSourceNode() *EntityNode {
+	if a == nil {
+		return nil
+	}
+	return a.SourceNode
+}
+
+func (a *AddTripleResponse) GetTargetNode() *EntityNode {
+	if a == nil {
+		return nil
+	}
+	return a.TargetNode
+}
+
+func (a *AddTripleResponse) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AddTripleResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddTripleResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddTripleResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddTripleResponse) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
 }
 
 type GraphSearchResults struct {

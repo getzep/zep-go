@@ -368,6 +368,60 @@ func (c *Client) GetFacts(
 	return response, nil
 }
 
+// Get user node.
+func (c *Client) GetNode(
+	ctx context.Context,
+	// The user_id of the user to get the node for.
+	userID string,
+	opts ...option.RequestOption,
+) (*v2.UserNodeResponse, error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/users/%v/node",
+		userID,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+
+	var response *v2.UserNodeResponse
+	if err := c.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 // list all sessions for a user by user id
 func (c *Client) GetSessions(
 	ctx context.Context,

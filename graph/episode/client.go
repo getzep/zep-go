@@ -213,3 +213,62 @@ func (c *Client) Get(
 	}
 	return response, nil
 }
+
+// Delete an episode by its UUID
+func (c *Client) Delete(
+	ctx context.Context,
+	// Episode UUID
+	__uuid string,
+	opts ...option.RequestOption,
+) (*v2.SuccessResponse, error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graph/episodes/%v",
+		__uuid,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+
+	var response *v2.SuccessResponse
+	if err := c.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodDelete,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
