@@ -54,6 +54,10 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type AddTripleRequest = interface{}
+
+type AddTripleResponse = interface{}
+
 type AddedFact = interface{}
 
 type ApidataFactRatingExamples struct {
