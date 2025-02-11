@@ -234,6 +234,52 @@ func (u *UserListResponse) String() string {
 	return fmt.Sprintf("%#v", u)
 }
 
+type UserNodeResponse struct {
+	Node *EntityNode `json:"node,omitempty" url:"node,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (u *UserNodeResponse) GetNode() *EntityNode {
+	if u == nil {
+		return nil
+	}
+	return u.Node
+}
+
+func (u *UserNodeResponse) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
+}
+
+func (u *UserNodeResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserNodeResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserNodeResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+	u.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserNodeResponse) String() string {
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
 type UpdateUserRequest struct {
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
