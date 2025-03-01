@@ -22,7 +22,7 @@ type GraphSearchQuery struct {
 	GroupID *string `json:"group_id,omitempty" url:"-"`
 	// The maximum number of facts to retrieve. Defaults to 10. Limited to 50.
 	Limit *int `json:"limit,omitempty" url:"-"`
-	// minimum similarity score for a result to be returned
+	// Deprecated
 	MinScore *float64 `json:"min_score,omitempty" url:"-"`
 	// weighting for maximal marginal relevance
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
@@ -34,6 +34,200 @@ type GraphSearchQuery struct {
 	Scope *GraphSearchScope `json:"scope,omitempty" url:"-"`
 	// one of user_id or group_id must be provided
 	UserID *string `json:"user_id,omitempty" url:"-"`
+}
+
+type ApidataEntityTypeRequest struct {
+	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"-"`
+}
+
+type ApidataEntityTypeResponse struct {
+	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *ApidataEntityTypeResponse) GetEntityTypes() []*EntityType {
+	if a == nil {
+		return nil
+	}
+	return a.EntityTypes
+}
+
+func (a *ApidataEntityTypeResponse) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *ApidataEntityTypeResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ApidataEntityTypeResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = ApidataEntityTypeResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *ApidataEntityTypeResponse) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type EntityProperty struct {
+	Description string             `json:"description" url:"description"`
+	Name        string             `json:"name" url:"name"`
+	Type        EntityPropertyType `json:"type" url:"type"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EntityProperty) GetDescription() string {
+	if e == nil {
+		return ""
+	}
+	return e.Description
+}
+
+func (e *EntityProperty) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+func (e *EntityProperty) GetType() EntityPropertyType {
+	if e == nil {
+		return ""
+	}
+	return e.Type
+}
+
+func (e *EntityProperty) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EntityProperty) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityProperty
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EntityProperty(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EntityProperty) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EntityPropertyType string
+
+const (
+	EntityPropertyTypeText    EntityPropertyType = "Text"
+	EntityPropertyTypeNumber  EntityPropertyType = "Number"
+	EntityPropertyTypeFloat   EntityPropertyType = "Float"
+	EntityPropertyTypeBoolean EntityPropertyType = "Boolean"
+)
+
+func NewEntityPropertyTypeFromString(s string) (EntityPropertyType, error) {
+	switch s {
+	case "Text":
+		return EntityPropertyTypeText, nil
+	case "Number":
+		return EntityPropertyTypeNumber, nil
+	case "Float":
+		return EntityPropertyTypeFloat, nil
+	case "Boolean":
+		return EntityPropertyTypeBoolean, nil
+	}
+	var t EntityPropertyType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EntityPropertyType) Ptr() *EntityPropertyType {
+	return &e
+}
+
+type EntityType struct {
+	Name       string            `json:"name" url:"name"`
+	Properties []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EntityType) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+func (e *EntityType) GetProperties() []*EntityProperty {
+	if e == nil {
+		return nil
+	}
+	return e.Properties
+}
+
+func (e *EntityType) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EntityType) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EntityType(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EntityType) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
 }
 
 type GraphSearchResults struct {

@@ -9,20 +9,20 @@ import (
 )
 
 type AddMemoryRequest struct {
-	// Additional instruction for generating the facts. Zep Cloud Only, will be ignored on Community Edition.
+	// Deprecated
 	FactInstruction *string `json:"fact_instruction,omitempty" url:"-"`
 	// A list of message objects, where each message contains a role and content.
 	Messages []*Message `json:"messages,omitempty" url:"-"`
 	// Optionally return memory context relevant to the most recent messages.
 	ReturnContext *bool `json:"return_context,omitempty" url:"-"`
-	// Additional instruction for generating the summary. Zep Cloud Only, will be ignored on Community Edition.
+	// Deprecated
 	SummaryInstruction *string `json:"summary_instruction,omitempty" url:"-"`
 }
 
 type CreateSessionRequest struct {
-	// Optional instruction to use for fact rating.
+	// Deprecated
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
-	// The metadata associated with the session.
+	// Deprecated
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 	// The unique identifier of the session.
 	SessionID string `json:"session_id" url:"-"`
@@ -59,12 +59,12 @@ type ExtractDataRequest struct {
 type MemoryGetRequest struct {
 	// The number of most recent memory entries to retrieve.
 	Lastn *int `json:"-" url:"lastn,omitempty"`
-	// The minimum rating by which to filter facts
+	// The minimum rating by which to filter relevant facts.
 	MinRating *float64 `json:"-" url:"minRating,omitempty"`
 }
 
 type MemoryGetSessionFactsRequest struct {
-	// Minimum rating by which to filter facts (Zep Cloud only)
+	// Minimum rating by which to filter facts
 	MinRating *float64 `json:"-" url:"minRating,omitempty"`
 }
 
@@ -78,11 +78,11 @@ type MemoryGetSessionMessagesRequest struct {
 type MemoryListSessionsRequest struct {
 	// Page number for pagination, starting from 1
 	PageNumber *int `json:"-" url:"page_number,omitempty"`
-	// Number of sessions to retrieve per page
+	// Number of sessions to retrieve per page.
 	PageSize *int `json:"-" url:"page_size,omitempty"`
-	// Field to order the results by: created_at, updated_at, user_id, session_id
+	// Field to order the results by: created_at, updated_at, user_id, session_id.
 	OrderBy *string `json:"-" url:"order_by,omitempty"`
-	// Order direction: true for ascending, false for descending
+	// Order direction: true for ascending, false for descending.
 	Asc *bool `json:"-" url:"asc,omitempty"`
 }
 
@@ -102,23 +102,23 @@ type MemorySearchPayload struct {
 type SessionSearchQuery struct {
 	// The maximum number of search results to return. Defaults to None (no limit).
 	Limit *int `json:"-" url:"limit,omitempty"`
-	// The minimum fact rating to filter on. Only supported on cloud. Will be ignored on Community Edition.
+	// The minimum fact rating to filter on.
 	MinFactRating *float64 `json:"min_fact_rating,omitempty" url:"-"`
-	// The minimum score for search results. Only supported on cloud. Will be ignored on Community Edition.
+	// The minimum score for search results.
 	MinScore *float64 `json:"min_score,omitempty" url:"-"`
-	// The lambda parameter for the MMR Reranking Algorithm. Only supported on cloud. Will be ignored on Community Edition.
+	// The lambda parameter for the MMR Reranking Algorithm.
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
-	// Record filter on the metadata. Only supported on cloud. Will be ignored on Community Edition.
+	// Record filter on the metadata.
 	RecordFilter map[string]interface{} `json:"record_filter,omitempty" url:"-"`
-	// Search scope. Only supported on cloud. On Community Edition the search scope is always "facts".
+	// Search scope.
 	SearchScope *SearchScope `json:"search_scope,omitempty" url:"-"`
-	// Search type. Only supported on cloud. Will be ignored on Community Edition.
+	// Search type.
 	SearchType *SearchType `json:"search_type,omitempty" url:"-"`
 	// the session ids to search
 	SessionIDs []string `json:"session_ids,omitempty" url:"-"`
 	// The search text.
 	Text string `json:"text" url:"-"`
-	// User ID used to determine which sessions to search. Required on Community Edition.
+	// User ID used to determine which sessions to search.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
 
@@ -180,9 +180,9 @@ type ClassifySessionRequest struct {
 	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
 	// The number of session messages to consider for classification. Defaults to 4.
 	LastN *int `json:"last_n,omitempty" url:"last_n,omitempty"`
-	// The name of the classifier. Will be used to store the classification in session metadata if persist is True.
+	// The name of the classifier.
 	Name string `json:"name" url:"name"`
-	// Whether to persist the classification to session metadata. Defaults to True.
+	// Whether to persist the classification as part of the session object. Defaults to True.
 	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -405,17 +405,15 @@ func (f *FactResponse) String() string {
 type Memory struct {
 	// Memory context containing relevant facts and entities for the session. Can be put into the prompt directly.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
-	// Most recent list of facts derived from the session. (cloud only)
-	// Deprecated: Facts will be deprecated in future releases and relevant_facts should be used instead.
+	// Deprecated
 	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
 	// A list of message objects, where each message contains a role and content. Only last_n messages will be returned
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	// A dictionary containing metadata associated with the memory.
+	// Deprecated
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// Most relevant facts to the recent messages in the session.
 	RelevantFacts []*Fact `json:"relevant_facts,omitempty" url:"relevant_facts,omitempty"`
-	// The most relevant summaries to the recent conversation. (cloud only)
-	// Deprecated: Please use context string instead.
+	// Deprecated
 	Summary *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -567,51 +565,44 @@ func (m *MemorySearchResult) String() string {
 }
 
 type Message struct {
-	// The content of the message.
-	Content string `json:"content" url:"content"`
+	// The unique identifier of the message.
+	UUID string `json:"uuid" url:"uuid"`
 	// The timestamp of when the message was created.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// The metadata associated with the message.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// The role of the sender of the message (e.g., "user", "assistant").
-	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// Customizable role of the sender of the message (e.g., "john", "sales_agent").
+	Role string `json:"role" url:"role"`
 	// The type of the role (e.g., "user", "system").
 	RoleType RoleType `json:"role_type" url:"role_type"`
-	// The number of tokens in the message.
-	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
-	// The timestamp of when the message was last updated.
-	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	// The unique identifier of the message.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The content of the message.
+	Content string `json:"content" url:"content"`
+	// The metadata associated with the message.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Deprecated
+	UpdatedAt string `json:"updated_at" url:"updated_at"`
+	// Deprecated
+	TokenCount int `json:"token_count" url:"token_count"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (m *Message) GetContent() string {
+func (m *Message) GetUUID() string {
 	if m == nil {
 		return ""
 	}
-	return m.Content
+	return m.UUID
 }
 
-func (m *Message) GetCreatedAt() *string {
+func (m *Message) GetCreatedAt() string {
 	if m == nil {
-		return nil
+		return ""
 	}
 	return m.CreatedAt
 }
 
-func (m *Message) GetMetadata() map[string]interface{} {
+func (m *Message) GetRole() string {
 	if m == nil {
-		return nil
-	}
-	return m.Metadata
-}
-
-func (m *Message) GetRole() *string {
-	if m == nil {
-		return nil
+		return ""
 	}
 	return m.Role
 }
@@ -623,25 +614,32 @@ func (m *Message) GetRoleType() RoleType {
 	return m.RoleType
 }
 
-func (m *Message) GetTokenCount() *int {
+func (m *Message) GetContent() string {
+	if m == nil {
+		return ""
+	}
+	return m.Content
+}
+
+func (m *Message) GetMetadata() map[string]interface{} {
 	if m == nil {
 		return nil
 	}
-	return m.TokenCount
+	return m.Metadata
 }
 
-func (m *Message) GetUpdatedAt() *string {
+func (m *Message) GetUpdatedAt() string {
 	if m == nil {
-		return nil
+		return ""
 	}
 	return m.UpdatedAt
 }
 
-func (m *Message) GetUUID() *string {
+func (m *Message) GetTokenCount() int {
 	if m == nil {
-		return nil
+		return 0
 	}
-	return m.UUID
+	return m.TokenCount
 }
 
 func (m *Message) GetExtraProperties() map[string]interface{} {
@@ -679,10 +677,10 @@ func (m *Message) String() string {
 type MessageListResponse struct {
 	// A list of message objects.
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	// The number of messages returned.
-	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
 	// The total number of messages.
-	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
+	TotalCount int `json:"total_count" url:"total_count"`
+	// The number of messages returned.
+	RowCount int `json:"row_count" url:"row_count"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -695,18 +693,18 @@ func (m *MessageListResponse) GetMessages() []*Message {
 	return m.Messages
 }
 
-func (m *MessageListResponse) GetRowCount() *int {
+func (m *MessageListResponse) GetTotalCount() int {
 	if m == nil {
-		return nil
-	}
-	return m.RowCount
-}
-
-func (m *MessageListResponse) GetTotalCount() *int {
-	if m == nil {
-		return nil
+		return 0
 	}
 	return m.TotalCount
+}
+
+func (m *MessageListResponse) GetRowCount() int {
+	if m == nil {
+		return 0
+	}
+	return m.RowCount
 }
 
 func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {
@@ -893,23 +891,23 @@ func (s SearchScope) Ptr() *SearchScope {
 }
 
 type SessionClassification struct {
-	Class *string `json:"class,omitempty" url:"class,omitempty"`
-	Label *string `json:"label,omitempty" url:"label,omitempty"`
+	Class string `json:"class" url:"class"`
+	Label string `json:"label" url:"label"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *SessionClassification) GetClass() *string {
+func (s *SessionClassification) GetClass() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.Class
 }
 
-func (s *SessionClassification) GetLabel() *string {
+func (s *SessionClassification) GetLabel() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.Label
 }
@@ -947,17 +945,17 @@ func (s *SessionClassification) String() string {
 }
 
 type SessionListResponse struct {
-	ResponseCount *int       `json:"response_count,omitempty" url:"response_count,omitempty"`
+	ResponseCount int        `json:"response_count" url:"response_count"`
 	Sessions      []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
-	TotalCount    *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
+	TotalCount    int        `json:"total_count" url:"total_count"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *SessionListResponse) GetResponseCount() *int {
+func (s *SessionListResponse) GetResponseCount() int {
 	if s == nil {
-		return nil
+		return 0
 	}
 	return s.ResponseCount
 }
@@ -969,9 +967,9 @@ func (s *SessionListResponse) GetSessions() []*Session {
 	return s.Sessions
 }
 
-func (s *SessionListResponse) GetTotalCount() *int {
+func (s *SessionListResponse) GetTotalCount() int {
 	if s == nil {
-		return nil
+		return 0
 	}
 	return s.TotalCount
 }
@@ -1057,8 +1055,8 @@ func (s *SessionSearchResponse) String() string {
 type SessionSearchResult struct {
 	Fact      *Fact    `json:"fact,omitempty" url:"fact,omitempty"`
 	Message   *Message `json:"message,omitempty" url:"message,omitempty"`
-	Score     *float64 `json:"score,omitempty" url:"score,omitempty"`
-	SessionID *string  `json:"session_id,omitempty" url:"session_id,omitempty"`
+	Score     float64  `json:"score" url:"score"`
+	SessionID string   `json:"session_id" url:"session_id"`
 	Summary   *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -1079,16 +1077,16 @@ func (s *SessionSearchResult) GetMessage() *Message {
 	return s.Message
 }
 
-func (s *SessionSearchResult) GetScore() *float64 {
+func (s *SessionSearchResult) GetScore() float64 {
 	if s == nil {
-		return nil
+		return 0
 	}
 	return s.Score
 }
 
-func (s *SessionSearchResult) GetSessionID() *string {
+func (s *SessionSearchResult) GetSessionID() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.SessionID
 }
@@ -1134,30 +1132,30 @@ func (s *SessionSearchResult) String() string {
 
 type Summary struct {
 	// The content of the summary.
-	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	Content string `json:"content" url:"content"`
 	// The timestamp of when the summary was created.
-	CreatedAt           *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreatedAt           string                 `json:"created_at" url:"created_at"`
 	Metadata            map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	RelatedMessageUUIDs []string               `json:"related_message_uuids,omitempty" url:"related_message_uuids,omitempty"`
 	// The number of tokens in the summary.
-	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	TokenCount int `json:"token_count" url:"token_count"`
 	// The unique identifier of the summary.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	UUID string `json:"uuid" url:"uuid"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *Summary) GetContent() *string {
+func (s *Summary) GetContent() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.Content
 }
 
-func (s *Summary) GetCreatedAt() *string {
+func (s *Summary) GetCreatedAt() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.CreatedAt
 }
@@ -1176,16 +1174,16 @@ func (s *Summary) GetRelatedMessageUUIDs() []string {
 	return s.RelatedMessageUUIDs
 }
 
-func (s *Summary) GetTokenCount() *int {
+func (s *Summary) GetTokenCount() int {
 	if s == nil {
-		return nil
+		return 0
 	}
 	return s.TokenCount
 }
 
-func (s *Summary) GetUUID() *string {
+func (s *Summary) GetUUID() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.UUID
 }
@@ -1223,17 +1221,17 @@ func (s *Summary) String() string {
 }
 
 type SummaryListResponse struct {
-	RowCount   *int       `json:"row_count,omitempty" url:"row_count,omitempty"`
+	RowCount   int        `json:"row_count" url:"row_count"`
 	Summaries  []*Summary `json:"summaries,omitempty" url:"summaries,omitempty"`
-	TotalCount *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
+	TotalCount int        `json:"total_count" url:"total_count"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *SummaryListResponse) GetRowCount() *int {
+func (s *SummaryListResponse) GetRowCount() int {
 	if s == nil {
-		return nil
+		return 0
 	}
 	return s.RowCount
 }
@@ -1245,9 +1243,9 @@ func (s *SummaryListResponse) GetSummaries() []*Summary {
 	return s.Summaries
 }
 
-func (s *SummaryListResponse) GetTotalCount() *int {
+func (s *SummaryListResponse) GetTotalCount() int {
 	if s == nil {
-		return nil
+		return 0
 	}
 	return s.TotalCount
 }
@@ -1285,7 +1283,7 @@ func (s *SummaryListResponse) String() string {
 }
 
 type ModelsMessageMetadataUpdate struct {
-	// The metadata to update
+	// Deprecated
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }
 
@@ -1293,6 +1291,6 @@ type UpdateSessionRequest struct {
 	// Optional instruction to use for fact rating.
 	// Fact rating instructions can not be unset.
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
-	// The metadata to update
+	// Deprecated
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }

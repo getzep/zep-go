@@ -35,7 +35,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Add a user.
+// Adds a user.
 func (c *Client) Add(
 	ctx context.Context,
 	request *v2.CreateUserRequest,
@@ -87,7 +87,7 @@ func (c *Client) Add(
 	return response, nil
 }
 
-// List all users with pagination.
+// Returns all users.
 func (c *Client) ListOrdered(
 	ctx context.Context,
 	request *v2.UserListOrderedRequest,
@@ -144,7 +144,7 @@ func (c *Client) ListOrdered(
 	return response, nil
 }
 
-// Get a user.
+// Returns a user.
 func (c *Client) Get(
 	ctx context.Context,
 	// The user_id of the user to get.
@@ -198,7 +198,7 @@ func (c *Client) Get(
 	return response, nil
 }
 
-// delete user by id
+// Deletes a user.
 func (c *Client) Delete(
 	ctx context.Context,
 	// User ID
@@ -252,7 +252,7 @@ func (c *Client) Delete(
 	return response, nil
 }
 
-// Update a user.
+// Updates a user.
 func (c *Client) Update(
 	ctx context.Context,
 	// User ID
@@ -314,7 +314,7 @@ func (c *Client) Update(
 	return response, nil
 }
 
-// Get user facts.
+// Deprecated: Use Get User Edges instead.
 func (c *Client) GetFacts(
 	ctx context.Context,
 	// The user_id of the user to get.
@@ -368,7 +368,7 @@ func (c *Client) GetFacts(
 	return response, nil
 }
 
-// Get user node.
+// Returns a user's node.
 func (c *Client) GetNode(
 	ctx context.Context,
 	// The user_id of the user to get the node for.
@@ -422,7 +422,7 @@ func (c *Client) GetNode(
 	return response, nil
 }
 
-// list all sessions for a user by user id
+// Returns all sessions for a user.
 func (c *Client) GetSessions(
 	ctx context.Context,
 	// User ID

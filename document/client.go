@@ -595,7 +595,7 @@ func (c *Client) BatchUpdateDocuments(
 }
 
 // Returns specified Document from a DocumentCollection.
-func (c *Client) GetsADocumentFromADocumentCollectionByUUIDCloudOnly(
+func (c *Client) GetsADocumentFromADocumentCollectionByUUID(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,
@@ -724,7 +724,7 @@ func (c *Client) DeleteDocument(
 }
 
 // Updates a Document in a DocumentCollection by UUID
-func (c *Client) UpdatesADocumentCloudOnly(
+func (c *Client) UpdatesADocument(
 	ctx context.Context,
 	// Name of the Document Collection
 	collectionName string,

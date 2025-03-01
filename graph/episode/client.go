@@ -36,7 +36,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Get episodes by Group ID
+// Returns episodes by group id.
 func (c *Client) GetByGroupID(
 	ctx context.Context,
 	// Group ID
@@ -98,7 +98,7 @@ func (c *Client) GetByGroupID(
 	return response, nil
 }
 
-// Get episodes by User ID
+// Returns episodes by user id.
 func (c *Client) GetByUserID(
 	ctx context.Context,
 	// User ID
@@ -160,7 +160,7 @@ func (c *Client) GetByUserID(
 	return response, nil
 }
 
-// Get episode by UUID
+// Returns episodes by UUID
 func (c *Client) Get(
 	ctx context.Context,
 	// Episode UUID
@@ -214,7 +214,7 @@ func (c *Client) Get(
 	return response, nil
 }
 
-// Delete an episode by its UUID
+// Deletes an episode by its UUID.
 func (c *Client) Delete(
 	ctx context.Context,
 	// Episode UUID

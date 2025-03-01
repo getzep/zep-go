@@ -21,8 +21,8 @@ type Client struct {
 	header  http.Header
 
 	Document *document.Client
-	Memory   *memory.Client
 	Graph    *graphclient.Client
+	Memory   *memory.Client
 	Group    *group.Client
 	User     *user.Client
 }
@@ -42,8 +42,8 @@ func NewClient(opts ...option.RequestOption) *Client {
 		),
 		header:   options.ToHeader(),
 		Document: document.NewClient(opts...),
-		Memory:   memory.NewClient(opts...),
 		Graph:    graphclient.NewClient(opts...),
+		Memory:   memory.NewClient(opts...),
 		Group:    group.NewClient(opts...),
 		User:     user.NewClient(opts...),
 	}

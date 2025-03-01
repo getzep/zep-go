@@ -10,17 +10,17 @@ import (
 
 type CreateUserRequest struct {
 	// The email address of the user.
-	Email *string `json:"email,omitempty" url:"-"`
+	Email string `json:"email" url:"-"`
 	// Optional instruction to use for fact rating.
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	// The first name of the user.
-	FirstName *string `json:"first_name,omitempty" url:"-"`
+	FirstName string `json:"first_name" url:"-"`
 	// The last name of the user.
-	LastName *string `json:"last_name,omitempty" url:"-"`
+	LastName string `json:"last_name" url:"-"`
 	// The metadata associated with the user.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 	// The unique identifier of the user.
-	UserID *string `json:"user_id,omitempty" url:"-"`
+	UserID string `json:"user_id" url:"-"`
 }
 
 type UserListOrderedRequest struct {
@@ -31,99 +31,25 @@ type UserListOrderedRequest struct {
 }
 
 type User struct {
-	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt             *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	Email                 *string                `json:"email,omitempty" url:"email,omitempty"`
-	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	FirstName             *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
-	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
-	LastName              *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
-	Metadata              map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProjectUUID           *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	ID     *int    `json:"id,omitempty" url:"id,omitempty"`
+	// Deprecated
+	UpdatedAt string `json:"updated_at" url:"updated_at"`
+	// Deprecated
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Deprecated
 	SessionCount          *int                   `json:"session_count,omitempty" url:"session_count,omitempty"`
-	UpdatedAt             *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UserID                *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
+	CreatedAt             string                 `json:"created_at" url:"created_at"`
+	DeletedAt             string                 `json:"deleted_at" url:"deleted_at"`
+	Email                 string                 `json:"email" url:"email"`
+	FirstName             string                 `json:"first_name" url:"first_name"`
+	LastName              string                 `json:"last_name" url:"last_name"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
 	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
+	ProjectUUID           string                 `json:"project_uuid" url:"project_uuid"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (u *User) GetCreatedAt() *string {
-	if u == nil {
-		return nil
-	}
-	return u.CreatedAt
-}
-
-func (u *User) GetDeletedAt() *string {
-	if u == nil {
-		return nil
-	}
-	return u.DeletedAt
-}
-
-func (u *User) GetEmail() *string {
-	if u == nil {
-		return nil
-	}
-	return u.Email
-}
-
-func (u *User) GetFactRatingInstruction() *FactRatingInstruction {
-	if u == nil {
-		return nil
-	}
-	return u.FactRatingInstruction
-}
-
-func (u *User) GetFirstName() *string {
-	if u == nil {
-		return nil
-	}
-	return u.FirstName
-}
-
-func (u *User) GetID() *int {
-	if u == nil {
-		return nil
-	}
-	return u.ID
-}
-
-func (u *User) GetLastName() *string {
-	if u == nil {
-		return nil
-	}
-	return u.LastName
-}
-
-func (u *User) GetMetadata() map[string]interface{} {
-	if u == nil {
-		return nil
-	}
-	return u.Metadata
-}
-
-func (u *User) GetProjectUUID() *string {
-	if u == nil {
-		return nil
-	}
-	return u.ProjectUUID
-}
-
-func (u *User) GetSessionCount() *int {
-	if u == nil {
-		return nil
-	}
-	return u.SessionCount
-}
-
-func (u *User) GetUpdatedAt() *string {
-	if u == nil {
-		return nil
-	}
-	return u.UpdatedAt
 }
 
 func (u *User) GetUserID() *string {
@@ -133,11 +59,88 @@ func (u *User) GetUserID() *string {
 	return u.UserID
 }
 
+func (u *User) GetID() *int {
+	if u == nil {
+		return nil
+	}
+	return u.ID
+}
+
+func (u *User) GetUpdatedAt() string {
+	if u == nil {
+		return ""
+	}
+	return u.UpdatedAt
+}
+
+func (u *User) GetMetadata() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
+	return u.Metadata
+}
+
+func (u *User) GetSessionCount() *int {
+	if u == nil {
+		return nil
+	}
+	return u.SessionCount
+}
+
+func (u *User) GetCreatedAt() string {
+	if u == nil {
+		return ""
+	}
+	return u.CreatedAt
+}
+
+func (u *User) GetDeletedAt() string {
+	if u == nil {
+		return ""
+	}
+	return u.DeletedAt
+}
+
+func (u *User) GetEmail() string {
+	if u == nil {
+		return ""
+	}
+	return u.Email
+}
+
+func (u *User) GetFirstName() string {
+	if u == nil {
+		return ""
+	}
+	return u.FirstName
+}
+
+func (u *User) GetLastName() string {
+	if u == nil {
+		return ""
+	}
+	return u.LastName
+}
+
+func (u *User) GetFactRatingInstruction() *FactRatingInstruction {
+	if u == nil {
+		return nil
+	}
+	return u.FactRatingInstruction
+}
+
 func (u *User) GetUUID() *string {
 	if u == nil {
 		return nil
 	}
 	return u.UUID
+}
+
+func (u *User) GetProjectUUID() string {
+	if u == nil {
+		return ""
+	}
+	return u.ProjectUUID
 }
 
 func (u *User) GetExtraProperties() map[string]interface{} {
@@ -173,26 +176,12 @@ func (u *User) String() string {
 }
 
 type UserListResponse struct {
-	RowCount   *int    `json:"row_count,omitempty" url:"row_count,omitempty"`
-	TotalCount *int    `json:"total_count,omitempty" url:"total_count,omitempty"`
 	Users      []*User `json:"users,omitempty" url:"users,omitempty"`
+	TotalCount int     `json:"total_count" url:"total_count"`
+	RowCount   int     `json:"row_count" url:"row_count"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (u *UserListResponse) GetRowCount() *int {
-	if u == nil {
-		return nil
-	}
-	return u.RowCount
-}
-
-func (u *UserListResponse) GetTotalCount() *int {
-	if u == nil {
-		return nil
-	}
-	return u.TotalCount
 }
 
 func (u *UserListResponse) GetUsers() []*User {
@@ -200,6 +189,20 @@ func (u *UserListResponse) GetUsers() []*User {
 		return nil
 	}
 	return u.Users
+}
+
+func (u *UserListResponse) GetTotalCount() int {
+	if u == nil {
+		return 0
+	}
+	return u.TotalCount
+}
+
+func (u *UserListResponse) GetRowCount() int {
+	if u == nil {
+		return 0
+	}
+	return u.RowCount
 }
 
 func (u *UserListResponse) GetExtraProperties() map[string]interface{} {
@@ -282,13 +285,13 @@ func (u *UserNodeResponse) String() string {
 
 type UpdateUserRequest struct {
 	// The email address of the user.
-	Email *string `json:"email,omitempty" url:"-"`
+	Email string `json:"email" url:"-"`
 	// Optional instruction to use for fact rating.
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	// The first name of the user.
-	FirstName *string `json:"first_name,omitempty" url:"-"`
+	FirstName string `json:"first_name" url:"-"`
 	// The last name of the user.
-	LastName *string `json:"last_name,omitempty" url:"-"`
+	LastName string `json:"last_name" url:"-"`
 	// The metadata to update
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }
