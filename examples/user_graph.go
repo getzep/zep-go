@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"time"
@@ -14,6 +15,24 @@ import (
 	"github.com/getzep/zep-go/v2/option"
 )
 
+// convertStruct converts a source struct to a target type T using JSON marshaling
+func ConvertNodeToStruct[T any](source *zep.EntityNode) (T, error) {
+	var target T
+
+	// Convert source to JSON bytes
+	jsonData, err := json.Marshal(source)
+	if err != nil {
+		return target, fmt.Errorf("error marshaling source: %w", err)
+	}
+
+	// Convert JSON bytes to target type
+	err = json.Unmarshal(jsonData, &target)
+	if err != nil {
+		return target, fmt.Errorf("error unmarshaling to target: %w", err)
+	}
+
+	return target, nil
+}
 func main() {
 	apiKey := os.Getenv("ZEP_API_KEY")
 	if apiKey == "" {
@@ -27,15 +46,58 @@ func main() {
 
 	ctx := context.Background()
 
+	type Purchase struct {
+		ItemName     string  `entity:"The item purchased" json:"item_name,omitempty"`
+		ItemPrice    float64 `entity:"The price of the item" json:"item_price,omitempty"`
+		ItemQuantity int     `entity:"The quantity of the item purchased" json:"item_quantity,omitempty"`
+	}
+
+	_, err := client.Graph.SetEntityTypes(
+		ctx,
+		map[string]interface{}{
+			"Purchase": Purchase{},
+		},
+	)
+	if err != nil {
+		fmt.Printf("Error setting entity types: %v\n", err)
+		return
+	}
+
+	searchResults, err := client.Graph.Search(
+		ctx,
+		&zep.GraphSearchQuery{
+			Query: "grocery purchases",
+			Scope: zep.GraphSearchScopeNodes.Ptr(),
+		},
+	)
+	if err != nil {
+		fmt.Printf("Error searching graph: %v\n", err)
+		return
+	}
+
+	nodes := searchResults.Nodes
+
+	var purchases []Purchase
+	for _, node := range nodes {
+		v, err := ConvertNodeToStruct[Purchase](node)
+		if err != nil {
+			fmt.Printf("Error converting node to struct: %v\n", err)
+			continue
+		}
+		purchases = append(purchases, v)
+	}
+
+	fmt.Printf("Purchases: %v\n", purchases)
+
 	userID := uuid.New().String()
 	sessionID := uuid.New().String()
 
 	// Create a user
 	userRequest := &zep.CreateUserRequest{
-		UserID:    zep.String(userID),
-		FirstName: zep.String("Paul"),
+		UserID:    userID,
+		FirstName: "Paul",
 	}
-	_, err := client.User.Add(ctx, userRequest)
+	_, err = client.User.Add(ctx, userRequest)
 	if err != nil {
 		fmt.Printf("Error creating user: %v\n", err)
 		return
@@ -59,6 +121,7 @@ func main() {
 			Messages: []*zep.Message{
 				{Role: message.Role, RoleType: message.RoleType, Content: message.Content},
 			},
+			ReturnContext: zep.Bool(true),
 		})
 		if err != nil {
 			fmt.Printf("Error adding message: %v\n", err)
