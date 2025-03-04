@@ -54,10 +54,6 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AddTripleRequest = interface{}
-
-type AddTripleResponse = interface{}
-
 type AddedFact = interface{}
 
 type ApidataFactRatingExamples struct {
@@ -263,6 +259,8 @@ func (e *EntityEdge) String() string {
 }
 
 type EntityNode struct {
+	// Additional attributes of the node. Dependent on node labels
+	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the node
 	CreatedAt string `json:"created_at" url:"created_at"`
 	// Labels associated with the node
@@ -276,6 +274,13 @@ type EntityNode struct {
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (e *EntityNode) GetAttributes() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.Attributes
 }
 
 func (e *EntityNode) GetCreatedAt() string {
@@ -483,7 +488,7 @@ type Fact struct {
 	Content   string  `json:"content" url:"content"`
 	CreatedAt string  `json:"created_at" url:"created_at"`
 	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	// Deprecated. This field will be removed in the future, please use `content` instead.
+	// Deprecated
 	Fact           string   `json:"fact" url:"fact"`
 	InvalidAt      *string  `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	Name           *string  `json:"name,omitempty" url:"name,omitempty"`
@@ -850,21 +855,23 @@ func (s SearchType) Ptr() *SearchType {
 }
 
 type Session struct {
-	Classifications       map[string]string      `json:"classifications,omitempty" url:"classifications,omitempty"`
-	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt             *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	EndedAt               *string                `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	Classifications map[string]string `json:"classifications,omitempty" url:"classifications,omitempty"`
+	CreatedAt       *string           `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt       *string           `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	EndedAt         *string           `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	// Deprecated
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	Facts                 []string               `json:"facts,omitempty" url:"facts,omitempty"`
-	// TODO deprecate
-	ID          *int                   `json:"id,omitempty" url:"id,omitempty"`
+	// Deprecated
+	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
+	ID    *int     `json:"id,omitempty" url:"id,omitempty"`
+	// Deprecated
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
 	SessionID   *string                `json:"session_id,omitempty" url:"session_id,omitempty"`
-	UpdatedAt   *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	// Must be a pointer to allow for null values
-	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UUID   *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// Deprecated
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UserID    *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -1042,5 +1049,3 @@ func (s *SuccessResponse) String() string {
 	}
 	return fmt.Sprintf("%#v", s)
 }
-
-type UpdateGroupRequest = interface{}

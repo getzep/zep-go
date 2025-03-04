@@ -35,7 +35,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// get fact by uuid
+// Deprecated API: get fact by uuid
 func (c *Client) GetFact(
 	ctx context.Context,
 	// Fact UUID
@@ -89,7 +89,7 @@ func (c *Client) GetFact(
 	return response, nil
 }
 
-// delete a fact
+// Deprecated API: delete a fact
 func (c *Client) DeleteFact(
 	ctx context.Context,
 	// Fact UUID
@@ -143,7 +143,7 @@ func (c *Client) DeleteFact(
 	return response, nil
 }
 
-// Create New Session
+// Creates a new session.
 func (c *Client) AddSession(
 	ctx context.Context,
 	request *v2.CreateSessionRequest,
@@ -195,7 +195,7 @@ func (c *Client) AddSession(
 	return response, nil
 }
 
-// Get all sessions with optional page number, page size, order by field and order direction for pagination.
+// Returns all sessions.
 func (c *Client) ListSessions(
 	ctx context.Context,
 	request *v2.MemoryListSessionsRequest,
@@ -252,7 +252,7 @@ func (c *Client) ListSessions(
 	return response, nil
 }
 
-// End multiple sessions by their IDs.
+// Deprecated API: End multiple sessions by their IDs.
 func (c *Client) EndSessions(
 	ctx context.Context,
 	request *v2.EndSessionsRequest,
@@ -309,7 +309,7 @@ func (c *Client) EndSessions(
 	return response, nil
 }
 
-// Search sessions for the specified query.
+// Deprecated API: Search sessions for the specified query.
 func (c *Client) SearchSessions(
 	ctx context.Context,
 	request *v2.SessionSearchQuery,
@@ -363,10 +363,10 @@ func (c *Client) SearchSessions(
 	return response, nil
 }
 
-// get session by id
+// Returns a session.
 func (c *Client) GetSession(
 	ctx context.Context,
-	// Session ID
+	// The unique identifier of the session.
 	sessionID string,
 	opts ...option.RequestOption,
 ) (*v2.Session, error) {
@@ -420,7 +420,7 @@ func (c *Client) GetSession(
 // Update Session Metadata
 func (c *Client) UpdateSession(
 	ctx context.Context,
-	// Session ID
+	// The unique identifier of the session.
 	sessionID string,
 	request *v2.UpdateSessionRequest,
 	opts ...option.RequestOption,
@@ -484,7 +484,7 @@ func (c *Client) UpdateSession(
 	return response, nil
 }
 
-// classify a session by session id.
+// Classifies a session.
 func (c *Client) ClassifySession(
 	ctx context.Context,
 	// Session ID
@@ -541,7 +541,7 @@ func (c *Client) ClassifySession(
 	return response, nil
 }
 
-// End a session by ID.
+// Deprecated API: End a session by ID.
 func (c *Client) EndSession(
 	ctx context.Context,
 	// Session ID
@@ -665,7 +665,7 @@ func (c *Client) ExtractData(
 	return response, nil
 }
 
-// get facts for a session
+// Deprecated API: get facts for a session
 func (c *Client) GetSessionFacts(
 	ctx context.Context,
 	// Session ID
@@ -727,7 +727,7 @@ func (c *Client) GetSessionFacts(
 	return response, nil
 }
 
-// Adds facts to a session
+// Deprecated API: Adds facts to a session
 func (c *Client) AddSessionFacts(
 	ctx context.Context,
 	// Session ID
@@ -784,7 +784,7 @@ func (c *Client) AddSessionFacts(
 	return response, nil
 }
 
-// Returns a memory (latest summary, list of messages and facts) for a given session
+// Returns a memory for a given session.
 func (c *Client) Get(
 	ctx context.Context,
 	// The ID of the session for which to retrieve memory.
@@ -898,7 +898,7 @@ func (c *Client) Add(
 	return response, nil
 }
 
-// delete memory messages by session id
+// Deletes a session.
 func (c *Client) Delete(
 	ctx context.Context,
 	// The ID of the session for which memory should be deleted.
@@ -952,7 +952,7 @@ func (c *Client) Delete(
 	return response, nil
 }
 
-// Lists messages for a session, specified by limit and cursor.
+// Returns messages for a session.
 func (c *Client) GetSessionMessages(
 	ctx context.Context,
 	// Session ID
@@ -1014,10 +1014,10 @@ func (c *Client) GetSessionMessages(
 	return response, nil
 }
 
-// Gets a specific message from a session
+// Returns a specific message from a session.
 func (c *Client) GetSessionMessage(
 	ctx context.Context,
-	// The ID of the session.
+	// Soon to be deprecated as this is not needed.
 	sessionID string,
 	// The UUID of the message.
 	messageUUID string,
@@ -1131,7 +1131,6 @@ func (c *Client) UpdateMessageMetadata(
 	return response, nil
 }
 
-// Search memory for the specified session. Deprecated, please use search_sessions method instead
 func (c *Client) Search(
 	ctx context.Context,
 	// The ID of the session for which memory should be searched.
@@ -1195,7 +1194,7 @@ func (c *Client) Search(
 	return response, nil
 }
 
-// Get session summaries by ID
+// Deprecated API: Get session summaries by ID
 func (c *Client) GetSummaries(
 	ctx context.Context,
 	// Session ID
@@ -1249,7 +1248,7 @@ func (c *Client) GetSummaries(
 	return response, nil
 }
 
-// Synthesize a question from the last N messages in the chat history.
+// Deprecated API: Synthesize a question from the last N messages in the chat history.
 func (c *Client) SynthesizeQuestion(
 	ctx context.Context,
 	// The ID of the session.

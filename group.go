@@ -9,31 +9,30 @@ import (
 )
 
 type CreateGroupRequest struct {
-	Description *string `json:"description,omitempty" url:"-"`
-	// UserIDs     []string `json:"user_ids"`
+	Description           *string                `json:"description,omitempty" url:"-"`
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	GroupID               string                 `json:"group_id" url:"-"`
 	Name                  *string                `json:"name,omitempty" url:"-"`
 }
 
 type GetGroupsOrderedRequest struct {
-	// Page number for pagination, starting from 1
+	// Page number for pagination, starting from 1.
 	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
-	// Number of groups to retrieve per page
+	// Number of groups to retrieve per page.
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
 }
 
 type Group struct {
-	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Description           *string                `json:"description,omitempty" url:"description,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// Deprecated
 	ExternalID            *string                `json:"external_id,omitempty" url:"external_id,omitempty"`
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
 	GroupID               *string                `json:"group_id,omitempty" url:"group_id,omitempty"`
-	// TODO deprecate
-	ID          *int    `json:"id,omitempty" url:"id,omitempty"`
-	Name        *string `json:"name,omitempty" url:"name,omitempty"`
-	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
+	Name                  *string                `json:"name,omitempty" url:"name,omitempty"`
+	ProjectUUID           *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -194,4 +193,10 @@ func (g *GroupListResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", g)
+}
+
+type UpdateGroupRequest struct {
+	Description           *string                `json:"description,omitempty" url:"-"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
+	Name                  *string                `json:"name,omitempty" url:"-"`
 }

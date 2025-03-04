@@ -35,7 +35,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Get all edges for a group
+// Returns all edges for a group.
 func (c *Client) GetByGroupID(
 	ctx context.Context,
 	// Group ID
@@ -89,7 +89,7 @@ func (c *Client) GetByGroupID(
 	return response, nil
 }
 
-// Get all edges for a user
+// Returns all edges for a user.
 func (c *Client) GetByUserID(
 	ctx context.Context,
 	// User ID
@@ -143,7 +143,7 @@ func (c *Client) GetByUserID(
 	return response, nil
 }
 
-// Get a specific edge by its UUID
+// Returns a specific edge by its UUID.
 func (c *Client) Get(
 	ctx context.Context,
 	// Edge UUID
@@ -202,7 +202,7 @@ func (c *Client) Get(
 	return response, nil
 }
 
-// Delete an edge by UUID
+// Deletes an edge by UUID.
 func (c *Client) Delete(
 	ctx context.Context,
 	// Edge UUID
