@@ -35,7 +35,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Create a new user group
+// Creates a new group.
 func (c *Client) Add(
 	ctx context.Context,
 	request *v2.CreateGroupRequest,
@@ -87,8 +87,8 @@ func (c *Client) Add(
 	return response, nil
 }
 
-// List all groups with pagination.
-func (c *Client) ListAllGroups(
+// Returns all groups.
+func (c *Client) GetAllGroups(
 	ctx context.Context,
 	request *v2.GetGroupsOrderedRequest,
 	opts ...option.RequestOption,
@@ -144,8 +144,8 @@ func (c *Client) ListAllGroups(
 	return response, nil
 }
 
-// Get a group.
-func (c *Client) GetAGroup(
+// Returns a group.
+func (c *Client) GetGroup(
 	ctx context.Context,
 	// The group_id of the group to get.
 	groupID string,
@@ -198,7 +198,7 @@ func (c *Client) GetAGroup(
 	return response, nil
 }
 
-// Delete group
+// Deletes a group.
 func (c *Client) Delete(
 	ctx context.Context,
 	// Group ID
@@ -257,7 +257,69 @@ func (c *Client) Delete(
 	return response, nil
 }
 
-// Get group facts.
+// Updates information about a group.
+func (c *Client) Update(
+	ctx context.Context,
+	// Group ID
+	groupID string,
+	request *v2.UpdateGroupRequest,
+	opts ...option.RequestOption,
+) (*v2.Group, error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/groups/%v",
+		groupID,
+	)
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	headers.Set("Content-Type", "application/json")
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+
+	var response *v2.Group
+	if err := c.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPatch,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// Deprecated: Use Get Group Edges instead.
 func (c *Client) GetFacts(
 	ctx context.Context,
 	// The group_id of the group to get.

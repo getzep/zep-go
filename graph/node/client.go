@@ -35,7 +35,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Get all nodes for a group
+// Returns all nodes for a group.
 func (c *Client) GetByGroupID(
 	ctx context.Context,
 	// Group ID
@@ -89,7 +89,7 @@ func (c *Client) GetByGroupID(
 	return response, nil
 }
 
-// Get all nodes for a user
+// Returns all nodes for a user
 func (c *Client) GetByUserID(
 	ctx context.Context,
 	// User ID
@@ -143,7 +143,7 @@ func (c *Client) GetByUserID(
 	return response, nil
 }
 
-// Get a specific node by its UUID
+// Returns a specific node by its UUID.
 func (c *Client) Get(
 	ctx context.Context,
 	// Node UUID

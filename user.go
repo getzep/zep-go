@@ -38,12 +38,15 @@ type User struct {
 	FirstName             *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
 	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
 	LastName              *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
-	Metadata              map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProjectUUID           *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	SessionCount          *int                   `json:"session_count,omitempty" url:"session_count,omitempty"`
-	UpdatedAt             *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UserID                *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// Deprecated
+	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	// Deprecated
+	SessionCount *int `json:"session_count,omitempty" url:"session_count,omitempty"`
+	// Deprecated
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UserID    *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
