@@ -11,6 +11,10 @@ import (
 type AddMemoryRequest struct {
 	// Deprecated
 	FactInstruction *string `json:"fact_instruction,omitempty" url:"-"`
+	// Optional list of role types to ignore when adding messages to graph memory.
+	// The message itself will still be added retained and used as context for messages
+	// that are added to a user's graph.
+	IgnoreRoles []RoleType `json:"ignore_roles,omitempty" url:"-"`
 	// A list of message objects, where each message contains a role and content.
 	Messages []*Message `json:"messages,omitempty" url:"-"`
 	// Optionally return memory context relevant to the most recent messages.
