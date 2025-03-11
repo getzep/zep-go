@@ -50,7 +50,7 @@ func (c *Client) Add(
 	ctx context.Context,
 	request *v2.AddDataRequest,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v2.Episode, error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -76,7 +76,7 @@ func (c *Client) Add(
 		},
 	}
 
-	var response *v2.SuccessResponse
+	var response *v2.Episode
 	if err := c.caller.Call(
 		ctx,
 		&internal.CallParams{
