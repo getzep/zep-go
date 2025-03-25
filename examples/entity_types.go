@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -25,24 +24,24 @@ func entityTypes() {
 	ctx := context.Background()
 
 	type Purchase struct {
+		zep.BaseEntity  `name:"Purchase" description:"A purchase is an item that was purchased with base entity"`
 		ItemName        string  `description:"The name of the item purchased" json:"item_name,omitempty"`
 		ItemPrice       float64 `description:"The price of the item" json:"item_price,omitempty"`
 		ItemQuantity    int     `description:"The quantity of the item purchased" json:"item_quantity,omitempty"`
 		AdditionalNotes string  `description:"Additional notes about the purchase" json:"additional_notes,omitempty"`
 	}
+
 	_, err := client.Graph.SetEntityTypes(
 		ctx,
-		map[string]zep.EntityTypeDefinition{
-			"Purchase": {
-				Description: "A purchase is an item that was purchased",
-				Interface:   Purchase{},
-			},
+		[]zep.EntityDefinition{
+			Purchase{},
 		},
 	)
 	if err != nil {
-		fmt.Printf("Error setting entity types: %v\n", err)
+		fmt.Printf("Error setting entity types with base entity: %v\n", err)
 		return
 	}
+
 	searchFilters := zep.SearchFilters{NodeLabels: []string{"Purchase"}}
 	searchResults, err := client.Graph.Search(
 		ctx,
@@ -58,22 +57,14 @@ func entityTypes() {
 		return
 	}
 
-	nodes := searchResults.Nodes
-
 	var purchases []Purchase
-	for _, node := range nodes {
+	for _, node := range searchResults.Nodes {
 		var purchase Purchase
-		jsonData, err := json.Marshal(node.Attributes)
-		if err != nil {
-			fmt.Printf("Error marshaling node attributes: %v\n", err)
-			continue
-		}
-		err = json.Unmarshal(jsonData, &purchase)
+		err := zep.UnmarshalNodeAttributes(node.Attributes, &purchase)
 		if err != nil {
 			fmt.Printf("Error converting node to struct: %v\n", err)
 			continue
 		}
-
 		purchases = append(purchases, purchase)
 	}
 
