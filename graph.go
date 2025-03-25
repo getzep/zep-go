@@ -15,6 +15,37 @@ type AddDataRequest struct {
 	UserID  *string        `json:"user_id,omitempty" url:"-"`
 }
 
+type AddTripleRequest struct {
+	// The timestamp of the message
+	CreatedAt *string `json:"created_at,omitempty" url:"-"`
+	// The time (if any) at which the edge expires
+	ExpiredAt *string `json:"expired_at,omitempty" url:"-"`
+	// The fact relating the two nodes that this edge represents
+	Fact string `json:"fact" url:"-"`
+	// The name of the edge to add. Should be all caps using snake case (eg RELATES_TO)
+	FactName string `json:"fact_name" url:"-"`
+	// The uuid of the edge to add
+	FactUUID *string `json:"fact_uuid,omitempty" url:"-"`
+	GroupID  *string `json:"group_id,omitempty" url:"-"`
+	// The time (if any) at which the fact stops being true
+	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
+	// The name of the source node to add
+	SourceNodeName *string `json:"source_node_name,omitempty" url:"-"`
+	// The summary of the source node to add
+	SourceNodeSummary *string `json:"source_node_summary,omitempty" url:"-"`
+	// The source node uuid
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"-"`
+	// The name of the target node to add
+	TargetNodeName string `json:"target_node_name" url:"-"`
+	// The summary of the target node to add
+	TargetNodeSummary *string `json:"target_node_summary,omitempty" url:"-"`
+	// The target node uuid
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"-"`
+	UserID         *string `json:"user_id,omitempty" url:"-"`
+	// The time at which the fact becomes true
+	ValidAt *string `json:"valid_at,omitempty" url:"-"`
+}
+
 type GraphSearchQuery struct {
 	// Node to rerank around for node distance reranking
 	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
@@ -32,39 +63,53 @@ type GraphSearchQuery struct {
 	Reranker *Reranker `json:"reranker,omitempty" url:"-"`
 	// Defaults to Edges. Communities will be added in the future.
 	Scope *GraphSearchScope `json:"scope,omitempty" url:"-"`
+	// Search filters to apply to the search
+	SearchFilters *SearchFilters `json:"search_filters,omitempty" url:"-"`
 	// one of user_id or group_id must be provided
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
 
-type ApidataEntityTypeRequest struct {
-	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"-"`
-}
-
-type ApidataEntityTypeResponse struct {
-	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
+type AddTripleResponse struct {
+	Edge       *EntityEdge `json:"edge,omitempty" url:"edge,omitempty"`
+	SourceNode *EntityNode `json:"source_node,omitempty" url:"source_node,omitempty"`
+	TargetNode *EntityNode `json:"target_node,omitempty" url:"target_node,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataEntityTypeResponse) GetEntityTypes() []*EntityType {
+func (a *AddTripleResponse) GetEdge() *EntityEdge {
 	if a == nil {
 		return nil
 	}
-	return a.EntityTypes
+	return a.Edge
 }
 
-func (a *ApidataEntityTypeResponse) GetExtraProperties() map[string]interface{} {
+func (a *AddTripleResponse) GetSourceNode() *EntityNode {
+	if a == nil {
+		return nil
+	}
+	return a.SourceNode
+}
+
+func (a *AddTripleResponse) GetTargetNode() *EntityNode {
+	if a == nil {
+		return nil
+	}
+	return a.TargetNode
+}
+
+func (a *AddTripleResponse) GetExtraProperties() map[string]interface{} {
 	return a.extraProperties
 }
 
-func (a *ApidataEntityTypeResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataEntityTypeResponse
+func (a *AddTripleResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddTripleResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataEntityTypeResponse(value)
+	*a = AddTripleResponse(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -74,7 +119,7 @@ func (a *ApidataEntityTypeResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *ApidataEntityTypeResponse) String() string {
+func (a *AddTripleResponse) String() string {
 	if len(a.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
@@ -84,204 +129,6 @@ func (a *ApidataEntityTypeResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
-}
-
-type EntityProperty struct {
-	Description string             `json:"description" url:"description"`
-	Name        string             `json:"name" url:"name"`
-	Type        EntityPropertyType `json:"type" url:"type"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EntityProperty) GetDescription() string {
-	if e == nil {
-		return ""
-	}
-	return e.Description
-}
-
-func (e *EntityProperty) GetName() string {
-	if e == nil {
-		return ""
-	}
-	return e.Name
-}
-
-func (e *EntityProperty) GetType() EntityPropertyType {
-	if e == nil {
-		return ""
-	}
-	return e.Type
-}
-
-func (e *EntityProperty) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EntityProperty) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityProperty
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EntityProperty(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EntityProperty) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EntityPropertyType string
-
-const (
-	EntityPropertyTypeText    EntityPropertyType = "Text"
-	EntityPropertyTypeNumber  EntityPropertyType = "Number"
-	EntityPropertyTypeFloat   EntityPropertyType = "Float"
-	EntityPropertyTypeBoolean EntityPropertyType = "Boolean"
-)
-
-func NewEntityPropertyTypeFromString(s string) (EntityPropertyType, error) {
-	switch s {
-	case "Text":
-		return EntityPropertyTypeText, nil
-	case "Number":
-		return EntityPropertyTypeNumber, nil
-	case "Float":
-		return EntityPropertyTypeFloat, nil
-	case "Boolean":
-		return EntityPropertyTypeBoolean, nil
-	}
-	var t EntityPropertyType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (e EntityPropertyType) Ptr() *EntityPropertyType {
-	return &e
-}
-
-type EntityType struct {
-	Name       string            `json:"name" url:"name"`
-	Properties []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EntityType) GetName() string {
-	if e == nil {
-		return ""
-	}
-	return e.Name
-}
-
-func (e *EntityType) GetProperties() []*EntityProperty {
-	if e == nil {
-		return nil
-	}
-	return e.Properties
-}
-
-func (e *EntityType) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EntityType) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityType
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EntityType(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EntityType) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type GraphSearchResults struct {
-	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
-	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphSearchResults) GetEdges() []*EntityEdge {
-	if g == nil {
-		return nil
-	}
-	return g.Edges
-}
-
-func (g *GraphSearchResults) GetNodes() []*EntityNode {
-	if g == nil {
-		return nil
-	}
-	return g.Nodes
-}
-
-func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphSearchResults
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphSearchResults(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphSearchResults) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
 }
 
 type GraphSearchScope string
@@ -335,4 +182,51 @@ func NewRerankerFromString(s string) (Reranker, error) {
 
 func (r Reranker) Ptr() *Reranker {
 	return &r
+}
+
+type SearchFilters struct {
+	// List of node labels to filter on
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SearchFilters) GetNodeLabels() []string {
+	if s == nil {
+		return nil
+	}
+	return s.NodeLabels
+}
+
+func (s *SearchFilters) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SearchFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler SearchFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SearchFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SearchFilters) String() string {
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
 }

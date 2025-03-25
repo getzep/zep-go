@@ -23,26 +23,19 @@ type GetGroupsOrderedRequest struct {
 }
 
 type Group struct {
-	GroupID               *string                `json:"group_id,omitempty" url:"group_id,omitempty"`
-	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Name                  *string                `json:"name,omitempty" url:"name,omitempty"`
-	Description           *string                `json:"description,omitempty" url:"description,omitempty"`
-	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	ProjectUUID           *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
-	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
 	// Deprecated
-	ExternalID *string `json:"external_id,omitempty" url:"external_id,omitempty"`
+	ExternalID            *string                `json:"external_id,omitempty" url:"external_id,omitempty"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	GroupID               *string                `json:"group_id,omitempty" url:"group_id,omitempty"`
+	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
+	Name                  *string                `json:"name,omitempty" url:"name,omitempty"`
+	ProjectUUID           *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (g *Group) GetGroupID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.GroupID
 }
 
 func (g *Group) GetCreatedAt() *string {
@@ -52,18 +45,18 @@ func (g *Group) GetCreatedAt() *string {
 	return g.CreatedAt
 }
 
-func (g *Group) GetName() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Name
-}
-
 func (g *Group) GetDescription() *string {
 	if g == nil {
 		return nil
 	}
 	return g.Description
+}
+
+func (g *Group) GetExternalID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ExternalID
 }
 
 func (g *Group) GetFactRatingInstruction() *FactRatingInstruction {
@@ -73,11 +66,11 @@ func (g *Group) GetFactRatingInstruction() *FactRatingInstruction {
 	return g.FactRatingInstruction
 }
 
-func (g *Group) GetProjectUUID() *string {
+func (g *Group) GetGroupID() *string {
 	if g == nil {
 		return nil
 	}
-	return g.ProjectUUID
+	return g.GroupID
 }
 
 func (g *Group) GetID() *int {
@@ -87,18 +80,25 @@ func (g *Group) GetID() *int {
 	return g.ID
 }
 
+func (g *Group) GetName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Name
+}
+
+func (g *Group) GetProjectUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ProjectUUID
+}
+
 func (g *Group) GetUUID() *string {
 	if g == nil {
 		return nil
 	}
 	return g.UUID
-}
-
-func (g *Group) GetExternalID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.ExternalID
 }
 
 func (g *Group) GetExtraProperties() map[string]interface{} {
@@ -135,8 +135,8 @@ func (g *Group) String() string {
 
 type GroupListResponse struct {
 	Groups     []*Group `json:"groups,omitempty" url:"groups,omitempty"`
-	TotalCount *int     `json:"total_count,omitempty" url:"total_count,omitempty"`
 	RowCount   *int     `json:"row_count,omitempty" url:"row_count,omitempty"`
+	TotalCount *int     `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -149,18 +149,18 @@ func (g *GroupListResponse) GetGroups() []*Group {
 	return g.Groups
 }
 
-func (g *GroupListResponse) GetTotalCount() *int {
-	if g == nil {
-		return nil
-	}
-	return g.TotalCount
-}
-
 func (g *GroupListResponse) GetRowCount() *int {
 	if g == nil {
 		return nil
 	}
 	return g.RowCount
+}
+
+func (g *GroupListResponse) GetTotalCount() *int {
+	if g == nil {
+		return nil
+	}
+	return g.TotalCount
 }
 
 func (g *GroupListResponse) GetExtraProperties() map[string]interface{} {

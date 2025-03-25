@@ -54,38 +54,34 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AddTripleRequest = interface{}
-
-type AddTripleResponse = interface{}
-
 type AddedFact = interface{}
 
 type ApidataFactRatingExamples struct {
-	High   string `json:"high" url:"high"`
-	Low    string `json:"low" url:"low"`
-	Medium string `json:"medium" url:"medium"`
+	High   *string `json:"high,omitempty" url:"high,omitempty"`
+	Low    *string `json:"low,omitempty" url:"low,omitempty"`
+	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataFactRatingExamples) GetHigh() string {
+func (a *ApidataFactRatingExamples) GetHigh() *string {
 	if a == nil {
-		return ""
+		return nil
 	}
 	return a.High
 }
 
-func (a *ApidataFactRatingExamples) GetLow() string {
+func (a *ApidataFactRatingExamples) GetLow() *string {
 	if a == nil {
-		return ""
+		return nil
 	}
 	return a.Low
 }
 
-func (a *ApidataFactRatingExamples) GetMedium() string {
+func (a *ApidataFactRatingExamples) GetMedium() *string {
 	if a == nil {
-		return ""
+		return nil
 	}
 	return a.Medium
 }
@@ -135,12 +131,6 @@ type DocumentSearchResult = interface{}
 type DocumentSearchResultPage = interface{}
 
 type EntityEdge struct {
-	// UUID of the edge
-	UUID string `json:"uuid" url:"uuid"`
-	// UUID of the source node
-	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
-	// UUID of the target node
-	TargetNodeUUID string `json:"target_node_uuid" url:"target_node_uuid"`
 	// Creation time of the edge
 	CreatedAt string `json:"created_at" url:"created_at"`
 	// List of episode ids that reference these entity edges
@@ -153,32 +143,17 @@ type EntityEdge struct {
 	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// Name of the edge, relation name
 	Name string `json:"name" url:"name"`
+	// UUID of the source node
+	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
+	// UUID of the target node
+	TargetNodeUUID string `json:"target_node_uuid" url:"target_node_uuid"`
+	// UUID of the edge
+	UUID string `json:"uuid" url:"uuid"`
 	// Datetime of when the fact became true
 	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (e *EntityEdge) GetUUID() string {
-	if e == nil {
-		return ""
-	}
-	return e.UUID
-}
-
-func (e *EntityEdge) GetSourceNodeUUID() string {
-	if e == nil {
-		return ""
-	}
-	return e.SourceNodeUUID
-}
-
-func (e *EntityEdge) GetTargetNodeUUID() string {
-	if e == nil {
-		return ""
-	}
-	return e.TargetNodeUUID
 }
 
 func (e *EntityEdge) GetCreatedAt() string {
@@ -223,6 +198,27 @@ func (e *EntityEdge) GetName() string {
 	return e.Name
 }
 
+func (e *EntityEdge) GetSourceNodeUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.SourceNodeUUID
+}
+
+func (e *EntityEdge) GetTargetNodeUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.TargetNodeUUID
+}
+
+func (e *EntityEdge) GetUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.UUID
+}
+
 func (e *EntityEdge) GetValidAt() *string {
 	if e == nil {
 		return nil
@@ -263,40 +259,28 @@ func (e *EntityEdge) String() string {
 }
 
 type EntityNode struct {
-	// UUID of the node
-	UUID string `json:"uuid" url:"uuid"`
-	// Name of the node
-	Name string `json:"name" url:"name"`
-	// Labels associated with the node
-	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// Additional attributes of the node. Dependent on node labels
+	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the node
 	CreatedAt string `json:"created_at" url:"created_at"`
+	// Labels associated with the node
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// Name of the node
+	Name string `json:"name" url:"name"`
 	// Regional summary of surrounding edges
 	Summary string `json:"summary" url:"summary"`
+	// UUID of the node
+	UUID string `json:"uuid" url:"uuid"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (e *EntityNode) GetUUID() string {
-	if e == nil {
-		return ""
-	}
-	return e.UUID
-}
-
-func (e *EntityNode) GetName() string {
-	if e == nil {
-		return ""
-	}
-	return e.Name
-}
-
-func (e *EntityNode) GetLabels() []string {
+func (e *EntityNode) GetAttributes() map[string]interface{} {
 	if e == nil {
 		return nil
 	}
-	return e.Labels
+	return e.Attributes
 }
 
 func (e *EntityNode) GetCreatedAt() string {
@@ -306,11 +290,32 @@ func (e *EntityNode) GetCreatedAt() string {
 	return e.CreatedAt
 }
 
+func (e *EntityNode) GetLabels() []string {
+	if e == nil {
+		return nil
+	}
+	return e.Labels
+}
+
+func (e *EntityNode) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
 func (e *EntityNode) GetSummary() string {
 	if e == nil {
 		return ""
 	}
 	return e.Summary
+}
+
+func (e *EntityNode) GetUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.UUID
 }
 
 func (e *EntityNode) GetExtraProperties() map[string]interface{} {
@@ -802,6 +807,60 @@ func (g GraphDataType) Ptr() *GraphDataType {
 	return &g
 }
 
+type GraphSearchResults struct {
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphSearchResults) GetEdges() []*EntityEdge {
+	if g == nil {
+		return nil
+	}
+	return g.Edges
+}
+
+func (g *GraphSearchResults) GetNodes() []*EntityNode {
+	if g == nil {
+		return nil
+	}
+	return g.Nodes
+}
+
+func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphSearchResults
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphSearchResults(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphSearchResults) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type MemoryType string
 
 const (
@@ -851,22 +910,22 @@ func (s SearchType) Ptr() *SearchType {
 
 type Session struct {
 	Classifications map[string]string `json:"classifications,omitempty" url:"classifications,omitempty"`
-	CreatedAt       string            `json:"created_at" url:"created_at"`
-	DeletedAt       string            `json:"deleted_at" url:"deleted_at"`
-	EndedAt         string            `json:"ended_at" url:"ended_at"`
+	CreatedAt       *string           `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt       *string           `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	EndedAt         *string           `json:"ended_at,omitempty" url:"ended_at,omitempty"`
 	// Deprecated
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
 	// Deprecated
 	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
-	ID    int      `json:"id" url:"id"`
+	ID    *int     `json:"id,omitempty" url:"id,omitempty"`
 	// Deprecated
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProjectUUID string                 `json:"project_uuid" url:"project_uuid"`
-	SessionID   string                 `json:"session_id" url:"session_id"`
+	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	SessionID   *string                `json:"session_id,omitempty" url:"session_id,omitempty"`
 	// Deprecated
-	UpdatedAt string `json:"updated_at" url:"updated_at"`
-	UserID    string `json:"user_id" url:"user_id"`
-	UUID      string `json:"uuid" url:"uuid"`
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UserID    *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -879,23 +938,23 @@ func (s *Session) GetClassifications() map[string]string {
 	return s.Classifications
 }
 
-func (s *Session) GetCreatedAt() string {
+func (s *Session) GetCreatedAt() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.CreatedAt
 }
 
-func (s *Session) GetDeletedAt() string {
+func (s *Session) GetDeletedAt() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.DeletedAt
 }
 
-func (s *Session) GetEndedAt() string {
+func (s *Session) GetEndedAt() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.EndedAt
 }
@@ -914,9 +973,9 @@ func (s *Session) GetFacts() []string {
 	return s.Facts
 }
 
-func (s *Session) GetID() int {
+func (s *Session) GetID() *int {
 	if s == nil {
-		return 0
+		return nil
 	}
 	return s.ID
 }
@@ -928,37 +987,37 @@ func (s *Session) GetMetadata() map[string]interface{} {
 	return s.Metadata
 }
 
-func (s *Session) GetProjectUUID() string {
+func (s *Session) GetProjectUUID() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.ProjectUUID
 }
 
-func (s *Session) GetSessionID() string {
+func (s *Session) GetSessionID() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.SessionID
 }
 
-func (s *Session) GetUpdatedAt() string {
+func (s *Session) GetUpdatedAt() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.UpdatedAt
 }
 
-func (s *Session) GetUserID() string {
+func (s *Session) GetUserID() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.UserID
 }
 
-func (s *Session) GetUUID() string {
+func (s *Session) GetUUID() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.UUID
 }

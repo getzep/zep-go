@@ -11,6 +11,10 @@ import (
 type AddMemoryRequest struct {
 	// Deprecated
 	FactInstruction *string `json:"fact_instruction,omitempty" url:"-"`
+	// Optional list of role types to ignore when adding messages to graph memory.
+	// The message itself will still be added retained and used as context for messages
+	// that are added to a user's graph.
+	IgnoreRoles []RoleType `json:"ignore_roles,omitempty" url:"-"`
 	// A list of message objects, where each message contains a role and content.
 	Messages []*Message `json:"messages,omitempty" url:"-"`
 	// Optionally return memory context relevant to the most recent messages.
@@ -182,7 +186,7 @@ type ClassifySessionRequest struct {
 	LastN *int `json:"last_n,omitempty" url:"last_n,omitempty"`
 	// The name of the classifier.
 	Name string `json:"name" url:"name"`
-	// Whether to persist the classification as part of the session object. Defaults to True.
+	// Deprecated
 	Persist *bool `json:"persist,omitempty" url:"persist,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -405,7 +409,7 @@ func (f *FactResponse) String() string {
 type Memory struct {
 	// Memory context containing relevant facts and entities for the session. Can be put into the prompt directly.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
-	// Deprecated
+	// Deprecated: Use relevant_facts instead.
 	Facts []string `json:"facts,omitempty" url:"facts,omitempty"`
 	// A list of message objects, where each message contains a role and content. Only last_n messages will be returned
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
@@ -413,7 +417,7 @@ type Memory struct {
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// Most relevant facts to the recent messages in the session.
 	RelevantFacts []*Fact `json:"relevant_facts,omitempty" url:"relevant_facts,omitempty"`
-	// Deprecated
+	// Deprecated: Use context string instead.
 	Summary *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -565,44 +569,51 @@ func (m *MemorySearchResult) String() string {
 }
 
 type Message struct {
-	// The unique identifier of the message.
-	UUID string `json:"uuid" url:"uuid"`
-	// The timestamp of when the message was created.
-	CreatedAt string `json:"created_at" url:"created_at"`
-	// Customizable role of the sender of the message (e.g., "john", "sales_agent").
-	Role string `json:"role" url:"role"`
-	// The type of the role (e.g., "user", "system").
-	RoleType RoleType `json:"role_type" url:"role_type"`
 	// The content of the message.
 	Content string `json:"content" url:"content"`
+	// The timestamp of when the message was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The metadata associated with the message.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Customizable role of the sender of the message (e.g., "john", "sales_agent").
+	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	// The type of the role (e.g., "user", "system").
+	RoleType RoleType `json:"role_type" url:"role_type"`
 	// Deprecated
-	UpdatedAt string `json:"updated_at" url:"updated_at"`
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
 	// Deprecated
-	TokenCount int `json:"token_count" url:"token_count"`
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The unique identifier of the message.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (m *Message) GetUUID() string {
+func (m *Message) GetContent() string {
 	if m == nil {
 		return ""
 	}
-	return m.UUID
+	return m.Content
 }
 
-func (m *Message) GetCreatedAt() string {
+func (m *Message) GetCreatedAt() *string {
 	if m == nil {
-		return ""
+		return nil
 	}
 	return m.CreatedAt
 }
 
-func (m *Message) GetRole() string {
+func (m *Message) GetMetadata() map[string]interface{} {
 	if m == nil {
-		return ""
+		return nil
+	}
+	return m.Metadata
+}
+
+func (m *Message) GetRole() *string {
+	if m == nil {
+		return nil
 	}
 	return m.Role
 }
@@ -614,32 +625,25 @@ func (m *Message) GetRoleType() RoleType {
 	return m.RoleType
 }
 
-func (m *Message) GetContent() string {
-	if m == nil {
-		return ""
-	}
-	return m.Content
-}
-
-func (m *Message) GetMetadata() map[string]interface{} {
+func (m *Message) GetTokenCount() *int {
 	if m == nil {
 		return nil
 	}
-	return m.Metadata
+	return m.TokenCount
 }
 
-func (m *Message) GetUpdatedAt() string {
+func (m *Message) GetUpdatedAt() *string {
 	if m == nil {
-		return ""
+		return nil
 	}
 	return m.UpdatedAt
 }
 
-func (m *Message) GetTokenCount() int {
+func (m *Message) GetUUID() *string {
 	if m == nil {
-		return 0
+		return nil
 	}
-	return m.TokenCount
+	return m.UUID
 }
 
 func (m *Message) GetExtraProperties() map[string]interface{} {
@@ -677,10 +681,10 @@ func (m *Message) String() string {
 type MessageListResponse struct {
 	// A list of message objects.
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	// The total number of messages.
-	TotalCount int `json:"total_count" url:"total_count"`
 	// The number of messages returned.
-	RowCount int `json:"row_count" url:"row_count"`
+	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
+	// The total number of messages.
+	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -693,18 +697,18 @@ func (m *MessageListResponse) GetMessages() []*Message {
 	return m.Messages
 }
 
-func (m *MessageListResponse) GetTotalCount() int {
+func (m *MessageListResponse) GetRowCount() *int {
 	if m == nil {
-		return 0
-	}
-	return m.TotalCount
-}
-
-func (m *MessageListResponse) GetRowCount() int {
-	if m == nil {
-		return 0
+		return nil
 	}
 	return m.RowCount
+}
+
+func (m *MessageListResponse) GetTotalCount() *int {
+	if m == nil {
+		return nil
+	}
+	return m.TotalCount
 }
 
 func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {
@@ -891,23 +895,23 @@ func (s SearchScope) Ptr() *SearchScope {
 }
 
 type SessionClassification struct {
-	Class string `json:"class" url:"class"`
-	Label string `json:"label" url:"label"`
+	Class *string `json:"class,omitempty" url:"class,omitempty"`
+	Label *string `json:"label,omitempty" url:"label,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *SessionClassification) GetClass() string {
+func (s *SessionClassification) GetClass() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.Class
 }
 
-func (s *SessionClassification) GetLabel() string {
+func (s *SessionClassification) GetLabel() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.Label
 }
@@ -945,17 +949,17 @@ func (s *SessionClassification) String() string {
 }
 
 type SessionListResponse struct {
-	ResponseCount int        `json:"response_count" url:"response_count"`
+	ResponseCount *int       `json:"response_count,omitempty" url:"response_count,omitempty"`
 	Sessions      []*Session `json:"sessions,omitempty" url:"sessions,omitempty"`
-	TotalCount    int        `json:"total_count" url:"total_count"`
+	TotalCount    *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *SessionListResponse) GetResponseCount() int {
+func (s *SessionListResponse) GetResponseCount() *int {
 	if s == nil {
-		return 0
+		return nil
 	}
 	return s.ResponseCount
 }
@@ -967,9 +971,9 @@ func (s *SessionListResponse) GetSessions() []*Session {
 	return s.Sessions
 }
 
-func (s *SessionListResponse) GetTotalCount() int {
+func (s *SessionListResponse) GetTotalCount() *int {
 	if s == nil {
-		return 0
+		return nil
 	}
 	return s.TotalCount
 }
@@ -1055,8 +1059,8 @@ func (s *SessionSearchResponse) String() string {
 type SessionSearchResult struct {
 	Fact      *Fact    `json:"fact,omitempty" url:"fact,omitempty"`
 	Message   *Message `json:"message,omitempty" url:"message,omitempty"`
-	Score     float64  `json:"score" url:"score"`
-	SessionID string   `json:"session_id" url:"session_id"`
+	Score     *float64 `json:"score,omitempty" url:"score,omitempty"`
+	SessionID *string  `json:"session_id,omitempty" url:"session_id,omitempty"`
 	Summary   *Summary `json:"summary,omitempty" url:"summary,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -1077,16 +1081,16 @@ func (s *SessionSearchResult) GetMessage() *Message {
 	return s.Message
 }
 
-func (s *SessionSearchResult) GetScore() float64 {
+func (s *SessionSearchResult) GetScore() *float64 {
 	if s == nil {
-		return 0
+		return nil
 	}
 	return s.Score
 }
 
-func (s *SessionSearchResult) GetSessionID() string {
+func (s *SessionSearchResult) GetSessionID() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.SessionID
 }
@@ -1132,30 +1136,30 @@ func (s *SessionSearchResult) String() string {
 
 type Summary struct {
 	// The content of the summary.
-	Content string `json:"content" url:"content"`
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
 	// The timestamp of when the summary was created.
-	CreatedAt           string                 `json:"created_at" url:"created_at"`
+	CreatedAt           *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
 	Metadata            map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	RelatedMessageUUIDs []string               `json:"related_message_uuids,omitempty" url:"related_message_uuids,omitempty"`
 	// The number of tokens in the summary.
-	TokenCount int `json:"token_count" url:"token_count"`
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
 	// The unique identifier of the summary.
-	UUID string `json:"uuid" url:"uuid"`
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *Summary) GetContent() string {
+func (s *Summary) GetContent() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.Content
 }
 
-func (s *Summary) GetCreatedAt() string {
+func (s *Summary) GetCreatedAt() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.CreatedAt
 }
@@ -1174,16 +1178,16 @@ func (s *Summary) GetRelatedMessageUUIDs() []string {
 	return s.RelatedMessageUUIDs
 }
 
-func (s *Summary) GetTokenCount() int {
+func (s *Summary) GetTokenCount() *int {
 	if s == nil {
-		return 0
+		return nil
 	}
 	return s.TokenCount
 }
 
-func (s *Summary) GetUUID() string {
+func (s *Summary) GetUUID() *string {
 	if s == nil {
-		return ""
+		return nil
 	}
 	return s.UUID
 }
@@ -1221,17 +1225,17 @@ func (s *Summary) String() string {
 }
 
 type SummaryListResponse struct {
-	RowCount   int        `json:"row_count" url:"row_count"`
+	RowCount   *int       `json:"row_count,omitempty" url:"row_count,omitempty"`
 	Summaries  []*Summary `json:"summaries,omitempty" url:"summaries,omitempty"`
-	TotalCount int        `json:"total_count" url:"total_count"`
+	TotalCount *int       `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *SummaryListResponse) GetRowCount() int {
+func (s *SummaryListResponse) GetRowCount() *int {
 	if s == nil {
-		return 0
+		return nil
 	}
 	return s.RowCount
 }
@@ -1243,9 +1247,9 @@ func (s *SummaryListResponse) GetSummaries() []*Summary {
 	return s.Summaries
 }
 
-func (s *SummaryListResponse) GetTotalCount() int {
+func (s *SummaryListResponse) GetTotalCount() *int {
 	if s == nil {
-		return 0
+		return nil
 	}
 	return s.TotalCount
 }

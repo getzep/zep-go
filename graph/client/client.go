@@ -45,113 +45,12 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Returns all entity types for a project.
-func (c *Client) ListEntityTypes(
-	ctx context.Context,
-	opts ...option.RequestOption,
-) (*v2.ApidataEntityTypeResponse, error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		c.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := baseURL + "/entity-types"
-	headers := internal.MergeHeaders(
-		c.header.Clone(),
-		options.ToHeader(),
-	)
-	errorCodes := internal.ErrorCodes{
-		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-
-	var response *v2.ApidataEntityTypeResponse
-	if err := c.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodGet,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	); err != nil {
-		return nil, err
-	}
-	return response, nil
-}
-
-// Sets the entity types for a project, replacing any existing ones.
-func (c *Client) SetEntityTypesInternal(
-	ctx context.Context,
-	request *v2.ApidataEntityTypeRequest,
-	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		c.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := baseURL + "/entity-types"
-	headers := internal.MergeHeaders(
-		c.header.Clone(),
-		options.ToHeader(),
-	)
-	headers.Set("Content-Type", "application/json")
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-
-	var response *v2.SuccessResponse
-	if err := c.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodPut,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Request:         request,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	); err != nil {
-		return nil, err
-	}
-	return response, nil
-}
-
 // Add data to the graph. Note: each subscription tier has different limits on the amount of data that can be added to the graph please refer to the pricing page for more information.
 func (c *Client) Add(
 	ctx context.Context,
 	request *v2.AddDataRequest,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v2.Episode, error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -177,7 +76,59 @@ func (c *Client) Add(
 		},
 	}
 
-	var response *v2.SuccessResponse
+	var response *v2.Episode
+	if err := c.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// Add a fact triple for a user or group
+func (c *Client) AddFactTriple(
+	ctx context.Context,
+	request *v2.AddTripleRequest,
+	opts ...option.RequestOption,
+) (*v2.AddTripleResponse, error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := baseURL + "/graph/add-fact-triple"
+	headers := internal.MergeHeaders(
+		c.header.Clone(),
+		options.ToHeader(),
+	)
+	headers.Set("Content-Type", "application/json")
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+
+	var response *v2.AddTripleResponse
 	if err := c.caller.Call(
 		ctx,
 		&internal.CallParams{
