@@ -59,6 +59,7 @@ func main() {
 			Messages: []*zep.Message{
 				{Role: message.Role, RoleType: message.RoleType, Content: message.Content},
 			},
+			ReturnContext: zep.Bool(true),
 		})
 		if err != nil {
 			fmt.Printf("Error adding message: %v\n", err)

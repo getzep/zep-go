@@ -4,4 +4,7 @@ README.md
 
 .gitignore
 examples/
+graph/client/entity.go
+graph/client/ontology.go
+entity_types.go
 LICENSE
