@@ -65,8 +65,14 @@ func entityTypes() {
 			fmt.Printf("Error converting node to struct: %v\n", err)
 			continue
 		}
+
 		purchases = append(purchases, purchase)
 	}
 
-	fmt.Printf("Purchases: %v\n", purchases)
+	for _, purchase := range purchases {
+		fmt.Printf("Item Name: %s\n", purchase.ItemName)
+		fmt.Printf("Item Price: %f\n", purchase.ItemPrice)
+		fmt.Printf("Item Quantity: %d\n", purchase.ItemQuantity)
+		fmt.Printf("Additional Notes: %s\n", purchase.AdditionalNotes)
+	}
 }

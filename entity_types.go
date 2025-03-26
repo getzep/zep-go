@@ -12,8 +12,11 @@ type EntityDefinition interface {
 	isEntityDefinition()
 }
 
+// isEntityDefinition is a marker method of EntityDefinition interface
 func (BaseEntity) isEntityDefinition() {}
 
+// UnmarshalNodeAttributes unmarshals a map[string]interface{} into a struct
+// that embeds BaseEntity
 func UnmarshalNodeAttributes(attributes map[string]interface{}, dest EntityDefinition) error {
 	jsonData, err := json.Marshal(attributes)
 	if err != nil {
