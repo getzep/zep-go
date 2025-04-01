@@ -575,8 +575,6 @@ type Message struct {
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The metadata associated with the message.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// Whether the message has been processed.
-	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
 	// Customizable role of the sender of the message (e.g., "john", "sales_agent").
 	Role *string `json:"role,omitempty" url:"role,omitempty"`
 	// The type of the role (e.g., "user", "system").
@@ -611,13 +609,6 @@ func (m *Message) GetMetadata() map[string]interface{} {
 		return nil
 	}
 	return m.Metadata
-}
-
-func (m *Message) GetProcessed() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.Processed
 }
 
 func (m *Message) GetRole() *string {

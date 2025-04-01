@@ -4,6 +4,9 @@ package client
 
 import (
 	context "context"
+	http "net/http"
+	os "os"
+
 	v2 "github.com/getzep/zep-go/v2"
 	core "github.com/getzep/zep-go/v2/core"
 	edge "github.com/getzep/zep-go/v2/graph/edge"
@@ -11,8 +14,6 @@ import (
 	node "github.com/getzep/zep-go/v2/graph/node"
 	internal "github.com/getzep/zep-go/v2/internal"
 	option "github.com/getzep/zep-go/v2/option"
-	http "net/http"
-	os "os"
 )
 
 type Client struct {
