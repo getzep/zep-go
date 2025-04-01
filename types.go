@@ -354,6 +354,7 @@ type Episode struct {
 	Content           string         `json:"content" url:"content"`
 	CreatedAt         string         `json:"created_at" url:"created_at"`
 	Name              *string        `json:"name,omitempty" url:"name,omitempty"`
+	Processed         *bool          `json:"processed,omitempty" url:"processed,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
 	UUID              string         `json:"uuid" url:"uuid"`
@@ -381,6 +382,13 @@ func (e *Episode) GetName() *string {
 		return nil
 	}
 	return e.Name
+}
+
+func (e *Episode) GetProcessed() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.Processed
 }
 
 func (e *Episode) GetSource() *GraphDataType {
