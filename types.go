@@ -815,6 +815,118 @@ func (g GraphDataType) Ptr() *GraphDataType {
 	return &g
 }
 
+type GraphEdgesRequest struct {
+	// Maximum number of items to return
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphEdgesRequest) GetLimit() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Limit
+}
+
+func (g *GraphEdgesRequest) GetUUIDCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUIDCursor
+}
+
+func (g *GraphEdgesRequest) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphEdgesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphEdgesRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphEdgesRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphEdgesRequest) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphNodesRequest struct {
+	// Maximum number of items to return
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphNodesRequest) GetLimit() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Limit
+}
+
+func (g *GraphNodesRequest) GetUUIDCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUIDCursor
+}
+
+func (g *GraphNodesRequest) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphNodesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphNodesRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphNodesRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphNodesRequest) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type GraphSearchResults struct {
 	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
 	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
