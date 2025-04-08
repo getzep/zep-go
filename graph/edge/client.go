@@ -40,6 +40,7 @@ func (c *Client) GetByGroupID(
 	ctx context.Context,
 	// Group ID
 	groupID string,
+	request *v2.GraphEdgesRequest,
 	opts ...option.RequestOption,
 ) ([]*v2.EntityEdge, error) {
 	options := core.NewRequestOptions(opts...)
@@ -56,6 +57,7 @@ func (c *Client) GetByGroupID(
 		c.header.Clone(),
 		options.ToHeader(),
 	)
+	headers.Set("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
 			return &v2.BadRequestError{
@@ -74,12 +76,13 @@ func (c *Client) GetByGroupID(
 		ctx,
 		&internal.CallParams{
 			URL:             endpointURL,
-			Method:          http.MethodGet,
+			Method:          http.MethodPost,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
+			Request:         request,
 			Response:        &response,
 			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
@@ -94,6 +97,7 @@ func (c *Client) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
+	request *v2.GraphEdgesRequest,
 	opts ...option.RequestOption,
 ) ([]*v2.EntityEdge, error) {
 	options := core.NewRequestOptions(opts...)
@@ -110,6 +114,7 @@ func (c *Client) GetByUserID(
 		c.header.Clone(),
 		options.ToHeader(),
 	)
+	headers.Set("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
 			return &v2.BadRequestError{
@@ -128,12 +133,13 @@ func (c *Client) GetByUserID(
 		ctx,
 		&internal.CallParams{
 			URL:             endpointURL,
-			Method:          http.MethodGet,
+			Method:          http.MethodPost,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
+			Request:         request,
 			Response:        &response,
 			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
 		},
