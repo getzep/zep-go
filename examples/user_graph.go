@@ -110,7 +110,7 @@ func main() {
 		fmt.Printf("%+v\n", episode)
 	}
 
-	edges, err := client.Graph.Edge.GetByUserID(ctx, userID)
+	edges, err := client.Graph.Edge.GetByUserID(ctx, userID, &zep.GraphEdgesRequest{})
 	if err != nil {
 		fmt.Printf("Error getting edges: %v\n", err)
 		return
@@ -127,7 +127,7 @@ func main() {
 		fmt.Printf("%+v\n", edge)
 	}
 
-	nodes, err := client.Graph.Node.GetByUserID(ctx, userID)
+	nodes, err := client.Graph.Node.GetByUserID(ctx, userID, &zep.GraphNodesRequest{})
 	if err != nil {
 		fmt.Printf("Error getting nodes: %v\n", err)
 		return
@@ -197,7 +197,7 @@ func main() {
 	time.Sleep(30 * time.Second)
 
 	fmt.Println("Getting nodes from the graph...")
-	updatedNodes, err := client.Graph.Node.GetByUserID(ctx, userID)
+	updatedNodes, err := client.Graph.Node.GetByUserID(ctx, userID, &zep.GraphNodesRequest{})
 	if err != nil {
 		fmt.Printf("Error getting updated nodes: %v\n", err)
 		return
