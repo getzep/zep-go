@@ -158,8 +158,8 @@ func main() {
 	fmt.Println("Adding a new text episode to the graph...")
 	_, err = client.Graph.Add(ctx, &zep.AddDataRequest{
 		UserID: zep.String(userID),
-		Type:   zep.GraphDataTypeText.Ptr(),
-		Data:   zep.String("The user is an avid fan of Eric Clapton"),
+		Type:   zep.GraphDataTypeText,
+		Data:   "The user is an avid fan of Eric Clapton",
 	})
 	if err != nil {
 		fmt.Printf("Error adding text episode: %v\n", err)
@@ -171,8 +171,8 @@ func main() {
 	jsonString := `{"name": "Eric Clapton", "age": 78, "genre": "Rock"}`
 	_, err = client.Graph.Add(ctx, &zep.AddDataRequest{
 		UserID: zep.String(userID),
-		Type:   zep.GraphDataTypeJSON.Ptr(),
-		Data:   zep.String(jsonString),
+		Type:   zep.GraphDataTypeJSON,
+		Data:   jsonString,
 	})
 	if err != nil {
 		fmt.Printf("Error adding JSON episode: %v\n", err)
@@ -184,8 +184,8 @@ func main() {
 	message := "Paul (user): I went to Eric Clapton concert last night"
 	_, err = client.Graph.Add(ctx, &zep.AddDataRequest{
 		UserID: zep.String(userID),
-		Type:   zep.GraphDataTypeMessage.Ptr(),
-		Data:   zep.String(message),
+		Type:   zep.GraphDataTypeMessage,
+		Data:   message,
 	})
 	if err != nil {
 		fmt.Printf("Error adding message episode: %v\n", err)
