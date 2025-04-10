@@ -9,10 +9,11 @@ import (
 )
 
 type AddDataRequest struct {
-	Data    *string        `json:"data,omitempty" url:"-"`
-	GroupID *string        `json:"group_id,omitempty" url:"-"`
-	Type    *GraphDataType `json:"type,omitempty" url:"-"`
-	UserID  *string        `json:"user_id,omitempty" url:"-"`
+	Data              string        `json:"data" url:"-"`
+	GroupID           *string       `json:"group_id,omitempty" url:"-"`
+	SourceDescription *string       `json:"source_description,omitempty" url:"-"`
+	Type              GraphDataType `json:"type" url:"-"`
+	UserID            *string       `json:"user_id,omitempty" url:"-"`
 }
 
 type AddTripleRequest struct {
