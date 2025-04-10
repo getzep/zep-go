@@ -353,7 +353,6 @@ func (e *EntityNode) String() string {
 type Episode struct {
 	Content           string         `json:"content" url:"content"`
 	CreatedAt         string         `json:"created_at" url:"created_at"`
-	Name              *string        `json:"name,omitempty" url:"name,omitempty"`
 	Processed         *bool          `json:"processed,omitempty" url:"processed,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
@@ -375,13 +374,6 @@ func (e *Episode) GetCreatedAt() string {
 		return ""
 	}
 	return e.CreatedAt
-}
-
-func (e *Episode) GetName() *string {
-	if e == nil {
-		return nil
-	}
-	return e.Name
 }
 
 func (e *Episode) GetProcessed() *bool {
