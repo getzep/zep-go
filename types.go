@@ -263,6 +263,8 @@ type EntityNode struct {
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the node
 	CreatedAt string `json:"created_at" url:"created_at"`
+	// List of episode uuids that mention this node
+	Episodes []string `json:"episodes,omitempty" url:"episodes,omitempty"`
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
 	// Name of the node
@@ -288,6 +290,13 @@ func (e *EntityNode) GetCreatedAt() string {
 		return ""
 	}
 	return e.CreatedAt
+}
+
+func (e *EntityNode) GetEpisodes() []string {
+	if e == nil {
+		return nil
+	}
+	return e.Episodes
 }
 
 func (e *EntityNode) GetLabels() []string {
