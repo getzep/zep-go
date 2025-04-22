@@ -8,14 +8,6 @@ import (
 	internal "github.com/getzep/zep-go/v2/internal"
 )
 
-type AddDataRequest struct {
-	Data              string        `json:"data" url:"-"`
-	GroupID           *string       `json:"group_id,omitempty" url:"-"`
-	SourceDescription *string       `json:"source_description,omitempty" url:"-"`
-	Type              GraphDataType `json:"type" url:"-"`
-	UserID            *string       `json:"user_id,omitempty" url:"-"`
-}
-
 type AddTripleRequest struct {
 	// The timestamp of the message
 	CreatedAt *string `json:"created_at,omitempty" url:"-"`
@@ -74,6 +66,84 @@ type GraphSearchQuery struct {
 
 type EntityTypeRequest struct {
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"-"`
+}
+
+type AddDataRequest struct {
+	Data              string        `json:"data" url:"data"`
+	GroupID           *string       `json:"group_id,omitempty" url:"group_id,omitempty"`
+	SourceDescription *string       `json:"source_description,omitempty" url:"source_description,omitempty"`
+	Type              GraphDataType `json:"type" url:"type"`
+	UserID            *string       `json:"user_id,omitempty" url:"user_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddDataRequest) GetData() string {
+	if a == nil {
+		return ""
+	}
+	return a.Data
+}
+
+func (a *AddDataRequest) GetGroupID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.GroupID
+}
+
+func (a *AddDataRequest) GetSourceDescription() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceDescription
+}
+
+func (a *AddDataRequest) GetType() GraphDataType {
+	if a == nil {
+		return ""
+	}
+	return a.Type
+}
+
+func (a *AddDataRequest) GetUserID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UserID
+}
+
+func (a *AddDataRequest) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AddDataRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddDataRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddDataRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddDataRequest) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
 }
 
 type AddTripleResponse struct {
