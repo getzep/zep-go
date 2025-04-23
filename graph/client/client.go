@@ -201,9 +201,9 @@ func (c *Client) Add(
 // Add data to the graph in batch mode (each episode processed concurrently). Note: each subscription tier has different limits on the amount of data that can be added to the graph please refer to the pricing page for more information.
 func (c *Client) AddBatch(
 	ctx context.Context,
-	request *v2.AddDataRequest,
+	request *v2.AddDataBatchRequest,
 	opts ...option.RequestOption,
-) (*v2.Episode, error) {
+) ([]*v2.Episode, error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -229,7 +229,7 @@ func (c *Client) AddBatch(
 		},
 	}
 
-	var response *v2.Episode
+	var response []*v2.Episode
 	if err := c.caller.Call(
 		ctx,
 		&internal.CallParams{
