@@ -20,7 +20,7 @@ type CreateUserRequest struct {
 	// The metadata associated with the user.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 	// The unique identifier of the user.
-	UserID *string `json:"user_id,omitempty" url:"-"`
+	UserID string `json:"user_id" url:"-"`
 }
 
 type UserListOrderedRequest struct {

@@ -32,7 +32,7 @@ func main() {
 
 	// Create a user
 	userRequest := &zep.CreateUserRequest{
-		UserID:    zep.String(userID),
+		UserID:    userID,
 		FirstName: zep.String("Paul"),
 	}
 	_, err := client.User.Add(ctx, userRequest)

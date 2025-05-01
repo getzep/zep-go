@@ -9,6 +9,7 @@ import (
 )
 
 type AddDataRequest struct {
+	CreatedAt         *string       `json:"created_at,omitempty" url:"-"`
 	Data              string        `json:"data" url:"-"`
 	GroupID           *string       `json:"group_id,omitempty" url:"-"`
 	SourceDescription *string       `json:"source_description,omitempty" url:"-"`
@@ -343,12 +344,20 @@ func (e *EntityTypeResponse) String() string {
 }
 
 type EpisodeData struct {
+	CreatedAt         *string       `json:"created_at,omitempty" url:"created_at,omitempty"`
 	Data              string        `json:"data" url:"data"`
 	SourceDescription *string       `json:"source_description,omitempty" url:"source_description,omitempty"`
 	Type              GraphDataType `json:"type" url:"type"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeData) GetCreatedAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.CreatedAt
 }
 
 func (e *EpisodeData) GetData() string {
