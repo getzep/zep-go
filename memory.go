@@ -753,15 +753,15 @@ func (m *MessageListResponse) String() string {
 }
 
 type NewFact struct {
-	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	Fact string `json:"fact" url:"fact"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (n *NewFact) GetFact() *string {
+func (n *NewFact) GetFact() string {
 	if n == nil {
-		return nil
+		return ""
 	}
 	return n.Fact
 }
