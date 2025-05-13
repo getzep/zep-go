@@ -351,9 +351,11 @@ func (e *EntityNode) String() string {
 }
 
 type Episode struct {
-	Content           string         `json:"content" url:"content"`
-	CreatedAt         string         `json:"created_at" url:"created_at"`
-	Processed         *bool          `json:"processed,omitempty" url:"processed,omitempty"`
+	Content   string `json:"content" url:"content"`
+	CreatedAt string `json:"created_at" url:"created_at"`
+	Processed *bool  `json:"processed,omitempty" url:"processed,omitempty"`
+	// Optional session ID. Will be present only if the episode corresponds to the messages added using memory.add API
+	SessionID         *string        `json:"session_id,omitempty" url:"session_id,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
 	UUID              string         `json:"uuid" url:"uuid"`
@@ -381,6 +383,13 @@ func (e *Episode) GetProcessed() *bool {
 		return nil
 	}
 	return e.Processed
+}
+
+func (e *Episode) GetSessionID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.SessionID
 }
 
 func (e *Episode) GetSource() *GraphDataType {
