@@ -1014,7 +1014,7 @@ func (c *Client) GetSessionMessages(
 	return response, nil
 }
 
-// Returns a specific message from a session.
+// Deprecated: Use graph.episodes.get instead. Returns a specific message from a session.
 func (c *Client) GetSessionMessage(
 	ctx context.Context,
 	// Soon to be deprecated as this is not needed.
