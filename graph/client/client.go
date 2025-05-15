@@ -146,7 +146,7 @@ func (c *Client) SetEntityTypesInternal(
 	return response, nil
 }
 
-// Add data to the graph. Note: each subscription tier has different limits on the amount of data that can be added to the graph please refer to the pricing page for more information.
+// Add data to the graph.
 func (c *Client) Add(
 	ctx context.Context,
 	request *v2.AddDataRequest,
@@ -198,7 +198,7 @@ func (c *Client) Add(
 	return response, nil
 }
 
-// Add data to the graph in batch mode (each episode processed concurrently). Note: each subscription tier has different limits on the amount of data that can be added to the graph please refer to the pricing page for more information.
+// Add data to the graph in batch mode, processing episodes concurrently. Use only for data that is insensitive to processing order.
 func (c *Client) AddBatch(
 	ctx context.Context,
 	request *v2.AddDataBatchRequest,
