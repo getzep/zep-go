@@ -54,7 +54,7 @@ func main() {
 	fmt.Printf("Session %s created\n", sessionID)
 
 	// Add messages to the session
-	for _, message := range history[2] {
+	for _, message := range history[0] {
 		_, err = client.Memory.Add(ctx, sessionID, &zep.AddMemoryRequest{
 			Messages: []*zep.Message{
 				{Role: message.Role, RoleType: message.RoleType, Content: message.Content},
@@ -241,12 +241,4 @@ func main() {
 		}
 		fmt.Printf("%+v\n", nodeSearchResults.Nodes)
 	}
-
-	fmt.Println("Getting all user facts")
-	userFacts, err := client.User.GetFacts(ctx, userID)
-	if err != nil {
-		fmt.Printf("Error getting user facts: %v\n", err)
-		return
-	}
-	fmt.Printf("%+v\n", userFacts.Facts)
 }

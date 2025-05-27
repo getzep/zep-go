@@ -6,15 +6,15 @@ import (
 	"github.com/getzep/zep-go/v2"
 )
 
-// BaseEntityMetadata contains information extracted from BaseEntity struct tags
-type BaseEntityMetadata struct {
+// BaseEdgeMetadata contains information extracted from BaseEdge struct tags
+type BaseEdgeMetadata struct {
 	Description string
 	Name        string
 }
 
-// ExtractBaseEntityMetadata tries to find an embedded BaseEntity by reflection
+// ExtractBaseEdgeMetadata tries to find an embedded BaseEdge by reflection
 // and extract metadata from direct struct tags
-func ExtractBaseEntityMetadata(entity zep.EntityDefinition) (BaseEntityMetadata, bool) {
+func ExtractBaseEdgeMetadata(entity zep.EdgeDefinition) (BaseEdgeMetadata, bool) {
 	v := reflect.ValueOf(entity)
 
 	if v.Kind() == reflect.Ptr {
@@ -22,18 +22,18 @@ func ExtractBaseEntityMetadata(entity zep.EntityDefinition) (BaseEntityMetadata,
 	}
 
 	if v.Kind() != reflect.Struct {
-		return BaseEntityMetadata{}, false
+		return BaseEdgeMetadata{}, false
 	}
 
 	t := v.Type()
 
-	// Look for BaseEntity field and its struct tags
+	// Look for BaseEdge field and its struct tags
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
-		// Check if this is the BaseEntity field
-		if field.Type.Name() == "BaseEntity" && field.Anonymous {
-			metadata := BaseEntityMetadata{}
+		// Check if this is the BaseEdge field
+		if field.Type.Name() == "BaseEdge" && field.Anonymous {
+			metadata := BaseEdgeMetadata{}
 			foundName := false
 
 			// Extract name tag directly
@@ -56,5 +56,5 @@ func ExtractBaseEntityMetadata(entity zep.EntityDefinition) (BaseEntityMetadata,
 		}
 	}
 
-	return BaseEntityMetadata{}, false
+	return BaseEdgeMetadata{}, false
 }
