@@ -602,11 +602,20 @@ func (r Reranker) Ptr() *Reranker {
 }
 
 type SearchFilters struct {
+	// List of edge types to filter on
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
 	// List of node labels to filter on
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (s *SearchFilters) GetEdgeTypes() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EdgeTypes
 }
 
 func (s *SearchFilters) GetNodeLabels() []string {
