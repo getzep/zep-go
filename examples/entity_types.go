@@ -103,4 +103,21 @@ func entityTypes() {
 		fmt.Printf("Destination Country: %s\n", destination.Country)
 		fmt.Printf("Destination Name: %s\n", destination.DestinationName)
 	}
+
+	var travelingToRelations []TravelingTo
+	for _, edge := range searchResults.Edges {
+		var travelingToRelation TravelingTo
+		err := zep.UnmarshalEdgeAttributes(edge.Attributes, &travelingToRelation)
+		if err != nil {
+			fmt.Printf("Error converting node to struct: %v\n", err)
+			continue
+		}
+
+		travelingToRelations = append(travelingToRelations, travelingToRelation)
+	}
+
+	for _, travelingToRelation := range travelingToRelations {
+		fmt.Printf("Traveling to destination: %s\n", travelingToRelation.Destination)
+		fmt.Printf("Traveling to distance: %f\n", travelingToRelation.Distance)
+	}
 }
