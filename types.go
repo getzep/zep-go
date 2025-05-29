@@ -131,6 +131,8 @@ type DocumentSearchResult = interface{}
 type DocumentSearchResultPage = interface{}
 
 type EntityEdge struct {
+	// Additional attributes of the edge. Dependent on edge types
+	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the edge
 	CreatedAt string `json:"created_at" url:"created_at"`
 	// List of episode ids that reference these entity edges
@@ -154,6 +156,13 @@ type EntityEdge struct {
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (e *EntityEdge) GetAttributes() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.Attributes
 }
 
 func (e *EntityEdge) GetCreatedAt() string {
