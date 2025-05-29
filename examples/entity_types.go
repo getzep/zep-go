@@ -109,7 +109,7 @@ func entityTypes() {
 		var travelingToRelation TravelingTo
 		err := zep.UnmarshalEdgeAttributes(edge.Attributes, &travelingToRelation)
 		if err != nil {
-			fmt.Printf("Error converting node to struct: %v\n", err)
+			fmt.Printf("Error converting edge to struct: %v\n", err)
 			continue
 		}
 
