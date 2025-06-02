@@ -28,7 +28,7 @@ var history = [][]zep.Message{
 		{
 			Role:     zep.String("Paul"),
 			RoleType: "user",
-			Content:  "That sounds perfect! What are some must-visit places in Tokyo?",
+			Content:  "That sounds perfect! I booked a flight on Nov 17th! it departs at 5 pm (flight number GC1234). It cost me $700.",
 		},
 	},
 	// Conversation 2: Italy

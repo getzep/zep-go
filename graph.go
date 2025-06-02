@@ -80,6 +80,7 @@ type GraphSearchQuery struct {
 }
 
 type EntityTypeRequest struct {
+	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"-"`
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"-"`
 }
 
@@ -143,6 +144,132 @@ func (a *AddTripleResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
+}
+
+type EdgeType struct {
+	Description   string                    `json:"description" url:"description"`
+	Name          string                    `json:"name" url:"name"`
+	Properties    []*EntityProperty         `json:"properties,omitempty" url:"properties,omitempty"`
+	SourceTargets []*EntityEdgeSourceTarget `json:"source_targets,omitempty" url:"source_targets,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EdgeType) GetDescription() string {
+	if e == nil {
+		return ""
+	}
+	return e.Description
+}
+
+func (e *EdgeType) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+func (e *EdgeType) GetProperties() []*EntityProperty {
+	if e == nil {
+		return nil
+	}
+	return e.Properties
+}
+
+func (e *EdgeType) GetSourceTargets() []*EntityEdgeSourceTarget {
+	if e == nil {
+		return nil
+	}
+	return e.SourceTargets
+}
+
+func (e *EdgeType) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EdgeType) UnmarshalJSON(data []byte) error {
+	type unmarshaler EdgeType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EdgeType(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EdgeType) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EntityEdgeSourceTarget struct {
+	// Source represents the originating node identifier in the edge type relationship. (optional)
+	Source *string `json:"source,omitempty" url:"source,omitempty"`
+	// Target represents the target node identifier in the edge type relationship. (optional)
+	Target *string `json:"target,omitempty" url:"target,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EntityEdgeSourceTarget) GetSource() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Source
+}
+
+func (e *EntityEdgeSourceTarget) GetTarget() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Target
+}
+
+func (e *EntityEdgeSourceTarget) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EntityEdgeSourceTarget) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityEdgeSourceTarget
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EntityEdgeSourceTarget(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EntityEdgeSourceTarget) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
 }
 
 type EntityProperty struct {
@@ -298,10 +425,18 @@ func (e *EntityType) String() string {
 }
 
 type EntityTypeResponse struct {
+	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"edge_types,omitempty"`
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (e *EntityTypeResponse) GetEdgeTypes() []*EdgeType {
+	if e == nil {
+		return nil
+	}
+	return e.EdgeTypes
 }
 
 func (e *EntityTypeResponse) GetEntityTypes() []*EntityType {
@@ -467,11 +602,20 @@ func (r Reranker) Ptr() *Reranker {
 }
 
 type SearchFilters struct {
+	// List of edge types to filter on
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
 	// List of node labels to filter on
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (s *SearchFilters) GetEdgeTypes() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EdgeTypes
 }
 
 func (s *SearchFilters) GetNodeLabels() []string {
