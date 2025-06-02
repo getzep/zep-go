@@ -7,8 +7,8 @@ import (
 	"github.com/getzep/zep-go/v2"
 )
 
-// SetEntityTypes sets entity types for the project using structs that embed BaseEntity with struct tags.
-// It takes a slice of EntityDefinition, which is satisfied by any struct that embeds BaseEntity.
+// SetEntityTypes sets entity end edge types for the project, replacing any existing entity/edge types set for the project.
+// It takes a slice of EntityDefinition, which is satisfied by any struct that embeds BaseEntity, and a slice of EdgeDefinition, which is satisfied by any struct that embeds BaseEdge
 func (c *Client) SetEntityTypes(ctx context.Context, entities []zep.EntityDefinition, edges []zep.EdgeDefinitionWithSourceTargets) (*zep.SuccessResponse, error) {
 	var entitySchemas []*zep.EntityType
 	var edgeSchemas []*zep.EdgeType
