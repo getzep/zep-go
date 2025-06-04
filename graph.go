@@ -551,8 +551,9 @@ func (e *EpisodeData) String() string {
 type GraphSearchScope string
 
 const (
-	GraphSearchScopeEdges GraphSearchScope = "edges"
-	GraphSearchScopeNodes GraphSearchScope = "nodes"
+	GraphSearchScopeEdges    GraphSearchScope = "edges"
+	GraphSearchScopeNodes    GraphSearchScope = "nodes"
+	GraphSearchScopeEpisodes GraphSearchScope = "episodes"
 )
 
 func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
@@ -561,6 +562,8 @@ func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
 		return GraphSearchScopeEdges, nil
 	case "nodes":
 		return GraphSearchScopeNodes, nil
+	case "episodes":
+		return GraphSearchScopeEpisodes, nil
 	}
 	var t GraphSearchScope
 	return "", fmt.Errorf("%s is not a valid %T", s, t)

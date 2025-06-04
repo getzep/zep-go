@@ -500,7 +500,30 @@ func (e *EpisodeResponse) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type EpisodeType = interface{}
+type EpisodeType string
+
+const (
+	EpisodeTypeMessage EpisodeType = "message"
+	EpisodeTypeText    EpisodeType = "text"
+	EpisodeTypeJSON    EpisodeType = "json"
+)
+
+func NewEpisodeTypeFromString(s string) (EpisodeType, error) {
+	switch s {
+	case "message":
+		return EpisodeTypeMessage, nil
+	case "text":
+		return EpisodeTypeText, nil
+	case "json":
+		return EpisodeTypeJSON, nil
+	}
+	var t EpisodeType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EpisodeType) Ptr() *EpisodeType {
+	return &e
+}
 
 type Fact struct {
 	Content   string  `json:"content" url:"content"`
@@ -938,8 +961,9 @@ func (g *GraphNodesRequest) String() string {
 }
 
 type GraphSearchResults struct {
-	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
-	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Edges    []*EntityEdge      `json:"edges,omitempty" url:"edges,omitempty"`
+	Episodes []*GraphitiEpisode `json:"episodes,omitempty" url:"episodes,omitempty"`
+	Nodes    []*EntityNode      `json:"nodes,omitempty" url:"nodes,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -950,6 +974,13 @@ func (g *GraphSearchResults) GetEdges() []*EntityEdge {
 		return nil
 	}
 	return g.Edges
+}
+
+func (g *GraphSearchResults) GetEpisodes() []*GraphitiEpisode {
+	if g == nil {
+		return nil
+	}
+	return g.Episodes
 }
 
 func (g *GraphSearchResults) GetNodes() []*EntityNode {
@@ -980,6 +1011,100 @@ func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
 }
 
 func (g *GraphSearchResults) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphitiEpisode struct {
+	Content           string      `json:"content" url:"content"`
+	CreatedAt         string      `json:"created_at" url:"created_at"`
+	Name              string      `json:"name" url:"name"`
+	Source            EpisodeType `json:"source" url:"source"`
+	SourceDescription string      `json:"source_description" url:"source_description"`
+	UUID              string      `json:"uuid" url:"uuid"`
+	ValidAt           *string     `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphitiEpisode) GetContent() string {
+	if g == nil {
+		return ""
+	}
+	return g.Content
+}
+
+func (g *GraphitiEpisode) GetCreatedAt() string {
+	if g == nil {
+		return ""
+	}
+	return g.CreatedAt
+}
+
+func (g *GraphitiEpisode) GetName() string {
+	if g == nil {
+		return ""
+	}
+	return g.Name
+}
+
+func (g *GraphitiEpisode) GetSource() EpisodeType {
+	if g == nil {
+		return ""
+	}
+	return g.Source
+}
+
+func (g *GraphitiEpisode) GetSourceDescription() string {
+	if g == nil {
+		return ""
+	}
+	return g.SourceDescription
+}
+
+func (g *GraphitiEpisode) GetUUID() string {
+	if g == nil {
+		return ""
+	}
+	return g.UUID
+}
+
+func (g *GraphitiEpisode) GetValidAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ValidAt
+}
+
+func (g *GraphitiEpisode) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphitiEpisode) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphitiEpisode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphitiEpisode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphitiEpisode) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
