@@ -548,6 +548,68 @@ func (e *EpisodeData) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type GraphSearchResults struct {
+	Edges    []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	Episodes []*Episode    `json:"episodes,omitempty" url:"episodes,omitempty"`
+	Nodes    []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphSearchResults) GetEdges() []*EntityEdge {
+	if g == nil {
+		return nil
+	}
+	return g.Edges
+}
+
+func (g *GraphSearchResults) GetEpisodes() []*Episode {
+	if g == nil {
+		return nil
+	}
+	return g.Episodes
+}
+
+func (g *GraphSearchResults) GetNodes() []*EntityNode {
+	if g == nil {
+		return nil
+	}
+	return g.Nodes
+}
+
+func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphSearchResults
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphSearchResults(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphSearchResults) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type GraphSearchScope string
 
 const (
