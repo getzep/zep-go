@@ -363,6 +363,10 @@ type Episode struct {
 	Content   string `json:"content" url:"content"`
 	CreatedAt string `json:"created_at" url:"created_at"`
 	Processed *bool  `json:"processed,omitempty" url:"processed,omitempty"`
+	// Optional role, will only be present if the episode was created using memory.add API
+	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	// Optional role_type, will only be present if the episode was created using memory.add API
+	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
 	// Optional session ID. Will be present only if the episode corresponds to the messages added using memory.add API
 	SessionID         *string        `json:"session_id,omitempty" url:"session_id,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
@@ -392,6 +396,20 @@ func (e *Episode) GetProcessed() *bool {
 		return nil
 	}
 	return e.Processed
+}
+
+func (e *Episode) GetRole() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Role
+}
+
+func (e *Episode) GetRoleType() *RoleType {
+	if e == nil {
+		return nil
+	}
+	return e.RoleType
 }
 
 func (e *Episode) GetSessionID() *string {
@@ -500,30 +518,7 @@ func (e *EpisodeResponse) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type EpisodeType string
-
-const (
-	EpisodeTypeMessage EpisodeType = "message"
-	EpisodeTypeText    EpisodeType = "text"
-	EpisodeTypeJSON    EpisodeType = "json"
-)
-
-func NewEpisodeTypeFromString(s string) (EpisodeType, error) {
-	switch s {
-	case "message":
-		return EpisodeTypeMessage, nil
-	case "text":
-		return EpisodeTypeText, nil
-	case "json":
-		return EpisodeTypeJSON, nil
-	}
-	var t EpisodeType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (e EpisodeType) Ptr() *EpisodeType {
-	return &e
-}
+type EpisodeType = interface{}
 
 type Fact struct {
 	Content   string  `json:"content" url:"content"`
@@ -960,104 +955,9 @@ func (g *GraphNodesRequest) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type GraphitiEpisode struct {
-	Content           string      `json:"content" url:"content"`
-	CreatedAt         string      `json:"created_at" url:"created_at"`
-	Name              string      `json:"name" url:"name"`
-	Source            EpisodeType `json:"source" url:"source"`
-	SourceDescription string      `json:"source_description" url:"source_description"`
-	UUID              string      `json:"uuid" url:"uuid"`
-	ValidAt           *string     `json:"valid_at,omitempty" url:"valid_at,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphitiEpisode) GetContent() string {
-	if g == nil {
-		return ""
-	}
-	return g.Content
-}
-
-func (g *GraphitiEpisode) GetCreatedAt() string {
-	if g == nil {
-		return ""
-	}
-	return g.CreatedAt
-}
-
-func (g *GraphitiEpisode) GetName() string {
-	if g == nil {
-		return ""
-	}
-	return g.Name
-}
-
-func (g *GraphitiEpisode) GetSource() EpisodeType {
-	if g == nil {
-		return ""
-	}
-	return g.Source
-}
-
-func (g *GraphitiEpisode) GetSourceDescription() string {
-	if g == nil {
-		return ""
-	}
-	return g.SourceDescription
-}
-
-func (g *GraphitiEpisode) GetUUID() string {
-	if g == nil {
-		return ""
-	}
-	return g.UUID
-}
-
-func (g *GraphitiEpisode) GetValidAt() *string {
-	if g == nil {
-		return nil
-	}
-	return g.ValidAt
-}
-
-func (g *GraphitiEpisode) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphitiEpisode) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphitiEpisode
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphitiEpisode(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphitiEpisode) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
 type GraphitiGraphSearchResults struct {
-	Edges    []*EntityEdge      `json:"edges,omitempty" url:"edges,omitempty"`
-	Episodes []*GraphitiEpisode `json:"episodes,omitempty" url:"episodes,omitempty"`
-	Nodes    []*EntityNode      `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -1068,13 +968,6 @@ func (g *GraphitiGraphSearchResults) GetEdges() []*EntityEdge {
 		return nil
 	}
 	return g.Edges
-}
-
-func (g *GraphitiGraphSearchResults) GetEpisodes() []*GraphitiEpisode {
-	if g == nil {
-		return nil
-	}
-	return g.Episodes
 }
 
 func (g *GraphitiGraphSearchResults) GetNodes() []*EntityNode {
@@ -1139,6 +1032,40 @@ func NewMemoryTypeFromString(s string) (MemoryType, error) {
 
 func (m MemoryType) Ptr() *MemoryType {
 	return &m
+}
+
+type RoleType string
+
+const (
+	RoleTypeNoRole        RoleType = "norole"
+	RoleTypeSystemRole    RoleType = "system"
+	RoleTypeAssistantRole RoleType = "assistant"
+	RoleTypeUserRole      RoleType = "user"
+	RoleTypeFunctionRole  RoleType = "function"
+	RoleTypeToolRole      RoleType = "tool"
+)
+
+func NewRoleTypeFromString(s string) (RoleType, error) {
+	switch s {
+	case "norole":
+		return RoleTypeNoRole, nil
+	case "system":
+		return RoleTypeSystemRole, nil
+	case "assistant":
+		return RoleTypeAssistantRole, nil
+	case "user":
+		return RoleTypeUserRole, nil
+	case "function":
+		return RoleTypeFunctionRole, nil
+	case "tool":
+		return RoleTypeToolRole, nil
+	}
+	var t RoleType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RoleType) Ptr() *RoleType {
+	return &r
 }
 
 type SearchType string
