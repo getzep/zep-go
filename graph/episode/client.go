@@ -279,7 +279,7 @@ func (c *Client) GetNodesAndEdges(
 	// Episode uuid
 	___uuid string,
 	opts ...option.RequestOption,
-) (*v2.GraphSearchResults, error) {
+) (*v2.EpisodeMentions, error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -307,7 +307,7 @@ func (c *Client) GetNodesAndEdges(
 		},
 	}
 
-	var response *v2.GraphSearchResults
+	var response *v2.EpisodeMentions
 	if err := c.caller.Call(
 		ctx,
 		&internal.CallParams{

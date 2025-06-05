@@ -363,6 +363,10 @@ type Episode struct {
 	Content   string `json:"content" url:"content"`
 	CreatedAt string `json:"created_at" url:"created_at"`
 	Processed *bool  `json:"processed,omitempty" url:"processed,omitempty"`
+	// Optional role, will only be present if the episode was created using memory.add API
+	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	// Optional role_type, will only be present if the episode was created using memory.add API
+	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
 	// Optional session ID. Will be present only if the episode corresponds to the messages added using memory.add API
 	SessionID         *string        `json:"session_id,omitempty" url:"session_id,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
@@ -392,6 +396,20 @@ func (e *Episode) GetProcessed() *bool {
 		return nil
 	}
 	return e.Processed
+}
+
+func (e *Episode) GetRole() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Role
+}
+
+func (e *Episode) GetRoleType() *RoleType {
+	if e == nil {
+		return nil
+	}
+	return e.RoleType
 }
 
 func (e *Episode) GetSessionID() *string {
@@ -443,6 +461,60 @@ func (e *Episode) UnmarshalJSON(data []byte) error {
 }
 
 func (e *Episode) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EpisodeMentions struct {
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeMentions) GetEdges() []*EntityEdge {
+	if e == nil {
+		return nil
+	}
+	return e.Edges
+}
+
+func (e *EpisodeMentions) GetNodes() []*EntityNode {
+	if e == nil {
+		return nil
+	}
+	return e.Nodes
+}
+
+func (e *EpisodeMentions) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EpisodeMentions) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeMentions
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeMentions(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeMentions) String() string {
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -937,60 +1009,6 @@ func (g *GraphNodesRequest) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type GraphSearchResults struct {
-	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
-	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphSearchResults) GetEdges() []*EntityEdge {
-	if g == nil {
-		return nil
-	}
-	return g.Edges
-}
-
-func (g *GraphSearchResults) GetNodes() []*EntityNode {
-	if g == nil {
-		return nil
-	}
-	return g.Nodes
-}
-
-func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphSearchResults) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphSearchResults
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphSearchResults(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphSearchResults) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
 type MemoryType string
 
 const (
@@ -1014,6 +1032,40 @@ func NewMemoryTypeFromString(s string) (MemoryType, error) {
 
 func (m MemoryType) Ptr() *MemoryType {
 	return &m
+}
+
+type RoleType string
+
+const (
+	RoleTypeNoRole        RoleType = "norole"
+	RoleTypeSystemRole    RoleType = "system"
+	RoleTypeAssistantRole RoleType = "assistant"
+	RoleTypeUserRole      RoleType = "user"
+	RoleTypeFunctionRole  RoleType = "function"
+	RoleTypeToolRole      RoleType = "tool"
+)
+
+func NewRoleTypeFromString(s string) (RoleType, error) {
+	switch s {
+	case "norole":
+		return RoleTypeNoRole, nil
+	case "system":
+		return RoleTypeSystemRole, nil
+	case "assistant":
+		return RoleTypeAssistantRole, nil
+	case "user":
+		return RoleTypeUserRole, nil
+	case "function":
+		return RoleTypeFunctionRole, nil
+	case "tool":
+		return RoleTypeToolRole, nil
+	}
+	var t RoleType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RoleType) Ptr() *RoleType {
+	return &r
 }
 
 type SearchType string
