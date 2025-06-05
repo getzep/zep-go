@@ -472,6 +472,60 @@ func (e *Episode) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type EpisodeMentions struct {
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeMentions) GetEdges() []*EntityEdge {
+	if e == nil {
+		return nil
+	}
+	return e.Edges
+}
+
+func (e *EpisodeMentions) GetNodes() []*EntityNode {
+	if e == nil {
+		return nil
+	}
+	return e.Nodes
+}
+
+func (e *EpisodeMentions) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EpisodeMentions) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeMentions
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeMentions(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeMentions) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
 type EpisodeResponse struct {
 	Episodes []*Episode `json:"episodes,omitempty" url:"episodes,omitempty"`
 
@@ -944,60 +998,6 @@ func (g *GraphNodesRequest) UnmarshalJSON(data []byte) error {
 }
 
 func (g *GraphNodesRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type GraphitiGraphSearchResults struct {
-	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
-	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphitiGraphSearchResults) GetEdges() []*EntityEdge {
-	if g == nil {
-		return nil
-	}
-	return g.Edges
-}
-
-func (g *GraphitiGraphSearchResults) GetNodes() []*EntityNode {
-	if g == nil {
-		return nil
-	}
-	return g.Nodes
-}
-
-func (g *GraphitiGraphSearchResults) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphitiGraphSearchResults) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphitiGraphSearchResults
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphitiGraphSearchResults(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphitiGraphSearchResults) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
