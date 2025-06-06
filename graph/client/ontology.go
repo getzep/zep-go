@@ -7,6 +7,12 @@ import (
 	"github.com/getzep/zep-go/v2"
 )
 
+// SetOntology sets entity end edge types for the project, replacing any existing entity/edge types set for the project.
+// It takes a slice of EntityDefinition, which is satisfied by any struct that embeds BaseEntity, and a slice of EdgeDefinition, which is satisfied by any struct that embeds BaseEdge
+func (c *Client) SetOntology(ctx context.Context, entities []zep.EntityDefinition, edges []zep.EdgeDefinitionWithSourceTargets) (*zep.SuccessResponse, error) {
+	return c.SetEntityTypes(ctx, entities, edges)
+}
+
 // SetEntityTypes sets entity end edge types for the project, replacing any existing entity/edge types set for the project.
 // It takes a slice of EntityDefinition, which is satisfied by any struct that embeds BaseEntity, and a slice of EdgeDefinition, which is satisfied by any struct that embeds BaseEdge
 func (c *Client) SetEntityTypes(ctx context.Context, entities []zep.EntityDefinition, edges []zep.EdgeDefinitionWithSourceTargets) (*zep.SuccessResponse, error) {
