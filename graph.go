@@ -55,6 +55,8 @@ type AddTripleRequest struct {
 }
 
 type GraphSearchQuery struct {
+	// Nodes that are the origins of the BFS searches
+	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
 	// Node to rerank around for node distance reranking
 	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
 	// one of user_id or group_id must be provided
