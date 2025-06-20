@@ -54,6 +54,17 @@ type AddTripleRequest struct {
 	ValidAt *string `json:"valid_at,omitempty" url:"-"`
 }
 
+type CloneGraphRequest struct {
+	// group_id of the group whose graph is being cloned. Required if user_id is not provided
+	SourceGroupID *string `json:"source_group_id,omitempty" url:"-"`
+	// user_id of the user whose graph is being cloned. Required if group_id is not provided
+	SourceUserID *string `json:"source_user_id,omitempty" url:"-"`
+	// group_id to be set on the cloned group. Must not point to an existing group. Required if target_user_id is not provided.
+	TargetGroupID *string `json:"target_group_id,omitempty" url:"-"`
+	// user_id to be set on the cloned user. Must not point to an existing user. Required if target_group_id is not provided.
+	TargetUserID *string `json:"target_user_id,omitempty" url:"-"`
+}
+
 type GraphSearchQuery struct {
 	// Nodes that are the origins of the BFS searches
 	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
@@ -146,6 +157,60 @@ func (a *AddTripleResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
+}
+
+type CloneGraphResponse struct {
+	GroupID *string `json:"group_id,omitempty" url:"group_id,omitempty"`
+	UserID  *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *CloneGraphResponse) GetGroupID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.GroupID
+}
+
+func (c *CloneGraphResponse) GetUserID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.UserID
+}
+
+func (c *CloneGraphResponse) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CloneGraphResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler CloneGraphResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CloneGraphResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CloneGraphResponse) String() string {
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
 }
 
 type EdgeType struct {
