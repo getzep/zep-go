@@ -484,7 +484,7 @@ func (c *Client) UpdateSession(
 	return response, nil
 }
 
-// Classifies a session.
+// Deprecated: Classifies a session.
 func (c *Client) ClassifySession(
 	ctx context.Context,
 	// Session ID
@@ -603,7 +603,7 @@ func (c *Client) EndSession(
 	return response, nil
 }
 
-// extract data from a session by session id
+// Deprecated: extract data from a session by session id
 func (c *Client) ExtractData(
 	ctx context.Context,
 	// Session ID
