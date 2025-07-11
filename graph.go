@@ -213,6 +213,96 @@ func (c *CloneGraphResponse) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
+type ComparisonOperator string
+
+const (
+	ComparisonOperatorEquals           ComparisonOperator = "="
+	ComparisonOperatorNotEquals        ComparisonOperator = "<>"
+	ComparisonOperatorGreaterThan      ComparisonOperator = ">"
+	ComparisonOperatorLessThan         ComparisonOperator = "<"
+	ComparisonOperatorGreaterThanEqual ComparisonOperator = ">="
+	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
+)
+
+func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
+	switch s {
+	case "=":
+		return ComparisonOperatorEquals, nil
+	case "<>":
+		return ComparisonOperatorNotEquals, nil
+	case ">":
+		return ComparisonOperatorGreaterThan, nil
+	case "<":
+		return ComparisonOperatorLessThan, nil
+	case ">=":
+		return ComparisonOperatorGreaterThanEqual, nil
+	case "<=":
+		return ComparisonOperatorLessThanEqual, nil
+	}
+	var t ComparisonOperator
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ComparisonOperator) Ptr() *ComparisonOperator {
+	return &c
+}
+
+type DateFilter struct {
+	// Comparison operator for date filter
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Date to filter on
+	Date string `json:"date" url:"date"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DateFilter) GetComparisonOperator() ComparisonOperator {
+	if d == nil {
+		return ""
+	}
+	return d.ComparisonOperator
+}
+
+func (d *DateFilter) GetDate() string {
+	if d == nil {
+		return ""
+	}
+	return d.Date
+}
+
+func (d *DateFilter) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DateFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler DateFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DateFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DateFilter) String() string {
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
 type EdgeType struct {
 	Description   string                    `json:"description" url:"description"`
 	Name          string                    `json:"name" url:"name"`
@@ -734,13 +824,44 @@ func (r Reranker) Ptr() *Reranker {
 }
 
 type SearchFilters struct {
+	// 2D array of date filters for the created_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: [[{">", date1}, {"<", date2}], [{"=", date3}]]
+	// This translates to: (created_at > date1 AND created_at < date2) OR (created_at = date3)
+	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// List of edge types to filter on
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// 2D array of date filters for the expired_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: [[{">", date1}, {"<", date2}], [{"=", date3}]]
+	// This translates to: (expired_at > date1 AND expired_at < date2) OR (expired_at = date3)
+	ExpiredAt [][]*DateFilter `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// 2D array of date filters for the invalid_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: [[{">", date1}, {"<", date2}], [{"=", date3}]]
+	// This translates to: (invalid_at > date1 AND invalid_at < date2) OR (invalid_at = date3)
+	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// List of node labels to filter on
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// 2D array of date filters for the valid_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: [[{">", date1}, {"<", date2}], [{"=", date3}]]
+	// This translates to: (valid_at > date1 AND valid_at < date2) OR (valid_at = date3)
+	ValidAt [][]*DateFilter `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (s *SearchFilters) GetCreatedAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.CreatedAt
 }
 
 func (s *SearchFilters) GetEdgeTypes() []string {
@@ -750,11 +871,32 @@ func (s *SearchFilters) GetEdgeTypes() []string {
 	return s.EdgeTypes
 }
 
+func (s *SearchFilters) GetExpiredAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.ExpiredAt
+}
+
+func (s *SearchFilters) GetInvalidAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.InvalidAt
+}
+
 func (s *SearchFilters) GetNodeLabels() []string {
 	if s == nil {
 		return nil
 	}
 	return s.NodeLabels
+}
+
+func (s *SearchFilters) GetValidAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.ValidAt
 }
 
 func (s *SearchFilters) GetExtraProperties() map[string]interface{} {
