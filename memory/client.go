@@ -417,7 +417,7 @@ func (c *Client) GetSession(
 	return response, nil
 }
 
-// Update Session Metadata
+// Update Session Metadata. Deprecated: This endpoint is no longer supported and will be removed in a future release.
 func (c *Client) UpdateSession(
 	ctx context.Context,
 	// The unique identifier of the session.
