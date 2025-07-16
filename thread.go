@@ -8,7 +8,7 @@ import (
 	internal "github.com/getzep/zep-go/v2/internal"
 )
 
-type ApidataAddThreadMessagesRequest struct {
+type AddThreadMessagesRequest struct {
 	// Optional list of role types to ignore when adding messages to graph memory.
 	// The message itself will still be added, retained and used as context for messages
 	// that are added to a user's graph.

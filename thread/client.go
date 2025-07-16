@@ -327,7 +327,7 @@ func (c *Client) AddMessages(
 	ctx context.Context,
 	// The ID of the thread to which messages should be added.
 	threadID string,
-	request *v2.ApidataAddThreadMessagesRequest,
+	request *v2.AddThreadMessagesRequest,
 	opts ...option.RequestOption,
 ) (*v2.AddThreadMessagesResponse, error) {
 	options := core.NewRequestOptions(opts...)
