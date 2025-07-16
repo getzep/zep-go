@@ -143,7 +143,7 @@ func (c *Client) DeleteFact(
 	return response, nil
 }
 
-// Creates a new session.
+// Deprecated: Creates a new session. Use thread.create instead.
 func (c *Client) AddSession(
 	ctx context.Context,
 	request *v2.CreateSessionRequest,
@@ -195,7 +195,7 @@ func (c *Client) AddSession(
 	return response, nil
 }
 
-// Returns all sessions.
+// Deprecated: Returns all sessions. Use GET /threads instead.
 func (c *Client) ListSessions(
 	ctx context.Context,
 	request *v2.MemoryListSessionsRequest,
@@ -784,7 +784,7 @@ func (c *Client) AddSessionFacts(
 	return response, nil
 }
 
-// Returns a memory for a given session.
+// Deprecated: Returns a memory for a given session. Use thread.get_user_context instead.
 func (c *Client) Get(
 	ctx context.Context,
 	// The ID of the session for which to retrieve memory.
@@ -846,7 +846,7 @@ func (c *Client) Get(
 	return response, nil
 }
 
-// Add memory to the specified session.
+// Deprecated: Add memory to the specified session. Use thread.add_messages instead.
 func (c *Client) Add(
 	ctx context.Context,
 	// The ID of the session to which memory should be added.
@@ -898,7 +898,7 @@ func (c *Client) Add(
 	return response, nil
 }
 
-// Deletes a session.
+// Deprecated: Deletes a session. Use thread.delete instead.
 func (c *Client) Delete(
 	ctx context.Context,
 	// The ID of the session for which memory should be deleted.
@@ -952,7 +952,7 @@ func (c *Client) Delete(
 	return response, nil
 }
 
-// Returns messages for a session.
+// Deprecated: Returns messages for a session. Use thread.get instead.
 func (c *Client) GetSessionMessages(
 	ctx context.Context,
 	// Session ID
