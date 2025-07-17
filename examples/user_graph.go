@@ -28,7 +28,7 @@ func main() {
 	ctx := context.Background()
 
 	userID := uuid.New().String()
-	sessionID := uuid.New().String()
+	threadID := uuid.New().String()
 
 	// Create a user
 	userRequest := &zep.CreateUserRequest{
@@ -42,20 +42,20 @@ func main() {
 	}
 	fmt.Printf("User %s created\n", userID)
 
-	// Create a session
-	_, err = client.Memory.AddSession(ctx, &zep.CreateSessionRequest{
-		SessionID: sessionID,
-		UserID:    userID,
+	// Create a thread
+	_, err = client.Thread.Create(ctx, &zep.CreateThreadRequest{
+		ThreadID: threadID,
+		UserID:   userID,
 	})
 	if err != nil {
-		fmt.Printf("Error creating session: %v\n", err)
+		fmt.Printf("Error creating thread: %v\n", err)
 		return
 	}
-	fmt.Printf("Session %s created\n", sessionID)
+	fmt.Printf("Thread %s created\n", threadID)
 
-	// Add messages to the session
+	// Add messages to the thread
 	for _, message := range history[0] {
-		_, err = client.Memory.Add(ctx, sessionID, &zep.AddMemoryRequest{
+		_, err = client.Thread.AddMessages(ctx, threadID, &zep.AddThreadMessagesRequest{
 			Messages: []*zep.Message{
 				{Role: message.Role, RoleType: message.RoleType, Content: message.Content},
 			},
@@ -70,25 +70,13 @@ func main() {
 	fmt.Println("Waiting for the graph to be updated...")
 	time.Sleep(10 * time.Second)
 
-	fmt.Println("Getting memory for session")
-	sessionMemory, err := client.Memory.Get(ctx, sessionID, nil)
+	fmt.Println("Getting memory for thread")
+	threadContext, err := client.Thread.GetUserContext(ctx, threadID, nil)
 	if err != nil {
-		fmt.Printf("Error getting session memory: %v\n", err)
+		fmt.Printf("Error getting thread memory: %v\n", err)
 		return
 	}
-	fmt.Printf("%+v\n", sessionMemory)
-
-	fmt.Println("Searching user memory...")
-	searchResults, err := client.Memory.SearchSessions(ctx, &zep.SessionSearchQuery{
-		UserID:      zep.String(userID),
-		Text:        "What is the weather in San Francisco?",
-		SearchScope: zep.SearchScopeFacts.Ptr(),
-	})
-	if err != nil {
-		fmt.Printf("Error searching sessions: %v\n", err)
-		return
-	}
-	fmt.Printf("%+v\n", searchResults)
+	fmt.Printf("%+v\n", threadContext)
 
 	fmt.Println("Getting episodes for user")
 	episodeResult, err := client.Graph.Episode.GetByUserID(ctx, userID, &graph.EpisodeGetByUserIDRequest{
