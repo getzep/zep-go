@@ -568,6 +568,190 @@ func (m *MemorySearchResult) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+type Message struct {
+	// The content of the message.
+	Content string `json:"content" url:"content"`
+	// The timestamp of when the message was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The metadata associated with the message.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Whether the message has been processed.
+	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
+	// Customizable role of the sender of the message (e.g., "john", "sales_agent").
+	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	// The type of the role (e.g., "user", "system").
+	RoleType RoleType `json:"role_type" url:"role_type"`
+	// Deprecated
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	// Deprecated
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The unique identifier of the message.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *Message) GetContent() string {
+	if m == nil {
+		return ""
+	}
+	return m.Content
+}
+
+func (m *Message) GetCreatedAt() *string {
+	if m == nil {
+		return nil
+	}
+	return m.CreatedAt
+}
+
+func (m *Message) GetMetadata() map[string]interface{} {
+	if m == nil {
+		return nil
+	}
+	return m.Metadata
+}
+
+func (m *Message) GetProcessed() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.Processed
+}
+
+func (m *Message) GetRole() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Role
+}
+
+func (m *Message) GetRoleType() RoleType {
+	if m == nil {
+		return ""
+	}
+	return m.RoleType
+}
+
+func (m *Message) GetTokenCount() *int {
+	if m == nil {
+		return nil
+	}
+	return m.TokenCount
+}
+
+func (m *Message) GetUpdatedAt() *string {
+	if m == nil {
+		return nil
+	}
+	return m.UpdatedAt
+}
+
+func (m *Message) GetUUID() *string {
+	if m == nil {
+		return nil
+	}
+	return m.UUID
+}
+
+func (m *Message) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *Message) UnmarshalJSON(data []byte) error {
+	type unmarshaler Message
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = Message(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *Message) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type MessageListResponse struct {
+	// A list of message objects.
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	// The number of messages returned.
+	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
+	// The total number of messages.
+	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *MessageListResponse) GetMessages() []*Message {
+	if m == nil {
+		return nil
+	}
+	return m.Messages
+}
+
+func (m *MessageListResponse) GetRowCount() *int {
+	if m == nil {
+		return nil
+	}
+	return m.RowCount
+}
+
+func (m *MessageListResponse) GetTotalCount() *int {
+	if m == nil {
+		return nil
+	}
+	return m.TotalCount
+}
+
+func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler MessageListResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MessageListResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MessageListResponse) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
 type NewFact struct {
 	Fact string `json:"fact" url:"fact"`
 
