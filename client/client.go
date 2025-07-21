@@ -10,7 +10,6 @@ import (
 	internal "github.com/getzep/zep-go/v2/internal"
 	memory "github.com/getzep/zep-go/v2/memory"
 	option "github.com/getzep/zep-go/v2/option"
-	thread "github.com/getzep/zep-go/v2/thread"
 	user "github.com/getzep/zep-go/v2/user"
 	http "net/http"
 	os "os"
@@ -25,7 +24,6 @@ type Client struct {
 	Graph    *graphclient.Client
 	Memory   *memory.Client
 	Group    *group.Client
-	Thread   *thread.Client
 	User     *user.Client
 }
 
@@ -47,7 +45,6 @@ func NewClient(opts ...option.RequestOption) *Client {
 		Graph:    graphclient.NewClient(opts...),
 		Memory:   memory.NewClient(opts...),
 		Group:    group.NewClient(opts...),
-		Thread:   thread.NewClient(opts...),
 		User:     user.NewClient(opts...),
 	}
 }
