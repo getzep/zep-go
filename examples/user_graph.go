@@ -8,10 +8,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/getzep/zep-go/v2"
-	zepclient "github.com/getzep/zep-go/v2/client"
-	"github.com/getzep/zep-go/v2/graph"
-	"github.com/getzep/zep-go/v2/option"
+	"github.com/getzep/zep-go/v3"
+	zepclient "github.com/getzep/zep-go/v3/client"
+	"github.com/getzep/zep-go/v3/graph"
+	"github.com/getzep/zep-go/v3/option"
 )
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 	ctx := context.Background()
 
 	userID := uuid.New().String()
-	sessionID := uuid.New().String()
+	threadID := uuid.New().String()
 
 	// Create a user
 	userRequest := &zep.CreateUserRequest{
@@ -43,21 +43,21 @@ func main() {
 	fmt.Printf("User %s created\n", userID)
 
 	// Create a session
-	_, err = client.Memory.AddSession(ctx, &zep.CreateSessionRequest{
-		SessionID: sessionID,
-		UserID:    userID,
+	_, err = client.Thread.Create(ctx, &zep.ModelsCreateThreadRequest{
+		ThreadID: threadID,
+		UserID:   userID,
 	})
 	if err != nil {
 		fmt.Printf("Error creating session: %v\n", err)
 		return
 	}
-	fmt.Printf("Session %s created\n", sessionID)
+	fmt.Printf("Session %s created\n", threadID)
 
 	// Add messages to the session
 	for _, message := range history[0] {
-		_, err = client.Memory.Add(ctx, sessionID, &zep.AddMemoryRequest{
+		_, err = client.Thread.AddMessages(ctx, threadID, &zep.ApidataAddThreadMessagesRequest{
 			Messages: []*zep.Message{
-				{Role: message.Role, RoleType: message.RoleType, Content: message.Content},
+				{Role: message.Role, Name: message.Name, Content: message.Content},
 			},
 			ReturnContext: zep.Bool(true),
 		})
@@ -71,24 +71,12 @@ func main() {
 	time.Sleep(10 * time.Second)
 
 	fmt.Println("Getting memory for session")
-	sessionMemory, err := client.Memory.Get(ctx, sessionID, nil)
+	sessionMemory, err := client.Thread.GetUserContext(ctx, threadID, nil)
 	if err != nil {
 		fmt.Printf("Error getting session memory: %v\n", err)
 		return
 	}
-	fmt.Printf("%+v\n", sessionMemory)
-
-	fmt.Println("Searching user memory...")
-	searchResults, err := client.Memory.SearchSessions(ctx, &zep.SessionSearchQuery{
-		UserID:      zep.String(userID),
-		Text:        "What is the weather in San Francisco?",
-		SearchScope: zep.SearchScopeFacts.Ptr(),
-	})
-	if err != nil {
-		fmt.Printf("Error searching sessions: %v\n", err)
-		return
-	}
-	fmt.Printf("%+v\n", searchResults)
+	fmt.Printf("%+v\n", sessionMemory.Context)
 
 	fmt.Println("Getting episodes for user")
 	episodeResult, err := client.Graph.Episode.GetByUserID(ctx, userID, &graph.EpisodeGetByUserIDRequest{

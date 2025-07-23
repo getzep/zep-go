@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/getzep/zep-go/v2"
-	zepclient "github.com/getzep/zep-go/v2/client"
-	"github.com/getzep/zep-go/v2/option"
+	"github.com/getzep/zep-go/v3"
+	zepclient "github.com/getzep/zep-go/v3/client"
+	"github.com/getzep/zep-go/v3/option"
 )
 
 func entityTypes() {
