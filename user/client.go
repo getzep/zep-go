@@ -9,6 +9,7 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
+	os "os"
 )
 
 type Client struct {
@@ -21,6 +22,9 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
+	if options.APIKey == "" {
+		options.APIKey = os.Getenv("ZEP_API_KEY")
+	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
 		baseURL:         options.BaseURL,
@@ -37,9 +41,9 @@ func NewClient(opts ...option.RequestOption) *Client {
 // Adds a user.
 func (c *Client) Add(
 	ctx context.Context,
-	request *v3.ApidataCreateUserRequest,
+	request *v3.CreateUserRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataUser, error) {
+) (*v3.User, error) {
 	response, err := c.WithRawResponse.Add(
 		ctx,
 		request,
@@ -56,7 +60,7 @@ func (c *Client) ListOrdered(
 	ctx context.Context,
 	request *v3.UserListOrderedRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataUserListResponse, error) {
+) (*v3.UserListResponse, error) {
 	response, err := c.WithRawResponse.ListOrdered(
 		ctx,
 		request,
@@ -74,7 +78,7 @@ func (c *Client) Get(
 	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
-) (*v3.ApidataUser, error) {
+) (*v3.User, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		userID,
@@ -92,7 +96,7 @@ func (c *Client) Delete(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (*v3.ApidataSuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		userID,
@@ -109,9 +113,9 @@ func (c *Client) Update(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v3.ApidataUpdateUserRequest,
+	request *v3.UpdateUserRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataUser, error) {
+) (*v3.User, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		userID,
@@ -130,7 +134,7 @@ func (c *Client) GetFacts(
 	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
-) (*v3.ApidataFactsResponse, error) {
+) (*v3.FactsResponse, error) {
 	response, err := c.WithRawResponse.GetFacts(
 		ctx,
 		userID,
@@ -148,7 +152,7 @@ func (c *Client) GetNode(
 	// The user_id of the user to get the node for.
 	userID string,
 	opts ...option.RequestOption,
-) (*v3.ApidataUserNodeResponse, error) {
+) (*v3.UserNodeResponse, error) {
 	response, err := c.WithRawResponse.GetNode(
 		ctx,
 		userID,

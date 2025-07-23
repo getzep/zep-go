@@ -8,11 +8,11 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 )
 
-type ApidataCreateUserRequest struct {
+type CreateUserRequest struct {
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
 	// Optional instruction to use for fact rating.
-	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	// The first name of the user.
 	FirstName *string `json:"first_name,omitempty" url:"-"`
 	// The last name of the user.
@@ -30,60 +30,60 @@ type UserListOrderedRequest struct {
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
 }
 
-type ApidataFactsResponse struct {
-	Facts []*ApidataFact `json:"facts,omitempty" url:"facts,omitempty"`
+type FactsResponse struct {
+	Facts []*Fact `json:"facts,omitempty" url:"facts,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataFactsResponse) GetFacts() []*ApidataFact {
-	if a == nil {
+func (f *FactsResponse) GetFacts() []*Fact {
+	if f == nil {
 		return nil
 	}
-	return a.Facts
+	return f.Facts
 }
 
-func (a *ApidataFactsResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (f *FactsResponse) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
 }
 
-func (a *ApidataFactsResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataFactsResponse
+func (f *FactsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler FactsResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataFactsResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*f = FactsResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	f.extraProperties = extraProperties
+	f.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataFactsResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (f *FactsResponse) String() string {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(f); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", f)
 }
 
-type ApidataUser struct {
-	CreatedAt             *string                      `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt             *string                      `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	Email                 *string                      `json:"email,omitempty" url:"email,omitempty"`
-	FactRatingInstruction *ModelsFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	FirstName             *string                      `json:"first_name,omitempty" url:"first_name,omitempty"`
-	ID                    *int                         `json:"id,omitempty" url:"id,omitempty"`
-	LastName              *string                      `json:"last_name,omitempty" url:"last_name,omitempty"`
+type User struct {
+	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt             *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	Email                 *string                `json:"email,omitempty" url:"email,omitempty"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	FirstName             *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
+	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
+	LastName              *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
 	// Deprecated
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
@@ -98,367 +98,242 @@ type ApidataUser struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataUser) GetCreatedAt() *string {
-	if a == nil {
+func (u *User) GetCreatedAt() *string {
+	if u == nil {
 		return nil
 	}
-	return a.CreatedAt
+	return u.CreatedAt
 }
 
-func (a *ApidataUser) GetDeletedAt() *string {
-	if a == nil {
+func (u *User) GetDeletedAt() *string {
+	if u == nil {
 		return nil
 	}
-	return a.DeletedAt
+	return u.DeletedAt
 }
 
-func (a *ApidataUser) GetEmail() *string {
-	if a == nil {
+func (u *User) GetEmail() *string {
+	if u == nil {
 		return nil
 	}
-	return a.Email
+	return u.Email
 }
 
-func (a *ApidataUser) GetFactRatingInstruction() *ModelsFactRatingInstruction {
-	if a == nil {
+func (u *User) GetFactRatingInstruction() *FactRatingInstruction {
+	if u == nil {
 		return nil
 	}
-	return a.FactRatingInstruction
+	return u.FactRatingInstruction
 }
 
-func (a *ApidataUser) GetFirstName() *string {
-	if a == nil {
+func (u *User) GetFirstName() *string {
+	if u == nil {
 		return nil
 	}
-	return a.FirstName
+	return u.FirstName
 }
 
-func (a *ApidataUser) GetID() *int {
-	if a == nil {
+func (u *User) GetID() *int {
+	if u == nil {
 		return nil
 	}
-	return a.ID
+	return u.ID
 }
 
-func (a *ApidataUser) GetLastName() *string {
-	if a == nil {
+func (u *User) GetLastName() *string {
+	if u == nil {
 		return nil
 	}
-	return a.LastName
+	return u.LastName
 }
 
-func (a *ApidataUser) GetMetadata() map[string]interface{} {
-	if a == nil {
+func (u *User) GetMetadata() map[string]interface{} {
+	if u == nil {
 		return nil
 	}
-	return a.Metadata
+	return u.Metadata
 }
 
-func (a *ApidataUser) GetProjectUUID() *string {
-	if a == nil {
+func (u *User) GetProjectUUID() *string {
+	if u == nil {
 		return nil
 	}
-	return a.ProjectUUID
+	return u.ProjectUUID
 }
 
-func (a *ApidataUser) GetSessionCount() *int {
-	if a == nil {
+func (u *User) GetSessionCount() *int {
+	if u == nil {
 		return nil
 	}
-	return a.SessionCount
+	return u.SessionCount
 }
 
-func (a *ApidataUser) GetUpdatedAt() *string {
-	if a == nil {
+func (u *User) GetUpdatedAt() *string {
+	if u == nil {
 		return nil
 	}
-	return a.UpdatedAt
+	return u.UpdatedAt
 }
 
-func (a *ApidataUser) GetUserID() *string {
-	if a == nil {
+func (u *User) GetUserID() *string {
+	if u == nil {
 		return nil
 	}
-	return a.UserID
+	return u.UserID
 }
 
-func (a *ApidataUser) GetUUID() *string {
-	if a == nil {
+func (u *User) GetUUID() *string {
+	if u == nil {
 		return nil
 	}
-	return a.UUID
+	return u.UUID
 }
 
-func (a *ApidataUser) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (u *User) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
 }
 
-func (a *ApidataUser) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataUser
+func (u *User) UnmarshalJSON(data []byte) error {
+	type unmarshaler User
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataUser(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*u = User(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	u.extraProperties = extraProperties
+	u.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataUser) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (u *User) String() string {
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(u); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", u)
 }
 
-type ApidataUserListResponse struct {
-	RowCount   *int           `json:"row_count,omitempty" url:"row_count,omitempty"`
-	TotalCount *int           `json:"total_count,omitempty" url:"total_count,omitempty"`
-	Users      []*ApidataUser `json:"users,omitempty" url:"users,omitempty"`
+type UserListResponse struct {
+	RowCount   *int    `json:"row_count,omitempty" url:"row_count,omitempty"`
+	TotalCount *int    `json:"total_count,omitempty" url:"total_count,omitempty"`
+	Users      []*User `json:"users,omitempty" url:"users,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataUserListResponse) GetRowCount() *int {
-	if a == nil {
+func (u *UserListResponse) GetRowCount() *int {
+	if u == nil {
 		return nil
 	}
-	return a.RowCount
+	return u.RowCount
 }
 
-func (a *ApidataUserListResponse) GetTotalCount() *int {
-	if a == nil {
+func (u *UserListResponse) GetTotalCount() *int {
+	if u == nil {
 		return nil
 	}
-	return a.TotalCount
+	return u.TotalCount
 }
 
-func (a *ApidataUserListResponse) GetUsers() []*ApidataUser {
-	if a == nil {
+func (u *UserListResponse) GetUsers() []*User {
+	if u == nil {
 		return nil
 	}
-	return a.Users
+	return u.Users
 }
 
-func (a *ApidataUserListResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (u *UserListResponse) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
 }
 
-func (a *ApidataUserListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataUserListResponse
+func (u *UserListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserListResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataUserListResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*u = UserListResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	u.extraProperties = extraProperties
+	u.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataUserListResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (u *UserListResponse) String() string {
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(u); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", u)
 }
 
-type ApidataUserNodeResponse struct {
-	Node *GraphitiEntityNode `json:"node,omitempty" url:"node,omitempty"`
+type UserNodeResponse struct {
+	Node *EntityNode `json:"node,omitempty" url:"node,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataUserNodeResponse) GetNode() *GraphitiEntityNode {
-	if a == nil {
+func (u *UserNodeResponse) GetNode() *EntityNode {
+	if u == nil {
 		return nil
 	}
-	return a.Node
+	return u.Node
 }
 
-func (a *ApidataUserNodeResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (u *UserNodeResponse) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
 }
 
-func (a *ApidataUserNodeResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataUserNodeResponse
+func (u *UserNodeResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserNodeResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataUserNodeResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*u = UserNodeResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	u.extraProperties = extraProperties
+	u.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataUserNodeResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (u *UserNodeResponse) String() string {
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(u); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", u)
 }
 
-type ModelsFactRatingExamples struct {
-	High   *string `json:"high,omitempty" url:"high,omitempty"`
-	Low    *string `json:"low,omitempty" url:"low,omitempty"`
-	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (m *ModelsFactRatingExamples) GetHigh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.High
-}
-
-func (m *ModelsFactRatingExamples) GetLow() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Low
-}
-
-func (m *ModelsFactRatingExamples) GetMedium() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Medium
-}
-
-func (m *ModelsFactRatingExamples) GetExtraProperties() map[string]interface{} {
-	return m.extraProperties
-}
-
-func (m *ModelsFactRatingExamples) UnmarshalJSON(data []byte) error {
-	type unmarshaler ModelsFactRatingExamples
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*m = ModelsFactRatingExamples(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *m)
-	if err != nil {
-		return err
-	}
-	m.extraProperties = extraProperties
-	m.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (m *ModelsFactRatingExamples) String() string {
-	if len(m.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(m); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", m)
-}
-
-type ModelsFactRatingInstruction struct {
-	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
-	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
-	// based on relevance to a trip planning application, your examples might be:
-	// High: "Joe's dream vacation is Bali"
-	// Medium: "Joe has a fear of flying",
-	// Low: "Joe's favorite food is Japanese",
-	Examples *ModelsFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
-	// A string describing how to rate facts as they apply to your application. A trip planning application may
-	// use something like "relevancy to planning a trip, the user's preferences when traveling,
-	// or the user's travel history."
-	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (m *ModelsFactRatingInstruction) GetExamples() *ModelsFactRatingExamples {
-	if m == nil {
-		return nil
-	}
-	return m.Examples
-}
-
-func (m *ModelsFactRatingInstruction) GetInstruction() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Instruction
-}
-
-func (m *ModelsFactRatingInstruction) GetExtraProperties() map[string]interface{} {
-	return m.extraProperties
-}
-
-func (m *ModelsFactRatingInstruction) UnmarshalJSON(data []byte) error {
-	type unmarshaler ModelsFactRatingInstruction
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*m = ModelsFactRatingInstruction(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *m)
-	if err != nil {
-		return err
-	}
-	m.extraProperties = extraProperties
-	m.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (m *ModelsFactRatingInstruction) String() string {
-	if len(m.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(m); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", m)
-}
-
-type ApidataUpdateUserRequest struct {
+type UpdateUserRequest struct {
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
 	// Optional instruction to use for fact rating.
-	FactRatingInstruction *ApidataFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
+	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	// The first name of the user.
 	FirstName *string `json:"first_name,omitempty" url:"-"`
 	// The last name of the user.

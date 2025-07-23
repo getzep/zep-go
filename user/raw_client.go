@@ -32,9 +32,9 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 
 func (r *RawClient) Add(
 	ctx context.Context,
-	request *v3.ApidataCreateUserRequest,
+	request *v3.CreateUserRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataUser], error) {
+) (*core.Response[*v3.User], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -59,7 +59,7 @@ func (r *RawClient) Add(
 			}
 		},
 	}
-	var response *v3.ApidataUser
+	var response *v3.User
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -78,7 +78,7 @@ func (r *RawClient) Add(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataUser]{
+	return &core.Response[*v3.User]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -89,7 +89,7 @@ func (r *RawClient) ListOrdered(
 	ctx context.Context,
 	request *v3.UserListOrderedRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataUserListResponse], error) {
+) (*core.Response[*v3.UserListResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -120,7 +120,7 @@ func (r *RawClient) ListOrdered(
 			}
 		},
 	}
-	var response *v3.ApidataUserListResponse
+	var response *v3.UserListResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -138,7 +138,7 @@ func (r *RawClient) ListOrdered(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataUserListResponse]{
+	return &core.Response[*v3.UserListResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -150,7 +150,7 @@ func (r *RawClient) Get(
 	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataUser], error) {
+) (*core.Response[*v3.User], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -177,7 +177,7 @@ func (r *RawClient) Get(
 			}
 		},
 	}
-	var response *v3.ApidataUser
+	var response *v3.User
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -195,7 +195,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataUser]{
+	return &core.Response[*v3.User]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -207,7 +207,7 @@ func (r *RawClient) Delete(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataSuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -234,7 +234,7 @@ func (r *RawClient) Delete(
 			}
 		},
 	}
-	var response *v3.ApidataSuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -252,7 +252,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataSuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -263,9 +263,9 @@ func (r *RawClient) Update(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v3.ApidataUpdateUserRequest,
+	request *v3.UpdateUserRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataUser], error) {
+) (*core.Response[*v3.User], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -298,7 +298,7 @@ func (r *RawClient) Update(
 			}
 		},
 	}
-	var response *v3.ApidataUser
+	var response *v3.User
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -317,7 +317,7 @@ func (r *RawClient) Update(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataUser]{
+	return &core.Response[*v3.User]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -329,7 +329,7 @@ func (r *RawClient) GetFacts(
 	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataFactsResponse], error) {
+) (*core.Response[*v3.FactsResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -356,7 +356,7 @@ func (r *RawClient) GetFacts(
 			}
 		},
 	}
-	var response *v3.ApidataFactsResponse
+	var response *v3.FactsResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -374,7 +374,7 @@ func (r *RawClient) GetFacts(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataFactsResponse]{
+	return &core.Response[*v3.FactsResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -386,7 +386,7 @@ func (r *RawClient) GetNode(
 	// The user_id of the user to get the node for.
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataUserNodeResponse], error) {
+) (*core.Response[*v3.UserNodeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -413,7 +413,7 @@ func (r *RawClient) GetNode(
 			}
 		},
 	}
-	var response *v3.ApidataUserNodeResponse
+	var response *v3.UserNodeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -431,7 +431,7 @@ func (r *RawClient) GetNode(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataUserNodeResponse]{
+	return &core.Response[*v3.UserNodeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

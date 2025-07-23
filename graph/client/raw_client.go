@@ -33,7 +33,7 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 func (r *RawClient) ListEntityTypes(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataEntityTypeResponse], error) {
+) (*core.Response[*v3.EntityTypeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -57,7 +57,7 @@ func (r *RawClient) ListEntityTypes(
 			}
 		},
 	}
-	var response *v3.ApidataEntityTypeResponse
+	var response *v3.EntityTypeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -75,7 +75,7 @@ func (r *RawClient) ListEntityTypes(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataEntityTypeResponse]{
+	return &core.Response[*v3.EntityTypeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -84,9 +84,9 @@ func (r *RawClient) ListEntityTypes(
 
 func (r *RawClient) SetEntityTypesInternal(
 	ctx context.Context,
-	request *v3.ApidataEntityTypeRequest,
+	request *v3.EntityTypeRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataSuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -111,7 +111,7 @@ func (r *RawClient) SetEntityTypesInternal(
 			}
 		},
 	}
-	var response *v3.ApidataSuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -130,7 +130,7 @@ func (r *RawClient) SetEntityTypesInternal(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataSuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -139,9 +139,9 @@ func (r *RawClient) SetEntityTypesInternal(
 
 func (r *RawClient) Add(
 	ctx context.Context,
-	request *v3.ApidataAddDataRequest,
+	request *v3.AddDataRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGraphEpisode], error) {
+) (*core.Response[*v3.Episode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -166,7 +166,7 @@ func (r *RawClient) Add(
 			}
 		},
 	}
-	var response *v3.ApidataGraphEpisode
+	var response *v3.Episode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -185,7 +185,7 @@ func (r *RawClient) Add(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGraphEpisode]{
+	return &core.Response[*v3.Episode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -194,9 +194,9 @@ func (r *RawClient) Add(
 
 func (r *RawClient) AddBatch(
 	ctx context.Context,
-	request *v3.ApidataAddDataBatchRequest,
+	request *v3.AddDataBatchRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v3.ApidataGraphEpisode], error) {
+) (*core.Response[[]*v3.Episode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -221,7 +221,7 @@ func (r *RawClient) AddBatch(
 			}
 		},
 	}
-	var response []*v3.ApidataGraphEpisode
+	var response []*v3.Episode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -240,7 +240,7 @@ func (r *RawClient) AddBatch(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.ApidataGraphEpisode]{
+	return &core.Response[[]*v3.Episode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -249,9 +249,9 @@ func (r *RawClient) AddBatch(
 
 func (r *RawClient) AddFactTriple(
 	ctx context.Context,
-	request *v3.GraphitiAddTripleRequest,
+	request *v3.AddTripleRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.GraphitiAddTripleResponse], error) {
+) (*core.Response[*v3.AddTripleResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -276,7 +276,7 @@ func (r *RawClient) AddFactTriple(
 			}
 		},
 	}
-	var response *v3.GraphitiAddTripleResponse
+	var response *v3.AddTripleResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -295,7 +295,7 @@ func (r *RawClient) AddFactTriple(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.GraphitiAddTripleResponse]{
+	return &core.Response[*v3.AddTripleResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -306,7 +306,7 @@ func (r *RawClient) Clone(
 	ctx context.Context,
 	request *v3.ApidataCloneGraphRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataCloneGraphResponse], error) {
+) (*core.Response[*v3.CloneGraphResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -331,7 +331,7 @@ func (r *RawClient) Clone(
 			}
 		},
 	}
-	var response *v3.ApidataCloneGraphResponse
+	var response *v3.CloneGraphResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -350,7 +350,7 @@ func (r *RawClient) Clone(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataCloneGraphResponse]{
+	return &core.Response[*v3.CloneGraphResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -359,9 +359,9 @@ func (r *RawClient) Clone(
 
 func (r *RawClient) Search(
 	ctx context.Context,
-	request *v3.GraphitiGraphSearchQuery,
+	request *v3.GraphSearchQuery,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGraphSearchResults], error) {
+) (*core.Response[*v3.GraphSearchResults], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -386,7 +386,7 @@ func (r *RawClient) Search(
 			}
 		},
 	}
-	var response *v3.ApidataGraphSearchResults
+	var response *v3.GraphSearchResults
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -405,7 +405,7 @@ func (r *RawClient) Search(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGraphSearchResults]{
+	return &core.Response[*v3.GraphSearchResults]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -416,7 +416,7 @@ func (r *RawClient) Create(
 	ctx context.Context,
 	request *v3.ApidataCreateGraphRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGraph], error) {
+) (*core.Response[*v3.Graph], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -441,7 +441,7 @@ func (r *RawClient) Create(
 			}
 		},
 	}
-	var response *v3.ApidataGraph
+	var response *v3.Graph
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -460,7 +460,7 @@ func (r *RawClient) Create(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGraph]{
+	return &core.Response[*v3.Graph]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -472,7 +472,7 @@ func (r *RawClient) Get(
 	// The graph_id of the graph to get.
 	graphID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGraph], error) {
+) (*core.Response[*v3.Graph], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -499,7 +499,7 @@ func (r *RawClient) Get(
 			}
 		},
 	}
-	var response *v3.ApidataGraph
+	var response *v3.Graph
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -517,7 +517,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGraph]{
+	return &core.Response[*v3.Graph]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -529,7 +529,7 @@ func (r *RawClient) Delete(
 	// Graph ID
 	graphID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataSuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -561,7 +561,7 @@ func (r *RawClient) Delete(
 			}
 		},
 	}
-	var response *v3.ApidataSuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -579,7 +579,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataSuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

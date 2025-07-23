@@ -10,11 +10,11 @@ import (
 // Bad Request
 type BadRequestError struct {
 	*core.APIError
-	Body *ApidataAPIError
+	Body *APIError
 }
 
 func (b *BadRequestError) UnmarshalJSON(data []byte) error {
-	var body *ApidataAPIError
+	var body *APIError
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
@@ -34,11 +34,11 @@ func (b *BadRequestError) Unwrap() error {
 // Internal Server Error
 type InternalServerError struct {
 	*core.APIError
-	Body *ApidataAPIError
+	Body *APIError
 }
 
 func (i *InternalServerError) UnmarshalJSON(data []byte) error {
-	var body *ApidataAPIError
+	var body *APIError
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
@@ -58,11 +58,11 @@ func (i *InternalServerError) Unwrap() error {
 // Not Found
 type NotFoundError struct {
 	*core.APIError
-	Body *ApidataAPIError
+	Body *APIError
 }
 
 func (n *NotFoundError) UnmarshalJSON(data []byte) error {
-	var body *ApidataAPIError
+	var body *APIError
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}

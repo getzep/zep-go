@@ -10,6 +10,7 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
+	os "os"
 )
 
 type Client struct {
@@ -22,6 +23,9 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
+	if options.APIKey == "" {
+		options.APIKey = os.Getenv("ZEP_API_KEY")
+	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
 		baseURL:         options.BaseURL,
@@ -42,7 +46,7 @@ func (c *Client) GetByGraphID(
 	graphID string,
 	request *graph.EpisodeGetByGraphIDRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataGraphEpisodeResponse, error) {
+) (*v3.EpisodeResponse, error) {
 	response, err := c.WithRawResponse.GetByGraphID(
 		ctx,
 		graphID,
@@ -62,7 +66,7 @@ func (c *Client) GetByUserID(
 	userID string,
 	request *graph.EpisodeGetByUserIDRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataGraphEpisodeResponse, error) {
+) (*v3.EpisodeResponse, error) {
 	response, err := c.WithRawResponse.GetByUserID(
 		ctx,
 		userID,
@@ -81,7 +85,7 @@ func (c *Client) Get(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v3.ApidataGraphEpisode, error) {
+) (*v3.Episode, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		uuid,
@@ -99,7 +103,7 @@ func (c *Client) Delete(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v3.ApidataSuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		uuid,
@@ -117,7 +121,7 @@ func (c *Client) GetNodesAndEdges(
 	// Episode uuid
 	uuid string,
 	opts ...option.RequestOption,
-) (*v3.ApidataEpisodeMentions, error) {
+) (*v3.EpisodeMentions, error) {
 	response, err := c.WithRawResponse.GetNodesAndEdges(
 		ctx,
 		uuid,

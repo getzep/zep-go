@@ -34,9 +34,9 @@ func (r *RawClient) GetByGraphID(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v3.ApidataGraphEdgesRequest,
+	request *v3.GraphEdgesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v3.GraphitiEntityEdge], error) {
+) (*core.Response[[]*v3.EntityEdge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -63,7 +63,7 @@ func (r *RawClient) GetByGraphID(
 			}
 		},
 	}
-	var response []*v3.GraphitiEntityEdge
+	var response []*v3.EntityEdge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -82,7 +82,7 @@ func (r *RawClient) GetByGraphID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.GraphitiEntityEdge]{
+	return &core.Response[[]*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -93,9 +93,9 @@ func (r *RawClient) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v3.ApidataGraphEdgesRequest,
+	request *v3.GraphEdgesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v3.GraphitiEntityEdge], error) {
+) (*core.Response[[]*v3.EntityEdge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -122,7 +122,7 @@ func (r *RawClient) GetByUserID(
 			}
 		},
 	}
-	var response []*v3.GraphitiEntityEdge
+	var response []*v3.EntityEdge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -141,7 +141,7 @@ func (r *RawClient) GetByUserID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.GraphitiEntityEdge]{
+	return &core.Response[[]*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -153,7 +153,7 @@ func (r *RawClient) Get(
 	// Edge UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.GraphitiEntityEdge], error) {
+) (*core.Response[*v3.EntityEdge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -185,7 +185,7 @@ func (r *RawClient) Get(
 			}
 		},
 	}
-	var response *v3.GraphitiEntityEdge
+	var response *v3.EntityEdge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -203,7 +203,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.GraphitiEntityEdge]{
+	return &core.Response[*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -215,7 +215,7 @@ func (r *RawClient) Delete(
 	// Edge UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataSuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -242,7 +242,7 @@ func (r *RawClient) Delete(
 			}
 		},
 	}
-	var response *v3.ApidataSuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -260,7 +260,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataSuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

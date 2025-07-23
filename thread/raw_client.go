@@ -34,7 +34,7 @@ func (r *RawClient) ListAll(
 	ctx context.Context,
 	request *v3.ThreadListAllRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataThreadListResponse], error) {
+) (*core.Response[*v3.ThreadListResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -65,7 +65,7 @@ func (r *RawClient) ListAll(
 			}
 		},
 	}
-	var response *v3.ApidataThreadListResponse
+	var response *v3.ThreadListResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -83,7 +83,7 @@ func (r *RawClient) ListAll(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataThreadListResponse]{
+	return &core.Response[*v3.ThreadListResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -94,7 +94,7 @@ func (r *RawClient) Create(
 	ctx context.Context,
 	request *v3.ModelsCreateThreadRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataThread], error) {
+) (*core.Response[*v3.Thread], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -119,7 +119,7 @@ func (r *RawClient) Create(
 			}
 		},
 	}
-	var response *v3.ApidataThread
+	var response *v3.Thread
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -138,7 +138,7 @@ func (r *RawClient) Create(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataThread]{
+	return &core.Response[*v3.Thread]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -150,7 +150,7 @@ func (r *RawClient) Delete(
 	// The ID of the thread for which memory should be deleted.
 	threadID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataSuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -177,7 +177,7 @@ func (r *RawClient) Delete(
 			}
 		},
 	}
-	var response *v3.ApidataSuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -195,7 +195,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataSuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -208,7 +208,7 @@ func (r *RawClient) GetUserContext(
 	threadID string,
 	request *v3.ThreadGetUserContextRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataThreadContextResponse], error) {
+) (*core.Response[*v3.ThreadContextResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -242,7 +242,7 @@ func (r *RawClient) GetUserContext(
 			}
 		},
 	}
-	var response *v3.ApidataThreadContextResponse
+	var response *v3.ThreadContextResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -260,7 +260,7 @@ func (r *RawClient) GetUserContext(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataThreadContextResponse]{
+	return &core.Response[*v3.ThreadContextResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -273,7 +273,7 @@ func (r *RawClient) Get(
 	threadID string,
 	request *v3.ThreadGetRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataMessageListResponse], error) {
+) (*core.Response[*v3.MessageListResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -307,7 +307,7 @@ func (r *RawClient) Get(
 			}
 		},
 	}
-	var response *v3.ApidataMessageListResponse
+	var response *v3.MessageListResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -325,7 +325,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataMessageListResponse]{
+	return &core.Response[*v3.MessageListResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -338,7 +338,7 @@ func (r *RawClient) AddMessages(
 	threadID string,
 	request *v3.ApidataAddThreadMessagesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataAddThreadMessagesResponse], error) {
+) (*core.Response[*v3.AddThreadMessagesResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -361,7 +361,7 @@ func (r *RawClient) AddMessages(
 			}
 		},
 	}
-	var response *v3.ApidataAddThreadMessagesResponse
+	var response *v3.AddThreadMessagesResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -380,7 +380,7 @@ func (r *RawClient) AddMessages(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataAddThreadMessagesResponse]{
+	return &core.Response[*v3.AddThreadMessagesResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

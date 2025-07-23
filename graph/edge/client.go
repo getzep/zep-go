@@ -9,6 +9,7 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
+	os "os"
 )
 
 type Client struct {
@@ -21,6 +22,9 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
+	if options.APIKey == "" {
+		options.APIKey = os.Getenv("ZEP_API_KEY")
+	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
 		baseURL:         options.BaseURL,
@@ -39,9 +43,9 @@ func (c *Client) GetByGraphID(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v3.ApidataGraphEdgesRequest,
+	request *v3.GraphEdgesRequest,
 	opts ...option.RequestOption,
-) ([]*v3.GraphitiEntityEdge, error) {
+) ([]*v3.EntityEdge, error) {
 	response, err := c.WithRawResponse.GetByGraphID(
 		ctx,
 		graphID,
@@ -59,9 +63,9 @@ func (c *Client) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v3.ApidataGraphEdgesRequest,
+	request *v3.GraphEdgesRequest,
 	opts ...option.RequestOption,
-) ([]*v3.GraphitiEntityEdge, error) {
+) ([]*v3.EntityEdge, error) {
 	response, err := c.WithRawResponse.GetByUserID(
 		ctx,
 		userID,
@@ -80,7 +84,7 @@ func (c *Client) Get(
 	// Edge UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v3.GraphitiEntityEdge, error) {
+) (*v3.EntityEdge, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		uuid,
@@ -98,7 +102,7 @@ func (c *Client) Delete(
 	// Edge UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v3.ApidataSuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		uuid,

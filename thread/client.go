@@ -9,6 +9,7 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
+	os "os"
 )
 
 type Client struct {
@@ -21,6 +22,9 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
+	if options.APIKey == "" {
+		options.APIKey = os.Getenv("ZEP_API_KEY")
+	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
 		baseURL:         options.BaseURL,
@@ -39,7 +43,7 @@ func (c *Client) ListAll(
 	ctx context.Context,
 	request *v3.ThreadListAllRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataThreadListResponse, error) {
+) (*v3.ThreadListResponse, error) {
 	response, err := c.WithRawResponse.ListAll(
 		ctx,
 		request,
@@ -56,7 +60,7 @@ func (c *Client) Create(
 	ctx context.Context,
 	request *v3.ModelsCreateThreadRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataThread, error) {
+) (*v3.Thread, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		request,
@@ -74,7 +78,7 @@ func (c *Client) Delete(
 	// The ID of the thread for which memory should be deleted.
 	threadID string,
 	opts ...option.RequestOption,
-) (*v3.ApidataSuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		threadID,
@@ -93,7 +97,7 @@ func (c *Client) GetUserContext(
 	threadID string,
 	request *v3.ThreadGetUserContextRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataThreadContextResponse, error) {
+) (*v3.ThreadContextResponse, error) {
 	response, err := c.WithRawResponse.GetUserContext(
 		ctx,
 		threadID,
@@ -113,7 +117,7 @@ func (c *Client) Get(
 	threadID string,
 	request *v3.ThreadGetRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataMessageListResponse, error) {
+) (*v3.MessageListResponse, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		threadID,
@@ -133,7 +137,7 @@ func (c *Client) AddMessages(
 	threadID string,
 	request *v3.ApidataAddThreadMessagesRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataAddThreadMessagesResponse, error) {
+) (*v3.AddThreadMessagesResponse, error) {
 	response, err := c.WithRawResponse.AddMessages(
 		ctx,
 		threadID,

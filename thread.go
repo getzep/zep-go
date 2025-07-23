@@ -12,9 +12,9 @@ type ApidataAddThreadMessagesRequest struct {
 	// Optional list of role types to ignore when adding messages to graph memory.
 	// The message itself will still be added, retained and used as context for messages
 	// that are added to a user's graph.
-	IgnoreRoles []ApidataRoleType `json:"ignore_roles,omitempty" url:"-"`
+	IgnoreRoles []RoleType `json:"ignore_roles,omitempty" url:"-"`
 	// A list of message objects, where each message contains a role and content.
-	Messages []*ApidataMessage `json:"messages,omitempty" url:"-"`
+	Messages []*Message `json:"messages,omitempty" url:"-"`
 	// Optionally return memory context relevant to the most recent messages.
 	ReturnContext *bool `json:"return_context,omitempty" url:"-"`
 }
@@ -53,31 +53,31 @@ type ThreadListAllRequest struct {
 	Asc *bool `json:"-" url:"asc,omitempty"`
 }
 
-type ApidataAddThreadMessagesResponse struct {
+type AddThreadMessagesResponse struct {
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataAddThreadMessagesResponse) GetContext() *string {
+func (a *AddThreadMessagesResponse) GetContext() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Context
 }
 
-func (a *ApidataAddThreadMessagesResponse) GetExtraProperties() map[string]interface{} {
+func (a *AddThreadMessagesResponse) GetExtraProperties() map[string]interface{} {
 	return a.extraProperties
 }
 
-func (a *ApidataAddThreadMessagesResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataAddThreadMessagesResponse
+func (a *AddThreadMessagesResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddThreadMessagesResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataAddThreadMessagesResponse(value)
+	*a = AddThreadMessagesResponse(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ func (a *ApidataAddThreadMessagesResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *ApidataAddThreadMessagesResponse) String() string {
+func (a *AddThreadMessagesResponse) String() string {
 	if len(a.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
@@ -111,7 +111,7 @@ type ApidataMessage struct {
 	// Customizable role of the sender of the message (e.g., "john", "sales_agent").
 	Role *string `json:"role,omitempty" url:"role,omitempty"`
 	// The type of the role (e.g., "user", "system").
-	RoleType ApidataRoleType `json:"role_type" url:"role_type"`
+	RoleType RoleType `json:"role_type" url:"role_type"`
 	// Deprecated
 	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
 	// Deprecated
@@ -158,7 +158,7 @@ func (a *ApidataMessage) GetRole() *string {
 	return a.Role
 }
 
-func (a *ApidataMessage) GetRoleType() ApidataRoleType {
+func (a *ApidataMessage) GetRoleType() RoleType {
 	if a == nil {
 		return ""
 	}
@@ -218,7 +218,126 @@ func (a *ApidataMessage) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ApidataMessageListResponse struct {
+type Message struct {
+	// The content of the message.
+	Content string `json:"content" url:"content"`
+	// The timestamp of when the message was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The metadata associated with the message.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Customizable name of the sender of the message (e.g., "john", "sales_agent").
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Whether the message has been processed.
+	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
+	// The role of message sender (e.g., "user", "system").
+	Role RoleType `json:"role" url:"role"`
+	// Deprecated
+	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
+	// Deprecated
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The unique identifier of the message.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *Message) GetContent() string {
+	if m == nil {
+		return ""
+	}
+	return m.Content
+}
+
+func (m *Message) GetCreatedAt() *string {
+	if m == nil {
+		return nil
+	}
+	return m.CreatedAt
+}
+
+func (m *Message) GetMetadata() map[string]interface{} {
+	if m == nil {
+		return nil
+	}
+	return m.Metadata
+}
+
+func (m *Message) GetName() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Name
+}
+
+func (m *Message) GetProcessed() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.Processed
+}
+
+func (m *Message) GetRole() RoleType {
+	if m == nil {
+		return ""
+	}
+	return m.Role
+}
+
+func (m *Message) GetTokenCount() *int {
+	if m == nil {
+		return nil
+	}
+	return m.TokenCount
+}
+
+func (m *Message) GetUpdatedAt() *string {
+	if m == nil {
+		return nil
+	}
+	return m.UpdatedAt
+}
+
+func (m *Message) GetUUID() *string {
+	if m == nil {
+		return nil
+	}
+	return m.UUID
+}
+
+func (m *Message) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *Message) UnmarshalJSON(data []byte) error {
+	type unmarshaler Message
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = Message(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *Message) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type MessageListResponse struct {
 	// A list of message objects.
 	Messages []*ApidataMessage `json:"messages,omitempty" url:"messages,omitempty"`
 	// The number of messages returned.
@@ -230,60 +349,60 @@ type ApidataMessageListResponse struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataMessageListResponse) GetMessages() []*ApidataMessage {
-	if a == nil {
+func (m *MessageListResponse) GetMessages() []*ApidataMessage {
+	if m == nil {
 		return nil
 	}
-	return a.Messages
+	return m.Messages
 }
 
-func (a *ApidataMessageListResponse) GetRowCount() *int {
-	if a == nil {
+func (m *MessageListResponse) GetRowCount() *int {
+	if m == nil {
 		return nil
 	}
-	return a.RowCount
+	return m.RowCount
 }
 
-func (a *ApidataMessageListResponse) GetTotalCount() *int {
-	if a == nil {
+func (m *MessageListResponse) GetTotalCount() *int {
+	if m == nil {
 		return nil
 	}
-	return a.TotalCount
+	return m.TotalCount
 }
 
-func (a *ApidataMessageListResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
 }
 
-func (a *ApidataMessageListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataMessageListResponse
+func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler MessageListResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataMessageListResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*m = MessageListResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataMessageListResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (m *MessageListResponse) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(m); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", m)
 }
 
-type ApidataThread struct {
+type Thread struct {
 	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
 	ThreadID    *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
@@ -294,196 +413,196 @@ type ApidataThread struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataThread) GetCreatedAt() *string {
-	if a == nil {
+func (t *Thread) GetCreatedAt() *string {
+	if t == nil {
 		return nil
 	}
-	return a.CreatedAt
+	return t.CreatedAt
 }
 
-func (a *ApidataThread) GetProjectUUID() *string {
-	if a == nil {
+func (t *Thread) GetProjectUUID() *string {
+	if t == nil {
 		return nil
 	}
-	return a.ProjectUUID
+	return t.ProjectUUID
 }
 
-func (a *ApidataThread) GetThreadID() *string {
-	if a == nil {
+func (t *Thread) GetThreadID() *string {
+	if t == nil {
 		return nil
 	}
-	return a.ThreadID
+	return t.ThreadID
 }
 
-func (a *ApidataThread) GetUserID() *string {
-	if a == nil {
+func (t *Thread) GetUserID() *string {
+	if t == nil {
 		return nil
 	}
-	return a.UserID
+	return t.UserID
 }
 
-func (a *ApidataThread) GetUUID() *string {
-	if a == nil {
+func (t *Thread) GetUUID() *string {
+	if t == nil {
 		return nil
 	}
-	return a.UUID
+	return t.UUID
 }
 
-func (a *ApidataThread) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (t *Thread) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
 }
 
-func (a *ApidataThread) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataThread
+func (t *Thread) UnmarshalJSON(data []byte) error {
+	type unmarshaler Thread
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataThread(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*t = Thread(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataThread) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (t *Thread) String() string {
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(t); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", t)
 }
 
-type ApidataThreadContextResponse struct {
+type ThreadContextResponse struct {
 	// Memory context containing relevant facts and entities for the session. Can be put into the prompt directly.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 	// A list of message objects, where each message contains a role and content. Only last_n messages will be returned
 	Messages []*ApidataMessage `json:"messages,omitempty" url:"messages,omitempty"`
 	// Most relevant facts to the recent messages in the session.
-	RelevantFacts []*ApidataFact `json:"relevant_facts,omitempty" url:"relevant_facts,omitempty"`
+	RelevantFacts []*Fact `json:"relevant_facts,omitempty" url:"relevant_facts,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataThreadContextResponse) GetContext() *string {
-	if a == nil {
+func (t *ThreadContextResponse) GetContext() *string {
+	if t == nil {
 		return nil
 	}
-	return a.Context
+	return t.Context
 }
 
-func (a *ApidataThreadContextResponse) GetMessages() []*ApidataMessage {
-	if a == nil {
+func (t *ThreadContextResponse) GetMessages() []*ApidataMessage {
+	if t == nil {
 		return nil
 	}
-	return a.Messages
+	return t.Messages
 }
 
-func (a *ApidataThreadContextResponse) GetRelevantFacts() []*ApidataFact {
-	if a == nil {
+func (t *ThreadContextResponse) GetRelevantFacts() []*Fact {
+	if t == nil {
 		return nil
 	}
-	return a.RelevantFacts
+	return t.RelevantFacts
 }
 
-func (a *ApidataThreadContextResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (t *ThreadContextResponse) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
 }
 
-func (a *ApidataThreadContextResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataThreadContextResponse
+func (t *ThreadContextResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadContextResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataThreadContextResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*t = ThreadContextResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataThreadContextResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (t *ThreadContextResponse) String() string {
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(t); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", t)
 }
 
-type ApidataThreadListResponse struct {
-	ResponseCount *int             `json:"response_count,omitempty" url:"response_count,omitempty"`
-	Thread        []*ApidataThread `json:"thread,omitempty" url:"thread,omitempty"`
-	TotalCount    *int             `json:"total_count,omitempty" url:"total_count,omitempty"`
+type ThreadListResponse struct {
+	ResponseCount *int      `json:"response_count,omitempty" url:"response_count,omitempty"`
+	Thread        []*Thread `json:"thread,omitempty" url:"thread,omitempty"`
+	TotalCount    *int      `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataThreadListResponse) GetResponseCount() *int {
-	if a == nil {
+func (t *ThreadListResponse) GetResponseCount() *int {
+	if t == nil {
 		return nil
 	}
-	return a.ResponseCount
+	return t.ResponseCount
 }
 
-func (a *ApidataThreadListResponse) GetThread() []*ApidataThread {
-	if a == nil {
+func (t *ThreadListResponse) GetThread() []*Thread {
+	if t == nil {
 		return nil
 	}
-	return a.Thread
+	return t.Thread
 }
 
-func (a *ApidataThreadListResponse) GetTotalCount() *int {
-	if a == nil {
+func (t *ThreadListResponse) GetTotalCount() *int {
+	if t == nil {
 		return nil
 	}
-	return a.TotalCount
+	return t.TotalCount
 }
 
-func (a *ApidataThreadListResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (t *ThreadListResponse) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
 }
 
-func (a *ApidataThreadListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataThreadListResponse
+func (t *ThreadListResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadListResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataThreadListResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*t = ThreadListResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataThreadListResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (t *ThreadListResponse) String() string {
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(t); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", t)
 }

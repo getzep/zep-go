@@ -37,7 +37,7 @@ func (r *RawClient) GetByGraphID(
 	graphID string,
 	request *graph.EpisodeGetByGraphIDRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGraphEpisodeResponse], error) {
+) (*core.Response[*v3.EpisodeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -71,7 +71,7 @@ func (r *RawClient) GetByGraphID(
 			}
 		},
 	}
-	var response *v3.ApidataGraphEpisodeResponse
+	var response *v3.EpisodeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -89,7 +89,7 @@ func (r *RawClient) GetByGraphID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGraphEpisodeResponse]{
+	return &core.Response[*v3.EpisodeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -102,7 +102,7 @@ func (r *RawClient) GetByUserID(
 	userID string,
 	request *graph.EpisodeGetByUserIDRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGraphEpisodeResponse], error) {
+) (*core.Response[*v3.EpisodeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -136,7 +136,7 @@ func (r *RawClient) GetByUserID(
 			}
 		},
 	}
-	var response *v3.ApidataGraphEpisodeResponse
+	var response *v3.EpisodeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -154,7 +154,7 @@ func (r *RawClient) GetByUserID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGraphEpisodeResponse]{
+	return &core.Response[*v3.EpisodeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -166,7 +166,7 @@ func (r *RawClient) Get(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGraphEpisode], error) {
+) (*core.Response[*v3.Episode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -193,7 +193,7 @@ func (r *RawClient) Get(
 			}
 		},
 	}
-	var response *v3.ApidataGraphEpisode
+	var response *v3.Episode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -211,7 +211,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGraphEpisode]{
+	return &core.Response[*v3.Episode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -223,7 +223,7 @@ func (r *RawClient) Delete(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataSuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -255,7 +255,7 @@ func (r *RawClient) Delete(
 			}
 		},
 	}
-	var response *v3.ApidataSuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -273,7 +273,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataSuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -285,7 +285,7 @@ func (r *RawClient) GetNodesAndEdges(
 	// Episode uuid
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataEpisodeMentions], error) {
+) (*core.Response[*v3.EpisodeMentions], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -312,7 +312,7 @@ func (r *RawClient) GetNodesAndEdges(
 			}
 		},
 	}
-	var response *v3.ApidataEpisodeMentions
+	var response *v3.EpisodeMentions
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -330,7 +330,7 @@ func (r *RawClient) GetNodesAndEdges(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataEpisodeMentions]{
+	return &core.Response[*v3.EpisodeMentions]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

@@ -34,9 +34,9 @@ func (r *RawClient) GetByGraphID(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v3.ApidataGraphNodesRequest,
+	request *v3.GraphNodesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v3.GraphitiEntityNode], error) {
+) (*core.Response[[]*v3.EntityNode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -63,7 +63,7 @@ func (r *RawClient) GetByGraphID(
 			}
 		},
 	}
-	var response []*v3.GraphitiEntityNode
+	var response []*v3.EntityNode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -82,7 +82,7 @@ func (r *RawClient) GetByGraphID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.GraphitiEntityNode]{
+	return &core.Response[[]*v3.EntityNode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -93,9 +93,9 @@ func (r *RawClient) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v3.ApidataGraphNodesRequest,
+	request *v3.GraphNodesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v3.GraphitiEntityNode], error) {
+) (*core.Response[[]*v3.EntityNode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -122,7 +122,7 @@ func (r *RawClient) GetByUserID(
 			}
 		},
 	}
-	var response []*v3.GraphitiEntityNode
+	var response []*v3.EntityNode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -141,7 +141,7 @@ func (r *RawClient) GetByUserID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.GraphitiEntityNode]{
+	return &core.Response[[]*v3.EntityNode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -153,7 +153,7 @@ func (r *RawClient) GetEdges(
 	// Node UUID
 	nodeUUID string,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v3.GraphitiEntityEdge], error) {
+) (*core.Response[[]*v3.EntityEdge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -180,7 +180,7 @@ func (r *RawClient) GetEdges(
 			}
 		},
 	}
-	var response []*v3.GraphitiEntityEdge
+	var response []*v3.EntityEdge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -198,7 +198,7 @@ func (r *RawClient) GetEdges(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.GraphitiEntityEdge]{
+	return &core.Response[[]*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -210,7 +210,7 @@ func (r *RawClient) GetEpisodes(
 	// Node UUID
 	nodeUUID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGraphEpisodeResponse], error) {
+) (*core.Response[*v3.EpisodeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -237,7 +237,7 @@ func (r *RawClient) GetEpisodes(
 			}
 		},
 	}
-	var response *v3.ApidataGraphEpisodeResponse
+	var response *v3.EpisodeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -255,7 +255,7 @@ func (r *RawClient) GetEpisodes(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGraphEpisodeResponse]{
+	return &core.Response[*v3.EpisodeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -267,7 +267,7 @@ func (r *RawClient) Get(
 	// Node UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.GraphitiEntityNode], error) {
+) (*core.Response[*v3.EntityNode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -299,7 +299,7 @@ func (r *RawClient) Get(
 			}
 		},
 	}
-	var response *v3.GraphitiEntityNode
+	var response *v3.EntityNode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -317,7 +317,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.GraphitiEntityNode]{
+	return &core.Response[*v3.EntityNode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

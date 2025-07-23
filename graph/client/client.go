@@ -12,6 +12,7 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
+	os "os"
 )
 
 type Client struct {
@@ -27,6 +28,9 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
+	if options.APIKey == "" {
+		options.APIKey = os.Getenv("ZEP_API_KEY")
+	}
 	return &Client{
 		Edge:            edge.NewClient(opts...),
 		Episode:         episode.NewClient(opts...),
@@ -47,7 +51,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) ListEntityTypes(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) (*v3.ApidataEntityTypeResponse, error) {
+) (*v3.EntityTypeResponse, error) {
 	response, err := c.WithRawResponse.ListEntityTypes(
 		ctx,
 		opts...,
@@ -61,9 +65,9 @@ func (c *Client) ListEntityTypes(
 // Sets the entity types for a project, replacing any existing ones.
 func (c *Client) SetEntityTypesInternal(
 	ctx context.Context,
-	request *v3.ApidataEntityTypeRequest,
+	request *v3.EntityTypeRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataSuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.SetEntityTypesInternal(
 		ctx,
 		request,
@@ -78,9 +82,9 @@ func (c *Client) SetEntityTypesInternal(
 // Add data to the graph.
 func (c *Client) Add(
 	ctx context.Context,
-	request *v3.ApidataAddDataRequest,
+	request *v3.AddDataRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataGraphEpisode, error) {
+) (*v3.Episode, error) {
 	response, err := c.WithRawResponse.Add(
 		ctx,
 		request,
@@ -95,9 +99,9 @@ func (c *Client) Add(
 // Add data to the graph in batch mode, processing episodes concurrently. Use only for data that is insensitive to processing order.
 func (c *Client) AddBatch(
 	ctx context.Context,
-	request *v3.ApidataAddDataBatchRequest,
+	request *v3.AddDataBatchRequest,
 	opts ...option.RequestOption,
-) ([]*v3.ApidataGraphEpisode, error) {
+) ([]*v3.Episode, error) {
 	response, err := c.WithRawResponse.AddBatch(
 		ctx,
 		request,
@@ -112,9 +116,9 @@ func (c *Client) AddBatch(
 // Add a fact triple for a user or group
 func (c *Client) AddFactTriple(
 	ctx context.Context,
-	request *v3.GraphitiAddTripleRequest,
+	request *v3.AddTripleRequest,
 	opts ...option.RequestOption,
-) (*v3.GraphitiAddTripleResponse, error) {
+) (*v3.AddTripleResponse, error) {
 	response, err := c.WithRawResponse.AddFactTriple(
 		ctx,
 		request,
@@ -131,7 +135,7 @@ func (c *Client) Clone(
 	ctx context.Context,
 	request *v3.ApidataCloneGraphRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataCloneGraphResponse, error) {
+) (*v3.CloneGraphResponse, error) {
 	response, err := c.WithRawResponse.Clone(
 		ctx,
 		request,
@@ -146,9 +150,9 @@ func (c *Client) Clone(
 // Perform a graph search query.
 func (c *Client) Search(
 	ctx context.Context,
-	request *v3.GraphitiGraphSearchQuery,
+	request *v3.GraphSearchQuery,
 	opts ...option.RequestOption,
-) (*v3.ApidataGraphSearchResults, error) {
+) (*v3.GraphSearchResults, error) {
 	response, err := c.WithRawResponse.Search(
 		ctx,
 		request,
@@ -165,7 +169,7 @@ func (c *Client) Create(
 	ctx context.Context,
 	request *v3.ApidataCreateGraphRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataGraph, error) {
+) (*v3.Graph, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		request,
@@ -183,7 +187,7 @@ func (c *Client) Get(
 	// The graph_id of the graph to get.
 	graphID string,
 	opts ...option.RequestOption,
-) (*v3.ApidataGraph, error) {
+) (*v3.Graph, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		graphID,
@@ -201,7 +205,7 @@ func (c *Client) Delete(
 	// Graph ID
 	graphID string,
 	opts ...option.RequestOption,
-) (*v3.ApidataSuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		graphID,

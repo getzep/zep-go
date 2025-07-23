@@ -10,6 +10,7 @@ import (
 	thread "github.com/getzep/zep-go/v3/thread"
 	user "github.com/getzep/zep-go/v3/user"
 	http "net/http"
+	os "os"
 )
 
 type Client struct {
@@ -24,6 +25,9 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
+	if options.APIKey == "" {
+		options.APIKey = os.Getenv("ZEP_API_KEY")
+	}
 	return &Client{
 		Graph:   client.NewClient(opts...),
 		Thread:  thread.NewClient(opts...),

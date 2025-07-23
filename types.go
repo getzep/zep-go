@@ -8,31 +8,31 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 )
 
-type ApidataAPIError struct {
+type APIError struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataAPIError) GetMessage() *string {
+func (a *APIError) GetMessage() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Message
 }
 
-func (a *ApidataAPIError) GetExtraProperties() map[string]interface{} {
+func (a *APIError) GetExtraProperties() map[string]interface{} {
 	return a.extraProperties
 }
 
-func (a *ApidataAPIError) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataAPIError
+func (a *APIError) UnmarshalJSON(data []byte) error {
+	type unmarshaler APIError
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataAPIError(value)
+	*a = APIError(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func (a *ApidataAPIError) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *ApidataAPIError) String() string {
+func (a *APIError) String() string {
 	if len(a.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
@@ -54,186 +54,13 @@ func (a *ApidataAPIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ApidataEpisodeMentions struct {
-	Edges []*GraphitiEntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
-	Nodes []*GraphitiEntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+type AddFactsRequest = interface{}
 
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
+type AddMemoryRequest = interface{}
 
-func (a *ApidataEpisodeMentions) GetEdges() []*GraphitiEntityEdge {
-	if a == nil {
-		return nil
-	}
-	return a.Edges
-}
+type AddMemoryResponse = interface{}
 
-func (a *ApidataEpisodeMentions) GetNodes() []*GraphitiEntityNode {
-	if a == nil {
-		return nil
-	}
-	return a.Nodes
-}
-
-func (a *ApidataEpisodeMentions) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataEpisodeMentions) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataEpisodeMentions
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataEpisodeMentions(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataEpisodeMentions) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
-type ApidataFact struct {
-	Content   string  `json:"content" url:"content"`
-	CreatedAt string  `json:"created_at" url:"created_at"`
-	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	// Deprecated
-	Fact           string   `json:"fact" url:"fact"`
-	InvalidAt      *string  `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	Name           *string  `json:"name,omitempty" url:"name,omitempty"`
-	Rating         *float64 `json:"rating,omitempty" url:"rating,omitempty"`
-	SourceNodeName *string  `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
-	TargetNodeName *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
-	UUID           string   `json:"uuid" url:"uuid"`
-	ValidAt        *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataFact) GetContent() string {
-	if a == nil {
-		return ""
-	}
-	return a.Content
-}
-
-func (a *ApidataFact) GetCreatedAt() string {
-	if a == nil {
-		return ""
-	}
-	return a.CreatedAt
-}
-
-func (a *ApidataFact) GetExpiredAt() *string {
-	if a == nil {
-		return nil
-	}
-	return a.ExpiredAt
-}
-
-func (a *ApidataFact) GetFact() string {
-	if a == nil {
-		return ""
-	}
-	return a.Fact
-}
-
-func (a *ApidataFact) GetInvalidAt() *string {
-	if a == nil {
-		return nil
-	}
-	return a.InvalidAt
-}
-
-func (a *ApidataFact) GetName() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Name
-}
-
-func (a *ApidataFact) GetRating() *float64 {
-	if a == nil {
-		return nil
-	}
-	return a.Rating
-}
-
-func (a *ApidataFact) GetSourceNodeName() *string {
-	if a == nil {
-		return nil
-	}
-	return a.SourceNodeName
-}
-
-func (a *ApidataFact) GetTargetNodeName() *string {
-	if a == nil {
-		return nil
-	}
-	return a.TargetNodeName
-}
-
-func (a *ApidataFact) GetUUID() string {
-	if a == nil {
-		return ""
-	}
-	return a.UUID
-}
-
-func (a *ApidataFact) GetValidAt() *string {
-	if a == nil {
-		return nil
-	}
-	return a.ValidAt
-}
-
-func (a *ApidataFact) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataFact) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataFact
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataFact(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataFact) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
+type AddedFact = interface{}
 
 type ApidataFactRatingExamples struct {
 	High   *string `json:"high,omitempty" url:"high,omitempty"`
@@ -297,420 +124,39 @@ func (a *ApidataFactRatingExamples) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ApidataFactRatingInstruction struct {
-	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
-	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
-	// based on relevance to a trip planning application, your examples might be:
-	// High: "Joe's dream vacation is Bali"
-	// Medium: "Joe has a fear of flying",
-	// Low: "Joe's favorite food is Japanese",
-	Examples *ApidataFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
-	// A string describing how to rate facts as they apply to your application. A trip planning application may
-	// use something like "relevancy to planning a trip, the user's preferences when traveling,
-	// or the user's travel history."
-	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+type ClassifySessionRequest = interface{}
 
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
+type ClassifySessionResponse = interface{}
 
-func (a *ApidataFactRatingInstruction) GetExamples() *ApidataFactRatingExamples {
-	if a == nil {
-		return nil
-	}
-	return a.Examples
-}
+type CommunityNode = interface{}
 
-func (a *ApidataFactRatingInstruction) GetInstruction() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Instruction
-}
+type CreateDocumentCollectionRequest = interface{}
 
-func (a *ApidataFactRatingInstruction) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
+type CreateDocumentRequest = interface{}
 
-func (a *ApidataFactRatingInstruction) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataFactRatingInstruction
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataFactRatingInstruction(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
+type CreateGroupRequest = interface{}
 
-func (a *ApidataFactRatingInstruction) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
+type CreateSessionRequest = interface{}
 
-type ApidataGraphEdgesRequest struct {
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+type DocumentCollectionResponse = interface{}
 
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
+type DocumentResponse = interface{}
 
-func (a *ApidataGraphEdgesRequest) GetLimit() *int {
-	if a == nil {
-		return nil
-	}
-	return a.Limit
-}
+type DocumentSearchPayload = interface{}
 
-func (a *ApidataGraphEdgesRequest) GetUUIDCursor() *string {
-	if a == nil {
-		return nil
-	}
-	return a.UUIDCursor
-}
+type DocumentSearchResult = interface{}
 
-func (a *ApidataGraphEdgesRequest) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
+type DocumentSearchResultPage = interface{}
 
-func (a *ApidataGraphEdgesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataGraphEdgesRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataGraphEdgesRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
+type EndSessionRequest = interface{}
 
-func (a *ApidataGraphEdgesRequest) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
+type EndSessionResponse = interface{}
 
-type ApidataGraphEpisode struct {
-	Content   string `json:"content" url:"content"`
-	CreatedAt string `json:"created_at" url:"created_at"`
-	Processed *bool  `json:"processed,omitempty" url:"processed,omitempty"`
-	// Optional role, will only be present if the episode was created using memory.add API
-	Role *string `json:"role,omitempty" url:"role,omitempty"`
-	// Optional role_type, will only be present if the episode was created using memory.add API
-	RoleType          *ApidataRoleType     `json:"role_type,omitempty" url:"role_type,omitempty"`
-	SessionID         *string              `json:"session_id,omitempty" url:"session_id,omitempty"`
-	Source            *ModelsGraphDataType `json:"source,omitempty" url:"source,omitempty"`
-	SourceDescription *string              `json:"source_description,omitempty" url:"source_description,omitempty"`
-	UUID              string               `json:"uuid" url:"uuid"`
+type EndSessionsRequest = interface{}
 
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
+type EndSessionsResponse = interface{}
 
-func (a *ApidataGraphEpisode) GetContent() string {
-	if a == nil {
-		return ""
-	}
-	return a.Content
-}
-
-func (a *ApidataGraphEpisode) GetCreatedAt() string {
-	if a == nil {
-		return ""
-	}
-	return a.CreatedAt
-}
-
-func (a *ApidataGraphEpisode) GetProcessed() *bool {
-	if a == nil {
-		return nil
-	}
-	return a.Processed
-}
-
-func (a *ApidataGraphEpisode) GetRole() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Role
-}
-
-func (a *ApidataGraphEpisode) GetRoleType() *ApidataRoleType {
-	if a == nil {
-		return nil
-	}
-	return a.RoleType
-}
-
-func (a *ApidataGraphEpisode) GetSessionID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.SessionID
-}
-
-func (a *ApidataGraphEpisode) GetSource() *ModelsGraphDataType {
-	if a == nil {
-		return nil
-	}
-	return a.Source
-}
-
-func (a *ApidataGraphEpisode) GetSourceDescription() *string {
-	if a == nil {
-		return nil
-	}
-	return a.SourceDescription
-}
-
-func (a *ApidataGraphEpisode) GetUUID() string {
-	if a == nil {
-		return ""
-	}
-	return a.UUID
-}
-
-func (a *ApidataGraphEpisode) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataGraphEpisode) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataGraphEpisode
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataGraphEpisode(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataGraphEpisode) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
-type ApidataGraphEpisodeResponse struct {
-	Episodes []*ApidataGraphEpisode `json:"episodes,omitempty" url:"episodes,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataGraphEpisodeResponse) GetEpisodes() []*ApidataGraphEpisode {
-	if a == nil {
-		return nil
-	}
-	return a.Episodes
-}
-
-func (a *ApidataGraphEpisodeResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataGraphEpisodeResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataGraphEpisodeResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataGraphEpisodeResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataGraphEpisodeResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
-type ApidataGraphNodesRequest struct {
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataGraphNodesRequest) GetLimit() *int {
-	if a == nil {
-		return nil
-	}
-	return a.Limit
-}
-
-func (a *ApidataGraphNodesRequest) GetUUIDCursor() *string {
-	if a == nil {
-		return nil
-	}
-	return a.UUIDCursor
-}
-
-func (a *ApidataGraphNodesRequest) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataGraphNodesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataGraphNodesRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataGraphNodesRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataGraphNodesRequest) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
-type ApidataRoleType string
-
-const (
-	ApidataRoleTypeNoRole        ApidataRoleType = "norole"
-	ApidataRoleTypeSystemRole    ApidataRoleType = "system"
-	ApidataRoleTypeAssistantRole ApidataRoleType = "assistant"
-	ApidataRoleTypeUserRole      ApidataRoleType = "user"
-	ApidataRoleTypeFunctionRole  ApidataRoleType = "function"
-	ApidataRoleTypeToolRole      ApidataRoleType = "tool"
-)
-
-func NewApidataRoleTypeFromString(s string) (ApidataRoleType, error) {
-	switch s {
-	case "norole":
-		return ApidataRoleTypeNoRole, nil
-	case "system":
-		return ApidataRoleTypeSystemRole, nil
-	case "assistant":
-		return ApidataRoleTypeAssistantRole, nil
-	case "user":
-		return ApidataRoleTypeUserRole, nil
-	case "function":
-		return ApidataRoleTypeFunctionRole, nil
-	case "tool":
-		return ApidataRoleTypeToolRole, nil
-	}
-	var t ApidataRoleType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (a ApidataRoleType) Ptr() *ApidataRoleType {
-	return &a
-}
-
-type ApidataSuccessResponse struct {
-	Message *string `json:"message,omitempty" url:"message,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataSuccessResponse) GetMessage() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Message
-}
-
-func (a *ApidataSuccessResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataSuccessResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataSuccessResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataSuccessResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataSuccessResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
-type GraphitiEntityEdge struct {
+type EntityEdge struct {
 	// Additional attributes of the edge. Dependent on edge types
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the edge
@@ -738,116 +184,116 @@ type GraphitiEntityEdge struct {
 	rawJSON         json.RawMessage
 }
 
-func (g *GraphitiEntityEdge) GetAttributes() map[string]interface{} {
-	if g == nil {
+func (e *EntityEdge) GetAttributes() map[string]interface{} {
+	if e == nil {
 		return nil
 	}
-	return g.Attributes
+	return e.Attributes
 }
 
-func (g *GraphitiEntityEdge) GetCreatedAt() string {
-	if g == nil {
+func (e *EntityEdge) GetCreatedAt() string {
+	if e == nil {
 		return ""
 	}
-	return g.CreatedAt
+	return e.CreatedAt
 }
 
-func (g *GraphitiEntityEdge) GetEpisodes() []string {
-	if g == nil {
+func (e *EntityEdge) GetEpisodes() []string {
+	if e == nil {
 		return nil
 	}
-	return g.Episodes
+	return e.Episodes
 }
 
-func (g *GraphitiEntityEdge) GetExpiredAt() *string {
-	if g == nil {
+func (e *EntityEdge) GetExpiredAt() *string {
+	if e == nil {
 		return nil
 	}
-	return g.ExpiredAt
+	return e.ExpiredAt
 }
 
-func (g *GraphitiEntityEdge) GetFact() string {
-	if g == nil {
+func (e *EntityEdge) GetFact() string {
+	if e == nil {
 		return ""
 	}
-	return g.Fact
+	return e.Fact
 }
 
-func (g *GraphitiEntityEdge) GetInvalidAt() *string {
-	if g == nil {
+func (e *EntityEdge) GetInvalidAt() *string {
+	if e == nil {
 		return nil
 	}
-	return g.InvalidAt
+	return e.InvalidAt
 }
 
-func (g *GraphitiEntityEdge) GetName() string {
-	if g == nil {
+func (e *EntityEdge) GetName() string {
+	if e == nil {
 		return ""
 	}
-	return g.Name
+	return e.Name
 }
 
-func (g *GraphitiEntityEdge) GetSourceNodeUUID() string {
-	if g == nil {
+func (e *EntityEdge) GetSourceNodeUUID() string {
+	if e == nil {
 		return ""
 	}
-	return g.SourceNodeUUID
+	return e.SourceNodeUUID
 }
 
-func (g *GraphitiEntityEdge) GetTargetNodeUUID() string {
-	if g == nil {
+func (e *EntityEdge) GetTargetNodeUUID() string {
+	if e == nil {
 		return ""
 	}
-	return g.TargetNodeUUID
+	return e.TargetNodeUUID
 }
 
-func (g *GraphitiEntityEdge) GetUUID() string {
-	if g == nil {
+func (e *EntityEdge) GetUUID() string {
+	if e == nil {
 		return ""
 	}
-	return g.UUID
+	return e.UUID
 }
 
-func (g *GraphitiEntityEdge) GetValidAt() *string {
-	if g == nil {
+func (e *EntityEdge) GetValidAt() *string {
+	if e == nil {
 		return nil
 	}
-	return g.ValidAt
+	return e.ValidAt
 }
 
-func (g *GraphitiEntityEdge) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
+func (e *EntityEdge) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
 }
 
-func (g *GraphitiEntityEdge) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphitiEntityEdge
+func (e *EntityEdge) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityEdge
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*g = GraphitiEntityEdge(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	*e = EntityEdge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
 	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (g *GraphitiEntityEdge) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+func (e *EntityEdge) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(g); err == nil {
+	if value, err := internal.StringifyJSON(e); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", g)
+	return fmt.Sprintf("%#v", e)
 }
 
-type GraphitiEntityNode struct {
+type EntityNode struct {
 	// Additional attributes of the node. Dependent on node labels
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the node
@@ -865,59 +311,612 @@ type GraphitiEntityNode struct {
 	rawJSON         json.RawMessage
 }
 
-func (g *GraphitiEntityNode) GetAttributes() map[string]interface{} {
-	if g == nil {
+func (e *EntityNode) GetAttributes() map[string]interface{} {
+	if e == nil {
 		return nil
 	}
-	return g.Attributes
+	return e.Attributes
 }
 
-func (g *GraphitiEntityNode) GetCreatedAt() string {
-	if g == nil {
+func (e *EntityNode) GetCreatedAt() string {
+	if e == nil {
 		return ""
 	}
-	return g.CreatedAt
+	return e.CreatedAt
 }
 
-func (g *GraphitiEntityNode) GetLabels() []string {
-	if g == nil {
+func (e *EntityNode) GetLabels() []string {
+	if e == nil {
 		return nil
 	}
-	return g.Labels
+	return e.Labels
 }
 
-func (g *GraphitiEntityNode) GetName() string {
-	if g == nil {
+func (e *EntityNode) GetName() string {
+	if e == nil {
 		return ""
 	}
-	return g.Name
+	return e.Name
 }
 
-func (g *GraphitiEntityNode) GetSummary() string {
-	if g == nil {
+func (e *EntityNode) GetSummary() string {
+	if e == nil {
 		return ""
 	}
-	return g.Summary
+	return e.Summary
 }
 
-func (g *GraphitiEntityNode) GetUUID() string {
-	if g == nil {
+func (e *EntityNode) GetUUID() string {
+	if e == nil {
 		return ""
 	}
-	return g.UUID
+	return e.UUID
 }
 
-func (g *GraphitiEntityNode) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
+func (e *EntityNode) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
 }
 
-func (g *GraphitiEntityNode) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphitiEntityNode
+func (e *EntityNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityNode
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*g = GraphitiEntityNode(value)
+	*e = EntityNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EntityNode) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type Episode struct {
+	Content   string `json:"content" url:"content"`
+	CreatedAt string `json:"created_at" url:"created_at"`
+	Processed *bool  `json:"processed,omitempty" url:"processed,omitempty"`
+	// Optional role, will only be present if the episode was created using memory.add API
+	Role *string `json:"role,omitempty" url:"role,omitempty"`
+	// Optional role_type, will only be present if the episode was created using memory.add API
+	RoleType          *RoleType      `json:"role_type,omitempty" url:"role_type,omitempty"`
+	SessionID         *string        `json:"session_id,omitempty" url:"session_id,omitempty"`
+	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
+	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
+	UUID              string         `json:"uuid" url:"uuid"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *Episode) GetContent() string {
+	if e == nil {
+		return ""
+	}
+	return e.Content
+}
+
+func (e *Episode) GetCreatedAt() string {
+	if e == nil {
+		return ""
+	}
+	return e.CreatedAt
+}
+
+func (e *Episode) GetProcessed() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.Processed
+}
+
+func (e *Episode) GetRole() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Role
+}
+
+func (e *Episode) GetRoleType() *RoleType {
+	if e == nil {
+		return nil
+	}
+	return e.RoleType
+}
+
+func (e *Episode) GetSessionID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.SessionID
+}
+
+func (e *Episode) GetSource() *GraphDataType {
+	if e == nil {
+		return nil
+	}
+	return e.Source
+}
+
+func (e *Episode) GetSourceDescription() *string {
+	if e == nil {
+		return nil
+	}
+	return e.SourceDescription
+}
+
+func (e *Episode) GetUUID() string {
+	if e == nil {
+		return ""
+	}
+	return e.UUID
+}
+
+func (e *Episode) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *Episode) UnmarshalJSON(data []byte) error {
+	type unmarshaler Episode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = Episode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *Episode) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EpisodeMentions struct {
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeMentions) GetEdges() []*EntityEdge {
+	if e == nil {
+		return nil
+	}
+	return e.Edges
+}
+
+func (e *EpisodeMentions) GetNodes() []*EntityNode {
+	if e == nil {
+		return nil
+	}
+	return e.Nodes
+}
+
+func (e *EpisodeMentions) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EpisodeMentions) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeMentions
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeMentions(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeMentions) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EpisodeResponse struct {
+	Episodes []*Episode `json:"episodes,omitempty" url:"episodes,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeResponse) GetEpisodes() []*Episode {
+	if e == nil {
+		return nil
+	}
+	return e.Episodes
+}
+
+func (e *EpisodeResponse) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EpisodeResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeResponse) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EpisodeType = interface{}
+
+type ExtractDataRequest = interface{}
+
+type Fact struct {
+	Content   string  `json:"content" url:"content"`
+	CreatedAt string  `json:"created_at" url:"created_at"`
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// Deprecated
+	Fact           string   `json:"fact" url:"fact"`
+	InvalidAt      *string  `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	Name           *string  `json:"name,omitempty" url:"name,omitempty"`
+	Rating         *float64 `json:"rating,omitempty" url:"rating,omitempty"`
+	SourceNodeName *string  `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
+	TargetNodeName *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
+	UUID           string   `json:"uuid" url:"uuid"`
+	ValidAt        *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (f *Fact) GetContent() string {
+	if f == nil {
+		return ""
+	}
+	return f.Content
+}
+
+func (f *Fact) GetCreatedAt() string {
+	if f == nil {
+		return ""
+	}
+	return f.CreatedAt
+}
+
+func (f *Fact) GetExpiredAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.ExpiredAt
+}
+
+func (f *Fact) GetFact() string {
+	if f == nil {
+		return ""
+	}
+	return f.Fact
+}
+
+func (f *Fact) GetInvalidAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.InvalidAt
+}
+
+func (f *Fact) GetName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Name
+}
+
+func (f *Fact) GetRating() *float64 {
+	if f == nil {
+		return nil
+	}
+	return f.Rating
+}
+
+func (f *Fact) GetSourceNodeName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.SourceNodeName
+}
+
+func (f *Fact) GetTargetNodeName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.TargetNodeName
+}
+
+func (f *Fact) GetUUID() string {
+	if f == nil {
+		return ""
+	}
+	return f.UUID
+}
+
+func (f *Fact) GetValidAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.ValidAt
+}
+
+func (f *Fact) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
+}
+
+func (f *Fact) UnmarshalJSON(data []byte) error {
+	type unmarshaler Fact
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = Fact(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+	f.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *Fact) String() string {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
+type FactRatingExamples struct {
+	High   *string `json:"high,omitempty" url:"high,omitempty"`
+	Low    *string `json:"low,omitempty" url:"low,omitempty"`
+	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (f *FactRatingExamples) GetHigh() *string {
+	if f == nil {
+		return nil
+	}
+	return f.High
+}
+
+func (f *FactRatingExamples) GetLow() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Low
+}
+
+func (f *FactRatingExamples) GetMedium() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Medium
+}
+
+func (f *FactRatingExamples) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
+}
+
+func (f *FactRatingExamples) UnmarshalJSON(data []byte) error {
+	type unmarshaler FactRatingExamples
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = FactRatingExamples(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+	f.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *FactRatingExamples) String() string {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
+type FactRatingInstruction struct {
+	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
+	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
+	// based on relevance to a trip planning application, your examples might be:
+	// High: "Joe's dream vacation is Bali"
+	// Medium: "Joe has a fear of flying",
+	// Low: "Joe's favorite food is Japanese",
+	Examples *FactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
+	// A string describing how to rate facts as they apply to your application. A trip planning application may
+	// use something like "relevancy to planning a trip, the user's preferences when traveling,
+	// or the user's travel history."
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (f *FactRatingInstruction) GetExamples() *FactRatingExamples {
+	if f == nil {
+		return nil
+	}
+	return f.Examples
+}
+
+func (f *FactRatingInstruction) GetInstruction() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Instruction
+}
+
+func (f *FactRatingInstruction) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
+}
+
+func (f *FactRatingInstruction) UnmarshalJSON(data []byte) error {
+	type unmarshaler FactRatingInstruction
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = FactRatingInstruction(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+	f.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *FactRatingInstruction) String() string {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
+type FactResponse = interface{}
+
+type GetDocumentListRequest = interface{}
+
+type GraphDataType string
+
+const (
+	GraphDataTypeText    GraphDataType = "text"
+	GraphDataTypeJSON    GraphDataType = "json"
+	GraphDataTypeMessage GraphDataType = "message"
+)
+
+func NewGraphDataTypeFromString(s string) (GraphDataType, error) {
+	switch s {
+	case "text":
+		return GraphDataTypeText, nil
+	case "json":
+		return GraphDataTypeJSON, nil
+	case "message":
+		return GraphDataTypeMessage, nil
+	}
+	var t GraphDataType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphDataType) Ptr() *GraphDataType {
+	return &g
+}
+
+type GraphEdgesRequest struct {
+	// Maximum number of items to return
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphEdgesRequest) GetLimit() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Limit
+}
+
+func (g *GraphEdgesRequest) GetUUIDCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUIDCursor
+}
+
+func (g *GraphEdgesRequest) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphEdgesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphEdgesRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphEdgesRequest(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *g)
 	if err != nil {
 		return err
@@ -927,7 +926,7 @@ func (g *GraphitiEntityNode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (g *GraphitiEntityNode) String() string {
+func (g *GraphEdgesRequest) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
@@ -939,27 +938,211 @@ func (g *GraphitiEntityNode) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type ModelsGraphDataType string
+type GraphNodesRequest struct {
+	// Maximum number of items to return
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphNodesRequest) GetLimit() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Limit
+}
+
+func (g *GraphNodesRequest) GetUUIDCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUIDCursor
+}
+
+func (g *GraphNodesRequest) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphNodesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphNodesRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphNodesRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphNodesRequest) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type Group = interface{}
+
+type GroupListResponse = interface{}
+
+type Memory = interface{}
+
+type MemorySearchPayload = interface{}
+
+type MemorySearchResult = interface{}
+
+type MemoryType string
 
 const (
-	ModelsGraphDataTypeText    ModelsGraphDataType = "text"
-	ModelsGraphDataTypeJSON    ModelsGraphDataType = "json"
-	ModelsGraphDataTypeMessage ModelsGraphDataType = "message"
+	MemoryTypePerpetual        MemoryType = "perpetual"
+	MemoryTypeSummaryRetriever MemoryType = "summary_retriever"
+	MemoryTypeMessageWindow    MemoryType = "message_window"
 )
 
-func NewModelsGraphDataTypeFromString(s string) (ModelsGraphDataType, error) {
+func NewMemoryTypeFromString(s string) (MemoryType, error) {
 	switch s {
-	case "text":
-		return ModelsGraphDataTypeText, nil
-	case "json":
-		return ModelsGraphDataTypeJSON, nil
-	case "message":
-		return ModelsGraphDataTypeMessage, nil
+	case "perpetual":
+		return MemoryTypePerpetual, nil
+	case "summary_retriever":
+		return MemoryTypeSummaryRetriever, nil
+	case "message_window":
+		return MemoryTypeMessageWindow, nil
 	}
-	var t ModelsGraphDataType
+	var t MemoryType
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (m ModelsGraphDataType) Ptr() *ModelsGraphDataType {
+func (m MemoryType) Ptr() *MemoryType {
 	return &m
 }
+
+type NewFact = interface{}
+
+type Question = interface{}
+
+type RoleType string
+
+const (
+	RoleTypeNoRole        RoleType = "norole"
+	RoleTypeSystemRole    RoleType = "system"
+	RoleTypeAssistantRole RoleType = "assistant"
+	RoleTypeUserRole      RoleType = "user"
+	RoleTypeFunctionRole  RoleType = "function"
+	RoleTypeToolRole      RoleType = "tool"
+)
+
+func NewRoleTypeFromString(s string) (RoleType, error) {
+	switch s {
+	case "norole":
+		return RoleTypeNoRole, nil
+	case "system":
+		return RoleTypeSystemRole, nil
+	case "assistant":
+		return RoleTypeAssistantRole, nil
+	case "user":
+		return RoleTypeUserRole, nil
+	case "function":
+		return RoleTypeFunctionRole, nil
+	case "tool":
+		return RoleTypeToolRole, nil
+	}
+	var t RoleType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RoleType) Ptr() *RoleType {
+	return &r
+}
+
+type SearchScope = interface{}
+
+type SearchType = interface{}
+
+type Session = interface{}
+
+type SessionClassification = interface{}
+
+type SessionFactRatingExamples = interface{}
+
+type SessionFactRatingInstruction = interface{}
+
+type SessionListResponse = interface{}
+
+type SessionSearchQuery = interface{}
+
+type SessionSearchResponse = interface{}
+
+type SessionSearchResult = interface{}
+
+type SuccessResponse struct {
+	Message *string `json:"message,omitempty" url:"message,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SuccessResponse) GetMessage() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Message
+}
+
+func (s *SuccessResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SuccessResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SuccessResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SuccessResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SuccessResponse) String() string {
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type Summary = interface{}
+
+type SummaryListResponse = interface{}
+
+type UpdateDocumentCollectionRequest = interface{}
+
+type UpdateDocumentListRequest = interface{}
+
+type UpdateDocumentRequest = interface{}
+
+type UpdateGroupRequest = interface{}
+
+type UpdateSessionRequest = interface{}
