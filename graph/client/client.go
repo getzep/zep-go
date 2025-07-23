@@ -133,7 +133,7 @@ func (c *Client) AddFactTriple(
 // Clone a user or group graph.
 func (c *Client) Clone(
 	ctx context.Context,
-	request *v3.ApidataCloneGraphRequest,
+	request *v3.CloneGraphRequest,
 	opts ...option.RequestOption,
 ) (*v3.CloneGraphResponse, error) {
 	response, err := c.WithRawResponse.Clone(
@@ -167,7 +167,7 @@ func (c *Client) Search(
 // Creates a new graph.
 func (c *Client) Create(
 	ctx context.Context,
-	request *v3.ApidataCreateGraphRequest,
+	request *v3.CreateGraphRequest,
 	opts ...option.RequestOption,
 ) (*v3.Graph, error) {
 	response, err := c.WithRawResponse.Create(

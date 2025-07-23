@@ -304,7 +304,7 @@ func (r *RawClient) AddFactTriple(
 
 func (r *RawClient) Clone(
 	ctx context.Context,
-	request *v3.ApidataCloneGraphRequest,
+	request *v3.CloneGraphRequest,
 	opts ...option.RequestOption,
 ) (*core.Response[*v3.CloneGraphResponse], error) {
 	options := core.NewRequestOptions(opts...)
@@ -414,7 +414,7 @@ func (r *RawClient) Search(
 
 func (r *RawClient) Create(
 	ctx context.Context,
-	request *v3.ApidataCreateGraphRequest,
+	request *v3.CreateGraphRequest,
 	opts ...option.RequestOption,
 ) (*core.Response[*v3.Graph], error) {
 	options := core.NewRequestOptions(opts...)

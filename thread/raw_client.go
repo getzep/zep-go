@@ -336,7 +336,7 @@ func (r *RawClient) AddMessages(
 	ctx context.Context,
 	// The ID of the thread to which messages should be added.
 	threadID string,
-	request *v3.ApidataAddThreadMessagesRequest,
+	request *v3.AddThreadMessagesRequest,
 	opts ...option.RequestOption,
 ) (*core.Response[*v3.AddThreadMessagesResponse], error) {
 	options := core.NewRequestOptions(opts...)

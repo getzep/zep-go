@@ -58,7 +58,7 @@ type AddTripleRequest struct {
 	ValidAt *string `json:"valid_at,omitempty" url:"-"`
 }
 
-type ApidataCloneGraphRequest struct {
+type CloneGraphRequest struct {
 	// source_graph_id is the ID of the graph to be cloned. Required if source_user_id is not provided
 	SourceGraphID *string `json:"source_graph_id,omitempty" url:"-"`
 	// user_id of the user whose graph is being cloned. Required if source_graph_id is not provided
@@ -69,7 +69,7 @@ type ApidataCloneGraphRequest struct {
 	TargetUserID *string `json:"target_user_id,omitempty" url:"-"`
 }
 
-type ApidataCreateGraphRequest struct {
+type CreateGraphRequest struct {
 	Description           *string                `json:"description,omitempty" url:"-"`
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	GraphID               string                 `json:"graph_id" url:"-"`

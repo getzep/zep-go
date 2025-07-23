@@ -8,7 +8,7 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 )
 
-type ApidataAddThreadMessagesRequest struct {
+type AddThreadMessagesRequest struct {
 	// Optional list of role types to ignore when adding messages to graph memory.
 	// The message itself will still be added, retained and used as context for messages
 	// that are added to a user's graph.
@@ -339,8 +339,6 @@ type ThreadContextResponse struct {
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 	// A list of message objects, where each message contains a role and content. Only last_n messages will be returned
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	// Most relevant facts to the recent messages in the session.
-	RelevantFacts []*Fact `json:"relevant_facts,omitempty" url:"relevant_facts,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -358,13 +356,6 @@ func (t *ThreadContextResponse) GetMessages() []*Message {
 		return nil
 	}
 	return t.Messages
-}
-
-func (t *ThreadContextResponse) GetRelevantFacts() []*Fact {
-	if t == nil {
-		return nil
-	}
-	return t.RelevantFacts
 }
 
 func (t *ThreadContextResponse) GetExtraProperties() map[string]interface{} {

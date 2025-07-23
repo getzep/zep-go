@@ -62,68 +62,6 @@ type AddMemoryResponse = interface{}
 
 type AddedFact = interface{}
 
-type ApidataFactRatingExamples struct {
-	High   *string `json:"high,omitempty" url:"high,omitempty"`
-	Low    *string `json:"low,omitempty" url:"low,omitempty"`
-	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataFactRatingExamples) GetHigh() *string {
-	if a == nil {
-		return nil
-	}
-	return a.High
-}
-
-func (a *ApidataFactRatingExamples) GetLow() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Low
-}
-
-func (a *ApidataFactRatingExamples) GetMedium() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Medium
-}
-
-func (a *ApidataFactRatingExamples) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataFactRatingExamples) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataFactRatingExamples
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataFactRatingExamples(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataFactRatingExamples) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
 type ClassifySessionRequest = interface{}
 
 type ClassifySessionResponse = interface{}
@@ -601,133 +539,6 @@ type EpisodeType = interface{}
 
 type ExtractDataRequest = interface{}
 
-type Fact struct {
-	Content   string  `json:"content" url:"content"`
-	CreatedAt string  `json:"created_at" url:"created_at"`
-	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	// Deprecated
-	Fact           string   `json:"fact" url:"fact"`
-	InvalidAt      *string  `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	Name           *string  `json:"name,omitempty" url:"name,omitempty"`
-	Rating         *float64 `json:"rating,omitempty" url:"rating,omitempty"`
-	SourceNodeName *string  `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
-	TargetNodeName *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
-	UUID           string   `json:"uuid" url:"uuid"`
-	ValidAt        *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (f *Fact) GetContent() string {
-	if f == nil {
-		return ""
-	}
-	return f.Content
-}
-
-func (f *Fact) GetCreatedAt() string {
-	if f == nil {
-		return ""
-	}
-	return f.CreatedAt
-}
-
-func (f *Fact) GetExpiredAt() *string {
-	if f == nil {
-		return nil
-	}
-	return f.ExpiredAt
-}
-
-func (f *Fact) GetFact() string {
-	if f == nil {
-		return ""
-	}
-	return f.Fact
-}
-
-func (f *Fact) GetInvalidAt() *string {
-	if f == nil {
-		return nil
-	}
-	return f.InvalidAt
-}
-
-func (f *Fact) GetName() *string {
-	if f == nil {
-		return nil
-	}
-	return f.Name
-}
-
-func (f *Fact) GetRating() *float64 {
-	if f == nil {
-		return nil
-	}
-	return f.Rating
-}
-
-func (f *Fact) GetSourceNodeName() *string {
-	if f == nil {
-		return nil
-	}
-	return f.SourceNodeName
-}
-
-func (f *Fact) GetTargetNodeName() *string {
-	if f == nil {
-		return nil
-	}
-	return f.TargetNodeName
-}
-
-func (f *Fact) GetUUID() string {
-	if f == nil {
-		return ""
-	}
-	return f.UUID
-}
-
-func (f *Fact) GetValidAt() *string {
-	if f == nil {
-		return nil
-	}
-	return f.ValidAt
-}
-
-func (f *Fact) GetExtraProperties() map[string]interface{} {
-	return f.extraProperties
-}
-
-func (f *Fact) UnmarshalJSON(data []byte) error {
-	type unmarshaler Fact
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*f = Fact(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *f)
-	if err != nil {
-		return err
-	}
-	f.extraProperties = extraProperties
-	f.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (f *Fact) String() string {
-	if len(f.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(f); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", f)
-}
-
 type FactRatingExamples struct {
 	High   *string `json:"high,omitempty" url:"high,omitempty"`
 	Low    *string `json:"low,omitempty" url:"low,omitempty"`
@@ -797,7 +608,7 @@ type FactRatingInstruction struct {
 	// High: "Joe's dream vacation is Bali"
 	// Medium: "Joe has a fear of flying",
 	// Low: "Joe's favorite food is Japanese",
-	Examples *FactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
+	Examples *ModelsFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
 	// A string describing how to rate facts as they apply to your application. A trip planning application may
 	// use something like "relevancy to planning a trip, the user's preferences when traveling,
 	// or the user's travel history."
@@ -807,7 +618,7 @@ type FactRatingInstruction struct {
 	rawJSON         json.RawMessage
 }
 
-func (f *FactRatingInstruction) GetExamples() *FactRatingExamples {
+func (f *FactRatingInstruction) GetExamples() *ModelsFactRatingExamples {
 	if f == nil {
 		return nil
 	}
@@ -1027,6 +838,68 @@ func NewMemoryTypeFromString(s string) (MemoryType, error) {
 
 func (m MemoryType) Ptr() *MemoryType {
 	return &m
+}
+
+type ModelsFactRatingExamples struct {
+	High   *string `json:"high,omitempty" url:"high,omitempty"`
+	Low    *string `json:"low,omitempty" url:"low,omitempty"`
+	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *ModelsFactRatingExamples) GetHigh() *string {
+	if m == nil {
+		return nil
+	}
+	return m.High
+}
+
+func (m *ModelsFactRatingExamples) GetLow() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Low
+}
+
+func (m *ModelsFactRatingExamples) GetMedium() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Medium
+}
+
+func (m *ModelsFactRatingExamples) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *ModelsFactRatingExamples) UnmarshalJSON(data []byte) error {
+	type unmarshaler ModelsFactRatingExamples
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = ModelsFactRatingExamples(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *ModelsFactRatingExamples) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
 }
 
 type NewFact = interface{}

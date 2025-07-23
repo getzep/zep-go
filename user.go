@@ -30,6 +30,133 @@ type UserListOrderedRequest struct {
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
 }
 
+type Fact struct {
+	Content   string  `json:"content" url:"content"`
+	CreatedAt string  `json:"created_at" url:"created_at"`
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// Deprecated
+	Fact           string   `json:"fact" url:"fact"`
+	InvalidAt      *string  `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	Name           *string  `json:"name,omitempty" url:"name,omitempty"`
+	Rating         *float64 `json:"rating,omitempty" url:"rating,omitempty"`
+	SourceNodeName *string  `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
+	TargetNodeName *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
+	UUID           string   `json:"uuid" url:"uuid"`
+	ValidAt        *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (f *Fact) GetContent() string {
+	if f == nil {
+		return ""
+	}
+	return f.Content
+}
+
+func (f *Fact) GetCreatedAt() string {
+	if f == nil {
+		return ""
+	}
+	return f.CreatedAt
+}
+
+func (f *Fact) GetExpiredAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.ExpiredAt
+}
+
+func (f *Fact) GetFact() string {
+	if f == nil {
+		return ""
+	}
+	return f.Fact
+}
+
+func (f *Fact) GetInvalidAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.InvalidAt
+}
+
+func (f *Fact) GetName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Name
+}
+
+func (f *Fact) GetRating() *float64 {
+	if f == nil {
+		return nil
+	}
+	return f.Rating
+}
+
+func (f *Fact) GetSourceNodeName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.SourceNodeName
+}
+
+func (f *Fact) GetTargetNodeName() *string {
+	if f == nil {
+		return nil
+	}
+	return f.TargetNodeName
+}
+
+func (f *Fact) GetUUID() string {
+	if f == nil {
+		return ""
+	}
+	return f.UUID
+}
+
+func (f *Fact) GetValidAt() *string {
+	if f == nil {
+		return nil
+	}
+	return f.ValidAt
+}
+
+func (f *Fact) GetExtraProperties() map[string]interface{} {
+	return f.extraProperties
+}
+
+func (f *Fact) UnmarshalJSON(data []byte) error {
+	type unmarshaler Fact
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*f = Fact(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *f)
+	if err != nil {
+		return err
+	}
+	f.extraProperties = extraProperties
+	f.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (f *Fact) String() string {
+	if len(f.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(f.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(f); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", f)
+}
+
 type FactsResponse struct {
 	Facts []*Fact `json:"facts,omitempty" url:"facts,omitempty"`
 
