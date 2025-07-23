@@ -99,142 +99,17 @@ func (a *AddThreadMessagesResponse) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ApidataMessage struct {
-	// The content of the message.
-	Content string `json:"content" url:"content"`
-	// The timestamp of when the message was created.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// The metadata associated with the message.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// Whether the message has been processed.
-	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
-	// Customizable role of the sender of the message (e.g., "john", "sales_agent").
-	Role *string `json:"role,omitempty" url:"role,omitempty"`
-	// The type of the role (e.g., "user", "system").
-	RoleType RoleType `json:"role_type" url:"role_type"`
-	// Deprecated
-	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
-	// Deprecated
-	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	// The unique identifier of the message.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataMessage) GetContent() string {
-	if a == nil {
-		return ""
-	}
-	return a.Content
-}
-
-func (a *ApidataMessage) GetCreatedAt() *string {
-	if a == nil {
-		return nil
-	}
-	return a.CreatedAt
-}
-
-func (a *ApidataMessage) GetMetadata() map[string]interface{} {
-	if a == nil {
-		return nil
-	}
-	return a.Metadata
-}
-
-func (a *ApidataMessage) GetProcessed() *bool {
-	if a == nil {
-		return nil
-	}
-	return a.Processed
-}
-
-func (a *ApidataMessage) GetRole() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Role
-}
-
-func (a *ApidataMessage) GetRoleType() RoleType {
-	if a == nil {
-		return ""
-	}
-	return a.RoleType
-}
-
-func (a *ApidataMessage) GetTokenCount() *int {
-	if a == nil {
-		return nil
-	}
-	return a.TokenCount
-}
-
-func (a *ApidataMessage) GetUpdatedAt() *string {
-	if a == nil {
-		return nil
-	}
-	return a.UpdatedAt
-}
-
-func (a *ApidataMessage) GetUUID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.UUID
-}
-
-func (a *ApidataMessage) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataMessage) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataMessage
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataMessage(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataMessage) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
 type Message struct {
 	// The content of the message.
 	Content string `json:"content" url:"content"`
 	// The timestamp of when the message was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// The metadata associated with the message.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// Customizable name of the sender of the message (e.g., "john", "sales_agent").
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// Whether the message has been processed.
 	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
 	// The role of message sender (e.g., "user", "system").
 	Role RoleType `json:"role" url:"role"`
-	// Deprecated
-	TokenCount *int `json:"token_count,omitempty" url:"token_count,omitempty"`
-	// Deprecated
-	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	// The unique identifier of the message.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -256,13 +131,6 @@ func (m *Message) GetCreatedAt() *string {
 	return m.CreatedAt
 }
 
-func (m *Message) GetMetadata() map[string]interface{} {
-	if m == nil {
-		return nil
-	}
-	return m.Metadata
-}
-
 func (m *Message) GetName() *string {
 	if m == nil {
 		return nil
@@ -282,20 +150,6 @@ func (m *Message) GetRole() RoleType {
 		return ""
 	}
 	return m.Role
-}
-
-func (m *Message) GetTokenCount() *int {
-	if m == nil {
-		return nil
-	}
-	return m.TokenCount
-}
-
-func (m *Message) GetUpdatedAt() *string {
-	if m == nil {
-		return nil
-	}
-	return m.UpdatedAt
 }
 
 func (m *Message) GetUUID() *string {
@@ -339,7 +193,7 @@ func (m *Message) String() string {
 
 type MessageListResponse struct {
 	// A list of message objects.
-	Messages []*ApidataMessage `json:"messages,omitempty" url:"messages,omitempty"`
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
 	// The number of messages returned.
 	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
 	// The total number of messages.
@@ -349,7 +203,7 @@ type MessageListResponse struct {
 	rawJSON         json.RawMessage
 }
 
-func (m *MessageListResponse) GetMessages() []*ApidataMessage {
+func (m *MessageListResponse) GetMessages() []*Message {
 	if m == nil {
 		return nil
 	}
@@ -484,7 +338,7 @@ type ThreadContextResponse struct {
 	// Memory context containing relevant facts and entities for the session. Can be put into the prompt directly.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 	// A list of message objects, where each message contains a role and content. Only last_n messages will be returned
-	Messages []*ApidataMessage `json:"messages,omitempty" url:"messages,omitempty"`
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
 	// Most relevant facts to the recent messages in the session.
 	RelevantFacts []*Fact `json:"relevant_facts,omitempty" url:"relevant_facts,omitempty"`
 
@@ -499,7 +353,7 @@ func (t *ThreadContextResponse) GetContext() *string {
 	return t.Context
 }
 
-func (t *ThreadContextResponse) GetMessages() []*ApidataMessage {
+func (t *ThreadContextResponse) GetMessages() []*Message {
 	if t == nil {
 		return nil
 	}
