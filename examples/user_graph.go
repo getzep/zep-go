@@ -42,18 +42,18 @@ func main() {
 	}
 	fmt.Printf("User %s created\n", userID)
 
-	// Create a session
+	// Create a thread
 	_, err = client.Thread.Create(ctx, &zep.ModelsCreateThreadRequest{
 		ThreadID: threadID,
 		UserID:   userID,
 	})
 	if err != nil {
-		fmt.Printf("Error creating session: %v\n", err)
+		fmt.Printf("Error creating thread: %v\n", err)
 		return
 	}
-	fmt.Printf("Session %s created\n", threadID)
+	fmt.Printf("thread %s created\n", threadID)
 
-	// Add messages to the session
+	// Add messages to the thread
 	for _, message := range history[0] {
 		_, err = client.Thread.AddMessages(ctx, threadID, &zep.AddThreadMessagesRequest{
 			Messages: []*zep.Message{
@@ -70,13 +70,13 @@ func main() {
 	fmt.Println("Waiting for the graph to be updated...")
 	time.Sleep(10 * time.Second)
 
-	fmt.Println("Getting memory for session")
-	sessionMemory, err := client.Thread.GetUserContext(ctx, threadID, nil)
+	fmt.Println("Getting memory for thread")
+	threadMemory, err := client.Thread.GetUserContext(ctx, threadID, nil)
 	if err != nil {
-		fmt.Printf("Error getting session memory: %v\n", err)
+		fmt.Printf("Error getting thread memory: %v\n", err)
 		return
 	}
-	fmt.Printf("%+v\n", sessionMemory.Context)
+	fmt.Printf("%+v\n", threadMemory.Context)
 
 	fmt.Println("Getting episodes for user")
 	episodeResult, err := client.Graph.Episode.GetByUserID(ctx, userID, &graph.EpisodeGetByUserIDRequest{
