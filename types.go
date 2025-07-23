@@ -608,7 +608,7 @@ type FactRatingInstruction struct {
 	// High: "Joe's dream vacation is Bali"
 	// Medium: "Joe has a fear of flying",
 	// Low: "Joe's favorite food is Japanese",
-	Examples *ModelsFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
+	Examples *FactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
 	// A string describing how to rate facts as they apply to your application. A trip planning application may
 	// use something like "relevancy to planning a trip, the user's preferences when traveling,
 	// or the user's travel history."
@@ -618,7 +618,7 @@ type FactRatingInstruction struct {
 	rawJSON         json.RawMessage
 }
 
-func (f *FactRatingInstruction) GetExamples() *ModelsFactRatingExamples {
+func (f *FactRatingInstruction) GetExamples() *FactRatingExamples {
 	if f == nil {
 		return nil
 	}
@@ -838,68 +838,6 @@ func NewMemoryTypeFromString(s string) (MemoryType, error) {
 
 func (m MemoryType) Ptr() *MemoryType {
 	return &m
-}
-
-type ModelsFactRatingExamples struct {
-	High   *string `json:"high,omitempty" url:"high,omitempty"`
-	Low    *string `json:"low,omitempty" url:"low,omitempty"`
-	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (m *ModelsFactRatingExamples) GetHigh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.High
-}
-
-func (m *ModelsFactRatingExamples) GetLow() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Low
-}
-
-func (m *ModelsFactRatingExamples) GetMedium() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Medium
-}
-
-func (m *ModelsFactRatingExamples) GetExtraProperties() map[string]interface{} {
-	return m.extraProperties
-}
-
-func (m *ModelsFactRatingExamples) UnmarshalJSON(data []byte) error {
-	type unmarshaler ModelsFactRatingExamples
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*m = ModelsFactRatingExamples(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *m)
-	if err != nil {
-		return err
-	}
-	m.extraProperties = extraProperties
-	m.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (m *ModelsFactRatingExamples) String() string {
-	if len(m.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(m); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", m)
 }
 
 type NewFact = interface{}

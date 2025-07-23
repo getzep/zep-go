@@ -203,14 +203,139 @@ func (f *FactsResponse) String() string {
 	return fmt.Sprintf("%#v", f)
 }
 
+type ModelsFactRatingExamples struct {
+	High   *string `json:"high,omitempty" url:"high,omitempty"`
+	Low    *string `json:"low,omitempty" url:"low,omitempty"`
+	Medium *string `json:"medium,omitempty" url:"medium,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *ModelsFactRatingExamples) GetHigh() *string {
+	if m == nil {
+		return nil
+	}
+	return m.High
+}
+
+func (m *ModelsFactRatingExamples) GetLow() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Low
+}
+
+func (m *ModelsFactRatingExamples) GetMedium() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Medium
+}
+
+func (m *ModelsFactRatingExamples) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *ModelsFactRatingExamples) UnmarshalJSON(data []byte) error {
+	type unmarshaler ModelsFactRatingExamples
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = ModelsFactRatingExamples(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *ModelsFactRatingExamples) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type ModelsFactRatingInstruction struct {
+	// Examples is a list of examples that demonstrate how facts might be rated based on your instruction. You should provide
+	// an example of a highly rated example, a low rated example, and a medium (or in between example). For example, if you are rating
+	// based on relevance to a trip planning application, your examples might be:
+	// High: "Joe's dream vacation is Bali"
+	// Medium: "Joe has a fear of flying",
+	// Low: "Joe's favorite food is Japanese",
+	Examples *ModelsFactRatingExamples `json:"examples,omitempty" url:"examples,omitempty"`
+	// A string describing how to rate facts as they apply to your application. A trip planning application may
+	// use something like "relevancy to planning a trip, the user's preferences when traveling,
+	// or the user's travel history."
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *ModelsFactRatingInstruction) GetExamples() *ModelsFactRatingExamples {
+	if m == nil {
+		return nil
+	}
+	return m.Examples
+}
+
+func (m *ModelsFactRatingInstruction) GetInstruction() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Instruction
+}
+
+func (m *ModelsFactRatingInstruction) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *ModelsFactRatingInstruction) UnmarshalJSON(data []byte) error {
+	type unmarshaler ModelsFactRatingInstruction
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = ModelsFactRatingInstruction(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *ModelsFactRatingInstruction) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
 type User struct {
-	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt             *string                `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	Email                 *string                `json:"email,omitempty" url:"email,omitempty"`
-	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	FirstName             *string                `json:"first_name,omitempty" url:"first_name,omitempty"`
-	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
-	LastName              *string                `json:"last_name,omitempty" url:"last_name,omitempty"`
+	CreatedAt             *string                      `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt             *string                      `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	Email                 *string                      `json:"email,omitempty" url:"email,omitempty"`
+	FactRatingInstruction *ModelsFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	FirstName             *string                      `json:"first_name,omitempty" url:"first_name,omitempty"`
+	ID                    *int                         `json:"id,omitempty" url:"id,omitempty"`
+	LastName              *string                      `json:"last_name,omitempty" url:"last_name,omitempty"`
 	// Deprecated
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
@@ -246,7 +371,7 @@ func (u *User) GetEmail() *string {
 	return u.Email
 }
 
-func (u *User) GetFactRatingInstruction() *FactRatingInstruction {
+func (u *User) GetFactRatingInstruction() *ModelsFactRatingInstruction {
 	if u == nil {
 		return nil
 	}
