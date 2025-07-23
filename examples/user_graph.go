@@ -55,7 +55,7 @@ func main() {
 
 	// Add messages to the session
 	for _, message := range history[0] {
-		_, err = client.Thread.AddMessages(ctx, threadID, &zep.ApidataAddThreadMessagesRequest{
+		_, err = client.Thread.AddMessages(ctx, threadID, &zep.AddThreadMessagesRequest{
 			Messages: []*zep.Message{
 				{Role: message.Role, Name: message.Name, Content: message.Content},
 			},
