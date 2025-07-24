@@ -92,7 +92,7 @@ func (r *RawClient) ListAll(
 
 func (r *RawClient) Create(
 	ctx context.Context,
-	request *v3.ModelsCreateThreadRequest,
+	request *v3.CreateThreadRequest,
 	opts ...option.RequestOption,
 ) (*core.Response[*v3.Thread], error) {
 	options := core.NewRequestOptions(opts...)

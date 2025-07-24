@@ -19,7 +19,7 @@ type AddThreadMessagesRequest struct {
 	ReturnContext *bool `json:"return_context,omitempty" url:"-"`
 }
 
-type ModelsCreateThreadRequest struct {
+type CreateThreadRequest struct {
 	// The unique identifier of the thread.
 	ThreadID string `json:"thread_id" url:"-"`
 	// The unique identifier of the user associated with the thread
@@ -392,7 +392,7 @@ func (t *ThreadContextResponse) String() string {
 
 type ThreadListResponse struct {
 	ResponseCount *int      `json:"response_count,omitempty" url:"response_count,omitempty"`
-	Threads       []*Thread `json:"threads,omitempty" url:"threads,omitempty"`
+	Thread        []*Thread `json:"thread,omitempty" url:"thread,omitempty"`
 	TotalCount    *int      `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -406,11 +406,11 @@ func (t *ThreadListResponse) GetResponseCount() *int {
 	return t.ResponseCount
 }
 
-func (t *ThreadListResponse) GetThreads() []*Thread {
+func (t *ThreadListResponse) GetThread() []*Thread {
 	if t == nil {
 		return nil
 	}
-	return t.Threads
+	return t.Thread
 }
 
 func (t *ThreadListResponse) GetTotalCount() *int {

@@ -128,24 +128,6 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
-// Deprecated: Use Get User Edges instead.
-func (c *Client) GetFacts(
-	ctx context.Context,
-	// The user_id of the user to get.
-	userID string,
-	opts ...option.RequestOption,
-) (*v3.FactsResponse, error) {
-	response, err := c.WithRawResponse.GetFacts(
-		ctx,
-		userID,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
 // Returns a user's node.
 func (c *Client) GetNode(
 	ctx context.Context,

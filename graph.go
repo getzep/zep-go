@@ -76,13 +76,6 @@ type CreateGraphRequest struct {
 	Name                  *string                `json:"name,omitempty" url:"-"`
 }
 
-type GraphListAllRequest struct {
-	// Page number for pagination, starting from 1.
-	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
-	// Number of graphs to retrieve per page.
-	PageSize *int `json:"-" url:"pageSize,omitempty"`
-}
-
 type GraphSearchQuery struct {
 	// Nodes that are the origins of the BFS searches
 	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
@@ -826,68 +819,6 @@ func (g *Graph) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type GraphListResponse struct {
-	Graphs     []*Graph `json:"graphs,omitempty" url:"graphs,omitempty"`
-	RowCount   *int     `json:"row_count,omitempty" url:"row_count,omitempty"`
-	TotalCount *int     `json:"total_count,omitempty" url:"total_count,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphListResponse) GetGraphs() []*Graph {
-	if g == nil {
-		return nil
-	}
-	return g.Graphs
-}
-
-func (g *GraphListResponse) GetRowCount() *int {
-	if g == nil {
-		return nil
-	}
-	return g.RowCount
-}
-
-func (g *GraphListResponse) GetTotalCount() *int {
-	if g == nil {
-		return nil
-	}
-	return g.TotalCount
-}
-
-func (g *GraphListResponse) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphListResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphListResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphListResponse) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
 type GraphSearchResults struct {
 	Edges    []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
 	Episodes []*Episode    `json:"episodes,omitempty" url:"episodes,omitempty"`
@@ -1112,10 +1043,4 @@ func (s *SearchFilters) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
-}
-
-type UpdateGraphRequest struct {
-	Description           *string                `json:"description,omitempty" url:"-"`
-	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
-	Name                  *string                `json:"name,omitempty" url:"-"`
 }

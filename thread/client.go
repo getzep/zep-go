@@ -58,7 +58,7 @@ func (c *Client) ListAll(
 // Start a new thread.
 func (c *Client) Create(
 	ctx context.Context,
-	request *v3.ModelsCreateThreadRequest,
+	request *v3.CreateThreadRequest,
 	opts ...option.RequestOption,
 ) (*v3.Thread, error) {
 	response, err := c.WithRawResponse.Create(

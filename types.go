@@ -565,6 +565,8 @@ type EpisodeType = interface{}
 
 type ExtractDataRequest = interface{}
 
+type Fact = interface{}
+
 type FactRatingExamples struct {
 	High   *string `json:"high,omitempty" url:"high,omitempty"`
 	Low    *string `json:"low,omitempty" url:"low,omitempty"`
@@ -692,6 +694,8 @@ func (f *FactRatingInstruction) String() string {
 
 type FactResponse = interface{}
 
+type FactsResponse = interface{}
+
 type FunctionRole = interface{}
 
 type GetDocumentListRequest = interface{}
@@ -776,6 +780,8 @@ func (g *GraphEdgesRequest) String() string {
 	}
 	return fmt.Sprintf("%#v", g)
 }
+
+type GraphListResponse = interface{}
 
 type GraphNodesRequest struct {
 	// Maximum number of items to return
@@ -987,6 +993,8 @@ type UpdateDocumentCollectionRequest = interface{}
 type UpdateDocumentListRequest = interface{}
 
 type UpdateDocumentRequest = interface{}
+
+type UpdateGraphRequest = interface{}
 
 type UpdateGroupRequest = interface{}
 
