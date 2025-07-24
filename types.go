@@ -781,8 +781,6 @@ func (g *GraphEdgesRequest) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type GraphListResponse = interface{}
-
 type GraphNodesRequest struct {
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
@@ -986,6 +984,84 @@ type SummaryListResponse = interface{}
 
 type SystemRole = interface{}
 
+type Thread struct {
+	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	ThreadID    *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
+	UserID      *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *Thread) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *Thread) GetProjectUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ProjectUUID
+}
+
+func (t *Thread) GetThreadID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ThreadID
+}
+
+func (t *Thread) GetUserID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UserID
+}
+
+func (t *Thread) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *Thread) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *Thread) UnmarshalJSON(data []byte) error {
+	type unmarshaler Thread
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = Thread(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *Thread) String() string {
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
 type ToolRole = interface{}
 
 type UpdateDocumentCollectionRequest = interface{}
@@ -993,8 +1069,6 @@ type UpdateDocumentCollectionRequest = interface{}
 type UpdateDocumentListRequest = interface{}
 
 type UpdateDocumentRequest = interface{}
-
-type UpdateGraphRequest = interface{}
 
 type UpdateGroupRequest = interface{}
 

@@ -181,6 +181,23 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
+// Returns all graphs.
+func (c *Client) ListAll(
+	ctx context.Context,
+	request *v3.GraphListAllRequest,
+	opts ...option.RequestOption,
+) (*v3.GraphListResponse, error) {
+	response, err := c.WithRawResponse.ListAll(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Returns a graph.
 func (c *Client) Get(
 	ctx context.Context,
@@ -209,6 +226,26 @@ func (c *Client) Delete(
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		graphID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Updates information about a graph.
+func (c *Client) Update(
+	ctx context.Context,
+	// Graph ID
+	graphID string,
+	request *v3.UpdateGraphRequest,
+	opts ...option.RequestOption,
+) (*v3.Graph, error) {
+	response, err := c.WithRawResponse.Update(
+		ctx,
+		graphID,
+		request,
 		opts...,
 	)
 	if err != nil {

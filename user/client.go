@@ -145,3 +145,21 @@ func (c *Client) GetNode(
 	}
 	return response.Body, nil
 }
+
+// Returns all threads for a user.
+func (c *Client) GetThreads(
+	ctx context.Context,
+	// User ID
+	userID string,
+	opts ...option.RequestOption,
+) ([]*v3.Thread, error) {
+	response, err := c.WithRawResponse.GetThreads(
+		ctx,
+		userID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}

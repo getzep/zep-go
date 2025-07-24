@@ -256,84 +256,6 @@ func (m *MessageListResponse) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
-type Thread struct {
-	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	ThreadID    *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
-	UserID      *string `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *Thread) GetCreatedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.CreatedAt
-}
-
-func (t *Thread) GetProjectUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.ProjectUUID
-}
-
-func (t *Thread) GetThreadID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.ThreadID
-}
-
-func (t *Thread) GetUserID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.UserID
-}
-
-func (t *Thread) GetUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.UUID
-}
-
-func (t *Thread) GetExtraProperties() map[string]interface{} {
-	return t.extraProperties
-}
-
-func (t *Thread) UnmarshalJSON(data []byte) error {
-	type unmarshaler Thread
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = Thread(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *Thread) String() string {
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
 type ThreadContextResponse struct {
 	// Memory context containing relevant facts and entities for the session. Can be put into the prompt directly.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
@@ -392,7 +314,7 @@ func (t *ThreadContextResponse) String() string {
 
 type ThreadListResponse struct {
 	ResponseCount *int      `json:"response_count,omitempty" url:"response_count,omitempty"`
-	Thread        []*Thread `json:"thread,omitempty" url:"thread,omitempty"`
+	Threads       []*Thread `json:"threads,omitempty" url:"threads,omitempty"`
 	TotalCount    *int      `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -406,11 +328,11 @@ func (t *ThreadListResponse) GetResponseCount() *int {
 	return t.ResponseCount
 }
 
-func (t *ThreadListResponse) GetThread() []*Thread {
+func (t *ThreadListResponse) GetThreads() []*Thread {
 	if t == nil {
 		return nil
 	}
-	return t.Thread
+	return t.Threads
 }
 
 func (t *ThreadListResponse) GetTotalCount() *int {
