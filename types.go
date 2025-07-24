@@ -62,6 +62,8 @@ type AddMemoryResponse = interface{}
 
 type AddedFact = interface{}
 
+type AssistantRole = interface{}
+
 type ClassifySessionRequest = interface{}
 
 type ClassifySessionResponse = interface{}
@@ -108,7 +110,8 @@ type EntityEdge struct {
 	// Datetime of when the fact stopped being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// Name of the edge, relation name
-	Name string `json:"name" url:"name"`
+	Name  string   `json:"name" url:"name"`
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// UUID of the source node
 	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
 	// UUID of the target node
@@ -169,6 +172,13 @@ func (e *EntityEdge) GetName() string {
 		return ""
 	}
 	return e.Name
+}
+
+func (e *EntityEdge) GetScore() *float64 {
+	if e == nil {
+		return nil
+	}
+	return e.Score
 }
 
 func (e *EntityEdge) GetSourceNodeUUID() string {
@@ -239,7 +249,8 @@ type EntityNode struct {
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
 	// Name of the node
-	Name string `json:"name" url:"name"`
+	Name  string   `json:"name" url:"name"`
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// Regional summary of surrounding edges
 	Summary string `json:"summary" url:"summary"`
 	// UUID of the node
@@ -275,6 +286,13 @@ func (e *EntityNode) GetName() string {
 		return ""
 	}
 	return e.Name
+}
+
+func (e *EntityNode) GetScore() *float64 {
+	if e == nil {
+		return nil
+	}
+	return e.Score
 }
 
 func (e *EntityNode) GetSummary() string {
@@ -331,6 +349,7 @@ type Episode struct {
 	Role *string `json:"role,omitempty" url:"role,omitempty"`
 	// Optional role_type, will only be present if the episode was created using memory.add API
 	RoleType          *RoleType      `json:"role_type,omitempty" url:"role_type,omitempty"`
+	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
 	SessionID         *string        `json:"session_id,omitempty" url:"session_id,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
@@ -373,6 +392,13 @@ func (e *Episode) GetRoleType() *RoleType {
 		return nil
 	}
 	return e.RoleType
+}
+
+func (e *Episode) GetScore() *float64 {
+	if e == nil {
+		return nil
+	}
+	return e.Score
 }
 
 func (e *Episode) GetSessionID() *string {
@@ -666,6 +692,8 @@ func (f *FactRatingInstruction) String() string {
 
 type FactResponse = interface{}
 
+type FunctionRole = interface{}
+
 type GetDocumentListRequest = interface{}
 
 type GraphDataType string
@@ -842,6 +870,8 @@ func (m MemoryType) Ptr() *MemoryType {
 
 type NewFact = interface{}
 
+type NoRole = interface{}
+
 type Question = interface{}
 
 type RoleType string
@@ -948,6 +978,10 @@ type Summary = interface{}
 
 type SummaryListResponse = interface{}
 
+type SystemRole = interface{}
+
+type ToolRole = interface{}
+
 type UpdateDocumentCollectionRequest = interface{}
 
 type UpdateDocumentListRequest = interface{}
@@ -957,3 +991,5 @@ type UpdateDocumentRequest = interface{}
 type UpdateGroupRequest = interface{}
 
 type UpdateSessionRequest = interface{}
+
+type UserRole = interface{}

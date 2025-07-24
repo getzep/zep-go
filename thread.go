@@ -392,7 +392,7 @@ func (t *ThreadContextResponse) String() string {
 
 type ThreadListResponse struct {
 	ResponseCount *int      `json:"response_count,omitempty" url:"response_count,omitempty"`
-	Thread        []*Thread `json:"thread,omitempty" url:"thread,omitempty"`
+	Threads       []*Thread `json:"threads,omitempty" url:"threads,omitempty"`
 	TotalCount    *int      `json:"total_count,omitempty" url:"total_count,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -406,11 +406,11 @@ func (t *ThreadListResponse) GetResponseCount() *int {
 	return t.ResponseCount
 }
 
-func (t *ThreadListResponse) GetThread() []*Thread {
+func (t *ThreadListResponse) GetThreads() []*Thread {
 	if t == nil {
 		return nil
 	}
-	return t.Thread
+	return t.Threads
 }
 
 func (t *ThreadListResponse) GetTotalCount() *int {
