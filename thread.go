@@ -34,8 +34,6 @@ type ThreadGetRequest struct {
 }
 
 type ThreadGetUserContextRequest struct {
-	// The number of most recent memory entries to retrieve.
-	Lastn *int `json:"-" url:"lastn,omitempty"`
 	// The minimum rating by which to filter relevant facts.
 	MinRating *float64 `json:"-" url:"minRating,omitempty"`
 	// If true, bypasses context summarization and returns raw search results.
@@ -259,8 +257,6 @@ func (m *MessageListResponse) String() string {
 type ThreadContextResponse struct {
 	// Memory context containing relevant facts and entities for the session. Can be put into the prompt directly.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
-	// A list of message objects, where each message contains a role and content. Only last_n messages will be returned
-	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -271,13 +267,6 @@ func (t *ThreadContextResponse) GetContext() *string {
 		return nil
 	}
 	return t.Context
-}
-
-func (t *ThreadContextResponse) GetMessages() []*Message {
-	if t == nil {
-		return nil
-	}
-	return t.Messages
 }
 
 func (t *ThreadContextResponse) GetExtraProperties() map[string]interface{} {
