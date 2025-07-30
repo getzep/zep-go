@@ -36,8 +36,8 @@ type ThreadGetRequest struct {
 type ThreadGetUserContextRequest struct {
 	// The minimum rating by which to filter relevant facts.
 	MinRating *float64 `json:"-" url:"minRating,omitempty"`
-	// If true, bypasses context summarization and returns raw search results.
-	Fast *bool `json:"-" url:"fast,omitempty"`
+	// Defaults to summary mode. Use basic for lower latency
+	Mode *ThreadGetUserContextRequestMode `json:"-" url:"mode,omitempty"`
 }
 
 type ThreadListAllRequest struct {
@@ -361,4 +361,26 @@ func (t *ThreadListResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+type ThreadGetUserContextRequestMode string
+
+const (
+	ThreadGetUserContextRequestModeBasic   ThreadGetUserContextRequestMode = "basic"
+	ThreadGetUserContextRequestModeSummary ThreadGetUserContextRequestMode = "summary"
+)
+
+func NewThreadGetUserContextRequestModeFromString(s string) (ThreadGetUserContextRequestMode, error) {
+	switch s {
+	case "basic":
+		return ThreadGetUserContextRequestModeBasic, nil
+	case "summary":
+		return ThreadGetUserContextRequestModeSummary, nil
+	}
+	var t ThreadGetUserContextRequestMode
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t ThreadGetUserContextRequestMode) Ptr() *ThreadGetUserContextRequestMode {
+	return &t
 }
