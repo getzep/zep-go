@@ -43,7 +43,7 @@ func main() {
 	fmt.Printf("User %s created\n", userID)
 
 	// Create a thread
-	_, err = client.Thread.Create(ctx, &zep.ModelsCreateThreadRequest{
+	_, err = client.Thread.Create(ctx, &zep.CreateThreadRequest{
 		ThreadID: threadID,
 		UserID:   userID,
 	})
@@ -71,7 +71,14 @@ func main() {
 	time.Sleep(10 * time.Second)
 
 	fmt.Println("Getting memory for thread")
-	threadMemory, err := client.Thread.GetUserContext(ctx, threadID, nil)
+
+	threadMemory, err := client.Thread.GetUserContext(
+		ctx,
+		threadID,
+		&zep.ThreadGetUserContextRequest{
+			Mode: zep.ThreadGetUserContextRequestModeSummary.Ptr(),
+		},
+	)
 	if err != nil {
 		fmt.Printf("Error getting thread memory: %v\n", err)
 		return
