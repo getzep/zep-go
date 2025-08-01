@@ -147,23 +147,6 @@ func (c *Client) Clone(
 	return response.Body, nil
 }
 
-// Perform a graph search query.
-func (c *Client) Search(
-	ctx context.Context,
-	request *v3.GraphSearchQuery,
-	opts ...option.RequestOption,
-) (*v3.GraphSearchResults, error) {
-	response, err := c.WithRawResponse.Search(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
 // Creates a new graph.
 func (c *Client) Create(
 	ctx context.Context,
@@ -188,6 +171,23 @@ func (c *Client) ListAll(
 	opts ...option.RequestOption,
 ) (*v3.GraphListResponse, error) {
 	response, err := c.WithRawResponse.ListAll(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Perform a graph search query.
+func (c *Client) Search(
+	ctx context.Context,
+	request *v3.GraphSearchQuery,
+	opts ...option.RequestOption,
+) (*v3.GraphSearchResults, error) {
+	response, err := c.WithRawResponse.Search(
 		ctx,
 		request,
 		opts...,
