@@ -32,6 +32,7 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 
 func (r *RawClient) ListEntityTypes(
 	ctx context.Context,
+	request *v3.GraphListEntityTypesRequest,
 	opts ...option.RequestOption,
 ) (*core.Response[*v3.EntityTypeResponse], error) {
 	options := core.NewRequestOptions(opts...)
@@ -41,11 +42,23 @@ func (r *RawClient) ListEntityTypes(
 		"https://api.getzep.com/api/v2",
 	)
 	endpointURL := baseURL + "/entity-types"
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 	headers := internal.MergeHeaders(
 		r.header.Clone(),
 		options.ToHeader(),
 	)
 	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v3.BadRequestError{
+				APIError: apiError,
+			}
+		},
 		404: func(apiError *core.APIError) error {
 			return &v3.NotFoundError{
 				APIError: apiError,
