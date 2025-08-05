@@ -9,13 +9,28 @@ import (
 
 // SetOntology sets entity end edge types for the project, replacing any existing entity/edge types set for the project.
 // It takes a slice of EntityDefinition, which is satisfied by any struct that embeds BaseEntity, and a slice of EdgeDefinition, which is satisfied by any struct that embeds BaseEdge
-func (c *Client) SetOntology(ctx context.Context, entities []zep.EntityDefinition, edges []zep.EdgeDefinitionWithSourceTargets) (*zep.SuccessResponse, error) {
-	return c.SetEntityTypes(ctx, entities, edges)
+func (c *Client) SetOntology(
+	ctx context.Context,
+	entities []zep.EntityDefinition,
+	edges []zep.EdgeDefinitionWithSourceTargets,
+	options ...zep.GraphOntologyOption,
+) (*zep.SuccessResponse, error) {
+	return c.SetEntityTypes(ctx, entities, edges, options...)
 }
 
 // SetEntityTypes sets entity end edge types for the project, replacing any existing entity/edge types set for the project.
 // It takes a slice of EntityDefinition, which is satisfied by any struct that embeds BaseEntity, and a slice of EdgeDefinition, which is satisfied by any struct that embeds BaseEdge
-func (c *Client) SetEntityTypes(ctx context.Context, entities []zep.EntityDefinition, edges []zep.EdgeDefinitionWithSourceTargets) (*zep.SuccessResponse, error) {
+func (c *Client) SetEntityTypes(
+	ctx context.Context,
+	entities []zep.EntityDefinition,
+	edges []zep.EdgeDefinitionWithSourceTargets,
+	options ...zep.GraphOntologyOption,
+) (*zep.SuccessResponse, error) {
+	opts := &zep.GraphOntologyOptions{}
+	for _, option := range options {
+		option(opts)
+	}
+
 	var entitySchemas []*zep.EntityType
 	var edgeSchemas []*zep.EdgeType
 
@@ -112,6 +127,8 @@ func (c *Client) SetEntityTypes(ctx context.Context, entities []zep.EntityDefini
 	request := &zep.EntityTypeRequest{
 		EntityTypes: entitySchemas,
 		EdgeTypes:   edgeSchemas,
+		GraphID:     opts.GraphID,
+		UserID:      opts.UserID,
 	}
 	return c.SetEntityTypesInternal(ctx, request)
 }

@@ -5,6 +5,29 @@ import (
 	"fmt"
 )
 
+// GraphOntologyOptions contains options for graph ontology operations
+type GraphOntologyOptions struct {
+	UserID  *string
+	GraphID *string
+}
+
+// GraphOntologyOption is a functional option for configuring graph ontology operations
+type GraphOntologyOption func(*GraphOntologyOptions)
+
+// ForUser allows to specify a user ID when setting entity/edge types.
+func ForUser(userID string) GraphOntologyOption {
+	return func(opts *GraphOntologyOptions) {
+		opts.UserID = &userID
+	}
+}
+
+// ForGraph allows to specify a graph ID when setting entity/edge types.
+func ForGraph(graphID string) GraphOntologyOption {
+	return func(opts *GraphOntologyOptions) {
+		opts.GraphID = &graphID
+	}
+}
+
 type BaseEntity struct{}
 
 type EntityDefinition interface {
