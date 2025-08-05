@@ -127,8 +127,8 @@ func (c *Client) SetEntityTypes(
 	request := &zep.EntityTypeRequest{
 		EntityTypes: entitySchemas,
 		EdgeTypes:   edgeSchemas,
-		GraphID:     opts.GraphID,
-		UserID:      opts.UserID,
+		GraphIDs:    opts.GraphIDs,
+		UserIDs:     opts.UserIDs,
 	}
 	return c.SetEntityTypesInternal(ctx, request)
 }
