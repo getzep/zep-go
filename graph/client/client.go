@@ -64,7 +64,7 @@ func (c *Client) ListEntityTypes(
 	return response.Body, nil
 }
 
-// Sets the entity types for a project, user, or graph, replacing any existing ones.
+// Sets the entity types for multiple users and graphs, replacing any existing ones.
 func (c *Client) SetEntityTypesInternal(
 	ctx context.Context,
 	request *v3.EntityTypeRequest,
