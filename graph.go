@@ -86,7 +86,7 @@ type GraphListAllRequest struct {
 type GraphListEntityTypesRequest struct {
 	// User ID to get user-specific entity types
 	UserID *string `json:"-" url:"user_id,omitempty"`
-	// Graph ID to get group-specific entity types
+	// Graph ID to get graph-specific entity types
 	GraphID *string `json:"-" url:"graph_id,omitempty"`
 }
 
@@ -120,8 +120,8 @@ type GraphSearchQuery struct {
 type EntityTypeRequest struct {
 	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"-"`
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"-"`
-	GraphID     *string       `json:"graph_id,omitempty" url:"-"`
-	UserID      *string       `json:"user_id,omitempty" url:"-"`
+	GraphIDs    []string      `json:"graph_ids,omitempty" url:"-"`
+	UserIDs     []string      `json:"user_ids,omitempty" url:"-"`
 }
 
 type AddTripleResponse struct {
