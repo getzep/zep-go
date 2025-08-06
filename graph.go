@@ -83,6 +83,13 @@ type GraphListAllRequest struct {
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
 }
 
+type GraphListEntityTypesRequest struct {
+	// User ID to get user-specific entity types
+	UserID *string `json:"-" url:"user_id,omitempty"`
+	// Graph ID to get graph-specific entity types
+	GraphID *string `json:"-" url:"graph_id,omitempty"`
+}
+
 type GraphSearchQuery struct {
 	// Nodes that are the origins of the BFS searches
 	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
@@ -113,6 +120,8 @@ type GraphSearchQuery struct {
 type EntityTypeRequest struct {
 	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"-"`
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"-"`
+	GraphIDs    []string      `json:"graph_ids,omitempty" url:"-"`
+	UserIDs     []string      `json:"user_ids,omitempty" url:"-"`
 }
 
 type AddTripleResponse struct {
