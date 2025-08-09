@@ -166,7 +166,7 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Returns all graphs.
+// List all graphs. In order to list users, use user.list_ordered instead
 func (c *Client) ListAll(
 	ctx context.Context,
 	request *v3.GraphListAllRequest,
