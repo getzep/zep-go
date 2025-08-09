@@ -31,6 +31,8 @@ type ThreadGetRequest struct {
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Cursor for pagination
 	Cursor *int `json:"-" url:"cursor,omitempty"`
+	// Number of most recent messages to return (overrides limit and cursor)
+	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
 
 type ThreadGetUserContextRequest struct {
