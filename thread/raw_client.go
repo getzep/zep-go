@@ -353,7 +353,60 @@ func (r *RawClient) AddMessages(
 		r.header.Clone(),
 		options.ToHeader(),
 	)
-	headers.Add("Content-Type", "application/json")
+	errorCodes := internal.ErrorCodes{
+		500: func(apiError *core.APIError) error {
+			return &v3.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+	var response *v3.AddThreadMessagesResponse
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*v3.AddThreadMessagesResponse]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) AddMessagesBatch(
+	ctx context.Context,
+	// The ID of the thread to which messages should be added.
+	threadID string,
+	request *v3.AddThreadMessagesRequest,
+	opts ...option.RequestOption,
+) (*core.Response[*v3.AddThreadMessagesResponse], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/threads/%v/messages-batch",
+		threadID,
+	)
+	headers := internal.MergeHeaders(
+		r.header.Clone(),
+		options.ToHeader(),
+	)
 	errorCodes := internal.ErrorCodes{
 		500: func(apiError *core.APIError) error {
 			return &v3.InternalServerError{
