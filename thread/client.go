@@ -149,3 +149,23 @@ func (c *Client) AddMessages(
 	}
 	return response.Body, nil
 }
+
+// Add messages to a thread in batch mode. This will process messages concurrently, which is useful for data migrations.
+func (c *Client) AddMessagesBatch(
+	ctx context.Context,
+	// The ID of the thread to which messages should be added.
+	threadID string,
+	request *v3.AddThreadMessagesRequest,
+	opts ...option.RequestOption,
+) (*v3.AddThreadMessagesResponse, error) {
+	response, err := c.WithRawResponse.AddMessagesBatch(
+		ctx,
+		threadID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}

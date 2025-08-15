@@ -8,17 +8,6 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 )
 
-type AddThreadMessagesRequest struct {
-	// Optional list of role types to ignore when adding messages to graph memory.
-	// The message itself will still be added, retained and used as context for messages
-	// that are added to a user's graph.
-	IgnoreRoles []RoleType `json:"ignore_roles,omitempty" url:"-"`
-	// A list of message objects, where each message contains a role and content.
-	Messages []*Message `json:"messages,omitempty" url:"-"`
-	// Optionally return memory context relevant to the most recent messages.
-	ReturnContext *bool `json:"return_context,omitempty" url:"-"`
-}
-
 type CreateThreadRequest struct {
 	// The unique identifier of the thread.
 	ThreadID string `json:"thread_id" url:"-"`
@@ -53,8 +42,76 @@ type ThreadListAllRequest struct {
 	Asc *bool `json:"-" url:"asc,omitempty"`
 }
 
+type AddThreadMessagesRequest struct {
+	// Optional list of role types to ignore when adding messages to graph memory.
+	// The message itself will still be added, retained and used as context for messages
+	// that are added to a user's graph.
+	IgnoreRoles []RoleType `json:"ignore_roles,omitempty" url:"ignore_roles,omitempty"`
+	// A list of message objects, where each message contains a role and content.
+	Messages []*Message `json:"messages" url:"messages"`
+	// Optionally return memory context relevant to the most recent messages.
+	ReturnContext *bool `json:"return_context,omitempty" url:"return_context,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddThreadMessagesRequest) GetIgnoreRoles() []RoleType {
+	if a == nil {
+		return nil
+	}
+	return a.IgnoreRoles
+}
+
+func (a *AddThreadMessagesRequest) GetMessages() []*Message {
+	if a == nil {
+		return nil
+	}
+	return a.Messages
+}
+
+func (a *AddThreadMessagesRequest) GetReturnContext() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.ReturnContext
+}
+
+func (a *AddThreadMessagesRequest) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AddThreadMessagesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddThreadMessagesRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddThreadMessagesRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddThreadMessagesRequest) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 type AddThreadMessagesResponse struct {
-	Context *string `json:"context,omitempty" url:"context,omitempty"`
+	Context      *string  `json:"context,omitempty" url:"context,omitempty"`
+	MessageUUIDs []string `json:"message_uuids,omitempty" url:"message_uuids,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -65,6 +122,13 @@ func (a *AddThreadMessagesResponse) GetContext() *string {
 		return nil
 	}
 	return a.Context
+}
+
+func (a *AddThreadMessagesResponse) GetMessageUUIDs() []string {
+	if a == nil {
+		return nil
+	}
+	return a.MessageUUIDs
 }
 
 func (a *AddThreadMessagesResponse) GetExtraProperties() map[string]interface{} {
