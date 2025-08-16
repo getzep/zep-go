@@ -49,7 +49,7 @@ type AddThreadMessagesRequest struct {
 	IgnoreRoles []RoleType `json:"ignore_roles,omitempty" url:"ignore_roles,omitempty"`
 	// A list of message objects, where each message contains a role and content.
 	Messages []*Message `json:"messages" url:"messages"`
-	// Optionally return memory context relevant to the most recent messages.
+	// Optionally return context block relevant to the most recent messages.
 	ReturnContext *bool `json:"return_context,omitempty" url:"return_context,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -321,7 +321,7 @@ func (m *MessageListResponse) String() string {
 }
 
 type ThreadContextResponse struct {
-	// Memory context containing relevant facts and entities for the session. Can be put into the prompt directly.
+	// Context block containing relevant facts, entities, and messages/episodes from the user graph. Meant to be replaced in the system prompt on every chat turn.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 
 	extraProperties map[string]interface{}

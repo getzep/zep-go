@@ -90,10 +90,10 @@ func (c *Client) Delete(
 	return response.Body, nil
 }
 
-// Returns most relevant context for a given thread.
+// Returns most relevant context from the user graph (including memory from any/all past threads) based on the content of the past few messages of the given thread.
 func (c *Client) GetUserContext(
 	ctx context.Context,
-	// The ID of the thread for which to retrieve context.
+	// The ID of the current thread (for which context is being retrieved).
 	threadID string,
 	request *v3.ThreadGetUserContextRequest,
 	opts ...option.RequestOption,
