@@ -204,7 +204,7 @@ func (r *RawClient) Delete(
 
 func (r *RawClient) GetUserContext(
 	ctx context.Context,
-	// The ID of the thread for which to retrieve context.
+	// The ID of the current thread (for which context is being retrieved).
 	threadID string,
 	request *v3.ThreadGetUserContextRequest,
 	opts ...option.RequestOption,
