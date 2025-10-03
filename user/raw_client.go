@@ -433,7 +433,7 @@ func (r *RawClient) GetThreads(
 	}, nil
 }
 
-func (r *RawClient) WarmUserCache(
+func (r *RawClient) Warm(
 	ctx context.Context,
 	// User ID
 	userID string,
