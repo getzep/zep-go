@@ -163,3 +163,21 @@ func (c *Client) GetThreads(
 	}
 	return response.Body, nil
 }
+
+// Hints Zep to warm a user's graph for low-latency search
+func (c *Client) Warm(
+	ctx context.Context,
+	// User ID
+	userID string,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.Warm(
+		ctx,
+		userID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
