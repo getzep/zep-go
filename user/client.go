@@ -163,3 +163,21 @@ func (c *Client) GetThreads(
 	}
 	return response.Body, nil
 }
+
+// Hints TurboPuffer to warm cache for this user's graph namespaces for low-latency search
+func (c *Client) WarmUserCache(
+	ctx context.Context,
+	// User ID
+	userID string,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.WarmUserCache(
+		ctx,
+		userID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
