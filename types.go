@@ -110,7 +110,11 @@ type EntityEdge struct {
 	// Datetime of when the fact stopped being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// Name of the edge, relation name
-	Name  string   `json:"name" url:"name"`
+	Name string `json:"name" url:"name"`
+	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
+	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// UUID of the source node
 	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
@@ -172,6 +176,13 @@ func (e *EntityEdge) GetName() string {
 		return ""
 	}
 	return e.Name
+}
+
+func (e *EntityEdge) GetRelevance() *float64 {
+	if e == nil {
+		return nil
+	}
+	return e.Relevance
 }
 
 func (e *EntityEdge) GetScore() *float64 {
@@ -249,7 +260,11 @@ type EntityNode struct {
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
 	// Name of the node
-	Name  string   `json:"name" url:"name"`
+	Name string `json:"name" url:"name"`
+	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
+	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// Regional summary of surrounding edges
 	Summary string `json:"summary" url:"summary"`
@@ -286,6 +301,13 @@ func (e *EntityNode) GetName() string {
 		return ""
 	}
 	return e.Name
+}
+
+func (e *EntityNode) GetRelevance() *float64 {
+	if e == nil {
+		return nil
+	}
+	return e.Relevance
 }
 
 func (e *EntityNode) GetScore() *float64 {
@@ -345,10 +367,14 @@ type Episode struct {
 	Content   string `json:"content" url:"content"`
 	CreatedAt string `json:"created_at" url:"created_at"`
 	Processed *bool  `json:"processed,omitempty" url:"processed,omitempty"`
+	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
+	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
 	// Optional role, will only be present if the episode was created using memory.add API
 	Role *string `json:"role,omitempty" url:"role,omitempty"`
 	// Optional role_type, will only be present if the episode was created using memory.add API
-	RoleType          *RoleType      `json:"role_type,omitempty" url:"role_type,omitempty"`
+	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
+	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
 	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
 	SessionID         *string        `json:"session_id,omitempty" url:"session_id,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
@@ -378,6 +404,13 @@ func (e *Episode) GetProcessed() *bool {
 		return nil
 	}
 	return e.Processed
+}
+
+func (e *Episode) GetRelevance() *float64 {
+	if e == nil {
+		return nil
+	}
+	return e.Relevance
 }
 
 func (e *Episode) GetRole() *string {
