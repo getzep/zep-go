@@ -124,6 +124,17 @@ type EntityTypeRequest struct {
 	UserIDs     []string      `json:"user_ids,omitempty" url:"-"`
 }
 
+type GraphSetOntologyRequest struct {
+	// Dictionary mapping entity type names to their definitions
+	Entities map[string]interface{} `json:"entities,omitempty" url:"-"`
+	// Dictionary mapping edge type names to their definitions with source/target constraints
+	Edges map[string]interface{} `json:"edges,omitempty" url:"-"`
+	// Optional list of user IDs to apply ontology to
+	UserIDs []string `json:"user_ids,omitempty" url:"-"`
+	// Optional list of graph IDs to apply ontology to
+	GraphIDs []string `json:"graph_ids,omitempty" url:"-"`
+}
+
 type AddTripleResponse struct {
 	Edge       *EntityEdge `json:"edge,omitempty" url:"edge,omitempty"`
 	SourceNode *EntityNode `json:"source_node,omitempty" url:"source_node,omitempty"`
