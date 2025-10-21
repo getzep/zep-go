@@ -364,9 +364,10 @@ func (e *EntityNode) String() string {
 }
 
 type Episode struct {
-	Content   string `json:"content" url:"content"`
-	CreatedAt string `json:"created_at" url:"created_at"`
-	Processed *bool  `json:"processed,omitempty" url:"processed,omitempty"`
+	Content   string                 `json:"content" url:"content"`
+	CreatedAt string                 `json:"created_at" url:"created_at"`
+	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Processed *bool                  `json:"processed,omitempty" url:"processed,omitempty"`
 	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
 	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
 	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
@@ -376,10 +377,11 @@ type Episode struct {
 	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
 	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
 	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
-	SessionID         *string        `json:"session_id,omitempty" url:"session_id,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
-	UUID              string         `json:"uuid" url:"uuid"`
+	// Optional thread ID, will be present if the episode is part of a thread
+	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
+	UUID     string  `json:"uuid" url:"uuid"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -397,6 +399,13 @@ func (e *Episode) GetCreatedAt() string {
 		return ""
 	}
 	return e.CreatedAt
+}
+
+func (e *Episode) GetMetadata() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.Metadata
 }
 
 func (e *Episode) GetProcessed() *bool {
@@ -434,13 +443,6 @@ func (e *Episode) GetScore() *float64 {
 	return e.Score
 }
 
-func (e *Episode) GetSessionID() *string {
-	if e == nil {
-		return nil
-	}
-	return e.SessionID
-}
-
 func (e *Episode) GetSource() *GraphDataType {
 	if e == nil {
 		return nil
@@ -453,6 +455,13 @@ func (e *Episode) GetSourceDescription() *string {
 		return nil
 	}
 	return e.SourceDescription
+}
+
+func (e *Episode) GetThreadID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ThreadID
 }
 
 func (e *Episode) GetUUID() string {
@@ -903,6 +912,107 @@ func NewMemoryTypeFromString(s string) (MemoryType, error) {
 
 func (m MemoryType) Ptr() *MemoryType {
 	return &m
+}
+
+type Message struct {
+	// The content of the message.
+	Content string `json:"content" url:"content"`
+	// The timestamp of when the message was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The metadata associated with the message.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Customizable name of the sender of the message (e.g., "john", "sales_agent").
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Whether the message has been processed.
+	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
+	// The role of message sender (e.g., "user", "system").
+	Role RoleType `json:"role" url:"role"`
+	// The unique identifier of the message.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *Message) GetContent() string {
+	if m == nil {
+		return ""
+	}
+	return m.Content
+}
+
+func (m *Message) GetCreatedAt() *string {
+	if m == nil {
+		return nil
+	}
+	return m.CreatedAt
+}
+
+func (m *Message) GetMetadata() map[string]interface{} {
+	if m == nil {
+		return nil
+	}
+	return m.Metadata
+}
+
+func (m *Message) GetName() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Name
+}
+
+func (m *Message) GetProcessed() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.Processed
+}
+
+func (m *Message) GetRole() RoleType {
+	if m == nil {
+		return ""
+	}
+	return m.Role
+}
+
+func (m *Message) GetUUID() *string {
+	if m == nil {
+		return nil
+	}
+	return m.UUID
+}
+
+func (m *Message) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *Message) UnmarshalJSON(data []byte) error {
+	type unmarshaler Message
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = Message(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *Message) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
 }
 
 type NewFact = interface{}
