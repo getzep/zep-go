@@ -54,118 +54,6 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AddFactsRequest = interface{}
-
-type AddMemoryRequest = interface{}
-
-type AddMemoryResponse = interface{}
-
-type AddedFact = interface{}
-
-type AssistantRole = interface{}
-
-type ClassifySessionRequest = interface{}
-
-type ClassifySessionResponse = interface{}
-
-type CommunityNode = interface{}
-
-type CreateDocumentCollectionRequest = interface{}
-
-type CreateDocumentRequest = interface{}
-
-type CreateGroupRequest = interface{}
-
-type CreateSessionRequest = interface{}
-
-type DocumentCollectionResponse = interface{}
-
-type DocumentResponse = interface{}
-
-type DocumentSearchPayload = interface{}
-
-type DocumentSearchResult = interface{}
-
-type DocumentSearchResultPage = interface{}
-
-type EdgeType struct {
-	Description   string                    `json:"description" url:"description"`
-	Name          string                    `json:"name" url:"name"`
-	Properties    []*EntityProperty         `json:"properties,omitempty" url:"properties,omitempty"`
-	SourceTargets []*EntityEdgeSourceTarget `json:"source_targets,omitempty" url:"source_targets,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EdgeType) GetDescription() string {
-	if e == nil {
-		return ""
-	}
-	return e.Description
-}
-
-func (e *EdgeType) GetName() string {
-	if e == nil {
-		return ""
-	}
-	return e.Name
-}
-
-func (e *EdgeType) GetProperties() []*EntityProperty {
-	if e == nil {
-		return nil
-	}
-	return e.Properties
-}
-
-func (e *EdgeType) GetSourceTargets() []*EntityEdgeSourceTarget {
-	if e == nil {
-		return nil
-	}
-	return e.SourceTargets
-}
-
-func (e *EdgeType) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EdgeType) UnmarshalJSON(data []byte) error {
-	type unmarshaler EdgeType
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EdgeType(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EdgeType) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EndSessionRequest = interface{}
-
-type EndSessionResponse = interface{}
-
-type EndSessionsRequest = interface{}
-
-type EndSessionsResponse = interface{}
-
 type EntityEdge struct {
 	// Additional attributes of the edge. Dependent on edge types
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
@@ -322,62 +210,6 @@ func (e *EntityEdge) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type EntityEdgeSourceTarget struct {
-	// Source represents the originating node identifier in the edge type relationship. (optional)
-	Source *string `json:"source,omitempty" url:"source,omitempty"`
-	// Target represents the target node identifier in the edge type relationship. (optional)
-	Target *string `json:"target,omitempty" url:"target,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EntityEdgeSourceTarget) GetSource() *string {
-	if e == nil {
-		return nil
-	}
-	return e.Source
-}
-
-func (e *EntityEdgeSourceTarget) GetTarget() *string {
-	if e == nil {
-		return nil
-	}
-	return e.Target
-}
-
-func (e *EntityEdgeSourceTarget) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EntityEdgeSourceTarget) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityEdgeSourceTarget
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EntityEdgeSourceTarget(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EntityEdgeSourceTarget) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
 type EntityNode struct {
 	// Additional attributes of the node. Dependent on node labels
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
@@ -478,282 +310,6 @@ func (e *EntityNode) UnmarshalJSON(data []byte) error {
 }
 
 func (e *EntityNode) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EntityProperty struct {
-	Description string             `json:"description" url:"description"`
-	Name        string             `json:"name" url:"name"`
-	Type        EntityPropertyType `json:"type" url:"type"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EntityProperty) GetDescription() string {
-	if e == nil {
-		return ""
-	}
-	return e.Description
-}
-
-func (e *EntityProperty) GetName() string {
-	if e == nil {
-		return ""
-	}
-	return e.Name
-}
-
-func (e *EntityProperty) GetType() EntityPropertyType {
-	if e == nil {
-		return ""
-	}
-	return e.Type
-}
-
-func (e *EntityProperty) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EntityProperty) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityProperty
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EntityProperty(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EntityProperty) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EntityPropertyType string
-
-const (
-	EntityPropertyTypeText    EntityPropertyType = "Text"
-	EntityPropertyTypeInt     EntityPropertyType = "Int"
-	EntityPropertyTypeFloat   EntityPropertyType = "Float"
-	EntityPropertyTypeBoolean EntityPropertyType = "Boolean"
-)
-
-func NewEntityPropertyTypeFromString(s string) (EntityPropertyType, error) {
-	switch s {
-	case "Text":
-		return EntityPropertyTypeText, nil
-	case "Int":
-		return EntityPropertyTypeInt, nil
-	case "Float":
-		return EntityPropertyTypeFloat, nil
-	case "Boolean":
-		return EntityPropertyTypeBoolean, nil
-	}
-	var t EntityPropertyType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (e EntityPropertyType) Ptr() *EntityPropertyType {
-	return &e
-}
-
-type EntityType struct {
-	Description string            `json:"description" url:"description"`
-	Name        string            `json:"name" url:"name"`
-	Properties  []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EntityType) GetDescription() string {
-	if e == nil {
-		return ""
-	}
-	return e.Description
-}
-
-func (e *EntityType) GetName() string {
-	if e == nil {
-		return ""
-	}
-	return e.Name
-}
-
-func (e *EntityType) GetProperties() []*EntityProperty {
-	if e == nil {
-		return nil
-	}
-	return e.Properties
-}
-
-func (e *EntityType) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EntityType) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityType
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EntityType(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EntityType) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EntityTypeRequest struct {
-	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
-	GraphIDs    []string      `json:"graph_ids,omitempty" url:"graph_ids,omitempty"`
-	UserIDs     []string      `json:"user_ids,omitempty" url:"user_ids,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EntityTypeRequest) GetEdgeTypes() []*EdgeType {
-	if e == nil {
-		return nil
-	}
-	return e.EdgeTypes
-}
-
-func (e *EntityTypeRequest) GetEntityTypes() []*EntityType {
-	if e == nil {
-		return nil
-	}
-	return e.EntityTypes
-}
-
-func (e *EntityTypeRequest) GetGraphIDs() []string {
-	if e == nil {
-		return nil
-	}
-	return e.GraphIDs
-}
-
-func (e *EntityTypeRequest) GetUserIDs() []string {
-	if e == nil {
-		return nil
-	}
-	return e.UserIDs
-}
-
-func (e *EntityTypeRequest) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EntityTypeRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityTypeRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EntityTypeRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EntityTypeRequest) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EntityTypeResponse struct {
-	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EntityTypeResponse) GetEdgeTypes() []*EdgeType {
-	if e == nil {
-		return nil
-	}
-	return e.EdgeTypes
-}
-
-func (e *EntityTypeResponse) GetEntityTypes() []*EntityType {
-	if e == nil {
-		return nil
-	}
-	return e.EntityTypes
-}
-
-func (e *EntityTypeResponse) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EntityTypeResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityTypeResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EntityTypeResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EntityTypeResponse) String() string {
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -1005,12 +561,6 @@ func (e *EpisodeResponse) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type EpisodeType = interface{}
-
-type ExtractDataRequest = interface{}
-
-type Fact = interface{}
-
 type FactRatingExamples struct {
 	High   *string `json:"high,omitempty" url:"high,omitempty"`
 	Low    *string `json:"low,omitempty" url:"low,omitempty"`
@@ -1135,14 +685,6 @@ func (f *FactRatingInstruction) String() string {
 	}
 	return fmt.Sprintf("%#v", f)
 }
-
-type FactResponse = interface{}
-
-type FactsResponse = interface{}
-
-type FunctionRole = interface{}
-
-type GetDocumentListRequest = interface{}
 
 type GraphDataType string
 
@@ -1281,41 +823,6 @@ func (g *GraphNodesRequest) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type Group = interface{}
-
-type GroupListResponse = interface{}
-
-type Memory = interface{}
-
-type MemorySearchPayload = interface{}
-
-type MemorySearchResult = interface{}
-
-type MemoryType string
-
-const (
-	MemoryTypePerpetual        MemoryType = "perpetual"
-	MemoryTypeSummaryRetriever MemoryType = "summary_retriever"
-	MemoryTypeMessageWindow    MemoryType = "message_window"
-)
-
-func NewMemoryTypeFromString(s string) (MemoryType, error) {
-	switch s {
-	case "perpetual":
-		return MemoryTypePerpetual, nil
-	case "summary_retriever":
-		return MemoryTypeSummaryRetriever, nil
-	case "message_window":
-		return MemoryTypeMessageWindow, nil
-	}
-	var t MemoryType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (m MemoryType) Ptr() *MemoryType {
-	return &m
-}
-
 type Message struct {
 	// The content of the message.
 	Content string `json:"content" url:"content"`
@@ -1417,12 +924,6 @@ func (m *Message) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
-type NewFact = interface{}
-
-type NoRole = interface{}
-
-type Question = interface{}
-
 type RoleType string
 
 const (
@@ -1456,26 +957,6 @@ func NewRoleTypeFromString(s string) (RoleType, error) {
 func (r RoleType) Ptr() *RoleType {
 	return &r
 }
-
-type SearchScope = interface{}
-
-type SearchType = interface{}
-
-type Session = interface{}
-
-type SessionClassification = interface{}
-
-type SessionFactRatingExamples = interface{}
-
-type SessionFactRatingInstruction = interface{}
-
-type SessionListResponse = interface{}
-
-type SessionSearchQuery = interface{}
-
-type SessionSearchResponse = interface{}
-
-type SessionSearchResult = interface{}
 
 type SuccessResponse struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
@@ -1522,12 +1003,6 @@ func (s *SuccessResponse) String() string {
 	}
 	return fmt.Sprintf("%#v", s)
 }
-
-type Summary = interface{}
-
-type SummaryListResponse = interface{}
-
-type SystemRole = interface{}
 
 type Thread struct {
 	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
@@ -1606,17 +1081,3 @@ func (t *Thread) String() string {
 	}
 	return fmt.Sprintf("%#v", t)
 }
-
-type ToolRole = interface{}
-
-type UpdateDocumentCollectionRequest = interface{}
-
-type UpdateDocumentListRequest = interface{}
-
-type UpdateDocumentRequest = interface{}
-
-type UpdateGroupRequest = interface{}
-
-type UpdateSessionRequest = interface{}
-
-type UserRole = interface{}
