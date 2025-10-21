@@ -33,7 +33,7 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 func (r *RawClient) Get(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataProjectInfoResponse], error) {
+) (*core.Response[*v3.ProjectInfoResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -62,7 +62,7 @@ func (r *RawClient) Get(
 			}
 		},
 	}
-	var response *v3.ApidataProjectInfoResponse
+	var response *v3.ProjectInfoResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -80,7 +80,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataProjectInfoResponse]{
+	return &core.Response[*v3.ProjectInfoResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

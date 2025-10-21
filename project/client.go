@@ -42,7 +42,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) Get(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) (*v3.ApidataProjectInfoResponse, error) {
+) (*v3.ProjectInfoResponse, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		opts...,
