@@ -47,40 +47,6 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Returns all entity types for a project, user, or graph.
-func (c *Client) ListEntityTypes(
-	ctx context.Context,
-	request *v3.GraphListEntityTypesRequest,
-	opts ...option.RequestOption,
-) (*v3.EntityTypeResponse, error) {
-	response, err := c.WithRawResponse.ListEntityTypes(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Sets the entity types for multiple users and graphs, replacing any existing ones.
-func (c *Client) SetEntityTypesInternal(
-	ctx context.Context,
-	request *v3.EntityTypeRequest,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.SetEntityTypesInternal(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
 // Add data to the graph.
 func (c *Client) Add(
 	ctx context.Context,
@@ -248,6 +214,44 @@ func (c *Client) Update(
 		ctx,
 		graphID,
 		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Sets custom entity and edge types for your graph. This wrapper method
+// provides a clean interface for defining your graph schema with custom
+// entity and edge types.
+//
+// See the [full documentation](/customizing-graph-structure#setting-entity-and-edge-types) for details.
+func (c *Client) SetOntology(
+	ctx context.Context,
+	request *v3.GraphSetOntologyRequest,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.SetOntology(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Retrieves the current entity and edge types configured for your graph.
+//
+// See the [full documentation](/customizing-graph-structure) for details.
+func (c *Client) ListOntology(
+	ctx context.Context,
+	opts ...option.RequestOption,
+) (*v3.EntityTypeResponse, error) {
+	response, err := c.WithRawResponse.ListOntology(
+		ctx,
 		opts...,
 	)
 	if err != nil {

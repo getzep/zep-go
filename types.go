@@ -363,6 +363,76 @@ func (e *EntityNode) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type EntityTypeRequest struct {
+	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
+	GraphIDs    []string      `json:"graph_ids,omitempty" url:"graph_ids,omitempty"`
+	UserIDs     []string      `json:"user_ids,omitempty" url:"user_ids,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EntityTypeRequest) GetEdgeTypes() []*EdgeType {
+	if e == nil {
+		return nil
+	}
+	return e.EdgeTypes
+}
+
+func (e *EntityTypeRequest) GetEntityTypes() []*EntityType {
+	if e == nil {
+		return nil
+	}
+	return e.EntityTypes
+}
+
+func (e *EntityTypeRequest) GetGraphIDs() []string {
+	if e == nil {
+		return nil
+	}
+	return e.GraphIDs
+}
+
+func (e *EntityTypeRequest) GetUserIDs() []string {
+	if e == nil {
+		return nil
+	}
+	return e.UserIDs
+}
+
+func (e *EntityTypeRequest) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EntityTypeRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityTypeRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EntityTypeRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EntityTypeRequest) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
 type Episode struct {
 	Content   string                 `json:"content" url:"content"`
 	CreatedAt string                 `json:"created_at" url:"created_at"`
