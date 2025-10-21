@@ -2,6 +2,6 @@
 
 package thread
 
-type ModelsThreadMessageUpdate struct {
+type ThreadMessageUpdate struct {
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }

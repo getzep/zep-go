@@ -35,7 +35,7 @@ func (r *RawClient) Update(
 	ctx context.Context,
 	// The UUID of the message.
 	messageUUID string,
-	request *thread.ModelsThreadMessageUpdate,
+	request *thread.ThreadMessageUpdate,
 	opts ...option.RequestOption,
 ) (*core.Response[*v3.Message], error) {
 	options := core.NewRequestOptions(opts...)

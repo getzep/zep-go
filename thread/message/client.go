@@ -44,7 +44,7 @@ func (c *Client) Update(
 	ctx context.Context,
 	// The UUID of the message.
 	messageUUID string,
-	request *thread.ModelsThreadMessageUpdate,
+	request *thread.ThreadMessageUpdate,
 	opts ...option.RequestOption,
 ) (*v3.Message, error) {
 	response, err := c.WithRawResponse.Update(
