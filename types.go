@@ -54,48 +54,6 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AddFactsRequest = interface{}
-
-type AddMemoryRequest = interface{}
-
-type AddMemoryResponse = interface{}
-
-type AddedFact = interface{}
-
-type AssistantRole = interface{}
-
-type ClassifySessionRequest = interface{}
-
-type ClassifySessionResponse = interface{}
-
-type CommunityNode = interface{}
-
-type CreateDocumentCollectionRequest = interface{}
-
-type CreateDocumentRequest = interface{}
-
-type CreateGroupRequest = interface{}
-
-type CreateSessionRequest = interface{}
-
-type DocumentCollectionResponse = interface{}
-
-type DocumentResponse = interface{}
-
-type DocumentSearchPayload = interface{}
-
-type DocumentSearchResult = interface{}
-
-type DocumentSearchResultPage = interface{}
-
-type EndSessionRequest = interface{}
-
-type EndSessionResponse = interface{}
-
-type EndSessionsRequest = interface{}
-
-type EndSessionsResponse = interface{}
-
 type EntityEdge struct {
 	// Additional attributes of the edge. Dependent on edge types
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
@@ -603,12 +561,6 @@ func (e *EpisodeResponse) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type EpisodeType = interface{}
-
-type ExtractDataRequest = interface{}
-
-type Fact = interface{}
-
 type FactRatingExamples struct {
 	High   *string `json:"high,omitempty" url:"high,omitempty"`
 	Low    *string `json:"low,omitempty" url:"low,omitempty"`
@@ -733,14 +685,6 @@ func (f *FactRatingInstruction) String() string {
 	}
 	return fmt.Sprintf("%#v", f)
 }
-
-type FactResponse = interface{}
-
-type FactsResponse = interface{}
-
-type FunctionRole = interface{}
-
-type GetDocumentListRequest = interface{}
 
 type GraphDataType string
 
@@ -879,41 +823,6 @@ func (g *GraphNodesRequest) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type Group = interface{}
-
-type GroupListResponse = interface{}
-
-type Memory = interface{}
-
-type MemorySearchPayload = interface{}
-
-type MemorySearchResult = interface{}
-
-type MemoryType string
-
-const (
-	MemoryTypePerpetual        MemoryType = "perpetual"
-	MemoryTypeSummaryRetriever MemoryType = "summary_retriever"
-	MemoryTypeMessageWindow    MemoryType = "message_window"
-)
-
-func NewMemoryTypeFromString(s string) (MemoryType, error) {
-	switch s {
-	case "perpetual":
-		return MemoryTypePerpetual, nil
-	case "summary_retriever":
-		return MemoryTypeSummaryRetriever, nil
-	case "message_window":
-		return MemoryTypeMessageWindow, nil
-	}
-	var t MemoryType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (m MemoryType) Ptr() *MemoryType {
-	return &m
-}
-
 type Message struct {
 	// The content of the message.
 	Content string `json:"content" url:"content"`
@@ -1015,12 +924,6 @@ func (m *Message) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
-type NewFact = interface{}
-
-type NoRole = interface{}
-
-type Question = interface{}
-
 type RoleType string
 
 const (
@@ -1054,26 +957,6 @@ func NewRoleTypeFromString(s string) (RoleType, error) {
 func (r RoleType) Ptr() *RoleType {
 	return &r
 }
-
-type SearchScope = interface{}
-
-type SearchType = interface{}
-
-type Session = interface{}
-
-type SessionClassification = interface{}
-
-type SessionFactRatingExamples = interface{}
-
-type SessionFactRatingInstruction = interface{}
-
-type SessionListResponse = interface{}
-
-type SessionSearchQuery = interface{}
-
-type SessionSearchResponse = interface{}
-
-type SessionSearchResult = interface{}
 
 type SuccessResponse struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
@@ -1120,12 +1003,6 @@ func (s *SuccessResponse) String() string {
 	}
 	return fmt.Sprintf("%#v", s)
 }
-
-type Summary = interface{}
-
-type SummaryListResponse = interface{}
-
-type SystemRole = interface{}
 
 type Thread struct {
 	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
@@ -1204,17 +1081,3 @@ func (t *Thread) String() string {
 	}
 	return fmt.Sprintf("%#v", t)
 }
-
-type ToolRole = interface{}
-
-type UpdateDocumentCollectionRequest = interface{}
-
-type UpdateDocumentListRequest = interface{}
-
-type UpdateDocumentRequest = interface{}
-
-type UpdateGroupRequest = interface{}
-
-type UpdateSessionRequest = interface{}
-
-type UserRole = interface{}
