@@ -1024,6 +1024,10 @@ type SearchFilters struct {
 	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// List of edge types to filter on
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// List of edge types to exclude from results
+	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
+	// List of node labels to exclude from results
+	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
 	// 2D array of date filters for the expired_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
@@ -1061,6 +1065,20 @@ func (s *SearchFilters) GetEdgeTypes() []string {
 		return nil
 	}
 	return s.EdgeTypes
+}
+
+func (s *SearchFilters) GetExcludeEdgeTypes() []string {
+	if s == nil {
+		return nil
+	}
+	return s.ExcludeEdgeTypes
+}
+
+func (s *SearchFilters) GetExcludeNodeLabels() []string {
+	if s == nil {
+		return nil
+	}
+	return s.ExcludeNodeLabels
 }
 
 func (s *SearchFilters) GetExpiredAt() [][]*DateFilter {

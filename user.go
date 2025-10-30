@@ -9,6 +9,8 @@ import (
 )
 
 type CreateUserRequest struct {
+	// When true, disables the use of default/fallback ontology for the user's graph.
+	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
 	// Optional instruction to use for fact rating.
@@ -156,13 +158,14 @@ func (m *ModelsFactRatingInstruction) String() string {
 }
 
 type User struct {
-	CreatedAt             *string                      `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt             *string                      `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	Email                 *string                      `json:"email,omitempty" url:"email,omitempty"`
-	FactRatingInstruction *ModelsFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	FirstName             *string                      `json:"first_name,omitempty" url:"first_name,omitempty"`
-	ID                    *int                         `json:"id,omitempty" url:"id,omitempty"`
-	LastName              *string                      `json:"last_name,omitempty" url:"last_name,omitempty"`
+	CreatedAt              *string                      `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DeletedAt              *string                      `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+	DisableDefaultOntology *bool                        `json:"disable_default_ontology,omitempty" url:"disable_default_ontology,omitempty"`
+	Email                  *string                      `json:"email,omitempty" url:"email,omitempty"`
+	FactRatingInstruction  *ModelsFactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
+	FirstName              *string                      `json:"first_name,omitempty" url:"first_name,omitempty"`
+	ID                     *int                         `json:"id,omitempty" url:"id,omitempty"`
+	LastName               *string                      `json:"last_name,omitempty" url:"last_name,omitempty"`
 	// Deprecated
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
@@ -189,6 +192,13 @@ func (u *User) GetDeletedAt() *string {
 		return nil
 	}
 	return u.DeletedAt
+}
+
+func (u *User) GetDisableDefaultOntology() *bool {
+	if u == nil {
+		return nil
+	}
+	return u.DisableDefaultOntology
 }
 
 func (u *User) GetEmail() *string {
@@ -409,6 +419,8 @@ func (u *UserNodeResponse) String() string {
 }
 
 type UpdateUserRequest struct {
+	// When true, disables the use of default/fallback ontology for the user's graph.
+	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
 	// Optional instruction to use for fact rating.
