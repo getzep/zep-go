@@ -38,7 +38,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Lists all user summary/instructions for a project, user, or graph.
+// Lists all user summary instructions for a project, user.
 func (c *Client) ListUserSummaryInstructions(
 	ctx context.Context,
 	request *v3.UserListUserSummaryInstructionsRequest,
@@ -55,7 +55,7 @@ func (c *Client) ListUserSummaryInstructions(
 	return response.Body, nil
 }
 
-// Adds new summary/instructions for users and/or graphs without removing existing ones.
+// Adds new summary instructions for users graphs without removing existing ones. If user_ids is empty, adds to project-wide default instructions.
 func (c *Client) AddUserSummaryInstructions(
 	ctx context.Context,
 	request *v3.ApidataAddUserInstructionsRequest,
@@ -72,7 +72,7 @@ func (c *Client) AddUserSummaryInstructions(
 	return response.Body, nil
 }
 
-// Deletes user summary/instructions for users and/or graphs.
+// Deletes user summary/instructions for users or project wide defaults.
 func (c *Client) DeleteUserSummaryInstructions(
 	ctx context.Context,
 	request *v3.ApidataDeleteUserInstructionsRequest,
