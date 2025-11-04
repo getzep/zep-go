@@ -25,11 +25,75 @@ type CreateUserRequest struct {
 	UserID string `json:"user_id" url:"-"`
 }
 
+type ApidataAddUserInstructionsRequest struct {
+	Instructions []*UserInstruction `json:"instructions,omitempty" url:"-"`
+	UserIDs      []string           `json:"user_ids,omitempty" url:"-"`
+}
+
+type ApidataDeleteUserInstructionsRequest struct {
+	// If empty, deletes all
+	InstructionNames []string `json:"instruction_names,omitempty" url:"-"`
+	UserIDs          []string `json:"user_ids,omitempty" url:"-"`
+}
+
 type UserListOrderedRequest struct {
 	// Page number for pagination, starting from 1
 	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
 	// Number of users to retrieve per page
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
+}
+
+type UserListUserSummaryInstructionsRequest struct {
+	// User ID to get user-specific instructions
+	UserID *string `json:"-" url:"user_id,omitempty"`
+	// Graph ID to get graph-specific instructions
+	GraphID *string `json:"-" url:"graph_id,omitempty"`
+}
+
+type ListUserInstructionsResponse struct {
+	Instructions []*UserInstruction `json:"instructions,omitempty" url:"instructions,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (l *ListUserInstructionsResponse) GetInstructions() []*UserInstruction {
+	if l == nil {
+		return nil
+	}
+	return l.Instructions
+}
+
+func (l *ListUserInstructionsResponse) GetExtraProperties() map[string]interface{} {
+	return l.extraProperties
+}
+
+func (l *ListUserInstructionsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ListUserInstructionsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = ListUserInstructionsResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *l)
+	if err != nil {
+		return err
+	}
+	l.extraProperties = extraProperties
+	l.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListUserInstructionsResponse) String() string {
+	if len(l.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
 }
 
 type ModelsFactRatingExamples struct {
@@ -299,6 +363,60 @@ func (u *User) UnmarshalJSON(data []byte) error {
 }
 
 func (u *User) String() string {
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
+type UserInstruction struct {
+	Name string `json:"name" url:"name"`
+	Text string `json:"text" url:"text"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (u *UserInstruction) GetName() string {
+	if u == nil {
+		return ""
+	}
+	return u.Name
+}
+
+func (u *UserInstruction) GetText() string {
+	if u == nil {
+		return ""
+	}
+	return u.Text
+}
+
+func (u *UserInstruction) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
+}
+
+func (u *UserInstruction) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserInstruction
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserInstruction(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+	u.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserInstruction) String() string {
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
