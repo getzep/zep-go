@@ -25,14 +25,14 @@ type CreateUserRequest struct {
 	UserID string `json:"user_id" url:"-"`
 }
 
-type ApidataAddUserInstructionsRequest struct {
+type AddUserInstructionsRequest struct {
 	// Instructions to add to the user summary generation.
 	Instructions []*UserInstruction `json:"instructions,omitempty" url:"-"`
 	// User IDs to add the instructions to. If empty, the instructions are added to the project-wide default.
 	UserIDs []string `json:"user_ids,omitempty" url:"-"`
 }
 
-type ApidataDeleteUserInstructionsRequest struct {
+type DeleteUserInstructionsRequest struct {
 	// Unique identifier for the instructions to be deleted. If empty deletes all instructions.
 	InstructionNames []string `json:"instruction_names,omitempty" url:"-"`
 	// Determines which users will have their custom instructions deleted. If no users are provided, the project-wide custom instructions will be effected.

@@ -92,7 +92,7 @@ func (r *RawClient) ListUserSummaryInstructions(
 
 func (r *RawClient) AddUserSummaryInstructions(
 	ctx context.Context,
-	request *v3.ApidataAddUserInstructionsRequest,
+	request *v3.AddUserInstructionsRequest,
 	opts ...option.RequestOption,
 ) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
@@ -147,7 +147,7 @@ func (r *RawClient) AddUserSummaryInstructions(
 
 func (r *RawClient) DeleteUserSummaryInstructions(
 	ctx context.Context,
-	request *v3.ApidataDeleteUserInstructionsRequest,
+	request *v3.DeleteUserInstructionsRequest,
 	opts ...option.RequestOption,
 ) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)

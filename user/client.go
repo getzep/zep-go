@@ -58,7 +58,7 @@ func (c *Client) ListUserSummaryInstructions(
 // Adds new summary instructions for users graphs without removing existing ones. If user_ids is empty, adds to project-wide default instructions.
 func (c *Client) AddUserSummaryInstructions(
 	ctx context.Context,
-	request *v3.ApidataAddUserInstructionsRequest,
+	request *v3.AddUserInstructionsRequest,
 	opts ...option.RequestOption,
 ) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.AddUserSummaryInstructions(
@@ -75,7 +75,7 @@ func (c *Client) AddUserSummaryInstructions(
 // Deletes user summary/instructions for users or project wide defaults.
 func (c *Client) DeleteUserSummaryInstructions(
 	ctx context.Context,
-	request *v3.ApidataDeleteUserInstructionsRequest,
+	request *v3.DeleteUserInstructionsRequest,
 	opts ...option.RequestOption,
 ) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.DeleteUserSummaryInstructions(
