@@ -250,6 +250,8 @@ const (
 	ComparisonOperatorLessThan         ComparisonOperator = "<"
 	ComparisonOperatorGreaterThanEqual ComparisonOperator = ">="
 	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
+	ComparisonOperatorIsNull           ComparisonOperator = "IS NULL"
+	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
 )
 
 func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
@@ -266,6 +268,10 @@ func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
 		return ComparisonOperatorGreaterThanEqual, nil
 	case "<=":
 		return ComparisonOperatorLessThanEqual, nil
+	case "IS NULL":
+		return ComparisonOperatorIsNull, nil
+	case "IS NOT NULL":
+		return ComparisonOperatorIsNotNull, nil
 	}
 	var t ComparisonOperator
 	return "", fmt.Errorf("%s is not a valid %T", s, t)

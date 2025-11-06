@@ -38,6 +38,57 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
+// Lists all user summary instructions for a project, user.
+func (c *Client) ListUserSummaryInstructions(
+	ctx context.Context,
+	request *v3.UserListUserSummaryInstructionsRequest,
+	opts ...option.RequestOption,
+) (*v3.ListUserInstructionsResponse, error) {
+	response, err := c.WithRawResponse.ListUserSummaryInstructions(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Adds new summary instructions for users graphs without removing existing ones. If user_ids is empty, adds to project-wide default instructions.
+func (c *Client) AddUserSummaryInstructions(
+	ctx context.Context,
+	request *v3.ApidataAddUserInstructionsRequest,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.AddUserSummaryInstructions(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Deletes user summary/instructions for users or project wide defaults.
+func (c *Client) DeleteUserSummaryInstructions(
+	ctx context.Context,
+	request *v3.ApidataDeleteUserInstructionsRequest,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.DeleteUserSummaryInstructions(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Adds a user.
 func (c *Client) Add(
 	ctx context.Context,
