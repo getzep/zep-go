@@ -19,7 +19,7 @@ type ThreadGetRequest struct {
 	// Limit the number of results returned
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Cursor for pagination
-	Cursor *int `json:"-" url:"cursor,omitempty"`
+	Cursor *int64 `json:"-" url:"cursor,omitempty"`
 	// Number of most recent messages to return (overrides limit and cursor)
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
@@ -27,7 +27,7 @@ type ThreadGetRequest struct {
 type ThreadGetUserContextRequest struct {
 	// The minimum rating by which to filter relevant facts.
 	MinRating *float64 `json:"-" url:"minRating,omitempty"`
-	// Defaults to summary mode. Use basic for lower latency
+	// Deprecated, this field will be removed in a future release. Defaults to summary mode. Use basic for lower latency
 	Mode *ThreadGetUserContextRequestMode `json:"-" url:"mode,omitempty"`
 }
 
