@@ -3,6 +3,7 @@
 package client
 
 import (
+	context "github.com/getzep/zep-go/v3/context"
 	core "github.com/getzep/zep-go/v3/core"
 	client "github.com/getzep/zep-go/v3/graph/client"
 	internal "github.com/getzep/zep-go/v3/internal"
@@ -15,6 +16,7 @@ import (
 )
 
 type Client struct {
+	Context *context.Client
 	Graph   *client.Client
 	Project *project.Client
 	Thread  *threadclient.Client
@@ -31,6 +33,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
+		Context: context.NewClient(opts...),
 		Graph:   client.NewClient(opts...),
 		Project: project.NewClient(opts...),
 		Thread:  threadclient.NewClient(opts...),

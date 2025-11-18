@@ -27,7 +27,9 @@ type ThreadGetRequest struct {
 type ThreadGetUserContextRequest struct {
 	// The minimum rating by which to filter relevant facts.
 	MinRating *float64 `json:"-" url:"minRating,omitempty"`
-	// Defaults to summary mode. Use basic for lower latency
+	// Optional template ID to use for custom context rendering.
+	TemplateID *string `json:"-" url:"template_id,omitempty"`
+	// Deprecated, this field will be removed in a future release. Defaults to summary mode. Use basic for lower latency
 	Mode *ThreadGetUserContextRequestMode `json:"-" url:"mode,omitempty"`
 }
 
