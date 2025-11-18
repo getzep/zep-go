@@ -114,6 +114,7 @@ func (a *AddThreadMessagesRequest) String() string {
 type AddThreadMessagesResponse struct {
 	Context      *string  `json:"context,omitempty" url:"context,omitempty"`
 	MessageUUIDs []string `json:"message_uuids,omitempty" url:"message_uuids,omitempty"`
+	TaskID       *string  `json:"task_id,omitempty" url:"task_id,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -131,6 +132,13 @@ func (a *AddThreadMessagesResponse) GetMessageUUIDs() []string {
 		return nil
 	}
 	return a.MessageUUIDs
+}
+
+func (a *AddThreadMessagesResponse) GetTaskID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskID
 }
 
 func (a *AddThreadMessagesResponse) GetExtraProperties() map[string]interface{} {

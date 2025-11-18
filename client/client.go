@@ -9,6 +9,7 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	project "github.com/getzep/zep-go/v3/project"
+	task "github.com/getzep/zep-go/v3/task"
 	threadclient "github.com/getzep/zep-go/v3/thread/client"
 	user "github.com/getzep/zep-go/v3/user"
 	http "net/http"
@@ -19,6 +20,7 @@ type Client struct {
 	Context *context.Client
 	Graph   *client.Client
 	Project *project.Client
+	Task    *task.Client
 	Thread  *threadclient.Client
 	User    *user.Client
 
@@ -36,6 +38,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 		Context: context.NewClient(opts...),
 		Graph:   client.NewClient(opts...),
 		Project: project.NewClient(opts...),
+		Task:    task.NewClient(opts...),
 		Thread:  threadclient.NewClient(opts...),
 		User:    user.NewClient(opts...),
 		baseURL: options.BaseURL,

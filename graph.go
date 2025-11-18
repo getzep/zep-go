@@ -128,6 +128,8 @@ type AddTripleResponse struct {
 	Edge       *EntityEdge `json:"edge,omitempty" url:"edge,omitempty"`
 	SourceNode *EntityNode `json:"source_node,omitempty" url:"source_node,omitempty"`
 	TargetNode *EntityNode `json:"target_node,omitempty" url:"target_node,omitempty"`
+	// Task ID of the add triple task
+	TaskID *string `json:"task_id,omitempty" url:"task_id,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -152,6 +154,13 @@ func (a *AddTripleResponse) GetTargetNode() *EntityNode {
 		return nil
 	}
 	return a.TargetNode
+}
+
+func (a *AddTripleResponse) GetTaskID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskID
 }
 
 func (a *AddTripleResponse) GetExtraProperties() map[string]interface{} {
@@ -189,7 +198,9 @@ func (a *AddTripleResponse) String() string {
 type CloneGraphResponse struct {
 	// graph_id is the ID of the cloned graph
 	GraphID *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
-	UserID  *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	// Task ID of the clone graph task
+	TaskID *string `json:"task_id,omitempty" url:"task_id,omitempty"`
+	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -200,6 +211,13 @@ func (c *CloneGraphResponse) GetGraphID() *string {
 		return nil
 	}
 	return c.GraphID
+}
+
+func (c *CloneGraphResponse) GetTaskID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.TaskID
 }
 
 func (c *CloneGraphResponse) GetUserID() *string {
