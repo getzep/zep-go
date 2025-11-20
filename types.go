@@ -337,6 +337,8 @@ type Episode struct {
 	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
+	// Optional task ID to poll episode processing status. Currently only available for batch ingestion.
+	TaskID *string `json:"task_id,omitempty" url:"task_id,omitempty"`
 	// Optional thread ID, will be present if the episode is part of a thread
 	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
 	UUID     string  `json:"uuid" url:"uuid"`
@@ -413,6 +415,13 @@ func (e *Episode) GetSourceDescription() *string {
 		return nil
 	}
 	return e.SourceDescription
+}
+
+func (e *Episode) GetTaskID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.TaskID
 }
 
 func (e *Episode) GetThreadID() *string {
