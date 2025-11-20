@@ -42,7 +42,7 @@ type AddTripleRequest struct {
 	// The time (if any) at which the fact stops being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
 	// The name of the source node to add
-	SourceNodeName *string `json:"source_node_name,omitempty" url:"-"`
+	SourceNodeName string `json:"source_node_name" url:"-"`
 	// The summary of the source node to add
 	SourceNodeSummary *string `json:"source_node_summary,omitempty" url:"-"`
 	// The source node uuid
