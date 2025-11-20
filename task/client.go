@@ -44,7 +44,7 @@ func (c *Client) Get(
 	// Task ID
 	taskID string,
 	opts ...option.RequestOption,
-) (*v3.ApidataGetTaskResponse, error) {
+) (*v3.GetTaskResponse, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		taskID,

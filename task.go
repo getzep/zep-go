@@ -8,117 +8,117 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 )
 
-type ApidataGetTaskResponse struct {
-	CompletedAt *string                   `json:"completed_at,omitempty" url:"completed_at,omitempty"`
-	CreatedAt   *string                   `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Error       *ApidataTaskErrorResponse `json:"error,omitempty" url:"error,omitempty"`
-	Progress    *ApidataTaskProgress      `json:"progress,omitempty" url:"progress,omitempty"`
-	StartedAt   *string                   `json:"started_at,omitempty" url:"started_at,omitempty"`
-	Status      *string                   `json:"status,omitempty" url:"status,omitempty"`
-	TaskID      *string                   `json:"task_id,omitempty" url:"task_id,omitempty"`
-	Type        *string                   `json:"type,omitempty" url:"type,omitempty"`
-	UpdatedAt   *string                   `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+type GetTaskResponse struct {
+	CompletedAt *string            `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	CreatedAt   *string            `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Error       *TaskErrorResponse `json:"error,omitempty" url:"error,omitempty"`
+	Progress    *TaskProgress      `json:"progress,omitempty" url:"progress,omitempty"`
+	StartedAt   *string            `json:"started_at,omitempty" url:"started_at,omitempty"`
+	Status      *string            `json:"status,omitempty" url:"status,omitempty"`
+	TaskID      *string            `json:"task_id,omitempty" url:"task_id,omitempty"`
+	Type        *string            `json:"type,omitempty" url:"type,omitempty"`
+	UpdatedAt   *string            `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataGetTaskResponse) GetCompletedAt() *string {
-	if a == nil {
+func (g *GetTaskResponse) GetCompletedAt() *string {
+	if g == nil {
 		return nil
 	}
-	return a.CompletedAt
+	return g.CompletedAt
 }
 
-func (a *ApidataGetTaskResponse) GetCreatedAt() *string {
-	if a == nil {
+func (g *GetTaskResponse) GetCreatedAt() *string {
+	if g == nil {
 		return nil
 	}
-	return a.CreatedAt
+	return g.CreatedAt
 }
 
-func (a *ApidataGetTaskResponse) GetError() *ApidataTaskErrorResponse {
-	if a == nil {
+func (g *GetTaskResponse) GetError() *TaskErrorResponse {
+	if g == nil {
 		return nil
 	}
-	return a.Error
+	return g.Error
 }
 
-func (a *ApidataGetTaskResponse) GetProgress() *ApidataTaskProgress {
-	if a == nil {
+func (g *GetTaskResponse) GetProgress() *TaskProgress {
+	if g == nil {
 		return nil
 	}
-	return a.Progress
+	return g.Progress
 }
 
-func (a *ApidataGetTaskResponse) GetStartedAt() *string {
-	if a == nil {
+func (g *GetTaskResponse) GetStartedAt() *string {
+	if g == nil {
 		return nil
 	}
-	return a.StartedAt
+	return g.StartedAt
 }
 
-func (a *ApidataGetTaskResponse) GetStatus() *string {
-	if a == nil {
+func (g *GetTaskResponse) GetStatus() *string {
+	if g == nil {
 		return nil
 	}
-	return a.Status
+	return g.Status
 }
 
-func (a *ApidataGetTaskResponse) GetTaskID() *string {
-	if a == nil {
+func (g *GetTaskResponse) GetTaskID() *string {
+	if g == nil {
 		return nil
 	}
-	return a.TaskID
+	return g.TaskID
 }
 
-func (a *ApidataGetTaskResponse) GetType() *string {
-	if a == nil {
+func (g *GetTaskResponse) GetType() *string {
+	if g == nil {
 		return nil
 	}
-	return a.Type
+	return g.Type
 }
 
-func (a *ApidataGetTaskResponse) GetUpdatedAt() *string {
-	if a == nil {
+func (g *GetTaskResponse) GetUpdatedAt() *string {
+	if g == nil {
 		return nil
 	}
-	return a.UpdatedAt
+	return g.UpdatedAt
 }
 
-func (a *ApidataGetTaskResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (g *GetTaskResponse) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
 }
 
-func (a *ApidataGetTaskResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataGetTaskResponse
+func (g *GetTaskResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler GetTaskResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataGetTaskResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*g = GetTaskResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataGetTaskResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (g *GetTaskResponse) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(g); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", g)
 }
 
-type ApidataTaskErrorResponse struct {
+type TaskErrorResponse struct {
 	Code    *string                `json:"code,omitempty" url:"code,omitempty"`
 	Details map[string]interface{} `json:"details,omitempty" url:"details,omitempty"`
 	Message *string                `json:"message,omitempty" url:"message,omitempty"`
@@ -127,60 +127,60 @@ type ApidataTaskErrorResponse struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataTaskErrorResponse) GetCode() *string {
-	if a == nil {
+func (t *TaskErrorResponse) GetCode() *string {
+	if t == nil {
 		return nil
 	}
-	return a.Code
+	return t.Code
 }
 
-func (a *ApidataTaskErrorResponse) GetDetails() map[string]interface{} {
-	if a == nil {
+func (t *TaskErrorResponse) GetDetails() map[string]interface{} {
+	if t == nil {
 		return nil
 	}
-	return a.Details
+	return t.Details
 }
 
-func (a *ApidataTaskErrorResponse) GetMessage() *string {
-	if a == nil {
+func (t *TaskErrorResponse) GetMessage() *string {
+	if t == nil {
 		return nil
 	}
-	return a.Message
+	return t.Message
 }
 
-func (a *ApidataTaskErrorResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (t *TaskErrorResponse) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
 }
 
-func (a *ApidataTaskErrorResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataTaskErrorResponse
+func (t *TaskErrorResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskErrorResponse
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataTaskErrorResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*t = TaskErrorResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataTaskErrorResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (t *TaskErrorResponse) String() string {
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(t); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", t)
 }
 
-type ApidataTaskProgress struct {
+type TaskProgress struct {
 	Message *string `json:"message,omitempty" url:"message,omitempty"`
 	Stage   *string `json:"stage,omitempty" url:"stage,omitempty"`
 
@@ -188,48 +188,48 @@ type ApidataTaskProgress struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *ApidataTaskProgress) GetMessage() *string {
-	if a == nil {
+func (t *TaskProgress) GetMessage() *string {
+	if t == nil {
 		return nil
 	}
-	return a.Message
+	return t.Message
 }
 
-func (a *ApidataTaskProgress) GetStage() *string {
-	if a == nil {
+func (t *TaskProgress) GetStage() *string {
+	if t == nil {
 		return nil
 	}
-	return a.Stage
+	return t.Stage
 }
 
-func (a *ApidataTaskProgress) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
+func (t *TaskProgress) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
 }
 
-func (a *ApidataTaskProgress) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataTaskProgress
+func (t *TaskProgress) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskProgress
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = ApidataTaskProgress(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	*t = TaskProgress(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
 	if err != nil {
 		return err
 	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (a *ApidataTaskProgress) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+func (t *TaskProgress) String() string {
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(a); err == nil {
+	if value, err := internal.StringifyJSON(t); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", a)
+	return fmt.Sprintf("%#v", t)
 }

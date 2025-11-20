@@ -35,7 +35,7 @@ func (r *RawClient) Get(
 	// Task ID
 	taskID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataGetTaskResponse], error) {
+) (*core.Response[*v3.GetTaskResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -62,7 +62,7 @@ func (r *RawClient) Get(
 			}
 		},
 	}
-	var response *v3.ApidataGetTaskResponse
+	var response *v3.GetTaskResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -80,7 +80,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataGetTaskResponse]{
+	return &core.Response[*v3.GetTaskResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
