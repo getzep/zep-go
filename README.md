@@ -7,9 +7,9 @@
 </p>
 
 <h1 align="center">
-Zep: Long-Term Memory for ‍AI Assistants.
+Zep: Context Engineering for AI Agents.
 </h1>
-<h2 align="center">Recall, understand, and extract data from chat histories. Power personalized AI experiences.</h2>
+<h2 align="center">Assemble the right context from chat history, business data, and user behavior. Build agents that work.</h2>
 <br />
 <p align="center">
   <a href="https://discord.gg/W8Kw6bsgXQ"><img
@@ -190,7 +190,7 @@ to access the type with `errors.Is` and `errors.As`, you can use the `%w` direct
 ```go
 _, err := client.Thread.GetUserContext(ctx, "thread_id", nil)
 if err != nil {
-  return fmt.Errorf("failed to get memory: %w", err)
+  return fmt.Errorf("failed to get context: %w", err)
 }
 ```
 
