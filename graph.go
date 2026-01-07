@@ -48,7 +48,7 @@ type AddTripleRequest struct {
 	// Nested objects and arrays are not allowed.
 	SourceNodeAttributes map[string]interface{} `json:"source_node_attributes,omitempty" url:"-"`
 	// The name of the source node to add
-	SourceNodeName string `json:"source_node_name" url:"-"`
+	SourceNodeName *string `json:"source_node_name,omitempty" url:"-"`
 	// The summary of the source node to add
 	SourceNodeSummary *string `json:"source_node_summary,omitempty" url:"-"`
 	// The source node uuid
@@ -57,7 +57,7 @@ type AddTripleRequest struct {
 	// Nested objects and arrays are not allowed.
 	TargetNodeAttributes map[string]interface{} `json:"target_node_attributes,omitempty" url:"-"`
 	// The name of the target node to add
-	TargetNodeName string `json:"target_node_name" url:"-"`
+	TargetNodeName *string `json:"target_node_name,omitempty" url:"-"`
 	// The summary of the target node to add
 	TargetNodeSummary *string `json:"target_node_summary,omitempty" url:"-"`
 	// The target node uuid
@@ -311,8 +311,9 @@ func (c ComparisonOperator) Ptr() *ComparisonOperator {
 type DateFilter struct {
 	// Comparison operator for date filter
 	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Date to filter on
-	Date string `json:"date" url:"date"`
+	// Date to filter on. Required for non-null operators (=, <>, >, <, >=, <=).
+	// Should be omitted for IS NULL and IS NOT NULL operators.
+	Date *string `json:"date,omitempty" url:"date,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -325,9 +326,9 @@ func (d *DateFilter) GetComparisonOperator() ComparisonOperator {
 	return d.ComparisonOperator
 }
 
-func (d *DateFilter) GetDate() string {
+func (d *DateFilter) GetDate() *string {
 	if d == nil {
-		return ""
+		return nil
 	}
 	return d.Date
 }
