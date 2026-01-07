@@ -25,7 +25,7 @@ type ThreadGetRequest struct {
 }
 
 type ThreadGetUserContextRequest struct {
-	// The minimum rating by which to filter relevant facts.
+	// Deprecated, this field will be removed in a future release. The minimum rating by which to filter relevant facts.
 	MinRating *float64 `json:"-" url:"minRating,omitempty"`
 	// Optional template ID to use for custom context rendering.
 	TemplateID *string `json:"-" url:"template_id,omitempty"`

@@ -13,7 +13,7 @@ type CreateUserRequest struct {
 	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
-	// Optional instruction to use for fact rating.
+	// Deprecated: this field will be removed in a future release. Optional instruction to use for fact rating.
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	// The first name of the user.
 	FirstName *string `json:"first_name,omitempty" url:"-"`
@@ -542,7 +542,7 @@ type UpdateUserRequest struct {
 	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
 	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
-	// Optional instruction to use for fact rating.
+	// Deprecated: this field will be removed in a future release. Optional instruction to use for fact rating.
 	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
 	// The first name of the user.
 	FirstName *string `json:"first_name,omitempty" url:"-"`

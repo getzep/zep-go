@@ -131,3 +131,21 @@ func (c *Client) Get(
 	}
 	return response.Body, nil
 }
+
+// Deletes a node by UUID.
+func (c *Client) Delete(
+	ctx context.Context,
+	// Node UUID
+	uuid string,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.Delete(
+		ctx,
+		uuid,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}

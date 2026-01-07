@@ -30,6 +30,9 @@ type AddDataBatchRequest struct {
 type AddTripleRequest struct {
 	// The timestamp of the message
 	CreatedAt *string `json:"created_at,omitempty" url:"-"`
+	// Additional attributes of the edge. Values must be scalar types (string, number, boolean, or null).
+	// Nested objects and arrays are not allowed.
+	EdgeAttributes map[string]interface{} `json:"edge_attributes,omitempty" url:"-"`
 	// The time (if any) at which the edge expires
 	ExpiredAt *string `json:"expired_at,omitempty" url:"-"`
 	// The fact relating the two nodes that this edge represents
@@ -41,14 +44,20 @@ type AddTripleRequest struct {
 	GraphID  *string `json:"graph_id,omitempty" url:"-"`
 	// The time (if any) at which the fact stops being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
+	// Additional attributes of the source node. Values must be scalar types (string, number, boolean, or null).
+	// Nested objects and arrays are not allowed.
+	SourceNodeAttributes map[string]interface{} `json:"source_node_attributes,omitempty" url:"-"`
 	// The name of the source node to add
-	SourceNodeName string `json:"source_node_name" url:"-"`
+	SourceNodeName *string `json:"source_node_name,omitempty" url:"-"`
 	// The summary of the source node to add
 	SourceNodeSummary *string `json:"source_node_summary,omitempty" url:"-"`
 	// The source node uuid
 	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"-"`
+	// Additional attributes of the target node. Values must be scalar types (string, number, boolean, or null).
+	// Nested objects and arrays are not allowed.
+	TargetNodeAttributes map[string]interface{} `json:"target_node_attributes,omitempty" url:"-"`
 	// The name of the target node to add
-	TargetNodeName string `json:"target_node_name" url:"-"`
+	TargetNodeName *string `json:"target_node_name,omitempty" url:"-"`
 	// The summary of the target node to add
 	TargetNodeSummary *string `json:"target_node_summary,omitempty" url:"-"`
 	// The target node uuid
@@ -302,8 +311,9 @@ func (c ComparisonOperator) Ptr() *ComparisonOperator {
 type DateFilter struct {
 	// Comparison operator for date filter
 	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Date to filter on
-	Date string `json:"date" url:"date"`
+	// Date to filter on. Required for non-null operators (=, <>, >, <, >=, <=).
+	// Should be omitted for IS NULL and IS NOT NULL operators.
+	Date *string `json:"date,omitempty" url:"date,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -316,9 +326,9 @@ func (d *DateFilter) GetComparisonOperator() ComparisonOperator {
 	return d.ComparisonOperator
 }
 
-func (d *DateFilter) GetDate() string {
+func (d *DateFilter) GetDate() *string {
 	if d == nil {
-		return ""
+		return nil
 	}
 	return d.Date
 }
@@ -1008,6 +1018,73 @@ func (g GraphSearchScope) Ptr() *GraphSearchScope {
 	return &g
 }
 
+type PropertyFilter struct {
+	// Comparison operator for property filter
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Property name to filter on
+	PropertyName string `json:"property_name" url:"property_name"`
+	// Property value to match on. Accepted types: string, int, float64, bool, or nil.
+	// Invalid types (e.g., arrays, objects) will be rejected by validation.
+	// Must be non-nil for non-null operators (=, <>, >, <, >=, <=).
+	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PropertyFilter) GetComparisonOperator() ComparisonOperator {
+	if p == nil {
+		return ""
+	}
+	return p.ComparisonOperator
+}
+
+func (p *PropertyFilter) GetPropertyName() string {
+	if p == nil {
+		return ""
+	}
+	return p.PropertyName
+}
+
+func (p *PropertyFilter) GetPropertyValue() interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.PropertyValue
+}
+
+func (p *PropertyFilter) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PropertyFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler PropertyFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PropertyFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PropertyFilter) String() string {
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type Reranker string
 
 const (
@@ -1048,6 +1125,8 @@ type SearchFilters struct {
 	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// List of edge types to filter on
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// List of edge UUIDs to filter on
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
 	// List of edge types to exclude from results
 	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
 	// List of node labels to exclude from results
@@ -1066,6 +1145,8 @@ type SearchFilters struct {
 	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// List of node labels to filter on
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// List of property filters to apply to nodes and edges
+	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
 	// 2D array of date filters for the valid_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
@@ -1089,6 +1170,13 @@ func (s *SearchFilters) GetEdgeTypes() []string {
 		return nil
 	}
 	return s.EdgeTypes
+}
+
+func (s *SearchFilters) GetEdgeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EdgeUUIDs
 }
 
 func (s *SearchFilters) GetExcludeEdgeTypes() []string {
@@ -1124,6 +1212,13 @@ func (s *SearchFilters) GetNodeLabels() []string {
 		return nil
 	}
 	return s.NodeLabels
+}
+
+func (s *SearchFilters) GetPropertyFilters() []*PropertyFilter {
+	if s == nil {
+		return nil
+	}
+	return s.PropertyFilters
 }
 
 func (s *SearchFilters) GetValidAt() [][]*DateFilter {
