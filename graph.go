@@ -27,6 +27,15 @@ type AddDataBatchRequest struct {
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
 
+type AddCustomInstructionsRequest struct {
+	// Graph IDs to add the instructions to. If empty, the instructions are added to the project-wide default.
+	GraphIDs []string `json:"graph_ids,omitempty" url:"-"`
+	// Instructions to add to the graph.
+	Instructions []*CustomInstruction `json:"instructions,omitempty" url:"-"`
+	// User IDs to add the instructions to. If empty, the instructions are added to the project-wide default.
+	UserIDs []string `json:"user_ids,omitempty" url:"-"`
+}
+
 type AddTripleRequest struct {
 	// The timestamp of the message
 	CreatedAt *string `json:"created_at,omitempty" url:"-"`
@@ -85,11 +94,27 @@ type CreateGraphRequest struct {
 	Name                  *string                `json:"name,omitempty" url:"-"`
 }
 
+type DeleteCustomInstructionsRequest struct {
+	// Determines which group graphs will have their custom instructions deleted. If no graphs are provided, the project-wide custom instructions will be affected.
+	GraphIDs []string `json:"graph_ids,omitempty" url:"-"`
+	// Unique identifier for the instructions to be deleted. If empty deletes all instructions.
+	InstructionNames []string `json:"instruction_names,omitempty" url:"-"`
+	// Determines which user graphs will have their custom instructions deleted. If no users are provided, the project-wide custom instructions will be affected.
+	UserIDs []string `json:"user_ids,omitempty" url:"-"`
+}
+
 type GraphListAllRequest struct {
 	// Page number for pagination, starting from 1.
 	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
 	// Number of graphs to retrieve per page.
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
+}
+
+type GraphListCustomInstructionsRequest struct {
+	// User ID to get user-specific instructions
+	UserID *string `json:"-" url:"user_id,omitempty"`
+	// Graph ID to get graph-specific instructions
+	GraphID *string `json:"-" url:"graph_id,omitempty"`
 }
 
 type GraphListEntityTypesRequest struct {
@@ -306,6 +331,60 @@ func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
 
 func (c ComparisonOperator) Ptr() *ComparisonOperator {
 	return &c
+}
+
+type CustomInstruction struct {
+	Name string `json:"name" url:"name"`
+	Text string `json:"text" url:"text"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *CustomInstruction) GetName() string {
+	if c == nil {
+		return ""
+	}
+	return c.Name
+}
+
+func (c *CustomInstruction) GetText() string {
+	if c == nil {
+		return ""
+	}
+	return c.Text
+}
+
+func (c *CustomInstruction) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomInstruction) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomInstruction
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomInstruction(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomInstruction) String() string {
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
 }
 
 type DateFilter struct {
@@ -1016,6 +1095,52 @@ func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
 
 func (g GraphSearchScope) Ptr() *GraphSearchScope {
 	return &g
+}
+
+type ListCustomInstructionsResponse struct {
+	Instructions []*CustomInstruction `json:"instructions,omitempty" url:"instructions,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (l *ListCustomInstructionsResponse) GetInstructions() []*CustomInstruction {
+	if l == nil {
+		return nil
+	}
+	return l.Instructions
+}
+
+func (l *ListCustomInstructionsResponse) GetExtraProperties() map[string]interface{} {
+	return l.extraProperties
+}
+
+func (l *ListCustomInstructionsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ListCustomInstructionsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = ListCustomInstructionsResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *l)
+	if err != nil {
+		return err
+	}
+	l.extraProperties = extraProperties
+	l.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListCustomInstructionsResponse) String() string {
+	if len(l.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
 }
 
 type PropertyFilter struct {
