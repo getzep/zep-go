@@ -47,6 +47,57 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
+// Lists all custom instructions for a project, user, or graph.
+func (c *Client) ListCustomInstructions(
+	ctx context.Context,
+	request *v3.GraphListCustomInstructionsRequest,
+	opts ...option.RequestOption,
+) (*v3.ListCustomInstructionsResponse, error) {
+	response, err := c.WithRawResponse.ListCustomInstructions(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Adds new custom instructions for graphs without removing existing ones. If user_ids or graph_ids is empty, adds to project-wide default instructions.
+func (c *Client) AddCustomInstructions(
+	ctx context.Context,
+	request *v3.AddCustomInstructionsRequest,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.AddCustomInstructions(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Deletes custom instructions for graphs or project wide defaults.
+func (c *Client) DeleteCustomInstructions(
+	ctx context.Context,
+	request *v3.DeleteCustomInstructionsRequest,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.DeleteCustomInstructions(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Returns all entity types for a project, user, or graph.
 func (c *Client) ListEntityTypes(
 	ctx context.Context,
