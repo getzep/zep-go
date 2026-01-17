@@ -180,6 +180,8 @@ type MessageListResponse struct {
 	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
 	// The total number of messages.
 	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
+	// The user ID associated with this thread.
+	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -204,6 +206,13 @@ func (m *MessageListResponse) GetTotalCount() *int {
 		return nil
 	}
 	return m.TotalCount
+}
+
+func (m *MessageListResponse) GetUserID() *string {
+	if m == nil {
+		return nil
+	}
+	return m.UserID
 }
 
 func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {

@@ -9,15 +9,16 @@ import (
 )
 
 type GetTaskResponse struct {
-	CompletedAt *string            `json:"completed_at,omitempty" url:"completed_at,omitempty"`
-	CreatedAt   *string            `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Error       *TaskErrorResponse `json:"error,omitempty" url:"error,omitempty"`
-	Progress    *TaskProgress      `json:"progress,omitempty" url:"progress,omitempty"`
-	StartedAt   *string            `json:"started_at,omitempty" url:"started_at,omitempty"`
-	Status      *string            `json:"status,omitempty" url:"status,omitempty"`
-	TaskID      *string            `json:"task_id,omitempty" url:"task_id,omitempty"`
-	Type        *string            `json:"type,omitempty" url:"type,omitempty"`
-	UpdatedAt   *string            `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	CompletedAt *string                `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	CreatedAt   *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Error       *TaskErrorResponse     `json:"error,omitempty" url:"error,omitempty"`
+	Params      map[string]interface{} `json:"params,omitempty" url:"params,omitempty"`
+	Progress    *TaskProgress          `json:"progress,omitempty" url:"progress,omitempty"`
+	StartedAt   *string                `json:"started_at,omitempty" url:"started_at,omitempty"`
+	Status      *string                `json:"status,omitempty" url:"status,omitempty"`
+	TaskID      *string                `json:"task_id,omitempty" url:"task_id,omitempty"`
+	Type        *string                `json:"type,omitempty" url:"type,omitempty"`
+	UpdatedAt   *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -42,6 +43,13 @@ func (g *GetTaskResponse) GetError() *TaskErrorResponse {
 		return nil
 	}
 	return g.Error
+}
+
+func (g *GetTaskResponse) GetParams() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.Params
 }
 
 func (g *GetTaskResponse) GetProgress() *TaskProgress {
