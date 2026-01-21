@@ -1,3 +1,4 @@
+// Deprecated: use github.com/getzep/zep-go/v3 instead.
 module github.com/getzep/zep-go/v2
 
 go 1.13
