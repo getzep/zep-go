@@ -56,6 +56,8 @@ type AddTripleRequest struct {
 	// Additional attributes of the source node. Values must be scalar types (string, number, boolean, or null).
 	// Nested objects and arrays are not allowed.
 	SourceNodeAttributes map[string]interface{} `json:"source_node_attributes,omitempty" url:"-"`
+	// The labels for the source node
+	SourceNodeLabels []string `json:"source_node_labels,omitempty" url:"-"`
 	// The name of the source node to add
 	SourceNodeName *string `json:"source_node_name,omitempty" url:"-"`
 	// The summary of the source node to add
@@ -65,6 +67,8 @@ type AddTripleRequest struct {
 	// Additional attributes of the target node. Values must be scalar types (string, number, boolean, or null).
 	// Nested objects and arrays are not allowed.
 	TargetNodeAttributes map[string]interface{} `json:"target_node_attributes,omitempty" url:"-"`
+	// The labels for the target node
+	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"-"`
 	// The name of the target node to add
 	TargetNodeName *string `json:"target_node_name,omitempty" url:"-"`
 	// The summary of the target node to add
@@ -88,10 +92,9 @@ type CloneGraphRequest struct {
 }
 
 type CreateGraphRequest struct {
-	Description           *string                `json:"description,omitempty" url:"-"`
-	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
-	GraphID               string                 `json:"graph_id" url:"-"`
-	Name                  *string                `json:"name,omitempty" url:"-"`
+	Description *string `json:"description,omitempty" url:"-"`
+	GraphID     string  `json:"graph_id" url:"-"`
+	Name        *string `json:"name,omitempty" url:"-"`
 }
 
 type DeleteCustomInstructionsRequest struct {
@@ -103,11 +106,39 @@ type DeleteCustomInstructionsRequest struct {
 	UserIDs []string `json:"user_ids,omitempty" url:"-"`
 }
 
+type DetectPatternsRequest struct {
+	// Which pattern types to detect with type-specific configuration.
+	// Omit to detect all types with defaults.
+	Detect *DetectConfig `json:"detect,omitempty" url:"-"`
+	// Graph ID when detecting patterns on a named graph
+	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// Include example node/edge UUIDs per pattern. Default: false
+	IncludeExamples *bool `json:"include_examples,omitempty" url:"-"`
+	// Max patterns to return. Default: 50, Max: 200
+	Limit *int `json:"limit,omitempty" url:"-"`
+	// Minimum occurrence count to report a pattern. Default: 2
+	MinOccurrences *int `json:"min_occurrences,omitempty" url:"-"`
+	// Exponential half-life decay applied to edge created_at timestamps.
+	// Valid values: none, 7_days, 30_days, 90_days. Default: none
+	RecencyWeight *RecencyWeight `json:"recency_weight,omitempty" url:"-"`
+	// Filters which edges/nodes participate in pattern detection.
+	// Reuses the same filter format as /graph/search.
+	SearchFilters *SearchFilters `json:"search_filters,omitempty" url:"-"`
+	// Seed selection. If omitted, analyzes the entire graph.
+	Seeds *PatternSeeds `json:"seeds,omitempty" url:"-"`
+	// User ID when detecting patterns on a user graph
+	UserID *string `json:"user_id,omitempty" url:"-"`
+}
+
 type GraphListAllRequest struct {
 	// Page number for pagination, starting from 1.
 	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
 	// Number of graphs to retrieve per page.
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
+	// Column to sort by (created_at, group_id, name).
+	OrderBy *string `json:"-" url:"order_by,omitempty"`
+	// Sort in ascending order.
+	Asc *bool `json:"-" url:"asc,omitempty"`
 }
 
 type GraphListCustomInstructionsRequest struct {
@@ -133,10 +164,6 @@ type GraphSearchQuery struct {
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
 	// The maximum number of facts to retrieve. Defaults to 10. Limited to 50.
 	Limit *int `json:"limit,omitempty" url:"-"`
-	// The minimum rating by which to filter relevant facts
-	MinFactRating *float64 `json:"min_fact_rating,omitempty" url:"-"`
-	// Deprecated
-	MinScore *float64 `json:"min_score,omitempty" url:"-"`
 	// weighting for maximal marginal relevance
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
 	// The string to search for (required)
@@ -293,6 +320,55 @@ func (c *CloneGraphResponse) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
+type ClusterDetectConfig = map[string]interface{}
+
+type CoOccurrenceDetectConfig struct {
+	// Max hops within which to detect co-occurring node types. Default: 3, Max: 5
+	MaxHops *int `json:"max_hops,omitempty" url:"max_hops,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *CoOccurrenceDetectConfig) GetMaxHops() *int {
+	if c == nil {
+		return nil
+	}
+	return c.MaxHops
+}
+
+func (c *CoOccurrenceDetectConfig) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CoOccurrenceDetectConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler CoOccurrenceDetectConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CoOccurrenceDetectConfig(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CoOccurrenceDetectConfig) String() string {
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 type ComparisonOperator string
 
 const (
@@ -433,6 +509,145 @@ func (d *DateFilter) UnmarshalJSON(data []byte) error {
 }
 
 func (d *DateFilter) String() string {
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+type DetectConfig struct {
+	// Detect tightly interconnected groups (triangle topology)
+	Clusters *ClusterDetectConfig `json:"clusters,omitempty" url:"clusters,omitempty"`
+	// Detect node types that co-occur within k hops
+	CoOccurrences *CoOccurrenceDetectConfig `json:"co_occurrences,omitempty" url:"co_occurrences,omitempty"`
+	// Detect highly connected hub nodes (star topology)
+	Hubs *HubDetectConfig `json:"hubs,omitempty" url:"hubs,omitempty"`
+	// Detect frequent multi-hop connection paths
+	Paths *PathDetectConfig `json:"paths,omitempty" url:"paths,omitempty"`
+	// Detect common (source_label, edge_type, target_label) relationship triples
+	Relationships *RelationshipDetectConfig `json:"relationships,omitempty" url:"relationships,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DetectConfig) GetClusters() *ClusterDetectConfig {
+	if d == nil {
+		return nil
+	}
+	return d.Clusters
+}
+
+func (d *DetectConfig) GetCoOccurrences() *CoOccurrenceDetectConfig {
+	if d == nil {
+		return nil
+	}
+	return d.CoOccurrences
+}
+
+func (d *DetectConfig) GetHubs() *HubDetectConfig {
+	if d == nil {
+		return nil
+	}
+	return d.Hubs
+}
+
+func (d *DetectConfig) GetPaths() *PathDetectConfig {
+	if d == nil {
+		return nil
+	}
+	return d.Paths
+}
+
+func (d *DetectConfig) GetRelationships() *RelationshipDetectConfig {
+	if d == nil {
+		return nil
+	}
+	return d.Relationships
+}
+
+func (d *DetectConfig) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DetectConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler DetectConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DetectConfig(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DetectConfig) String() string {
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+type DetectPatternsResponse struct {
+	// Statistics about the detection run
+	Metadata *PatternMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Detected patterns, sorted by weighted_score descending
+	Patterns []*PatternResult `json:"patterns,omitempty" url:"patterns,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DetectPatternsResponse) GetMetadata() *PatternMetadata {
+	if d == nil {
+		return nil
+	}
+	return d.Metadata
+}
+
+func (d *DetectPatternsResponse) GetPatterns() []*PatternResult {
+	if d == nil {
+		return nil
+	}
+	return d.Patterns
+}
+
+func (d *DetectPatternsResponse) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DetectPatternsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler DetectPatternsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DetectPatternsResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DetectPatternsResponse) String() string {
 	if len(d.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
 			return value
@@ -847,14 +1062,13 @@ func (e *EpisodeData) String() string {
 }
 
 type Graph struct {
-	CreatedAt             *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Description           *string                `json:"description,omitempty" url:"description,omitempty"`
-	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"fact_rating_instruction,omitempty"`
-	GraphID               *string                `json:"graph_id,omitempty" url:"graph_id,omitempty"`
-	ID                    *int                   `json:"id,omitempty" url:"id,omitempty"`
-	Name                  *string                `json:"name,omitempty" url:"name,omitempty"`
-	ProjectUUID           *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	UUID                  *string                `json:"uuid,omitempty" url:"uuid,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	GraphID     *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
+	ID          *int    `json:"id,omitempty" url:"id,omitempty"`
+	Name        *string `json:"name,omitempty" url:"name,omitempty"`
+	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -872,13 +1086,6 @@ func (g *Graph) GetDescription() *string {
 		return nil
 	}
 	return g.Description
-}
-
-func (g *Graph) GetFactRatingInstruction() *FactRatingInstruction {
-	if g == nil {
-		return nil
-	}
-	return g.FactRatingInstruction
 }
 
 func (g *Graph) GetGraphID() *string {
@@ -1097,6 +1304,53 @@ func (g GraphSearchScope) Ptr() *GraphSearchScope {
 	return &g
 }
 
+type HubDetectConfig struct {
+	// Minimum number of connections for a node to be considered a hub. Default: 3, Min: 2
+	MinDegree *int `json:"min_degree,omitempty" url:"min_degree,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (h *HubDetectConfig) GetMinDegree() *int {
+	if h == nil {
+		return nil
+	}
+	return h.MinDegree
+}
+
+func (h *HubDetectConfig) GetExtraProperties() map[string]interface{} {
+	return h.extraProperties
+}
+
+func (h *HubDetectConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler HubDetectConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*h = HubDetectConfig(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *h)
+	if err != nil {
+		return err
+	}
+	h.extraProperties = extraProperties
+	h.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (h *HubDetectConfig) String() string {
+	if len(h.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(h.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(h); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", h)
+}
+
 type ListCustomInstructionsResponse struct {
 	Instructions []*CustomInstruction `json:"instructions,omitempty" url:"instructions,omitempty"`
 
@@ -1141,6 +1395,340 @@ func (l *ListCustomInstructionsResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
+}
+
+type PathDetectConfig struct {
+	// Max hops from seed nodes for path detection. Default: 3, Max: 5
+	MaxHops *int `json:"max_hops,omitempty" url:"max_hops,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PathDetectConfig) GetMaxHops() *int {
+	if p == nil {
+		return nil
+	}
+	return p.MaxHops
+}
+
+func (p *PathDetectConfig) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PathDetectConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler PathDetectConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PathDetectConfig(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PathDetectConfig) String() string {
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PatternExample struct {
+	// Edge UUIDs involved in this instance
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Node UUIDs involved in this instance
+	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PatternExample) GetEdgeUUIDs() []string {
+	if p == nil {
+		return nil
+	}
+	return p.EdgeUUIDs
+}
+
+func (p *PatternExample) GetNodeUUIDs() []string {
+	if p == nil {
+		return nil
+	}
+	return p.NodeUUIDs
+}
+
+func (p *PatternExample) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PatternExample) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatternExample
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PatternExample(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PatternExample) String() string {
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PatternMetadata struct {
+	// Number of edges analyzed
+	EdgesAnalyzed *int `json:"edges_analyzed,omitempty" url:"edges_analyzed,omitempty"`
+	// Elapsed time in milliseconds
+	ElapsedMs *int `json:"elapsed_ms,omitempty" url:"elapsed_ms,omitempty"`
+	// Number of unique nodes analyzed
+	NodesAnalyzed *int `json:"nodes_analyzed,omitempty" url:"nodes_analyzed,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PatternMetadata) GetEdgesAnalyzed() *int {
+	if p == nil {
+		return nil
+	}
+	return p.EdgesAnalyzed
+}
+
+func (p *PatternMetadata) GetElapsedMs() *int {
+	if p == nil {
+		return nil
+	}
+	return p.ElapsedMs
+}
+
+func (p *PatternMetadata) GetNodesAnalyzed() *int {
+	if p == nil {
+		return nil
+	}
+	return p.NodesAnalyzed
+}
+
+func (p *PatternMetadata) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PatternMetadata) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatternMetadata
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PatternMetadata(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PatternMetadata) String() string {
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PatternResult struct {
+	// Human-readable description of the pattern
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// Edge types in the pattern structure
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// Example instances (only populated when include_examples is true)
+	Examples []*PatternExample `json:"examples,omitempty" url:"examples,omitempty"`
+	// Node labels in the pattern structure
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// Raw occurrence count (always unweighted)
+	Occurrences *int `json:"occurrences,omitempty" url:"occurrences,omitempty"`
+	// Pattern type: relationship, path, co_occurrence, hub, cluster
+	Type *string `json:"type,omitempty" url:"type,omitempty"`
+	// Weighted sum — equals occurrences when recency_weight is "none"
+	WeightedScore *float64 `json:"weighted_score,omitempty" url:"weighted_score,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PatternResult) GetDescription() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Description
+}
+
+func (p *PatternResult) GetEdgeTypes() []string {
+	if p == nil {
+		return nil
+	}
+	return p.EdgeTypes
+}
+
+func (p *PatternResult) GetExamples() []*PatternExample {
+	if p == nil {
+		return nil
+	}
+	return p.Examples
+}
+
+func (p *PatternResult) GetNodeLabels() []string {
+	if p == nil {
+		return nil
+	}
+	return p.NodeLabels
+}
+
+func (p *PatternResult) GetOccurrences() *int {
+	if p == nil {
+		return nil
+	}
+	return p.Occurrences
+}
+
+func (p *PatternResult) GetType() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Type
+}
+
+func (p *PatternResult) GetWeightedScore() *float64 {
+	if p == nil {
+		return nil
+	}
+	return p.WeightedScore
+}
+
+func (p *PatternResult) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PatternResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatternResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PatternResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PatternResult) String() string {
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PatternSeeds struct {
+	// All endpoints of these edge types become seeds
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// All nodes with these labels become seeds
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// Specific node UUIDs to analyze around
+	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PatternSeeds) GetEdgeTypes() []string {
+	if p == nil {
+		return nil
+	}
+	return p.EdgeTypes
+}
+
+func (p *PatternSeeds) GetNodeLabels() []string {
+	if p == nil {
+		return nil
+	}
+	return p.NodeLabels
+}
+
+func (p *PatternSeeds) GetNodeUUIDs() []string {
+	if p == nil {
+		return nil
+	}
+	return p.NodeUUIDs
+}
+
+func (p *PatternSeeds) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PatternSeeds) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatternSeeds
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PatternSeeds(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PatternSeeds) String() string {
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
 }
 
 type PropertyFilter struct {
@@ -1209,6 +1797,36 @@ func (p *PropertyFilter) String() string {
 	}
 	return fmt.Sprintf("%#v", p)
 }
+
+type RecencyWeight string
+
+const (
+	RecencyWeightNone       RecencyWeight = "none"
+	RecencyWeightSevenDays  RecencyWeight = "7_days"
+	RecencyWeightThirtyDays RecencyWeight = "30_days"
+	RecencyWeightNinetyDays RecencyWeight = "90_days"
+)
+
+func NewRecencyWeightFromString(s string) (RecencyWeight, error) {
+	switch s {
+	case "none":
+		return RecencyWeightNone, nil
+	case "7_days":
+		return RecencyWeightSevenDays, nil
+	case "30_days":
+		return RecencyWeightThirtyDays, nil
+	case "90_days":
+		return RecencyWeightNinetyDays, nil
+	}
+	var t RecencyWeight
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RecencyWeight) Ptr() *RecencyWeight {
+	return &r
+}
+
+type RelationshipDetectConfig = map[string]interface{}
 
 type Reranker string
 
@@ -1386,7 +2004,6 @@ func (s *SearchFilters) String() string {
 }
 
 type UpdateGraphRequest struct {
-	Description           *string                `json:"description,omitempty" url:"-"`
-	FactRatingInstruction *FactRatingInstruction `json:"fact_rating_instruction,omitempty" url:"-"`
-	Name                  *string                `json:"name,omitempty" url:"-"`
+	Description *string `json:"description,omitempty" url:"-"`
+	Name        *string `json:"name,omitempty" url:"-"`
 }

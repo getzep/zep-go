@@ -6,6 +6,7 @@ import (
 	context "context"
 	v3 "github.com/getzep/zep-go/v3"
 	core "github.com/getzep/zep-go/v3/core"
+	graph "github.com/getzep/zep-go/v3/graph"
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
@@ -142,6 +143,26 @@ func (c *Client) Delete(
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		uuid,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Updates an entity node by UUID.
+func (c *Client) Update(
+	ctx context.Context,
+	// Node UUID
+	uuid string,
+	request *graph.UpdateNodeRequest,
+	opts ...option.RequestOption,
+) (*v3.EntityNode, error) {
+	response, err := c.WithRawResponse.Update(
+		ctx,
+		uuid,
+		request,
 		opts...,
 	)
 	if err != nil {

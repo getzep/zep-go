@@ -25,12 +25,8 @@ type ThreadGetRequest struct {
 }
 
 type ThreadGetUserContextRequest struct {
-	// Deprecated, this field will be removed in a future release. The minimum rating by which to filter relevant facts.
-	MinRating *float64 `json:"-" url:"minRating,omitempty"`
 	// Optional template ID to use for custom context rendering.
 	TemplateID *string `json:"-" url:"template_id,omitempty"`
-	// Deprecated, this field will be removed in a future release. Defaults to summary mode. Use basic for lower latency
-	Mode *ThreadGetUserContextRequestMode `json:"-" url:"mode,omitempty"`
 }
 
 type ThreadListAllRequest struct {
@@ -178,6 +174,8 @@ type MessageListResponse struct {
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
 	// The number of messages returned.
 	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
+	// The thread creation timestamp.
+	ThreadCreatedAt *string `json:"thread_created_at,omitempty" url:"thread_created_at,omitempty"`
 	// The total number of messages.
 	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
 	// The user ID associated with this thread.
@@ -199,6 +197,13 @@ func (m *MessageListResponse) GetRowCount() *int {
 		return nil
 	}
 	return m.RowCount
+}
+
+func (m *MessageListResponse) GetThreadCreatedAt() *string {
+	if m == nil {
+		return nil
+	}
+	return m.ThreadCreatedAt
 }
 
 func (m *MessageListResponse) GetTotalCount() *int {
@@ -354,26 +359,4 @@ func (t *ThreadListResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
-}
-
-type ThreadGetUserContextRequestMode string
-
-const (
-	ThreadGetUserContextRequestModeBasic   ThreadGetUserContextRequestMode = "basic"
-	ThreadGetUserContextRequestModeSummary ThreadGetUserContextRequestMode = "summary"
-)
-
-func NewThreadGetUserContextRequestModeFromString(s string) (ThreadGetUserContextRequestMode, error) {
-	switch s {
-	case "basic":
-		return ThreadGetUserContextRequestModeBasic, nil
-	case "summary":
-		return ThreadGetUserContextRequestModeSummary, nil
-	}
-	var t ThreadGetUserContextRequestMode
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (t ThreadGetUserContextRequestMode) Ptr() *ThreadGetUserContextRequestMode {
-	return &t
 }

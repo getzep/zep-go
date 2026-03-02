@@ -149,7 +149,7 @@ func (c *Client) Add(
 	return response.Body, nil
 }
 
-// Add data to the graph in batch mode, processing episodes concurrently. Use only for data that is insensitive to processing order.
+// Add data to the graph in batch mode. Episodes are processed sequentially in the order provided.
 func (c *Client) AddBatch(
 	ctx context.Context,
 	request *v3.AddDataBatchRequest,
@@ -224,6 +224,24 @@ func (c *Client) ListAll(
 	opts ...option.RequestOption,
 ) (*v3.GraphListResponse, error) {
 	response, err := c.WithRawResponse.ListAll(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Detects structural patterns in a knowledge graph including relationship frequencies,
+// multi-hop paths, co-occurrences, hubs, and clusters.
+func (c *Client) DetectPatterns(
+	ctx context.Context,
+	request *v3.DetectPatternsRequest,
+	opts ...option.RequestOption,
+) (*v3.DetectPatternsResponse, error) {
+	response, err := c.WithRawResponse.DetectPatterns(
 		ctx,
 		request,
 		opts...,
