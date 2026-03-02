@@ -256,118 +256,6 @@ func (a *AddTripleResponse) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ApidataDetectPatternsResponse struct {
-	// Statistics about the detection run
-	Metadata *PatternMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// Detected patterns, sorted by weighted_score descending
-	Patterns []*PatternResult `json:"patterns,omitempty" url:"patterns,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataDetectPatternsResponse) GetMetadata() *PatternMetadata {
-	if a == nil {
-		return nil
-	}
-	return a.Metadata
-}
-
-func (a *ApidataDetectPatternsResponse) GetPatterns() []*PatternResult {
-	if a == nil {
-		return nil
-	}
-	return a.Patterns
-}
-
-func (a *ApidataDetectPatternsResponse) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataDetectPatternsResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataDetectPatternsResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataDetectPatternsResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataDetectPatternsResponse) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
-type ApidataPatternExample struct {
-	// Edge UUIDs involved in this instance
-	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
-	// Node UUIDs involved in this instance
-	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataPatternExample) GetEdgeUUIDs() []string {
-	if a == nil {
-		return nil
-	}
-	return a.EdgeUUIDs
-}
-
-func (a *ApidataPatternExample) GetNodeUUIDs() []string {
-	if a == nil {
-		return nil
-	}
-	return a.NodeUUIDs
-}
-
-func (a *ApidataPatternExample) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataPatternExample) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataPatternExample
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataPatternExample(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataPatternExample) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
 type CloneGraphResponse struct {
 	// graph_id is the ID of the cloned graph
 	GraphID *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
@@ -704,6 +592,62 @@ func (d *DetectConfig) UnmarshalJSON(data []byte) error {
 }
 
 func (d *DetectConfig) String() string {
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+type DetectPatternsResponse struct {
+	// Statistics about the detection run
+	Metadata *PatternMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Detected patterns, sorted by weighted_score descending
+	Patterns []*PatternResult `json:"patterns,omitempty" url:"patterns,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DetectPatternsResponse) GetMetadata() *PatternMetadata {
+	if d == nil {
+		return nil
+	}
+	return d.Metadata
+}
+
+func (d *DetectPatternsResponse) GetPatterns() []*PatternResult {
+	if d == nil {
+		return nil
+	}
+	return d.Patterns
+}
+
+func (d *DetectPatternsResponse) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DetectPatternsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler DetectPatternsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DetectPatternsResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DetectPatternsResponse) String() string {
 	if len(d.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
 			return value
@@ -1500,6 +1444,62 @@ func (p *PathDetectConfig) String() string {
 	return fmt.Sprintf("%#v", p)
 }
 
+type PatternExample struct {
+	// Edge UUIDs involved in this instance
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Node UUIDs involved in this instance
+	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PatternExample) GetEdgeUUIDs() []string {
+	if p == nil {
+		return nil
+	}
+	return p.EdgeUUIDs
+}
+
+func (p *PatternExample) GetNodeUUIDs() []string {
+	if p == nil {
+		return nil
+	}
+	return p.NodeUUIDs
+}
+
+func (p *PatternExample) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PatternExample) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatternExample
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PatternExample(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PatternExample) String() string {
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type PatternMetadata struct {
 	// Number of edges analyzed
 	EdgesAnalyzed *int `json:"edges_analyzed,omitempty" url:"edges_analyzed,omitempty"`
@@ -1571,7 +1571,7 @@ type PatternResult struct {
 	// Edge types in the pattern structure
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
 	// Example instances (only populated when include_examples is true)
-	Examples []*ApidataPatternExample `json:"examples,omitempty" url:"examples,omitempty"`
+	Examples []*PatternExample `json:"examples,omitempty" url:"examples,omitempty"`
 	// Node labels in the pattern structure
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 	// Raw occurrence count (always unweighted)
@@ -1599,7 +1599,7 @@ func (p *PatternResult) GetEdgeTypes() []string {
 	return p.EdgeTypes
 }
 
-func (p *PatternResult) GetExamples() []*ApidataPatternExample {
+func (p *PatternResult) GetExamples() []*PatternExample {
 	if p == nil {
 		return nil
 	}

@@ -240,7 +240,7 @@ func (c *Client) DetectPatterns(
 	ctx context.Context,
 	request *v3.DetectPatternsRequest,
 	opts ...option.RequestOption,
-) (*v3.ApidataDetectPatternsResponse, error) {
+) (*v3.DetectPatternsResponse, error) {
 	response, err := c.WithRawResponse.DetectPatterns(
 		ctx,
 		request,

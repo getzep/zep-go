@@ -659,7 +659,7 @@ func (r *RawClient) DetectPatterns(
 	ctx context.Context,
 	request *v3.DetectPatternsRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ApidataDetectPatternsResponse], error) {
+) (*core.Response[*v3.DetectPatternsResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -694,7 +694,7 @@ func (r *RawClient) DetectPatterns(
 			}
 		},
 	}
-	var response *v3.ApidataDetectPatternsResponse
+	var response *v3.DetectPatternsResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -713,7 +713,7 @@ func (r *RawClient) DetectPatterns(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ApidataDetectPatternsResponse]{
+	return &core.Response[*v3.DetectPatternsResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
