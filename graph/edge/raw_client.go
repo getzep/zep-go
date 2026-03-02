@@ -6,6 +6,7 @@ import (
 	context "context"
 	v3 "github.com/getzep/zep-go/v3"
 	core "github.com/getzep/zep-go/v3/core"
+	graph "github.com/getzep/zep-go/v3/graph"
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
@@ -236,6 +237,11 @@ func (r *RawClient) Delete(
 				APIError: apiError,
 			}
 		},
+		404: func(apiError *core.APIError) error {
+			return &v3.NotFoundError{
+				APIError: apiError,
+			}
+		},
 		500: func(apiError *core.APIError) error {
 			return &v3.InternalServerError{
 				APIError: apiError,
@@ -261,6 +267,71 @@ func (r *RawClient) Delete(
 		return nil, err
 	}
 	return &core.Response[*v3.SuccessResponse]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) Update(
+	ctx context.Context,
+	// Edge UUID
+	uuid string,
+	request *graph.UpdateEdgeRequest,
+	opts ...option.RequestOption,
+) (*core.Response[*v3.EntityEdge], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graph/edge/%v",
+		uuid,
+	)
+	headers := internal.MergeHeaders(
+		r.header.Clone(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v3.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		404: func(apiError *core.APIError) error {
+			return &v3.NotFoundError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v3.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+	var response *v3.EntityEdge
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPatch,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
