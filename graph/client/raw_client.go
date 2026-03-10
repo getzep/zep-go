@@ -59,6 +59,11 @@ func (r *RawClient) ListCustomInstructions(
 				APIError: apiError,
 			}
 		},
+		404: func(apiError *core.APIError) error {
+			return &v3.NotFoundError{
+				APIError: apiError,
+			}
+		},
 		500: func(apiError *core.APIError) error {
 			return &v3.InternalServerError{
 				APIError: apiError,
@@ -110,6 +115,11 @@ func (r *RawClient) AddCustomInstructions(
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
 			return &v3.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		404: func(apiError *core.APIError) error {
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
@@ -165,6 +175,11 @@ func (r *RawClient) DeleteCustomInstructions(
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
 			return &v3.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		404: func(apiError *core.APIError) error {
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
@@ -285,6 +300,11 @@ func (r *RawClient) SetEntityTypesInternal(
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
 			return &v3.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		404: func(apiError *core.APIError) error {
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
