@@ -236,6 +236,8 @@ func (c *Client) ListAll(
 
 // Detects structural patterns in a knowledge graph including relationship frequencies,
 // multi-hop paths, co-occurrences, hubs, and clusters.
+// When a query is provided, uses hybrid search to discover seed nodes,
+// detects triple-frequency patterns, and returns resolved edges ranked by relevance.
 func (c *Client) DetectPatterns(
 	ctx context.Context,
 	request *v3.DetectPatternsRequest,

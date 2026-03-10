@@ -108,23 +108,29 @@ type DeleteCustomInstructionsRequest struct {
 
 type DetectPatternsRequest struct {
 	// Which pattern types to detect with type-specific configuration.
-	// Omit to detect all types with defaults.
+	// Omit to detect all types with defaults. Ignored when query is set.
 	Detect *DetectConfig `json:"detect,omitempty" url:"-"`
+	// Max resolved edges per pattern. Default: 10, Max: 100. Only used with query.
+	EdgeLimit *int `json:"edge_limit,omitempty" url:"-"`
 	// Graph ID when detecting patterns on a named graph
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
-	// Include example node/edge UUIDs per pattern. Default: false
-	IncludeExamples *bool `json:"include_examples,omitempty" url:"-"`
 	// Max patterns to return. Default: 50, Max: 200
 	Limit *int `json:"limit,omitempty" url:"-"`
 	// Minimum occurrence count to report a pattern. Default: 2
 	MinOccurrences *int `json:"min_occurrences,omitempty" url:"-"`
+	// Search query for discovering seed nodes via hybrid search.
+	// When set, forces triple-frequency detection only and enables edge resolution
+	// with cross-encoder reranking. Mutually exclusive with seeds.
+	Query *string `json:"query,omitempty" url:"-"`
+	// Max seed nodes from search. Default: 10, Max: 50. Only used with query.
+	QueryLimit *int `json:"query_limit,omitempty" url:"-"`
 	// Exponential half-life decay applied to edge created_at timestamps.
 	// Valid values: none, 7_days, 30_days, 90_days. Default: none
 	RecencyWeight *RecencyWeight `json:"recency_weight,omitempty" url:"-"`
 	// Filters which edges/nodes participate in pattern detection.
 	// Reuses the same filter format as /graph/search.
 	SearchFilters *SearchFilters `json:"search_filters,omitempty" url:"-"`
-	// Seed selection. If omitted, analyzes the entire graph.
+	// Seed selection. If omitted, analyzes the entire graph. Mutually exclusive with query.
 	Seeds *PatternSeeds `json:"seeds,omitempty" url:"-"`
 	// User ID when detecting patterns on a user graph
 	UserID *string `json:"user_id,omitempty" url:"-"`
@@ -466,7 +472,7 @@ func (c *CustomInstruction) String() string {
 type DateFilter struct {
 	// Comparison operator for date filter
 	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Date to filter on. Required for non-null operators (=, <>, >, <, >=, <=).
+	// Date to filter on. Required for non-null operators (=, \<\>, \>, \<, \>=, \<=).
 	// Should be omitted for IS NULL and IS NOT NULL operators.
 	Date *string `json:"date,omitempty" url:"date,omitempty"`
 
@@ -606,6 +612,8 @@ func (d *DetectConfig) String() string {
 type DetectPatternsResponse struct {
 	// Statistics about the detection run
 	Metadata *PatternMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Resolved nodes referenced by pattern edges (deduplicated). Only populated when query is set.
+	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
 	// Detected patterns, sorted by weighted_score descending
 	Patterns []*PatternResult `json:"patterns,omitempty" url:"patterns,omitempty"`
 
@@ -618,6 +626,13 @@ func (d *DetectPatternsResponse) GetMetadata() *PatternMetadata {
 		return nil
 	}
 	return d.Metadata
+}
+
+func (d *DetectPatternsResponse) GetNodes() []*EntityNode {
+	if d == nil {
+		return nil
+	}
+	return d.Nodes
 }
 
 func (d *DetectPatternsResponse) GetPatterns() []*PatternResult {
@@ -1444,62 +1459,6 @@ func (p *PathDetectConfig) String() string {
 	return fmt.Sprintf("%#v", p)
 }
 
-type PatternExample struct {
-	// Edge UUIDs involved in this instance
-	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
-	// Node UUIDs involved in this instance
-	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (p *PatternExample) GetEdgeUUIDs() []string {
-	if p == nil {
-		return nil
-	}
-	return p.EdgeUUIDs
-}
-
-func (p *PatternExample) GetNodeUUIDs() []string {
-	if p == nil {
-		return nil
-	}
-	return p.NodeUUIDs
-}
-
-func (p *PatternExample) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PatternExample) UnmarshalJSON(data []byte) error {
-	type unmarshaler PatternExample
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PatternExample(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-	p.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PatternExample) String() string {
-	if len(p.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
 type PatternMetadata struct {
 	// Number of edges analyzed
 	EdgesAnalyzed *int `json:"edges_analyzed,omitempty" url:"edges_analyzed,omitempty"`
@@ -1570,8 +1529,9 @@ type PatternResult struct {
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
 	// Edge types in the pattern structure
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// Example instances (only populated when include_examples is true)
-	Examples []*PatternExample `json:"examples,omitempty" url:"examples,omitempty"`
+	// Resolved edges for this pattern, sorted by cross-encoder relevance.
+	// Only populated when query is set.
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
 	// Node labels in the pattern structure
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 	// Raw occurrence count (always unweighted)
@@ -1599,11 +1559,11 @@ func (p *PatternResult) GetEdgeTypes() []string {
 	return p.EdgeTypes
 }
 
-func (p *PatternResult) GetExamples() []*PatternExample {
+func (p *PatternResult) GetEdges() []*EntityEdge {
 	if p == nil {
 		return nil
 	}
-	return p.Examples
+	return p.Edges
 }
 
 func (p *PatternResult) GetNodeLabels() []string {
@@ -1738,7 +1698,7 @@ type PropertyFilter struct {
 	PropertyName string `json:"property_name" url:"property_name"`
 	// Property value to match on. Accepted types: string, int, float64, bool, or nil.
 	// Invalid types (e.g., arrays, objects) will be rejected by validation.
-	// Must be non-nil for non-null operators (=, <>, >, <, >=, <=).
+	// Must be non-nil for non-null operators (=, \<\>, \>, \<, \>=, \<=).
 	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -1863,8 +1823,8 @@ type SearchFilters struct {
 	// 2D array of date filters for the created_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
-	// Example: [[{">", date1}, {"<", date2}], [{"=", date3}]]
-	// This translates to: (created_at > date1 AND created_at < date2) OR (created_at = date3)
+	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
+	// This translates to: (created_at \> date1 AND created_at \< date2) OR (created_at = date3)
 	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// List of edge types to filter on
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
@@ -1877,14 +1837,14 @@ type SearchFilters struct {
 	// 2D array of date filters for the expired_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
-	// Example: [[{">", date1}, {"<", date2}], [{"=", date3}]]
-	// This translates to: (expired_at > date1 AND expired_at < date2) OR (expired_at = date3)
+	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
+	// This translates to: (expired_at \> date1 AND expired_at \< date2) OR (expired_at = date3)
 	ExpiredAt [][]*DateFilter `json:"expired_at,omitempty" url:"expired_at,omitempty"`
 	// 2D array of date filters for the invalid_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
-	// Example: [[{">", date1}, {"<", date2}], [{"=", date3}]]
-	// This translates to: (invalid_at > date1 AND invalid_at < date2) OR (invalid_at = date3)
+	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
+	// This translates to: (invalid_at \> date1 AND invalid_at \< date2) OR (invalid_at = date3)
 	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// List of node labels to filter on
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
@@ -1893,8 +1853,8 @@ type SearchFilters struct {
 	// 2D array of date filters for the valid_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
-	// Example: [[{">", date1}, {"<", date2}], [{"=", date3}]]
-	// This translates to: (valid_at > date1 AND valid_at < date2) OR (valid_at = date3)
+	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
+	// This translates to: (valid_at \> date1 AND valid_at \< date2) OR (valid_at = date3)
 	ValidAt [][]*DateFilter `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	extraProperties map[string]interface{}
