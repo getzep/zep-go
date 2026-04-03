@@ -8,7 +8,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/getzep/zep-go/v3/core"
+	"github.com/getzep/zep-go/v2/core"
 )
 
 // ErrorDecoder decodes *http.Response errors and returns a

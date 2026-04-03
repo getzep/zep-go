@@ -5,18 +5,16 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	internal "github.com/getzep/zep-go/v3/internal"
+	internal "github.com/getzep/zep-go/v2/internal"
 )
 
 type AddDataRequest struct {
 	CreatedAt *string `json:"created_at,omitempty" url:"-"`
 	Data      string  `json:"data" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
-	GraphID *string `json:"graph_id,omitempty" url:"-"`
-	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, or booleans.
-	Metadata          map[string]interface{} `json:"metadata,omitempty" url:"-"`
-	SourceDescription *string                `json:"source_description,omitempty" url:"-"`
-	Type              GraphDataType          `json:"type" url:"-"`
+	GraphID           *string       `json:"graph_id,omitempty" url:"-"`
+	SourceDescription *string       `json:"source_description,omitempty" url:"-"`
+	Type              GraphDataType `json:"type" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -55,9 +53,6 @@ type AddTripleRequest struct {
 	GraphID  *string `json:"graph_id,omitempty" url:"-"`
 	// The time (if any) at which the fact stops being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
-	// Optional metadata key-value pairs for the shadow episode created for this fact triple.
-	// Max 10 keys. Values must be strings, numbers, or booleans.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 	// Additional attributes of the source node. Values must be scalar types (string, number, boolean, or null).
 	// Nested objects and arrays are not allowed.
 	SourceNodeAttributes map[string]interface{} `json:"source_node_attributes,omitempty" url:"-"`
@@ -1838,7 +1833,7 @@ type PatternSeeds struct {
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
 	// All nodes with these labels become seeds
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
-	// Specific node UUIDs to analyze around. Max 10000 to align with pattern detection seed limits.
+	// Specific node UUIDs to analyze around
 	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
 
 	extraProperties map[string]interface{}

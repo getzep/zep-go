@@ -4,10 +4,10 @@ package client
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
+	option "github.com/getzep/zep-go/v2/option"
 	http "net/http"
 )
 
@@ -32,9 +32,9 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 
 func (r *RawClient) ListAll(
 	ctx context.Context,
-	request *v3.ThreadListAllRequest,
+	request *v2.ThreadListAllRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ThreadListResponse], error) {
+) (*core.Response[*v2.ThreadListResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -55,17 +55,17 @@ func (r *RawClient) ListAll(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.ThreadListResponse
+	var response *v2.ThreadListResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -83,7 +83,7 @@ func (r *RawClient) ListAll(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ThreadListResponse]{
+	return &core.Response[*v2.ThreadListResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -92,9 +92,9 @@ func (r *RawClient) ListAll(
 
 func (r *RawClient) Create(
 	ctx context.Context,
-	request *v3.CreateThreadRequest,
+	request *v2.CreateThreadRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.Thread], error) {
+) (*core.Response[*v2.Thread], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -109,17 +109,17 @@ func (r *RawClient) Create(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.Thread
+	var response *v2.Thread
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -138,7 +138,7 @@ func (r *RawClient) Create(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.Thread]{
+	return &core.Response[*v2.Thread]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -150,7 +150,7 @@ func (r *RawClient) Delete(
 	// The ID of the thread for which memory should be deleted.
 	threadID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.SuccessResponse], error) {
+) (*core.Response[*v2.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -167,17 +167,17 @@ func (r *RawClient) Delete(
 	)
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.SuccessResponse
+	var response *v2.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -195,7 +195,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.SuccessResponse]{
+	return &core.Response[*v2.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -206,9 +206,9 @@ func (r *RawClient) GetUserContext(
 	ctx context.Context,
 	// The ID of the current thread (for which context is being retrieved).
 	threadID string,
-	request *v3.ThreadGetUserContextRequest,
+	request *v2.ThreadGetUserContextRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ThreadContextResponse], error) {
+) (*core.Response[*v2.ThreadContextResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -232,17 +232,17 @@ func (r *RawClient) GetUserContext(
 	)
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.ThreadContextResponse
+	var response *v2.ThreadContextResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -260,7 +260,7 @@ func (r *RawClient) GetUserContext(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ThreadContextResponse]{
+	return &core.Response[*v2.ThreadContextResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -271,9 +271,9 @@ func (r *RawClient) Get(
 	ctx context.Context,
 	// Thread ID
 	threadID string,
-	request *v3.ThreadGetRequest,
+	request *v2.ThreadGetRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.MessageListResponse], error) {
+) (*core.Response[*v2.MessageListResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -297,17 +297,17 @@ func (r *RawClient) Get(
 	)
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.MessageListResponse
+	var response *v2.MessageListResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -325,7 +325,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.MessageListResponse]{
+	return &core.Response[*v2.MessageListResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -336,9 +336,9 @@ func (r *RawClient) AddMessages(
 	ctx context.Context,
 	// The ID of the thread to which messages should be added.
 	threadID string,
-	request *v3.AddThreadMessagesRequest,
+	request *v2.AddThreadMessagesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.AddThreadMessagesResponse], error) {
+) (*core.Response[*v2.AddThreadMessagesResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -355,12 +355,12 @@ func (r *RawClient) AddMessages(
 	)
 	errorCodes := internal.ErrorCodes{
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.AddThreadMessagesResponse
+	var response *v2.AddThreadMessagesResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -379,7 +379,7 @@ func (r *RawClient) AddMessages(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.AddThreadMessagesResponse]{
+	return &core.Response[*v2.AddThreadMessagesResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -390,9 +390,9 @@ func (r *RawClient) AddMessagesBatch(
 	ctx context.Context,
 	// The ID of the thread to which messages should be added.
 	threadID string,
-	request *v3.AddThreadMessagesRequest,
+	request *v2.AddThreadMessagesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.AddThreadMessagesResponse], error) {
+) (*core.Response[*v2.AddThreadMessagesResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -409,12 +409,12 @@ func (r *RawClient) AddMessagesBatch(
 	)
 	errorCodes := internal.ErrorCodes{
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.AddThreadMessagesResponse
+	var response *v2.AddThreadMessagesResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -433,7 +433,7 @@ func (r *RawClient) AddMessagesBatch(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.AddThreadMessagesResponse]{
+	return &core.Response[*v2.AddThreadMessagesResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

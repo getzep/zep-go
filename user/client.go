@@ -4,10 +4,10 @@ package user
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
+	option "github.com/getzep/zep-go/v2/option"
 	http "net/http"
 	os "os"
 )
@@ -41,9 +41,9 @@ func NewClient(opts ...option.RequestOption) *Client {
 // Lists all user summary instructions for a project, user.
 func (c *Client) ListUserSummaryInstructions(
 	ctx context.Context,
-	request *v3.UserListUserSummaryInstructionsRequest,
+	request *v2.UserListUserSummaryInstructionsRequest,
 	opts ...option.RequestOption,
-) (*v3.ListUserInstructionsResponse, error) {
+) (*v2.ListUserInstructionsResponse, error) {
 	response, err := c.WithRawResponse.ListUserSummaryInstructions(
 		ctx,
 		request,
@@ -58,9 +58,9 @@ func (c *Client) ListUserSummaryInstructions(
 // Adds new summary instructions for users graphs without removing existing ones. If user_ids is empty, adds to project-wide default instructions.
 func (c *Client) AddUserSummaryInstructions(
 	ctx context.Context,
-	request *v3.AddUserInstructionsRequest,
+	request *v2.AddUserInstructionsRequest,
 	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+) (*v2.SuccessResponse, error) {
 	response, err := c.WithRawResponse.AddUserSummaryInstructions(
 		ctx,
 		request,
@@ -75,9 +75,9 @@ func (c *Client) AddUserSummaryInstructions(
 // Deletes user summary/instructions for users or project wide defaults.
 func (c *Client) DeleteUserSummaryInstructions(
 	ctx context.Context,
-	request *v3.DeleteUserInstructionsRequest,
+	request *v2.DeleteUserInstructionsRequest,
 	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+) (*v2.SuccessResponse, error) {
 	response, err := c.WithRawResponse.DeleteUserSummaryInstructions(
 		ctx,
 		request,
@@ -92,9 +92,9 @@ func (c *Client) DeleteUserSummaryInstructions(
 // Adds a user.
 func (c *Client) Add(
 	ctx context.Context,
-	request *v3.CreateUserRequest,
+	request *v2.CreateUserRequest,
 	opts ...option.RequestOption,
-) (*v3.User, error) {
+) (*v2.User, error) {
 	response, err := c.WithRawResponse.Add(
 		ctx,
 		request,
@@ -109,9 +109,9 @@ func (c *Client) Add(
 // Returns all users.
 func (c *Client) ListOrdered(
 	ctx context.Context,
-	request *v3.UserListOrderedRequest,
+	request *v2.UserListOrderedRequest,
 	opts ...option.RequestOption,
-) (*v3.UserListResponse, error) {
+) (*v2.UserListResponse, error) {
 	response, err := c.WithRawResponse.ListOrdered(
 		ctx,
 		request,
@@ -129,7 +129,7 @@ func (c *Client) Get(
 	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
-) (*v3.User, error) {
+) (*v2.User, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		userID,
@@ -147,7 +147,7 @@ func (c *Client) Delete(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+) (*v2.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		userID,
@@ -164,9 +164,9 @@ func (c *Client) Update(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v3.UpdateUserRequest,
+	request *v2.UpdateUserRequest,
 	opts ...option.RequestOption,
-) (*v3.User, error) {
+) (*v2.User, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		userID,
@@ -185,7 +185,7 @@ func (c *Client) GetNode(
 	// The user_id of the user to get the node for.
 	userID string,
 	opts ...option.RequestOption,
-) (*v3.UserNodeResponse, error) {
+) (*v2.UserNodeResponse, error) {
 	response, err := c.WithRawResponse.GetNode(
 		ctx,
 		userID,
@@ -203,7 +203,7 @@ func (c *Client) GetThreads(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) ([]*v3.Thread, error) {
+) ([]*v2.Thread, error) {
 	response, err := c.WithRawResponse.GetThreads(
 		ctx,
 		userID,
@@ -221,7 +221,7 @@ func (c *Client) Warm(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+) (*v2.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Warm(
 		ctx,
 		userID,

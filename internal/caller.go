@@ -12,7 +12,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/getzep/zep-go/v3/core"
+	"github.com/getzep/zep-go/v2/core"
 )
 
 const (

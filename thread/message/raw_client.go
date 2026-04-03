@@ -4,11 +4,11 @@ package message
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
-	thread "github.com/getzep/zep-go/v3/thread"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
+	option "github.com/getzep/zep-go/v2/option"
+	thread "github.com/getzep/zep-go/v2/thread"
 	http "net/http"
 )
 
@@ -37,7 +37,7 @@ func (r *RawClient) Update(
 	messageUUID string,
 	request *thread.ThreadMessageUpdate,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.Message], error) {
+) (*core.Response[*v2.Message], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -55,17 +55,17 @@ func (r *RawClient) Update(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.Message
+	var response *v2.Message
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -84,7 +84,7 @@ func (r *RawClient) Update(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.Message]{
+	return &core.Response[*v2.Message]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

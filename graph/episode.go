@@ -11,3 +11,8 @@ type EpisodeGetByUserIDRequest struct {
 	// The number of most recent episodes entries to retrieve.
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
+
+type UpdateEpisodeRequest struct {
+	// Updated metadata. Merged with existing metadata: supplied keys overwrite/add, keys set to null are removed. Maximum 10 keys. Values must be scalars (string, number, boolean, or null).
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
+}

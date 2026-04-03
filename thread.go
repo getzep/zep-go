@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	internal "github.com/getzep/zep-go/v3/internal"
+	internal "github.com/getzep/zep-go/v2/internal"
 )
 
 type CreateThreadRequest struct {
@@ -19,7 +19,7 @@ type ThreadGetRequest struct {
 	// Limit the number of results returned
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Cursor for pagination
-	Cursor *int64 `json:"-" url:"cursor,omitempty"`
+	Cursor *int `json:"-" url:"cursor,omitempty"`
 	// Number of most recent messages to return (overrides limit and cursor)
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }

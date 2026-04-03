@@ -4,11 +4,11 @@ package episode
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	graph "github.com/getzep/zep-go/v3/graph"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	graph "github.com/getzep/zep-go/v2/graph"
+	internal "github.com/getzep/zep-go/v2/internal"
+	option "github.com/getzep/zep-go/v2/option"
 	http "net/http"
 )
 
@@ -37,7 +37,7 @@ func (r *RawClient) GetByGraphID(
 	graphID string,
 	request *graph.EpisodeGetByGraphIDRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.EpisodeResponse], error) {
+) (*core.Response[*v2.EpisodeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -61,17 +61,17 @@ func (r *RawClient) GetByGraphID(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.EpisodeResponse
+	var response *v2.EpisodeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -89,7 +89,7 @@ func (r *RawClient) GetByGraphID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.EpisodeResponse]{
+	return &core.Response[*v2.EpisodeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -102,7 +102,7 @@ func (r *RawClient) GetByUserID(
 	userID string,
 	request *graph.EpisodeGetByUserIDRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.EpisodeResponse], error) {
+) (*core.Response[*v2.EpisodeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -126,17 +126,17 @@ func (r *RawClient) GetByUserID(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.EpisodeResponse
+	var response *v2.EpisodeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -154,7 +154,7 @@ func (r *RawClient) GetByUserID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.EpisodeResponse]{
+	return &core.Response[*v2.EpisodeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -166,7 +166,7 @@ func (r *RawClient) Get(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.Episode], error) {
+) (*core.Response[*v2.Episode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -183,17 +183,17 @@ func (r *RawClient) Get(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.Episode
+	var response *v2.Episode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -211,7 +211,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.Episode]{
+	return &core.Response[*v2.Episode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -223,7 +223,7 @@ func (r *RawClient) Delete(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.SuccessResponse], error) {
+) (*core.Response[*v2.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -240,22 +240,22 @@ func (r *RawClient) Delete(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.SuccessResponse
+	var response *v2.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -273,7 +273,77 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.SuccessResponse]{
+	return &core.Response[*v2.SuccessResponse]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) Update(
+	ctx context.Context,
+	// Episode UUID
+	uuid string,
+	request *graph.UpdateEpisodeRequest,
+	opts ...option.RequestOption,
+) (*core.Response[*v2.Episode], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graph/episodes/%v",
+		uuid,
+	)
+	headers := internal.MergeHeaders(
+		r.header.Clone(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v2.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		403: func(apiError *core.APIError) error {
+			return &v2.ForbiddenError{
+				APIError: apiError,
+			}
+		},
+		404: func(apiError *core.APIError) error {
+			return &v2.NotFoundError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v2.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+	var response *v2.Episode
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPatch,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*v2.Episode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -285,7 +355,7 @@ func (r *RawClient) GetNodesAndEdges(
 	// Episode uuid
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.EpisodeMentions], error) {
+) (*core.Response[*v2.EpisodeMentions], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -302,17 +372,17 @@ func (r *RawClient) GetNodesAndEdges(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.EpisodeMentions
+	var response *v2.EpisodeMentions
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -330,7 +400,7 @@ func (r *RawClient) GetNodesAndEdges(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.EpisodeMentions]{
+	return &core.Response[*v2.EpisodeMentions]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

@@ -5,7 +5,7 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	internal "github.com/getzep/zep-go/v3/internal"
+	internal "github.com/getzep/zep-go/v2/internal"
 )
 
 type APIError struct {
@@ -749,10 +749,9 @@ func (g *GraphCommunitiesRequest) String() string {
 type GraphDataType string
 
 const (
-	GraphDataTypeText       GraphDataType = "text"
-	GraphDataTypeJSON       GraphDataType = "json"
-	GraphDataTypeMessage    GraphDataType = "message"
-	GraphDataTypeFactTriple GraphDataType = "fact_triple"
+	GraphDataTypeText    GraphDataType = "text"
+	GraphDataTypeJSON    GraphDataType = "json"
+	GraphDataTypeMessage GraphDataType = "message"
 )
 
 func NewGraphDataTypeFromString(s string) (GraphDataType, error) {
@@ -763,8 +762,6 @@ func NewGraphDataTypeFromString(s string) (GraphDataType, error) {
 		return GraphDataTypeJSON, nil
 	case "message":
 		return GraphDataTypeMessage, nil
-	case "fact_triple":
-		return GraphDataTypeFactTriple, nil
 	}
 	var t GraphDataType
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -875,62 +872,6 @@ func (g *GraphNodesRequest) UnmarshalJSON(data []byte) error {
 }
 
 func (g *GraphNodesRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type GraphThemesRequest struct {
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphThemesRequest) GetLimit() *int {
-	if g == nil {
-		return nil
-	}
-	return g.Limit
-}
-
-func (g *GraphThemesRequest) GetUUIDCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UUIDCursor
-}
-
-func (g *GraphThemesRequest) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphThemesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphThemesRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphThemesRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphThemesRequest) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value

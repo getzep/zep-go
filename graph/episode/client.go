@@ -4,11 +4,11 @@ package episode
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	graph "github.com/getzep/zep-go/v3/graph"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	graph "github.com/getzep/zep-go/v2/graph"
+	internal "github.com/getzep/zep-go/v2/internal"
+	option "github.com/getzep/zep-go/v2/option"
 	http "net/http"
 	os "os"
 )
@@ -46,7 +46,7 @@ func (c *Client) GetByGraphID(
 	graphID string,
 	request *graph.EpisodeGetByGraphIDRequest,
 	opts ...option.RequestOption,
-) (*v3.EpisodeResponse, error) {
+) (*v2.EpisodeResponse, error) {
 	response, err := c.WithRawResponse.GetByGraphID(
 		ctx,
 		graphID,
@@ -66,7 +66,7 @@ func (c *Client) GetByUserID(
 	userID string,
 	request *graph.EpisodeGetByUserIDRequest,
 	opts ...option.RequestOption,
-) (*v3.EpisodeResponse, error) {
+) (*v2.EpisodeResponse, error) {
 	response, err := c.WithRawResponse.GetByUserID(
 		ctx,
 		userID,
@@ -85,7 +85,7 @@ func (c *Client) Get(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v3.Episode, error) {
+) (*v2.Episode, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		uuid,
@@ -103,10 +103,30 @@ func (c *Client) Delete(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+) (*v2.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		uuid,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Update episode metadata with merge semantics. Supplied keys overwrite or add to existing metadata; keys set to null are removed.
+func (c *Client) Update(
+	ctx context.Context,
+	// Episode UUID
+	uuid string,
+	request *graph.UpdateEpisodeRequest,
+	opts ...option.RequestOption,
+) (*v2.Episode, error) {
+	response, err := c.WithRawResponse.Update(
+		ctx,
+		uuid,
+		request,
 		opts...,
 	)
 	if err != nil {
@@ -121,7 +141,7 @@ func (c *Client) GetNodesAndEdges(
 	// Episode uuid
 	uuid string,
 	opts ...option.RequestOption,
-) (*v3.EpisodeMentions, error) {
+) (*v2.EpisodeMentions, error) {
 	response, err := c.WithRawResponse.GetNodesAndEdges(
 		ctx,
 		uuid,

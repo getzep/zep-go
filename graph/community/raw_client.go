@@ -4,10 +4,10 @@ package community
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
+	option "github.com/getzep/zep-go/v2/option"
 	http "net/http"
 )
 
@@ -34,9 +34,9 @@ func (r *RawClient) GetByGraphID(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v3.GraphCommunitiesRequest,
+	request *v2.GraphCommunitiesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v3.CommunityNode], error) {
+) (*core.Response[[]*v2.CommunityNode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -53,22 +53,22 @@ func (r *RawClient) GetByGraphID(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response []*v3.CommunityNode
+	var response []*v2.CommunityNode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -87,7 +87,7 @@ func (r *RawClient) GetByGraphID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.CommunityNode]{
+	return &core.Response[[]*v2.CommunityNode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -98,9 +98,9 @@ func (r *RawClient) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v3.GraphCommunitiesRequest,
+	request *v2.GraphCommunitiesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v3.CommunityNode], error) {
+) (*core.Response[[]*v2.CommunityNode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -117,22 +117,22 @@ func (r *RawClient) GetByUserID(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response []*v3.CommunityNode
+	var response []*v2.CommunityNode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -151,7 +151,7 @@ func (r *RawClient) GetByUserID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.CommunityNode]{
+	return &core.Response[[]*v2.CommunityNode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -163,7 +163,7 @@ func (r *RawClient) Get(
 	// Community UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.CommunityNode], error) {
+) (*core.Response[*v2.CommunityNode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -180,22 +180,22 @@ func (r *RawClient) Get(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.CommunityNode
+	var response *v2.CommunityNode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -213,7 +213,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.CommunityNode]{
+	return &core.Response[*v2.CommunityNode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

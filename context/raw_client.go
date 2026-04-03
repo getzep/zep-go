@@ -4,10 +4,10 @@ package context
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
+	option "github.com/getzep/zep-go/v2/option"
 	http "net/http"
 )
 
@@ -33,7 +33,7 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 func (r *RawClient) ListContextTemplates(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ListContextTemplatesResponse], error) {
+) (*core.Response[*v2.ListContextTemplatesResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -47,17 +47,17 @@ func (r *RawClient) ListContextTemplates(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.ListContextTemplatesResponse
+	var response *v2.ListContextTemplatesResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -75,7 +75,7 @@ func (r *RawClient) ListContextTemplates(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ListContextTemplatesResponse]{
+	return &core.Response[*v2.ListContextTemplatesResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -84,9 +84,9 @@ func (r *RawClient) ListContextTemplates(
 
 func (r *RawClient) CreateContextTemplate(
 	ctx context.Context,
-	request *v3.CreateContextTemplateRequest,
+	request *v2.CreateContextTemplateRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ContextTemplateResponse], error) {
+) (*core.Response[*v2.ContextTemplateResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -101,17 +101,17 @@ func (r *RawClient) CreateContextTemplate(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.ContextTemplateResponse
+	var response *v2.ContextTemplateResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -130,7 +130,7 @@ func (r *RawClient) CreateContextTemplate(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ContextTemplateResponse]{
+	return &core.Response[*v2.ContextTemplateResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -142,7 +142,7 @@ func (r *RawClient) GetContextTemplate(
 	// Template ID
 	templateID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ContextTemplateResponse], error) {
+) (*core.Response[*v2.ContextTemplateResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -159,22 +159,22 @@ func (r *RawClient) GetContextTemplate(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.ContextTemplateResponse
+	var response *v2.ContextTemplateResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -192,7 +192,7 @@ func (r *RawClient) GetContextTemplate(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ContextTemplateResponse]{
+	return &core.Response[*v2.ContextTemplateResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -203,9 +203,9 @@ func (r *RawClient) UpdateContextTemplate(
 	ctx context.Context,
 	// Template ID
 	templateID string,
-	request *v3.UpdateContextTemplateRequest,
+	request *v2.UpdateContextTemplateRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ContextTemplateResponse], error) {
+) (*core.Response[*v2.ContextTemplateResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -223,22 +223,22 @@ func (r *RawClient) UpdateContextTemplate(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.ContextTemplateResponse
+	var response *v2.ContextTemplateResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -257,7 +257,7 @@ func (r *RawClient) UpdateContextTemplate(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ContextTemplateResponse]{
+	return &core.Response[*v2.ContextTemplateResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -269,7 +269,7 @@ func (r *RawClient) DeleteContextTemplate(
 	// Template ID
 	templateID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.SuccessResponse], error) {
+) (*core.Response[*v2.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -286,22 +286,22 @@ func (r *RawClient) DeleteContextTemplate(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
+			return &v2.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
+			return &v2.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
+			return &v2.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v3.SuccessResponse
+	var response *v2.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -319,7 +319,7 @@ func (r *RawClient) DeleteContextTemplate(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.SuccessResponse]{
+	return &core.Response[*v2.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

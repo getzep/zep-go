@@ -4,10 +4,10 @@ package context
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
+	v2 "github.com/getzep/zep-go/v2"
+	core "github.com/getzep/zep-go/v2/core"
+	internal "github.com/getzep/zep-go/v2/internal"
+	option "github.com/getzep/zep-go/v2/option"
 	http "net/http"
 	os "os"
 )
@@ -42,7 +42,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) ListContextTemplates(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) (*v3.ListContextTemplatesResponse, error) {
+) (*v2.ListContextTemplatesResponse, error) {
 	response, err := c.WithRawResponse.ListContextTemplates(
 		ctx,
 		opts...,
@@ -56,9 +56,9 @@ func (c *Client) ListContextTemplates(
 // Creates a new context template.
 func (c *Client) CreateContextTemplate(
 	ctx context.Context,
-	request *v3.CreateContextTemplateRequest,
+	request *v2.CreateContextTemplateRequest,
 	opts ...option.RequestOption,
-) (*v3.ContextTemplateResponse, error) {
+) (*v2.ContextTemplateResponse, error) {
 	response, err := c.WithRawResponse.CreateContextTemplate(
 		ctx,
 		request,
@@ -76,7 +76,7 @@ func (c *Client) GetContextTemplate(
 	// Template ID
 	templateID string,
 	opts ...option.RequestOption,
-) (*v3.ContextTemplateResponse, error) {
+) (*v2.ContextTemplateResponse, error) {
 	response, err := c.WithRawResponse.GetContextTemplate(
 		ctx,
 		templateID,
@@ -93,9 +93,9 @@ func (c *Client) UpdateContextTemplate(
 	ctx context.Context,
 	// Template ID
 	templateID string,
-	request *v3.UpdateContextTemplateRequest,
+	request *v2.UpdateContextTemplateRequest,
 	opts ...option.RequestOption,
-) (*v3.ContextTemplateResponse, error) {
+) (*v2.ContextTemplateResponse, error) {
 	response, err := c.WithRawResponse.UpdateContextTemplate(
 		ctx,
 		templateID,
@@ -114,7 +114,7 @@ func (c *Client) DeleteContextTemplate(
 	// Template ID
 	templateID string,
 	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+) (*v2.SuccessResponse, error) {
 	response, err := c.WithRawResponse.DeleteContextTemplate(
 		ctx,
 		templateID,
