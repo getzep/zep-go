@@ -54,6 +54,117 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type CommunityNode struct {
+	// Additional attributes of the community node.
+	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// Creation time of the node
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// Labels associated with the node
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// Name of the node
+	Name string `json:"name" url:"name"`
+	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
+	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// Region summary of member nodes
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// UUID of the node
+	UUID string `json:"uuid" url:"uuid"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *CommunityNode) GetAttributes() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.Attributes
+}
+
+func (c *CommunityNode) GetCreatedAt() string {
+	if c == nil {
+		return ""
+	}
+	return c.CreatedAt
+}
+
+func (c *CommunityNode) GetLabels() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Labels
+}
+
+func (c *CommunityNode) GetName() string {
+	if c == nil {
+		return ""
+	}
+	return c.Name
+}
+
+func (c *CommunityNode) GetRelevance() *float64 {
+	if c == nil {
+		return nil
+	}
+	return c.Relevance
+}
+
+func (c *CommunityNode) GetScore() *float64 {
+	if c == nil {
+		return nil
+	}
+	return c.Score
+}
+
+func (c *CommunityNode) GetSummary() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Summary
+}
+
+func (c *CommunityNode) GetUUID() string {
+	if c == nil {
+		return ""
+	}
+	return c.UUID
+}
+
+func (c *CommunityNode) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CommunityNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler CommunityNode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CommunityNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CommunityNode) String() string {
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 type EntityEdge struct {
 	// Additional attributes of the edge. Dependent on edge types
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
@@ -72,6 +183,8 @@ type EntityEdge struct {
 	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
 	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
 	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// Scope of the edge (e.g. "entity", "maybe_related")
+	Scope *string `json:"scope,omitempty" url:"scope,omitempty"`
 	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// UUID of the source node
@@ -141,6 +254,13 @@ func (e *EntityEdge) GetRelevance() *float64 {
 		return nil
 	}
 	return e.Relevance
+}
+
+func (e *EntityEdge) GetScope() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Scope
 }
 
 func (e *EntityEdge) GetScore() *float64 {
@@ -568,6 +688,62 @@ func (e *EpisodeResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", e)
+}
+
+type GraphCommunitiesRequest struct {
+	// Maximum number of items to return
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphCommunitiesRequest) GetLimit() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Limit
+}
+
+func (g *GraphCommunitiesRequest) GetUUIDCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUIDCursor
+}
+
+func (g *GraphCommunitiesRequest) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphCommunitiesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphCommunitiesRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphCommunitiesRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphCommunitiesRequest) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
 }
 
 type GraphDataType string

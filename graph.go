@@ -12,9 +12,11 @@ type AddDataRequest struct {
 	CreatedAt *string `json:"created_at,omitempty" url:"-"`
 	Data      string  `json:"data" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
-	GraphID           *string       `json:"graph_id,omitempty" url:"-"`
-	SourceDescription *string       `json:"source_description,omitempty" url:"-"`
-	Type              GraphDataType `json:"type" url:"-"`
+	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
+	Metadata          map[string]interface{} `json:"metadata,omitempty" url:"-"`
+	SourceDescription *string                `json:"source_description,omitempty" url:"-"`
+	Type              GraphDataType          `json:"type" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -141,6 +143,8 @@ type GraphListAllRequest struct {
 	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
 	// Number of graphs to retrieve per page.
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
+	// Search term for filtering graphs by graph_id.
+	Search *string `json:"-" url:"search,omitempty"`
 	// Column to sort by (created_at, group_id, name).
 	OrderBy *string `json:"-" url:"order_by,omitempty"`
 	// Sort in ascending order.
@@ -176,7 +180,7 @@ type GraphSearchQuery struct {
 	Query string `json:"query" url:"-"`
 	// Defaults to RRF
 	Reranker *Reranker `json:"reranker,omitempty" url:"-"`
-	// Defaults to Edges. Communities will be added in the future.
+	// Defaults to Edges.
 	Scope *GraphSearchScope `json:"scope,omitempty" url:"-"`
 	// Search filters to apply to the search
 	SearchFilters *SearchFilters `json:"search_filters,omitempty" url:"-"`
@@ -386,6 +390,7 @@ const (
 	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
 	ComparisonOperatorIsNull           ComparisonOperator = "IS NULL"
 	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
+	ComparisonOperatorContains         ComparisonOperator = "CONTAINS"
 )
 
 func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
@@ -406,6 +411,8 @@ func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
 		return ComparisonOperatorIsNull, nil
 	case "IS NOT NULL":
 		return ComparisonOperatorIsNotNull, nil
+	case "CONTAINS":
+		return ComparisonOperatorContains, nil
 	}
 	var t ComparisonOperator
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -1007,10 +1014,12 @@ func (e *EntityTypeResponse) String() string {
 }
 
 type EpisodeData struct {
-	CreatedAt         *string       `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Data              string        `json:"data" url:"data"`
-	SourceDescription *string       `json:"source_description,omitempty" url:"source_description,omitempty"`
-	Type              GraphDataType `json:"type" url:"type"`
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Data      string  `json:"data" url:"data"`
+	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, or booleans.
+	Metadata          map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	SourceDescription *string                `json:"source_description,omitempty" url:"source_description,omitempty"`
+	Type              GraphDataType          `json:"type" url:"type"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -1028,6 +1037,13 @@ func (e *EpisodeData) GetData() string {
 		return ""
 	}
 	return e.Data
+}
+
+func (e *EpisodeData) GetMetadata() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.Metadata
 }
 
 func (e *EpisodeData) GetSourceDescription() *string {
@@ -1233,12 +1249,21 @@ func (g *GraphListResponse) String() string {
 }
 
 type GraphSearchResults struct {
-	Edges    []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
-	Episodes []*Episode    `json:"episodes,omitempty" url:"episodes,omitempty"`
-	Nodes    []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Communities []*CommunityNode `json:"communities,omitempty" url:"communities,omitempty"`
+	Edges       []*EntityEdge    `json:"edges,omitempty" url:"edges,omitempty"`
+	Episodes    []*Episode       `json:"episodes,omitempty" url:"episodes,omitempty"`
+	Nodes       []*EntityNode    `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Themes      []*CommunityNode `json:"themes,omitempty" url:"themes,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (g *GraphSearchResults) GetCommunities() []*CommunityNode {
+	if g == nil {
+		return nil
+	}
+	return g.Communities
 }
 
 func (g *GraphSearchResults) GetEdges() []*EntityEdge {
@@ -1260,6 +1285,13 @@ func (g *GraphSearchResults) GetNodes() []*EntityNode {
 		return nil
 	}
 	return g.Nodes
+}
+
+func (g *GraphSearchResults) GetThemes() []*CommunityNode {
+	if g == nil {
+		return nil
+	}
+	return g.Themes
 }
 
 func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
@@ -1297,9 +1329,11 @@ func (g *GraphSearchResults) String() string {
 type GraphSearchScope string
 
 const (
-	GraphSearchScopeEdges    GraphSearchScope = "edges"
-	GraphSearchScopeNodes    GraphSearchScope = "nodes"
-	GraphSearchScopeEpisodes GraphSearchScope = "episodes"
+	GraphSearchScopeEdges       GraphSearchScope = "edges"
+	GraphSearchScopeNodes       GraphSearchScope = "nodes"
+	GraphSearchScopeEpisodes    GraphSearchScope = "episodes"
+	GraphSearchScopeCommunities GraphSearchScope = "communities"
+	GraphSearchScopeThemes      GraphSearchScope = "themes"
 )
 
 func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
@@ -1310,12 +1344,39 @@ func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
 		return GraphSearchScopeNodes, nil
 	case "episodes":
 		return GraphSearchScopeEpisodes, nil
+	case "communities":
+		return GraphSearchScopeCommunities, nil
+	case "themes":
+		return GraphSearchScopeThemes, nil
 	}
 	var t GraphSearchScope
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
 func (g GraphSearchScope) Ptr() *GraphSearchScope {
+	return &g
+}
+
+// Logical operator: "and" or "or"
+type GraphitiMetadataFilterGroupType string
+
+const (
+	GraphitiMetadataFilterGroupTypeAnd GraphitiMetadataFilterGroupType = "and"
+	GraphitiMetadataFilterGroupTypeOr  GraphitiMetadataFilterGroupType = "or"
+)
+
+func NewGraphitiMetadataFilterGroupTypeFromString(s string) (GraphitiMetadataFilterGroupType, error) {
+	switch s {
+	case "and":
+		return GraphitiMetadataFilterGroupTypeAnd, nil
+	case "or":
+		return GraphitiMetadataFilterGroupTypeOr, nil
+	}
+	var t GraphitiMetadataFilterGroupType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphitiMetadataFilterGroupType) Ptr() *GraphitiMetadataFilterGroupType {
 	return &g
 }
 
@@ -1410,6 +1471,136 @@ func (l *ListCustomInstructionsResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
+}
+
+type MetadataFilterEntry struct {
+	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Nested group (set if this entry is a sub-expression)
+	Group *MetadataFilterGroup `json:"group,omitempty" url:"group,omitempty"`
+	// Metadata key to filter on
+	PropertyName string `json:"property_name" url:"property_name"`
+	// Value to compare against. Not required for IS NULL / IS NOT NULL operators.
+	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *MetadataFilterEntry) GetComparisonOperator() ComparisonOperator {
+	if m == nil {
+		return ""
+	}
+	return m.ComparisonOperator
+}
+
+func (m *MetadataFilterEntry) GetGroup() *MetadataFilterGroup {
+	if m == nil {
+		return nil
+	}
+	return m.Group
+}
+
+func (m *MetadataFilterEntry) GetPropertyName() string {
+	if m == nil {
+		return ""
+	}
+	return m.PropertyName
+}
+
+func (m *MetadataFilterEntry) GetPropertyValue() interface{} {
+	if m == nil {
+		return nil
+	}
+	return m.PropertyValue
+}
+
+func (m *MetadataFilterEntry) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *MetadataFilterEntry) UnmarshalJSON(data []byte) error {
+	type unmarshaler MetadataFilterEntry
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MetadataFilterEntry(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MetadataFilterEntry) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type MetadataFilterGroup struct {
+	// Leaf filters and/or nested groups
+	Filters []*MetadataFilterEntry `json:"filters" url:"filters"`
+	// Logical operator: "and" or "or"
+	Type GraphitiMetadataFilterGroupType `json:"type" url:"type"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *MetadataFilterGroup) GetFilters() []*MetadataFilterEntry {
+	if m == nil {
+		return nil
+	}
+	return m.Filters
+}
+
+func (m *MetadataFilterGroup) GetType() GraphitiMetadataFilterGroupType {
+	if m == nil {
+		return ""
+	}
+	return m.Type
+}
+
+func (m *MetadataFilterGroup) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *MetadataFilterGroup) UnmarshalJSON(data []byte) error {
+	type unmarshaler MetadataFilterGroup
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MetadataFilterGroup(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MetadataFilterGroup) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
 }
 
 type PathDetectConfig struct {
@@ -1525,7 +1716,8 @@ func (p *PatternMetadata) String() string {
 }
 
 type PatternResult struct {
-	// Human-readable description of the pattern
+	// Human-readable structural description of the pattern (e.g. "Person -[KNOWS]-> Person").
+	// Omitted in query mode in favor of Summary.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
 	// Edge types in the pattern structure
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
@@ -1534,11 +1726,16 @@ type PatternResult struct {
 	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
 	// Node labels in the pattern structure
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
-	// Raw occurrence count (always unweighted)
+	// Raw structural occurrence count (always unweighted).
+	// Reflects pattern frequency in the graph, not the number of resolved edges after filtering.
 	Occurrences *int `json:"occurrences,omitempty" url:"occurrences,omitempty"`
+	// Fact-derived summary from top reranked edges. Only populated when query is set.
+	// This is the primary display field for QA consumers.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
 	// Pattern type: relationship, path, co_occurrence, hub, cluster
 	Type *string `json:"type,omitempty" url:"type,omitempty"`
-	// Weighted sum — equals occurrences when recency_weight is "none"
+	// Weighted structural support — equals occurrences when recency_weight is "none".
+	// Reflects graph-level support, not post-enrichment edge count.
 	WeightedScore *float64 `json:"weighted_score,omitempty" url:"weighted_score,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -1578,6 +1775,13 @@ func (p *PatternResult) GetOccurrences() *int {
 		return nil
 	}
 	return p.Occurrences
+}
+
+func (p *PatternResult) GetSummary() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Summary
 }
 
 func (p *PatternResult) GetType() *string {
@@ -1828,8 +2032,11 @@ type SearchFilters struct {
 	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// List of edge types to filter on
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// List of edge UUIDs to filter on
+	// List of edge UUIDs to filter on. Max 256 to align with graph-service filter limits.
 	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Episode metadata filter. Restricts results to edges/nodes derived from episodes
+	// matching the metadata predicates. Uses explicit AND/OR groups.
+	EpisodeMetadataFilters *MetadataFilterGroup `json:"episode_metadata_filters,omitempty" url:"episode_metadata_filters,omitempty"`
 	// List of edge types to exclude from results
 	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
 	// List of node labels to exclude from results
@@ -1880,6 +2087,13 @@ func (s *SearchFilters) GetEdgeUUIDs() []string {
 		return nil
 	}
 	return s.EdgeUUIDs
+}
+
+func (s *SearchFilters) GetEpisodeMetadataFilters() *MetadataFilterGroup {
+	if s == nil {
+		return nil
+	}
+	return s.EpisodeMetadataFilters
 }
 
 func (s *SearchFilters) GetExcludeEdgeTypes() []string {
