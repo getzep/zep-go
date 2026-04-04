@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/getzep/zep-go/v3"
+	"github.com/getzep/zep-go/v2"
 )
 
 // SetOntology sets entity end edge types for the target, replacing any existing entity/edge types set for the target. If no user/graph target is set, it will default to the project target.
