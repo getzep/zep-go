@@ -4,11 +4,11 @@ package edge
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	graph "github.com/getzep/zep-go/v2/graph"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	graph "github.com/getzep/zep-go/v3/graph"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
 )
@@ -44,9 +44,9 @@ func (c *Client) GetByGraphID(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v2.GraphEdgesRequest,
+	request *v3.GraphEdgesRequest,
 	opts ...option.RequestOption,
-) ([]*v2.EntityEdge, error) {
+) ([]*v3.EntityEdge, error) {
 	response, err := c.WithRawResponse.GetByGraphID(
 		ctx,
 		graphID,
@@ -64,9 +64,9 @@ func (c *Client) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v2.GraphEdgesRequest,
+	request *v3.GraphEdgesRequest,
 	opts ...option.RequestOption,
-) ([]*v2.EntityEdge, error) {
+) ([]*v3.EntityEdge, error) {
 	response, err := c.WithRawResponse.GetByUserID(
 		ctx,
 		userID,
@@ -85,7 +85,7 @@ func (c *Client) Get(
 	// Edge UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v2.EntityEdge, error) {
+) (*v3.EntityEdge, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		uuid,
@@ -103,7 +103,7 @@ func (c *Client) Delete(
 	// Edge UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		uuid,
@@ -122,7 +122,7 @@ func (c *Client) Update(
 	uuid string,
 	request *graph.UpdateEdgeRequest,
 	opts ...option.RequestOption,
-) (*v2.EntityEdge, error) {
+) (*v3.EntityEdge, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		uuid,

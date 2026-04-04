@@ -4,11 +4,11 @@ package message
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
-	thread "github.com/getzep/zep-go/v2/thread"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
+	thread "github.com/getzep/zep-go/v3/thread"
 	http "net/http"
 	os "os"
 )
@@ -46,7 +46,7 @@ func (c *Client) Update(
 	messageUUID string,
 	request *thread.ThreadMessageUpdate,
 	opts ...option.RequestOption,
-) (*v2.Message, error) {
+) (*v3.Message, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		messageUUID,

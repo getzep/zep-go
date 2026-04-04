@@ -5,16 +5,18 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	internal "github.com/getzep/zep-go/v2/internal"
+	internal "github.com/getzep/zep-go/v3/internal"
 )
 
 type AddDataRequest struct {
 	CreatedAt *string `json:"created_at,omitempty" url:"-"`
 	Data      string  `json:"data" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
-	GraphID           *string       `json:"graph_id,omitempty" url:"-"`
-	SourceDescription *string       `json:"source_description,omitempty" url:"-"`
-	Type              GraphDataType `json:"type" url:"-"`
+	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
+	Metadata          map[string]interface{} `json:"metadata,omitempty" url:"-"`
+	SourceDescription *string                `json:"source_description,omitempty" url:"-"`
+	Type              GraphDataType          `json:"type" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }

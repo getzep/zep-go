@@ -4,11 +4,11 @@ package edge
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	graph "github.com/getzep/zep-go/v2/graph"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	graph "github.com/getzep/zep-go/v3/graph"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 )
 
@@ -35,9 +35,9 @@ func (r *RawClient) GetByGraphID(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v2.GraphEdgesRequest,
+	request *v3.GraphEdgesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v2.EntityEdge], error) {
+) (*core.Response[[]*v3.EntityEdge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -54,17 +54,17 @@ func (r *RawClient) GetByGraphID(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response []*v2.EntityEdge
+	var response []*v3.EntityEdge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -83,7 +83,7 @@ func (r *RawClient) GetByGraphID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v2.EntityEdge]{
+	return &core.Response[[]*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -94,9 +94,9 @@ func (r *RawClient) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v2.GraphEdgesRequest,
+	request *v3.GraphEdgesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v2.EntityEdge], error) {
+) (*core.Response[[]*v3.EntityEdge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -113,17 +113,17 @@ func (r *RawClient) GetByUserID(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response []*v2.EntityEdge
+	var response []*v3.EntityEdge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -142,7 +142,7 @@ func (r *RawClient) GetByUserID(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v2.EntityEdge]{
+	return &core.Response[[]*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -154,7 +154,7 @@ func (r *RawClient) Get(
 	// Edge UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.EntityEdge], error) {
+) (*core.Response[*v3.EntityEdge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -171,22 +171,22 @@ func (r *RawClient) Get(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.EntityEdge
+	var response *v3.EntityEdge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -204,7 +204,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.EntityEdge]{
+	return &core.Response[*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -216,7 +216,7 @@ func (r *RawClient) Delete(
 	// Edge UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -233,22 +233,22 @@ func (r *RawClient) Delete(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -266,7 +266,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -279,7 +279,7 @@ func (r *RawClient) Update(
 	uuid string,
 	request *graph.UpdateEdgeRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.EntityEdge], error) {
+) (*core.Response[*v3.EntityEdge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -297,22 +297,22 @@ func (r *RawClient) Update(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.EntityEdge
+	var response *v3.EntityEdge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -331,7 +331,7 @@ func (r *RawClient) Update(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.EntityEdge]{
+	return &core.Response[*v3.EntityEdge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

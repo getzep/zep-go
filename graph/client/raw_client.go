@@ -4,10 +4,10 @@ package client
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 )
 
@@ -32,9 +32,9 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 
 func (r *RawClient) ListCustomInstructions(
 	ctx context.Context,
-	request *v2.GraphListCustomInstructionsRequest,
+	request *v3.GraphListCustomInstructionsRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.ListCustomInstructionsResponse], error) {
+) (*core.Response[*v3.ListCustomInstructionsResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -55,22 +55,22 @@ func (r *RawClient) ListCustomInstructions(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.ListCustomInstructionsResponse
+	var response *v3.ListCustomInstructionsResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -88,7 +88,7 @@ func (r *RawClient) ListCustomInstructions(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.ListCustomInstructionsResponse]{
+	return &core.Response[*v3.ListCustomInstructionsResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -97,9 +97,9 @@ func (r *RawClient) ListCustomInstructions(
 
 func (r *RawClient) AddCustomInstructions(
 	ctx context.Context,
-	request *v2.AddCustomInstructionsRequest,
+	request *v3.AddCustomInstructionsRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -114,22 +114,22 @@ func (r *RawClient) AddCustomInstructions(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -148,7 +148,7 @@ func (r *RawClient) AddCustomInstructions(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -157,9 +157,9 @@ func (r *RawClient) AddCustomInstructions(
 
 func (r *RawClient) DeleteCustomInstructions(
 	ctx context.Context,
-	request *v2.DeleteCustomInstructionsRequest,
+	request *v3.DeleteCustomInstructionsRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -174,22 +174,22 @@ func (r *RawClient) DeleteCustomInstructions(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -208,7 +208,7 @@ func (r *RawClient) DeleteCustomInstructions(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -217,9 +217,9 @@ func (r *RawClient) DeleteCustomInstructions(
 
 func (r *RawClient) ListEntityTypes(
 	ctx context.Context,
-	request *v2.GraphListEntityTypesRequest,
+	request *v3.GraphListEntityTypesRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.EntityTypeResponse], error) {
+) (*core.Response[*v3.EntityTypeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -240,22 +240,22 @@ func (r *RawClient) ListEntityTypes(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.EntityTypeResponse
+	var response *v3.EntityTypeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -273,7 +273,7 @@ func (r *RawClient) ListEntityTypes(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.EntityTypeResponse]{
+	return &core.Response[*v3.EntityTypeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -282,9 +282,9 @@ func (r *RawClient) ListEntityTypes(
 
 func (r *RawClient) SetEntityTypesInternal(
 	ctx context.Context,
-	request *v2.EntityTypeRequest,
+	request *v3.EntityTypeRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -299,22 +299,22 @@ func (r *RawClient) SetEntityTypesInternal(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -333,7 +333,7 @@ func (r *RawClient) SetEntityTypesInternal(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -342,9 +342,9 @@ func (r *RawClient) SetEntityTypesInternal(
 
 func (r *RawClient) Add(
 	ctx context.Context,
-	request *v2.AddDataRequest,
+	request *v3.AddDataRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.Episode], error) {
+) (*core.Response[*v3.Episode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -359,17 +359,17 @@ func (r *RawClient) Add(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.Episode
+	var response *v3.Episode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -388,7 +388,7 @@ func (r *RawClient) Add(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.Episode]{
+	return &core.Response[*v3.Episode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -397,9 +397,9 @@ func (r *RawClient) Add(
 
 func (r *RawClient) AddBatch(
 	ctx context.Context,
-	request *v2.AddDataBatchRequest,
+	request *v3.AddDataBatchRequest,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v2.Episode], error) {
+) (*core.Response[[]*v3.Episode], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -414,17 +414,17 @@ func (r *RawClient) AddBatch(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response []*v2.Episode
+	var response []*v3.Episode
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -443,7 +443,7 @@ func (r *RawClient) AddBatch(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v2.Episode]{
+	return &core.Response[[]*v3.Episode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -452,9 +452,9 @@ func (r *RawClient) AddBatch(
 
 func (r *RawClient) AddFactTriple(
 	ctx context.Context,
-	request *v2.AddTripleRequest,
+	request *v3.AddTripleRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.AddTripleResponse], error) {
+) (*core.Response[*v3.AddTripleResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -469,17 +469,17 @@ func (r *RawClient) AddFactTriple(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.AddTripleResponse
+	var response *v3.AddTripleResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -498,7 +498,7 @@ func (r *RawClient) AddFactTriple(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.AddTripleResponse]{
+	return &core.Response[*v3.AddTripleResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -507,9 +507,9 @@ func (r *RawClient) AddFactTriple(
 
 func (r *RawClient) Clone(
 	ctx context.Context,
-	request *v2.CloneGraphRequest,
+	request *v3.CloneGraphRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.CloneGraphResponse], error) {
+) (*core.Response[*v3.CloneGraphResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -524,17 +524,17 @@ func (r *RawClient) Clone(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.CloneGraphResponse
+	var response *v3.CloneGraphResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -553,7 +553,7 @@ func (r *RawClient) Clone(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.CloneGraphResponse]{
+	return &core.Response[*v3.CloneGraphResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -562,9 +562,9 @@ func (r *RawClient) Clone(
 
 func (r *RawClient) Create(
 	ctx context.Context,
-	request *v2.CreateGraphRequest,
+	request *v3.CreateGraphRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.Graph], error) {
+) (*core.Response[*v3.Graph], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -579,17 +579,17 @@ func (r *RawClient) Create(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.Graph
+	var response *v3.Graph
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -608,7 +608,7 @@ func (r *RawClient) Create(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.Graph]{
+	return &core.Response[*v3.Graph]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -617,9 +617,9 @@ func (r *RawClient) Create(
 
 func (r *RawClient) ListAll(
 	ctx context.Context,
-	request *v2.GraphListAllRequest,
+	request *v3.GraphListAllRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.GraphListResponse], error) {
+) (*core.Response[*v3.GraphListResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -640,17 +640,17 @@ func (r *RawClient) ListAll(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.GraphListResponse
+	var response *v3.GraphListResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -668,7 +668,7 @@ func (r *RawClient) ListAll(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.GraphListResponse]{
+	return &core.Response[*v3.GraphListResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -677,9 +677,9 @@ func (r *RawClient) ListAll(
 
 func (r *RawClient) DetectPatterns(
 	ctx context.Context,
-	request *v2.DetectPatternsRequest,
+	request *v3.DetectPatternsRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.DetectPatternsResponse], error) {
+) (*core.Response[*v3.DetectPatternsResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -694,27 +694,27 @@ func (r *RawClient) DetectPatterns(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		403: func(apiError *core.APIError) error {
-			return &v2.ForbiddenError{
+			return &v3.ForbiddenError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.DetectPatternsResponse
+	var response *v3.DetectPatternsResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -733,7 +733,7 @@ func (r *RawClient) DetectPatterns(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.DetectPatternsResponse]{
+	return &core.Response[*v3.DetectPatternsResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -742,9 +742,9 @@ func (r *RawClient) DetectPatterns(
 
 func (r *RawClient) Search(
 	ctx context.Context,
-	request *v2.GraphSearchQuery,
+	request *v3.GraphSearchQuery,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.GraphSearchResults], error) {
+) (*core.Response[*v3.GraphSearchResults], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -759,17 +759,17 @@ func (r *RawClient) Search(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.GraphSearchResults
+	var response *v3.GraphSearchResults
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -788,7 +788,7 @@ func (r *RawClient) Search(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.GraphSearchResults]{
+	return &core.Response[*v3.GraphSearchResults]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -800,7 +800,7 @@ func (r *RawClient) Get(
 	// The graph_id of the graph to get.
 	graphID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.Graph], error) {
+) (*core.Response[*v3.Graph], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -817,17 +817,17 @@ func (r *RawClient) Get(
 	)
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.Graph
+	var response *v3.Graph
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -845,7 +845,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.Graph]{
+	return &core.Response[*v3.Graph]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -857,7 +857,7 @@ func (r *RawClient) Delete(
 	// Graph ID
 	graphID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -874,22 +874,22 @@ func (r *RawClient) Delete(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -907,7 +907,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -918,9 +918,9 @@ func (r *RawClient) Update(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v2.UpdateGraphRequest,
+	request *v3.UpdateGraphRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.Graph], error) {
+) (*core.Response[*v3.Graph], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -938,22 +938,22 @@ func (r *RawClient) Update(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.Graph
+	var response *v3.Graph
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -972,7 +972,7 @@ func (r *RawClient) Update(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.Graph]{
+	return &core.Response[*v3.Graph]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

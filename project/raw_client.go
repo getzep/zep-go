@@ -4,10 +4,10 @@ package project
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 )
 
@@ -33,7 +33,7 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 func (r *RawClient) Get(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.ProjectInfoResponse], error) {
+) (*core.Response[*v3.ProjectInfoResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -47,22 +47,22 @@ func (r *RawClient) Get(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.ProjectInfoResponse
+	var response *v3.ProjectInfoResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -80,7 +80,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.ProjectInfoResponse]{
+	return &core.Response[*v3.ProjectInfoResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

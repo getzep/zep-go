@@ -4,10 +4,10 @@ package task
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
 )
@@ -44,7 +44,7 @@ func (c *Client) Get(
 	// Task ID
 	taskID string,
 	opts ...option.RequestOption,
-) (*v2.GetTaskResponse, error) {
+) (*v3.GetTaskResponse, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		taskID,

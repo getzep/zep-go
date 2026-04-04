@@ -4,14 +4,14 @@ package client
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	community "github.com/getzep/zep-go/v2/graph/community"
-	edge "github.com/getzep/zep-go/v2/graph/edge"
-	episode "github.com/getzep/zep-go/v2/graph/episode"
-	node "github.com/getzep/zep-go/v2/graph/node"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	community "github.com/getzep/zep-go/v3/graph/community"
+	edge "github.com/getzep/zep-go/v3/graph/edge"
+	episode "github.com/getzep/zep-go/v3/graph/episode"
+	node "github.com/getzep/zep-go/v3/graph/node"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
 )
@@ -53,9 +53,9 @@ func NewClient(opts ...option.RequestOption) *Client {
 // Lists all custom instructions for a project, user, or graph.
 func (c *Client) ListCustomInstructions(
 	ctx context.Context,
-	request *v2.GraphListCustomInstructionsRequest,
+	request *v3.GraphListCustomInstructionsRequest,
 	opts ...option.RequestOption,
-) (*v2.ListCustomInstructionsResponse, error) {
+) (*v3.ListCustomInstructionsResponse, error) {
 	response, err := c.WithRawResponse.ListCustomInstructions(
 		ctx,
 		request,
@@ -70,9 +70,9 @@ func (c *Client) ListCustomInstructions(
 // Adds new custom instructions for graphs without removing existing ones. If user_ids or graph_ids is empty, adds to project-wide default instructions.
 func (c *Client) AddCustomInstructions(
 	ctx context.Context,
-	request *v2.AddCustomInstructionsRequest,
+	request *v3.AddCustomInstructionsRequest,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.AddCustomInstructions(
 		ctx,
 		request,
@@ -87,9 +87,9 @@ func (c *Client) AddCustomInstructions(
 // Deletes custom instructions for graphs or project wide defaults.
 func (c *Client) DeleteCustomInstructions(
 	ctx context.Context,
-	request *v2.DeleteCustomInstructionsRequest,
+	request *v3.DeleteCustomInstructionsRequest,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.DeleteCustomInstructions(
 		ctx,
 		request,
@@ -104,9 +104,9 @@ func (c *Client) DeleteCustomInstructions(
 // Returns all entity types for a project, user, or graph.
 func (c *Client) ListEntityTypes(
 	ctx context.Context,
-	request *v2.GraphListEntityTypesRequest,
+	request *v3.GraphListEntityTypesRequest,
 	opts ...option.RequestOption,
-) (*v2.EntityTypeResponse, error) {
+) (*v3.EntityTypeResponse, error) {
 	response, err := c.WithRawResponse.ListEntityTypes(
 		ctx,
 		request,
@@ -121,9 +121,9 @@ func (c *Client) ListEntityTypes(
 // Sets the entity types for multiple users and graphs, replacing any existing ones.
 func (c *Client) SetEntityTypesInternal(
 	ctx context.Context,
-	request *v2.EntityTypeRequest,
+	request *v3.EntityTypeRequest,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.SetEntityTypesInternal(
 		ctx,
 		request,
@@ -138,9 +138,9 @@ func (c *Client) SetEntityTypesInternal(
 // Add data to the graph.
 func (c *Client) Add(
 	ctx context.Context,
-	request *v2.AddDataRequest,
+	request *v3.AddDataRequest,
 	opts ...option.RequestOption,
-) (*v2.Episode, error) {
+) (*v3.Episode, error) {
 	response, err := c.WithRawResponse.Add(
 		ctx,
 		request,
@@ -155,9 +155,9 @@ func (c *Client) Add(
 // Add data to the graph in batch mode. Episodes are processed sequentially in the order provided.
 func (c *Client) AddBatch(
 	ctx context.Context,
-	request *v2.AddDataBatchRequest,
+	request *v3.AddDataBatchRequest,
 	opts ...option.RequestOption,
-) ([]*v2.Episode, error) {
+) ([]*v3.Episode, error) {
 	response, err := c.WithRawResponse.AddBatch(
 		ctx,
 		request,
@@ -172,9 +172,9 @@ func (c *Client) AddBatch(
 // Add a fact triple for a user or group
 func (c *Client) AddFactTriple(
 	ctx context.Context,
-	request *v2.AddTripleRequest,
+	request *v3.AddTripleRequest,
 	opts ...option.RequestOption,
-) (*v2.AddTripleResponse, error) {
+) (*v3.AddTripleResponse, error) {
 	response, err := c.WithRawResponse.AddFactTriple(
 		ctx,
 		request,
@@ -189,9 +189,9 @@ func (c *Client) AddFactTriple(
 // Clone a user or group graph.
 func (c *Client) Clone(
 	ctx context.Context,
-	request *v2.CloneGraphRequest,
+	request *v3.CloneGraphRequest,
 	opts ...option.RequestOption,
-) (*v2.CloneGraphResponse, error) {
+) (*v3.CloneGraphResponse, error) {
 	response, err := c.WithRawResponse.Clone(
 		ctx,
 		request,
@@ -206,9 +206,9 @@ func (c *Client) Clone(
 // Creates a new graph.
 func (c *Client) Create(
 	ctx context.Context,
-	request *v2.CreateGraphRequest,
+	request *v3.CreateGraphRequest,
 	opts ...option.RequestOption,
-) (*v2.Graph, error) {
+) (*v3.Graph, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		request,
@@ -223,9 +223,9 @@ func (c *Client) Create(
 // Returns all graphs. In order to list users, use user.list_ordered instead
 func (c *Client) ListAll(
 	ctx context.Context,
-	request *v2.GraphListAllRequest,
+	request *v3.GraphListAllRequest,
 	opts ...option.RequestOption,
-) (*v2.GraphListResponse, error) {
+) (*v3.GraphListResponse, error) {
 	response, err := c.WithRawResponse.ListAll(
 		ctx,
 		request,
@@ -243,9 +243,9 @@ func (c *Client) ListAll(
 // detects triple-frequency patterns, and returns resolved edges ranked by relevance.
 func (c *Client) DetectPatterns(
 	ctx context.Context,
-	request *v2.DetectPatternsRequest,
+	request *v3.DetectPatternsRequest,
 	opts ...option.RequestOption,
-) (*v2.DetectPatternsResponse, error) {
+) (*v3.DetectPatternsResponse, error) {
 	response, err := c.WithRawResponse.DetectPatterns(
 		ctx,
 		request,
@@ -260,9 +260,9 @@ func (c *Client) DetectPatterns(
 // Perform a graph search query.
 func (c *Client) Search(
 	ctx context.Context,
-	request *v2.GraphSearchQuery,
+	request *v3.GraphSearchQuery,
 	opts ...option.RequestOption,
-) (*v2.GraphSearchResults, error) {
+) (*v3.GraphSearchResults, error) {
 	response, err := c.WithRawResponse.Search(
 		ctx,
 		request,
@@ -280,7 +280,7 @@ func (c *Client) Get(
 	// The graph_id of the graph to get.
 	graphID string,
 	opts ...option.RequestOption,
-) (*v2.Graph, error) {
+) (*v3.Graph, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		graphID,
@@ -298,7 +298,7 @@ func (c *Client) Delete(
 	// Graph ID
 	graphID string,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		graphID,
@@ -315,9 +315,9 @@ func (c *Client) Update(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v2.UpdateGraphRequest,
+	request *v3.UpdateGraphRequest,
 	opts ...option.RequestOption,
-) (*v2.Graph, error) {
+) (*v3.Graph, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		graphID,

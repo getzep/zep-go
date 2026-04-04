@@ -4,10 +4,10 @@ package user
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 )
 
@@ -32,9 +32,9 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 
 func (r *RawClient) ListUserSummaryInstructions(
 	ctx context.Context,
-	request *v2.UserListUserSummaryInstructionsRequest,
+	request *v3.UserListUserSummaryInstructionsRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.ListUserInstructionsResponse], error) {
+) (*core.Response[*v3.ListUserInstructionsResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -55,22 +55,22 @@ func (r *RawClient) ListUserSummaryInstructions(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.ListUserInstructionsResponse
+	var response *v3.ListUserInstructionsResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -88,7 +88,7 @@ func (r *RawClient) ListUserSummaryInstructions(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.ListUserInstructionsResponse]{
+	return &core.Response[*v3.ListUserInstructionsResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -97,9 +97,9 @@ func (r *RawClient) ListUserSummaryInstructions(
 
 func (r *RawClient) AddUserSummaryInstructions(
 	ctx context.Context,
-	request *v2.AddUserInstructionsRequest,
+	request *v3.AddUserInstructionsRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -114,22 +114,22 @@ func (r *RawClient) AddUserSummaryInstructions(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -148,7 +148,7 @@ func (r *RawClient) AddUserSummaryInstructions(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -157,9 +157,9 @@ func (r *RawClient) AddUserSummaryInstructions(
 
 func (r *RawClient) DeleteUserSummaryInstructions(
 	ctx context.Context,
-	request *v2.DeleteUserInstructionsRequest,
+	request *v3.DeleteUserInstructionsRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -174,22 +174,22 @@ func (r *RawClient) DeleteUserSummaryInstructions(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -208,7 +208,7 @@ func (r *RawClient) DeleteUserSummaryInstructions(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -217,9 +217,9 @@ func (r *RawClient) DeleteUserSummaryInstructions(
 
 func (r *RawClient) Add(
 	ctx context.Context,
-	request *v2.CreateUserRequest,
+	request *v3.CreateUserRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.User], error) {
+) (*core.Response[*v3.User], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -234,17 +234,17 @@ func (r *RawClient) Add(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.User
+	var response *v3.User
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -263,7 +263,7 @@ func (r *RawClient) Add(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.User]{
+	return &core.Response[*v3.User]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -272,9 +272,9 @@ func (r *RawClient) Add(
 
 func (r *RawClient) ListOrdered(
 	ctx context.Context,
-	request *v2.UserListOrderedRequest,
+	request *v3.UserListOrderedRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.UserListResponse], error) {
+) (*core.Response[*v3.UserListResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -295,17 +295,17 @@ func (r *RawClient) ListOrdered(
 	)
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.UserListResponse
+	var response *v3.UserListResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -323,7 +323,7 @@ func (r *RawClient) ListOrdered(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.UserListResponse]{
+	return &core.Response[*v3.UserListResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -335,7 +335,7 @@ func (r *RawClient) Get(
 	// The user_id of the user to get.
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.User], error) {
+) (*core.Response[*v3.User], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -352,17 +352,17 @@ func (r *RawClient) Get(
 	)
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.User
+	var response *v3.User
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -380,7 +380,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.User]{
+	return &core.Response[*v3.User]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -392,7 +392,7 @@ func (r *RawClient) Delete(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -409,17 +409,17 @@ func (r *RawClient) Delete(
 	)
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -437,7 +437,7 @@ func (r *RawClient) Delete(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -448,9 +448,9 @@ func (r *RawClient) Update(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v2.UpdateUserRequest,
+	request *v3.UpdateUserRequest,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.User], error) {
+) (*core.Response[*v3.User], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -468,22 +468,22 @@ func (r *RawClient) Update(
 	headers.Add("Content-Type", "application/json")
 	errorCodes := internal.ErrorCodes{
 		400: func(apiError *core.APIError) error {
-			return &v2.BadRequestError{
+			return &v3.BadRequestError{
 				APIError: apiError,
 			}
 		},
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.User
+	var response *v3.User
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -502,7 +502,7 @@ func (r *RawClient) Update(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.User]{
+	return &core.Response[*v3.User]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -514,7 +514,7 @@ func (r *RawClient) GetNode(
 	// The user_id of the user to get the node for.
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.UserNodeResponse], error) {
+) (*core.Response[*v3.UserNodeResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -531,17 +531,17 @@ func (r *RawClient) GetNode(
 	)
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.UserNodeResponse
+	var response *v3.UserNodeResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -559,7 +559,7 @@ func (r *RawClient) GetNode(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.UserNodeResponse]{
+	return &core.Response[*v3.UserNodeResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -571,7 +571,7 @@ func (r *RawClient) GetThreads(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[[]*v2.Thread], error) {
+) (*core.Response[[]*v3.Thread], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -588,12 +588,12 @@ func (r *RawClient) GetThreads(
 	)
 	errorCodes := internal.ErrorCodes{
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response []*v2.Thread
+	var response []*v3.Thread
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -611,7 +611,7 @@ func (r *RawClient) GetThreads(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v2.Thread]{
+	return &core.Response[[]*v3.Thread]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -623,7 +623,7 @@ func (r *RawClient) Warm(
 	// User ID
 	userID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v2.SuccessResponse], error) {
+) (*core.Response[*v3.SuccessResponse], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -640,17 +640,17 @@ func (r *RawClient) Warm(
 	)
 	errorCodes := internal.ErrorCodes{
 		404: func(apiError *core.APIError) error {
-			return &v2.NotFoundError{
+			return &v3.NotFoundError{
 				APIError: apiError,
 			}
 		},
 		500: func(apiError *core.APIError) error {
-			return &v2.InternalServerError{
+			return &v3.InternalServerError{
 				APIError: apiError,
 			}
 		},
 	}
-	var response *v2.SuccessResponse
+	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -668,7 +668,7 @@ func (r *RawClient) Warm(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v2.SuccessResponse]{
+	return &core.Response[*v3.SuccessResponse]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

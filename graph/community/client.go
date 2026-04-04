@@ -4,10 +4,10 @@ package community
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
 )
@@ -43,9 +43,9 @@ func (c *Client) GetByGraphID(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v2.GraphCommunitiesRequest,
+	request *v3.GraphCommunitiesRequest,
 	opts ...option.RequestOption,
-) ([]*v2.CommunityNode, error) {
+) ([]*v3.CommunityNode, error) {
 	response, err := c.WithRawResponse.GetByGraphID(
 		ctx,
 		graphID,
@@ -63,9 +63,9 @@ func (c *Client) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v2.GraphCommunitiesRequest,
+	request *v3.GraphCommunitiesRequest,
 	opts ...option.RequestOption,
-) ([]*v2.CommunityNode, error) {
+) ([]*v3.CommunityNode, error) {
 	response, err := c.WithRawResponse.GetByUserID(
 		ctx,
 		userID,
@@ -84,7 +84,7 @@ func (c *Client) Get(
 	// Community UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v2.CommunityNode, error) {
+) (*v3.CommunityNode, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		uuid,

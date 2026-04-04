@@ -4,11 +4,11 @@ package client
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
-	message "github.com/getzep/zep-go/v2/thread/message"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
+	message "github.com/getzep/zep-go/v3/thread/message"
 	http "net/http"
 	os "os"
 )
@@ -44,9 +44,9 @@ func NewClient(opts ...option.RequestOption) *Client {
 // Returns all threads.
 func (c *Client) ListAll(
 	ctx context.Context,
-	request *v2.ThreadListAllRequest,
+	request *v3.ThreadListAllRequest,
 	opts ...option.RequestOption,
-) (*v2.ThreadListResponse, error) {
+) (*v3.ThreadListResponse, error) {
 	response, err := c.WithRawResponse.ListAll(
 		ctx,
 		request,
@@ -61,9 +61,9 @@ func (c *Client) ListAll(
 // Start a new thread.
 func (c *Client) Create(
 	ctx context.Context,
-	request *v2.CreateThreadRequest,
+	request *v3.CreateThreadRequest,
 	opts ...option.RequestOption,
-) (*v2.Thread, error) {
+) (*v3.Thread, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		request,
@@ -81,7 +81,7 @@ func (c *Client) Delete(
 	// The ID of the thread for which memory should be deleted.
 	threadID string,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		threadID,
@@ -98,9 +98,9 @@ func (c *Client) GetUserContext(
 	ctx context.Context,
 	// The ID of the current thread (for which context is being retrieved).
 	threadID string,
-	request *v2.ThreadGetUserContextRequest,
+	request *v3.ThreadGetUserContextRequest,
 	opts ...option.RequestOption,
-) (*v2.ThreadContextResponse, error) {
+) (*v3.ThreadContextResponse, error) {
 	response, err := c.WithRawResponse.GetUserContext(
 		ctx,
 		threadID,
@@ -118,9 +118,9 @@ func (c *Client) Get(
 	ctx context.Context,
 	// Thread ID
 	threadID string,
-	request *v2.ThreadGetRequest,
+	request *v3.ThreadGetRequest,
 	opts ...option.RequestOption,
-) (*v2.MessageListResponse, error) {
+) (*v3.MessageListResponse, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		threadID,
@@ -138,9 +138,9 @@ func (c *Client) AddMessages(
 	ctx context.Context,
 	// The ID of the thread to which messages should be added.
 	threadID string,
-	request *v2.AddThreadMessagesRequest,
+	request *v3.AddThreadMessagesRequest,
 	opts ...option.RequestOption,
-) (*v2.AddThreadMessagesResponse, error) {
+) (*v3.AddThreadMessagesResponse, error) {
 	response, err := c.WithRawResponse.AddMessages(
 		ctx,
 		threadID,
@@ -158,9 +158,9 @@ func (c *Client) AddMessagesBatch(
 	ctx context.Context,
 	// The ID of the thread to which messages should be added.
 	threadID string,
-	request *v2.AddThreadMessagesRequest,
+	request *v3.AddThreadMessagesRequest,
 	opts ...option.RequestOption,
-) (*v2.AddThreadMessagesResponse, error) {
+) (*v3.AddThreadMessagesResponse, error) {
 	response, err := c.WithRawResponse.AddMessagesBatch(
 		ctx,
 		threadID,

@@ -4,11 +4,11 @@ package episode
 
 import (
 	context "context"
-	v2 "github.com/getzep/zep-go/v2"
-	core "github.com/getzep/zep-go/v2/core"
-	graph "github.com/getzep/zep-go/v2/graph"
-	internal "github.com/getzep/zep-go/v2/internal"
-	option "github.com/getzep/zep-go/v2/option"
+	v3 "github.com/getzep/zep-go/v3"
+	core "github.com/getzep/zep-go/v3/core"
+	graph "github.com/getzep/zep-go/v3/graph"
+	internal "github.com/getzep/zep-go/v3/internal"
+	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
 )
@@ -46,7 +46,7 @@ func (c *Client) GetByGraphID(
 	graphID string,
 	request *graph.EpisodeGetByGraphIDRequest,
 	opts ...option.RequestOption,
-) (*v2.EpisodeResponse, error) {
+) (*v3.EpisodeResponse, error) {
 	response, err := c.WithRawResponse.GetByGraphID(
 		ctx,
 		graphID,
@@ -66,7 +66,7 @@ func (c *Client) GetByUserID(
 	userID string,
 	request *graph.EpisodeGetByUserIDRequest,
 	opts ...option.RequestOption,
-) (*v2.EpisodeResponse, error) {
+) (*v3.EpisodeResponse, error) {
 	response, err := c.WithRawResponse.GetByUserID(
 		ctx,
 		userID,
@@ -85,7 +85,7 @@ func (c *Client) Get(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v2.Episode, error) {
+) (*v3.Episode, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		uuid,
@@ -103,7 +103,7 @@ func (c *Client) Delete(
 	// Episode UUID
 	uuid string,
 	opts ...option.RequestOption,
-) (*v2.SuccessResponse, error) {
+) (*v3.SuccessResponse, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
 		uuid,
@@ -122,7 +122,7 @@ func (c *Client) Update(
 	uuid string,
 	request *graph.UpdateEpisodeRequest,
 	opts ...option.RequestOption,
-) (*v2.Episode, error) {
+) (*v3.Episode, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		uuid,
@@ -141,7 +141,7 @@ func (c *Client) GetNodesAndEdges(
 	// Episode uuid
 	uuid string,
 	opts ...option.RequestOption,
-) (*v2.EpisodeMentions, error) {
+) (*v3.EpisodeMentions, error) {
 	response, err := c.WithRawResponse.GetNodesAndEdges(
 		ctx,
 		uuid,
