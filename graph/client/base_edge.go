@@ -3,7 +3,7 @@ package client
 import (
 	"reflect"
 
-	"github.com/getzep/zep-go/v2"
+	"github.com/getzep/zep-go/v3"
 )
 
 // BaseEdgeMetadata contains information extracted from BaseEdge struct tags

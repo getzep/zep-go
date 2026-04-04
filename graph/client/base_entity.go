@@ -3,7 +3,7 @@ package client
 import (
 	"reflect"
 
-	"github.com/getzep/zep-go/v2"
+	"github.com/getzep/zep-go/v3"
 )
 
 // BaseEntityMetadata contains information extracted from BaseEntity struct tags
