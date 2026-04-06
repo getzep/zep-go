@@ -3,27 +3,13 @@
 package client
 
 import (
-	context "github.com/getzep/zep-go/v3/context"
 	core "github.com/getzep/zep-go/v3/core"
-	client "github.com/getzep/zep-go/v3/graph/client"
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
-	project "github.com/getzep/zep-go/v3/project"
-	task "github.com/getzep/zep-go/v3/task"
-	threadclient "github.com/getzep/zep-go/v3/thread/client"
-	user "github.com/getzep/zep-go/v3/user"
 	http "net/http"
-	os "os"
 )
 
 type Client struct {
-	Context *context.Client
-	Graph   *client.Client
-	Project *project.Client
-	Task    *task.Client
-	Thread  *threadclient.Client
-	User    *user.Client
-
 	baseURL string
 	caller  *internal.Caller
 	header  http.Header
@@ -31,16 +17,7 @@ type Client struct {
 
 func NewClient(opts ...option.RequestOption) *Client {
 	options := core.NewRequestOptions(opts...)
-	if options.APIKey == "" {
-		options.APIKey = os.Getenv("ZEP_API_KEY")
-	}
 	return &Client{
-		Context: context.NewClient(opts...),
-		Graph:   client.NewClient(opts...),
-		Project: project.NewClient(opts...),
-		Task:    task.NewClient(opts...),
-		Thread:  threadclient.NewClient(opts...),
-		User:    user.NewClient(opts...),
 		baseURL: options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
