@@ -43,7 +43,7 @@ func (c *Client) GetByGraphID(
 	ctx context.Context,
 	// Graph ID
 	graphID string,
-	request *v3.ApidataGraphSagasRequest,
+	request *v3.GraphSagasRequest,
 	opts ...option.RequestOption,
 ) ([]*v3.GraphitiSagaNode, error) {
 	response, err := c.WithRawResponse.GetByGraphID(
@@ -63,7 +63,7 @@ func (c *Client) GetByUserID(
 	ctx context.Context,
 	// User ID
 	userID string,
-	request *v3.ApidataGraphSagasRequest,
+	request *v3.GraphSagasRequest,
 	opts ...option.RequestOption,
 ) ([]*v3.GraphitiSagaNode, error) {
 	response, err := c.WithRawResponse.GetByUserID(

@@ -54,62 +54,6 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ApidataGraphSagasRequest struct {
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ApidataGraphSagasRequest) GetLimit() *int {
-	if a == nil {
-		return nil
-	}
-	return a.Limit
-}
-
-func (a *ApidataGraphSagasRequest) GetUUIDCursor() *string {
-	if a == nil {
-		return nil
-	}
-	return a.UUIDCursor
-}
-
-func (a *ApidataGraphSagasRequest) GetExtraProperties() map[string]interface{} {
-	return a.extraProperties
-}
-
-func (a *ApidataGraphSagasRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler ApidataGraphSagasRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ApidataGraphSagasRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ApidataGraphSagasRequest) String() string {
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
-}
-
 type CommunityNode struct {
 	// Additional attributes of the community node.
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
@@ -967,6 +911,62 @@ func (g *GraphNodesRequest) UnmarshalJSON(data []byte) error {
 }
 
 func (g *GraphNodesRequest) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphSagasRequest struct {
+	// Maximum number of items to return
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphSagasRequest) GetLimit() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Limit
+}
+
+func (g *GraphSagasRequest) GetUUIDCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUIDCursor
+}
+
+func (g *GraphSagasRequest) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphSagasRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphSagasRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphSagasRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphSagasRequest) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
