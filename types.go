@@ -68,6 +68,8 @@ type CommunityNode struct {
 	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
 	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
 	// Region summary of member nodes
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
 	// UUID of the node
@@ -117,6 +119,13 @@ func (c *CommunityNode) GetScore() *float64 {
 		return nil
 	}
 	return c.Score
+}
+
+func (c *CommunityNode) GetSelectionRank() *int {
+	if c == nil {
+		return nil
+	}
+	return c.SelectionRank
 }
 
 func (c *CommunityNode) GetSummary() *string {
@@ -187,6 +196,8 @@ type EntityEdge struct {
 	Scope *string `json:"scope,omitempty" url:"scope,omitempty"`
 	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
 	// UUID of the source node
 	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
 	// UUID of the target node
@@ -268,6 +279,13 @@ func (e *EntityEdge) GetScore() *float64 {
 		return nil
 	}
 	return e.Score
+}
+
+func (e *EntityEdge) GetSelectionRank() *int {
+	if e == nil {
+		return nil
+	}
+	return e.SelectionRank
 }
 
 func (e *EntityEdge) GetSourceNodeUUID() string {
@@ -454,7 +472,9 @@ type Episode struct {
 	// Optional role_type, will only be present if the episode was created using memory.add API
 	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
 	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
-	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
+	SelectionRank     *int           `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
 	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
 	// Optional task ID to poll episode processing status. Currently only available for batch ingestion.
@@ -521,6 +541,13 @@ func (e *Episode) GetScore() *float64 {
 		return nil
 	}
 	return e.Score
+}
+
+func (e *Episode) GetSelectionRank() *int {
+	if e == nil {
+		return nil
+	}
+	return e.SelectionRank
 }
 
 func (e *Episode) GetSource() *GraphDataType {
