@@ -10,6 +10,8 @@ import (
 	edge "github.com/getzep/zep-go/v3/graph/edge"
 	episode "github.com/getzep/zep-go/v3/graph/episode"
 	node "github.com/getzep/zep-go/v3/graph/node"
+	saga "github.com/getzep/zep-go/v3/graph/saga"
+	theme "github.com/getzep/zep-go/v3/graph/theme"
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
@@ -22,6 +24,8 @@ type Client struct {
 	Edge            *edge.Client
 	Episode         *episode.Client
 	Node            *node.Client
+	Saga            *saga.Client
+	Theme           *theme.Client
 
 	baseURL string
 	caller  *internal.Caller
@@ -38,6 +42,8 @@ func NewClient(opts ...option.RequestOption) *Client {
 		Edge:            edge.NewClient(opts...),
 		Episode:         episode.NewClient(opts...),
 		Node:            node.NewClient(opts...),
+		Saga:            saga.NewClient(opts...),
+		Theme:           theme.NewClient(opts...),
 		WithRawResponse: NewRawClient(options),
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
