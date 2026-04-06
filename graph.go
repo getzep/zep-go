@@ -1090,6 +1090,71 @@ func (e *EpisodeData) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type EpisodeMetadataFilter struct {
+	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Metadata key to filter on
+	PropertyName string `json:"property_name" url:"property_name"`
+	// Value to compare against. Not required for IS NULL / IS NOT NULL operators.
+	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeMetadataFilter) GetComparisonOperator() ComparisonOperator {
+	if e == nil {
+		return ""
+	}
+	return e.ComparisonOperator
+}
+
+func (e *EpisodeMetadataFilter) GetPropertyName() string {
+	if e == nil {
+		return ""
+	}
+	return e.PropertyName
+}
+
+func (e *EpisodeMetadataFilter) GetPropertyValue() interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.PropertyValue
+}
+
+func (e *EpisodeMetadataFilter) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EpisodeMetadataFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeMetadataFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeMetadataFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeMetadataFilter) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
 type Graph struct {
 	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
@@ -1377,71 +1442,6 @@ func (g GraphSearchScope) Ptr() *GraphSearchScope {
 	return &g
 }
 
-type GraphitiEpisodeMetadataFilter struct {
-	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Metadata key to filter on
-	PropertyName string `json:"property_name" url:"property_name"`
-	// Value to compare against. Not required for IS NULL / IS NOT NULL operators.
-	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphitiEpisodeMetadataFilter) GetComparisonOperator() ComparisonOperator {
-	if g == nil {
-		return ""
-	}
-	return g.ComparisonOperator
-}
-
-func (g *GraphitiEpisodeMetadataFilter) GetPropertyName() string {
-	if g == nil {
-		return ""
-	}
-	return g.PropertyName
-}
-
-func (g *GraphitiEpisodeMetadataFilter) GetPropertyValue() interface{} {
-	if g == nil {
-		return nil
-	}
-	return g.PropertyValue
-}
-
-func (g *GraphitiEpisodeMetadataFilter) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphitiEpisodeMetadataFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphitiEpisodeMetadataFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphitiEpisodeMetadataFilter(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphitiEpisodeMetadataFilter) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
 // Logical operator: "and" or "or"
 type GraphitiMetadataFilterGroupType string
 
@@ -1560,7 +1560,7 @@ func (l *ListCustomInstructionsResponse) String() string {
 
 type MetadataFilterGroup struct {
 	// Leaf filters (predicates on metadata key-value pairs)
-	Filters []*GraphitiEpisodeMetadataFilter `json:"filters,omitempty" url:"filters,omitempty"`
+	Filters []*EpisodeMetadataFilter `json:"filters,omitempty" url:"filters,omitempty"`
 	// Nested sub-groups for composing complex boolean expressions
 	Groups []*MetadataFilterGroup `json:"groups,omitempty" url:"groups,omitempty"`
 	// Logical operator: "and" or "or"
@@ -1570,7 +1570,7 @@ type MetadataFilterGroup struct {
 	rawJSON         json.RawMessage
 }
 
-func (m *MetadataFilterGroup) GetFilters() []*GraphitiEpisodeMetadataFilter {
+func (m *MetadataFilterGroup) GetFilters() []*EpisodeMetadataFilter {
 	if m == nil {
 		return nil
 	}
