@@ -54,6 +54,62 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type ApidataGraphSagasRequest struct {
+	// Maximum number of items to return
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *ApidataGraphSagasRequest) GetLimit() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Limit
+}
+
+func (a *ApidataGraphSagasRequest) GetUUIDCursor() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUIDCursor
+}
+
+func (a *ApidataGraphSagasRequest) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *ApidataGraphSagasRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ApidataGraphSagasRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = ApidataGraphSagasRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *ApidataGraphSagasRequest) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 type CommunityNode struct {
 	// Additional attributes of the community node.
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
@@ -362,6 +418,8 @@ type EntityNode struct {
 	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
 	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
 	// Regional summary of surrounding edges
 	Summary string `json:"summary" url:"summary"`
 	// UUID of the node
@@ -411,6 +469,13 @@ func (e *EntityNode) GetScore() *float64 {
 		return nil
 	}
 	return e.Score
+}
+
+func (e *EntityNode) GetSelectionRank() *int {
+	if e == nil {
+		return nil
+	}
+	return e.SelectionRank
 }
 
 func (e *EntityNode) GetSummary() string {
@@ -776,9 +841,10 @@ func (g *GraphCommunitiesRequest) String() string {
 type GraphDataType string
 
 const (
-	GraphDataTypeText    GraphDataType = "text"
-	GraphDataTypeJSON    GraphDataType = "json"
-	GraphDataTypeMessage GraphDataType = "message"
+	GraphDataTypeText       GraphDataType = "text"
+	GraphDataTypeJSON       GraphDataType = "json"
+	GraphDataTypeMessage    GraphDataType = "message"
+	GraphDataTypeFactTriple GraphDataType = "fact_triple"
 )
 
 func NewGraphDataTypeFromString(s string) (GraphDataType, error) {
@@ -789,6 +855,8 @@ func NewGraphDataTypeFromString(s string) (GraphDataType, error) {
 		return GraphDataTypeJSON, nil
 	case "message":
 		return GraphDataTypeMessage, nil
+	case "fact_triple":
+		return GraphDataTypeFactTriple, nil
 	}
 	var t GraphDataType
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -899,6 +967,182 @@ func (g *GraphNodesRequest) UnmarshalJSON(data []byte) error {
 }
 
 func (g *GraphNodesRequest) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphThemesRequest struct {
+	// Maximum number of items to return
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphThemesRequest) GetLimit() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Limit
+}
+
+func (g *GraphThemesRequest) GetUUIDCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUIDCursor
+}
+
+func (g *GraphThemesRequest) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphThemesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphThemesRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphThemesRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphThemesRequest) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphitiSagaNode struct {
+	// Creation time of the node
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// Labels associated with the node
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// Timestamp of the most recent summary update.
+	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// Name of the node
+	Name string `json:"name" url:"name"`
+	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
+	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// Incremental summary of the thread.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// UUID of the node
+	UUID string `json:"uuid" url:"uuid"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphitiSagaNode) GetCreatedAt() string {
+	if g == nil {
+		return ""
+	}
+	return g.CreatedAt
+}
+
+func (g *GraphitiSagaNode) GetLabels() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Labels
+}
+
+func (g *GraphitiSagaNode) GetLastSummarizedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.LastSummarizedAt
+}
+
+func (g *GraphitiSagaNode) GetName() string {
+	if g == nil {
+		return ""
+	}
+	return g.Name
+}
+
+func (g *GraphitiSagaNode) GetRelevance() *float64 {
+	if g == nil {
+		return nil
+	}
+	return g.Relevance
+}
+
+func (g *GraphitiSagaNode) GetScore() *float64 {
+	if g == nil {
+		return nil
+	}
+	return g.Score
+}
+
+func (g *GraphitiSagaNode) GetSelectionRank() *int {
+	if g == nil {
+		return nil
+	}
+	return g.SelectionRank
+}
+
+func (g *GraphitiSagaNode) GetSummary() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Summary
+}
+
+func (g *GraphitiSagaNode) GetUUID() string {
+	if g == nil {
+		return ""
+	}
+	return g.UUID
+}
+
+func (g *GraphitiSagaNode) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphitiSagaNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphitiSagaNode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphitiSagaNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphitiSagaNode) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value

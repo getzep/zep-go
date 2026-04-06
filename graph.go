@@ -12,9 +12,11 @@ type AddDataRequest struct {
 	CreatedAt *string `json:"created_at,omitempty" url:"-"`
 	Data      string  `json:"data" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
-	GraphID           *string       `json:"graph_id,omitempty" url:"-"`
-	SourceDescription *string       `json:"source_description,omitempty" url:"-"`
-	Type              GraphDataType `json:"type" url:"-"`
+	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
+	Metadata          map[string]interface{} `json:"metadata,omitempty" url:"-"`
+	SourceDescription *string                `json:"source_description,omitempty" url:"-"`
+	Type              GraphDataType          `json:"type" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -53,6 +55,9 @@ type AddTripleRequest struct {
 	GraphID  *string `json:"graph_id,omitempty" url:"-"`
 	// The time (if any) at which the fact stops being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
+	// Optional metadata key-value pairs for the shadow episode created for this fact triple.
+	// Max 10 keys. Values must be strings, numbers, or booleans.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 	// Additional attributes of the source node. Values must be scalar types (string, number, boolean, or null).
 	// Nested objects and arrays are not allowed.
 	SourceNodeAttributes map[string]interface{} `json:"source_node_attributes,omitempty" url:"-"`
@@ -172,12 +177,16 @@ type GraphSearchQuery struct {
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
 	// The maximum number of facts to retrieve. Defaults to 10. Limited to 50.
 	Limit *int `json:"limit,omitempty" url:"-"`
+	// Maximum total characters across all selected results when scope=auto. Defaults to 2000. Limited to 50000.
+	MaxCharacters *int `json:"max_characters,omitempty" url:"-"`
 	// weighting for maximal marginal relevance
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
 	// The string to search for (required)
 	Query string `json:"query" url:"-"`
 	// Defaults to RRF
 	Reranker *Reranker `json:"reranker,omitempty" url:"-"`
+	// When scope=auto, include the selected raw graph results alongside the materialized context block.
+	ReturnRawResults *bool `json:"return_raw_results,omitempty" url:"-"`
 	// Defaults to Edges.
 	Scope *GraphSearchScope `json:"scope,omitempty" url:"-"`
 	// Search filters to apply to the search
@@ -1312,13 +1321,13 @@ func (g *GraphListResponse) String() string {
 }
 
 type GraphSearchResults struct {
-	Communities []*CommunityNode `json:"communities,omitempty" url:"communities,omitempty"`
-	Context     *string          `json:"context,omitempty" url:"context,omitempty"`
-	Edges       []*EntityEdge    `json:"edges,omitempty" url:"edges,omitempty"`
-	Episodes    []*Episode       `json:"episodes,omitempty" url:"episodes,omitempty"`
-	Nodes       []*EntityNode    `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Sagas       []interface{}    `json:"sagas,omitempty" url:"sagas,omitempty"`
-	Themes      []*CommunityNode `json:"themes,omitempty" url:"themes,omitempty"`
+	Communities []*CommunityNode    `json:"communities,omitempty" url:"communities,omitempty"`
+	Context     *string             `json:"context,omitempty" url:"context,omitempty"`
+	Edges       []*EntityEdge       `json:"edges,omitempty" url:"edges,omitempty"`
+	Episodes    []*Episode          `json:"episodes,omitempty" url:"episodes,omitempty"`
+	Nodes       []*EntityNode       `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Sagas       []*GraphitiSagaNode `json:"sagas,omitempty" url:"sagas,omitempty"`
+	Themes      []*CommunityNode    `json:"themes,omitempty" url:"themes,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -1359,7 +1368,7 @@ func (g *GraphSearchResults) GetNodes() []*EntityNode {
 	return g.Nodes
 }
 
-func (g *GraphSearchResults) GetSagas() []interface{} {
+func (g *GraphSearchResults) GetSagas() []*GraphitiSagaNode {
 	if g == nil {
 		return nil
 	}
@@ -1855,7 +1864,7 @@ type PatternSeeds struct {
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
 	// All nodes with these labels become seeds
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
-	// Specific node UUIDs to analyze around
+	// Specific node UUIDs to analyze around. Max 10000 to align with pattern detection seed limits.
 	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
 
 	extraProperties map[string]interface{}
