@@ -19,7 +19,7 @@ type ThreadGetRequest struct {
 	// Limit the number of results returned
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Cursor for pagination
-	Cursor *int64 `json:"-" url:"cursor,omitempty"`
+	Cursor *int `json:"-" url:"cursor,omitempty"`
 	// Number of most recent messages to return (overrides limit and cursor)
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }

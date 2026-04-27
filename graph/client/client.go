@@ -6,12 +6,11 @@ import (
 	context "context"
 	v3 "github.com/getzep/zep-go/v3"
 	core "github.com/getzep/zep-go/v3/core"
-	community "github.com/getzep/zep-go/v3/graph/community"
 	edge "github.com/getzep/zep-go/v3/graph/edge"
 	episode "github.com/getzep/zep-go/v3/graph/episode"
 	node "github.com/getzep/zep-go/v3/graph/node"
-	saga "github.com/getzep/zep-go/v3/graph/saga"
-	theme "github.com/getzep/zep-go/v3/graph/theme"
+	observation "github.com/getzep/zep-go/v3/graph/observation"
+	threadsummary "github.com/getzep/zep-go/v3/graph/threadsummary"
 	internal "github.com/getzep/zep-go/v3/internal"
 	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
@@ -20,12 +19,11 @@ import (
 
 type Client struct {
 	WithRawResponse *RawClient
-	Community       *community.Client
 	Edge            *edge.Client
 	Episode         *episode.Client
 	Node            *node.Client
-	Saga            *saga.Client
-	Theme           *theme.Client
+	Observation     *observation.Client
+	ThreadSummary   *threadsummary.Client
 
 	baseURL string
 	caller  *internal.Caller
@@ -38,12 +36,11 @@ func NewClient(opts ...option.RequestOption) *Client {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
-		Community:       community.NewClient(opts...),
 		Edge:            edge.NewClient(opts...),
 		Episode:         episode.NewClient(opts...),
 		Node:            node.NewClient(opts...),
-		Saga:            saga.NewClient(opts...),
-		Theme:           theme.NewClient(opts...),
+		Observation:     observation.NewClient(opts...),
+		ThreadSummary:   threadsummary.NewClient(opts...),
 		WithRawResponse: NewRawClient(options),
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
