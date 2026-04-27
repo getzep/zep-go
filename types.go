@@ -54,11 +54,13 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type CommunityNode struct {
-	// Additional attributes of the community node.
+type DerivedNode struct {
+	// Additional attributes of the derived node.
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the node
 	CreatedAt string `json:"created_at" url:"created_at"`
+	// Episode UUIDs that support this observation. Only populated for observation nodes in web API responses.
+	EpisodeIDs []string `json:"episode_ids,omitempty" url:"episode_ids,omitempty"`
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
 	// Name of the node
@@ -79,99 +81,106 @@ type CommunityNode struct {
 	rawJSON         json.RawMessage
 }
 
-func (c *CommunityNode) GetAttributes() map[string]interface{} {
-	if c == nil {
+func (d *DerivedNode) GetAttributes() map[string]interface{} {
+	if d == nil {
 		return nil
 	}
-	return c.Attributes
+	return d.Attributes
 }
 
-func (c *CommunityNode) GetCreatedAt() string {
-	if c == nil {
+func (d *DerivedNode) GetCreatedAt() string {
+	if d == nil {
 		return ""
 	}
-	return c.CreatedAt
+	return d.CreatedAt
 }
 
-func (c *CommunityNode) GetLabels() []string {
-	if c == nil {
+func (d *DerivedNode) GetEpisodeIDs() []string {
+	if d == nil {
 		return nil
 	}
-	return c.Labels
+	return d.EpisodeIDs
 }
 
-func (c *CommunityNode) GetName() string {
-	if c == nil {
+func (d *DerivedNode) GetLabels() []string {
+	if d == nil {
+		return nil
+	}
+	return d.Labels
+}
+
+func (d *DerivedNode) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return c.Name
+	return d.Name
 }
 
-func (c *CommunityNode) GetRelevance() *float64 {
-	if c == nil {
+func (d *DerivedNode) GetRelevance() *float64 {
+	if d == nil {
 		return nil
 	}
-	return c.Relevance
+	return d.Relevance
 }
 
-func (c *CommunityNode) GetScore() *float64 {
-	if c == nil {
+func (d *DerivedNode) GetScore() *float64 {
+	if d == nil {
 		return nil
 	}
-	return c.Score
+	return d.Score
 }
 
-func (c *CommunityNode) GetSelectionRank() *int {
-	if c == nil {
+func (d *DerivedNode) GetSelectionRank() *int {
+	if d == nil {
 		return nil
 	}
-	return c.SelectionRank
+	return d.SelectionRank
 }
 
-func (c *CommunityNode) GetSummary() *string {
-	if c == nil {
+func (d *DerivedNode) GetSummary() *string {
+	if d == nil {
 		return nil
 	}
-	return c.Summary
+	return d.Summary
 }
 
-func (c *CommunityNode) GetUUID() string {
-	if c == nil {
+func (d *DerivedNode) GetUUID() string {
+	if d == nil {
 		return ""
 	}
-	return c.UUID
+	return d.UUID
 }
 
-func (c *CommunityNode) GetExtraProperties() map[string]interface{} {
-	return c.extraProperties
+func (d *DerivedNode) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
 }
 
-func (c *CommunityNode) UnmarshalJSON(data []byte) error {
-	type unmarshaler CommunityNode
+func (d *DerivedNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler DerivedNode
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*c = CommunityNode(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	*d = DerivedNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
 	if err != nil {
 		return err
 	}
-	c.extraProperties = extraProperties
-	c.rawJSON = json.RawMessage(data)
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (c *CommunityNode) String() string {
-	if len(c.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+func (d *DerivedNode) String() string {
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(c); err == nil {
+	if value, err := internal.StringifyJSON(d); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", c)
+	return fmt.Sprintf("%#v", d)
 }
 
 type EntityEdge struct {
@@ -726,62 +735,6 @@ func (e *EpisodeResponse) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type GraphCommunitiesRequest struct {
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphCommunitiesRequest) GetLimit() *int {
-	if g == nil {
-		return nil
-	}
-	return g.Limit
-}
-
-func (g *GraphCommunitiesRequest) GetUUIDCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UUIDCursor
-}
-
-func (g *GraphCommunitiesRequest) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphCommunitiesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphCommunitiesRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphCommunitiesRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphCommunitiesRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
 type GraphDataType string
 
 const (
@@ -922,7 +875,7 @@ func (g *GraphNodesRequest) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type GraphSagasRequest struct {
+type GraphObservationsRequest struct {
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
@@ -932,31 +885,31 @@ type GraphSagasRequest struct {
 	rawJSON         json.RawMessage
 }
 
-func (g *GraphSagasRequest) GetLimit() *int {
+func (g *GraphObservationsRequest) GetLimit() *int {
 	if g == nil {
 		return nil
 	}
 	return g.Limit
 }
 
-func (g *GraphSagasRequest) GetUUIDCursor() *string {
+func (g *GraphObservationsRequest) GetUUIDCursor() *string {
 	if g == nil {
 		return nil
 	}
 	return g.UUIDCursor
 }
 
-func (g *GraphSagasRequest) GetExtraProperties() map[string]interface{} {
+func (g *GraphObservationsRequest) GetExtraProperties() map[string]interface{} {
 	return g.extraProperties
 }
 
-func (g *GraphSagasRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphSagasRequest
+func (g *GraphObservationsRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphObservationsRequest
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*g = GraphSagasRequest(value)
+	*g = GraphObservationsRequest(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *g)
 	if err != nil {
 		return err
@@ -966,7 +919,7 @@ func (g *GraphSagasRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (g *GraphSagasRequest) String() string {
+func (g *GraphObservationsRequest) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
@@ -978,7 +931,7 @@ func (g *GraphSagasRequest) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type GraphThemesRequest struct {
+type GraphThreadSummariesRequest struct {
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
@@ -988,31 +941,31 @@ type GraphThemesRequest struct {
 	rawJSON         json.RawMessage
 }
 
-func (g *GraphThemesRequest) GetLimit() *int {
+func (g *GraphThreadSummariesRequest) GetLimit() *int {
 	if g == nil {
 		return nil
 	}
 	return g.Limit
 }
 
-func (g *GraphThemesRequest) GetUUIDCursor() *string {
+func (g *GraphThreadSummariesRequest) GetUUIDCursor() *string {
 	if g == nil {
 		return nil
 	}
 	return g.UUIDCursor
 }
 
-func (g *GraphThemesRequest) GetExtraProperties() map[string]interface{} {
+func (g *GraphThreadSummariesRequest) GetExtraProperties() map[string]interface{} {
 	return g.extraProperties
 }
 
-func (g *GraphThemesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphThemesRequest
+func (g *GraphThreadSummariesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphThreadSummariesRequest
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*g = GraphThemesRequest(value)
+	*g = GraphThreadSummariesRequest(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *g)
 	if err != nil {
 		return err
@@ -1022,127 +975,7 @@ func (g *GraphThemesRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (g *GraphThemesRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type GraphitiSagaNode struct {
-	// Creation time of the node
-	CreatedAt string `json:"created_at" url:"created_at"`
-	// Labels associated with the node
-	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
-	// Timestamp of the most recent summary update.
-	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
-	// Name of the node
-	Name string `json:"name" url:"name"`
-	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
-	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
-	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
-	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
-	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
-	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
-	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	// Incremental summary of the thread.
-	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
-	// UUID of the node
-	UUID string `json:"uuid" url:"uuid"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphitiSagaNode) GetCreatedAt() string {
-	if g == nil {
-		return ""
-	}
-	return g.CreatedAt
-}
-
-func (g *GraphitiSagaNode) GetLabels() []string {
-	if g == nil {
-		return nil
-	}
-	return g.Labels
-}
-
-func (g *GraphitiSagaNode) GetLastSummarizedAt() *string {
-	if g == nil {
-		return nil
-	}
-	return g.LastSummarizedAt
-}
-
-func (g *GraphitiSagaNode) GetName() string {
-	if g == nil {
-		return ""
-	}
-	return g.Name
-}
-
-func (g *GraphitiSagaNode) GetRelevance() *float64 {
-	if g == nil {
-		return nil
-	}
-	return g.Relevance
-}
-
-func (g *GraphitiSagaNode) GetScore() *float64 {
-	if g == nil {
-		return nil
-	}
-	return g.Score
-}
-
-func (g *GraphitiSagaNode) GetSelectionRank() *int {
-	if g == nil {
-		return nil
-	}
-	return g.SelectionRank
-}
-
-func (g *GraphitiSagaNode) GetSummary() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Summary
-}
-
-func (g *GraphitiSagaNode) GetUUID() string {
-	if g == nil {
-		return ""
-	}
-	return g.UUID
-}
-
-func (g *GraphitiSagaNode) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphitiSagaNode) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphitiSagaNode
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphitiSagaNode(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphitiSagaNode) String() string {
+func (g *GraphThreadSummariesRequest) String() string {
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
@@ -1402,6 +1235,92 @@ func (t *Thread) UnmarshalJSON(data []byte) error {
 }
 
 func (t *Thread) String() string {
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type ThreadSummary struct {
+	// CreatedAt is when the summary node was first created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// LastSummarizedAt is the timestamp of the most recent summary update.
+	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// Summary is the incremental summary content.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// ThreadID is the ID of the thread this summary belongs to.
+	// When a thread was created without an explicit thread_id, this
+	// field falls back to the thread's UUID. Clients should treat it
+	// as an opaque identifier.
+	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
+	// UUID of the thread summary node.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *ThreadSummary) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *ThreadSummary) GetLastSummarizedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.LastSummarizedAt
+}
+
+func (t *ThreadSummary) GetSummary() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Summary
+}
+
+func (t *ThreadSummary) GetThreadID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ThreadID
+}
+
+func (t *ThreadSummary) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *ThreadSummary) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *ThreadSummary) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadSummary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = ThreadSummary(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *ThreadSummary) String() string {
 	if len(t.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value

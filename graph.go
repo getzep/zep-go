@@ -1321,23 +1321,15 @@ func (g *GraphListResponse) String() string {
 }
 
 type GraphSearchResults struct {
-	Communities []*CommunityNode    `json:"communities,omitempty" url:"communities,omitempty"`
-	Context     *string             `json:"context,omitempty" url:"context,omitempty"`
-	Edges       []*EntityEdge       `json:"edges,omitempty" url:"edges,omitempty"`
-	Episodes    []*Episode          `json:"episodes,omitempty" url:"episodes,omitempty"`
-	Nodes       []*EntityNode       `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Sagas       []*GraphitiSagaNode `json:"sagas,omitempty" url:"sagas,omitempty"`
-	Themes      []*CommunityNode    `json:"themes,omitempty" url:"themes,omitempty"`
+	Context         *string             `json:"context,omitempty" url:"context,omitempty"`
+	Edges           []*EntityEdge       `json:"edges,omitempty" url:"edges,omitempty"`
+	Episodes        []*Episode          `json:"episodes,omitempty" url:"episodes,omitempty"`
+	Nodes           []*EntityNode       `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Observations    []*DerivedNode      `json:"observations,omitempty" url:"observations,omitempty"`
+	ThreadSummaries []*GraphitiSagaNode `json:"thread_summaries,omitempty" url:"thread_summaries,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (g *GraphSearchResults) GetCommunities() []*CommunityNode {
-	if g == nil {
-		return nil
-	}
-	return g.Communities
 }
 
 func (g *GraphSearchResults) GetContext() *string {
@@ -1368,18 +1360,18 @@ func (g *GraphSearchResults) GetNodes() []*EntityNode {
 	return g.Nodes
 }
 
-func (g *GraphSearchResults) GetSagas() []*GraphitiSagaNode {
+func (g *GraphSearchResults) GetObservations() []*DerivedNode {
 	if g == nil {
 		return nil
 	}
-	return g.Sagas
+	return g.Observations
 }
 
-func (g *GraphSearchResults) GetThemes() []*CommunityNode {
+func (g *GraphSearchResults) GetThreadSummaries() []*GraphitiSagaNode {
 	if g == nil {
 		return nil
 	}
-	return g.Themes
+	return g.ThreadSummaries
 }
 
 func (g *GraphSearchResults) GetExtraProperties() map[string]interface{} {
@@ -1417,13 +1409,12 @@ func (g *GraphSearchResults) String() string {
 type GraphSearchScope string
 
 const (
-	GraphSearchScopeEdges       GraphSearchScope = "edges"
-	GraphSearchScopeNodes       GraphSearchScope = "nodes"
-	GraphSearchScopeEpisodes    GraphSearchScope = "episodes"
-	GraphSearchScopeCommunities GraphSearchScope = "communities"
-	GraphSearchScopeSagas       GraphSearchScope = "sagas"
-	GraphSearchScopeThemes      GraphSearchScope = "themes"
-	GraphSearchScopeAuto        GraphSearchScope = "auto"
+	GraphSearchScopeEdges           GraphSearchScope = "edges"
+	GraphSearchScopeNodes           GraphSearchScope = "nodes"
+	GraphSearchScopeEpisodes        GraphSearchScope = "episodes"
+	GraphSearchScopeThreadSummaries GraphSearchScope = "thread_summaries"
+	GraphSearchScopeObservations    GraphSearchScope = "observations"
+	GraphSearchScopeAuto            GraphSearchScope = "auto"
 )
 
 func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
@@ -1434,12 +1425,10 @@ func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
 		return GraphSearchScopeNodes, nil
 	case "episodes":
 		return GraphSearchScopeEpisodes, nil
-	case "communities":
-		return GraphSearchScopeCommunities, nil
-	case "sagas":
-		return GraphSearchScopeSagas, nil
-	case "themes":
-		return GraphSearchScopeThemes, nil
+	case "thread_summaries":
+		return GraphSearchScopeThreadSummaries, nil
+	case "observations":
+		return GraphSearchScopeObservations, nil
 	case "auto":
 		return GraphSearchScopeAuto, nil
 	}
@@ -1472,6 +1461,126 @@ func NewGraphitiMetadataFilterGroupTypeFromString(s string) (GraphitiMetadataFil
 
 func (g GraphitiMetadataFilterGroupType) Ptr() *GraphitiMetadataFilterGroupType {
 	return &g
+}
+
+type GraphitiSagaNode struct {
+	// Creation time of the node
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// Labels associated with the node
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// Timestamp of the most recent summary update.
+	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// Name of the node
+	Name string `json:"name" url:"name"`
+	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
+	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// Incremental summary of the thread.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// UUID of the node
+	UUID string `json:"uuid" url:"uuid"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphitiSagaNode) GetCreatedAt() string {
+	if g == nil {
+		return ""
+	}
+	return g.CreatedAt
+}
+
+func (g *GraphitiSagaNode) GetLabels() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Labels
+}
+
+func (g *GraphitiSagaNode) GetLastSummarizedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.LastSummarizedAt
+}
+
+func (g *GraphitiSagaNode) GetName() string {
+	if g == nil {
+		return ""
+	}
+	return g.Name
+}
+
+func (g *GraphitiSagaNode) GetRelevance() *float64 {
+	if g == nil {
+		return nil
+	}
+	return g.Relevance
+}
+
+func (g *GraphitiSagaNode) GetScore() *float64 {
+	if g == nil {
+		return nil
+	}
+	return g.Score
+}
+
+func (g *GraphitiSagaNode) GetSelectionRank() *int {
+	if g == nil {
+		return nil
+	}
+	return g.SelectionRank
+}
+
+func (g *GraphitiSagaNode) GetSummary() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Summary
+}
+
+func (g *GraphitiSagaNode) GetUUID() string {
+	if g == nil {
+		return ""
+	}
+	return g.UUID
+}
+
+func (g *GraphitiSagaNode) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphitiSagaNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphitiSagaNode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphitiSagaNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphitiSagaNode) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
 }
 
 type HubDetectConfig struct {

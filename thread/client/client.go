@@ -172,3 +172,21 @@ func (c *Client) AddMessagesBatch(
 	}
 	return response.Body, nil
 }
+
+// Returns the incremental summary generated from messages in the thread. Returns 404 if no summary exists for the thread.
+func (c *Client) GetSummary(
+	ctx context.Context,
+	// The thread ID.
+	threadID string,
+	opts ...option.RequestOption,
+) (*v3.ThreadSummary, error) {
+	response, err := c.WithRawResponse.GetSummary(
+		ctx,
+		threadID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
