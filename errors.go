@@ -10,11 +10,11 @@ import (
 // Bad Request
 type BadRequestError struct {
 	*core.APIError
-	Body *APIError
+	Body interface{}
 }
 
 func (b *BadRequestError) UnmarshalJSON(data []byte) error {
-	var body *APIError
+	var body interface{}
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
@@ -29,6 +29,30 @@ func (b *BadRequestError) MarshalJSON() ([]byte, error) {
 
 func (b *BadRequestError) Unwrap() error {
 	return b.APIError
+}
+
+// Conflict
+type ConflictError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (c *ConflictError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	c.StatusCode = 409
+	c.Body = body
+	return nil
+}
+
+func (c *ConflictError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.Body)
+}
+
+func (c *ConflictError) Unwrap() error {
+	return c.APIError
 }
 
 // Forbidden

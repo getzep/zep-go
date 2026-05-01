@@ -177,15 +177,19 @@ type GraphSearchQuery struct {
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
 	// The maximum number of facts to retrieve. Defaults to 10. Limited to 50.
 	Limit *int `json:"limit,omitempty" url:"-"`
-	// Maximum total characters across all selected results when scope=auto. Defaults to 2000. Limited to 50000.
+	// Maximum total characters across all selected results when scope=auto. Defaults to 2500. Limited to 50000.
 	MaxCharacters *int `json:"max_characters,omitempty" url:"-"`
 	// weighting for maximal marginal relevance
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
 	// The string to search for (required)
 	Query string `json:"query" url:"-"`
-	// Defaults to RRF
+	// Defaults to RRF. When scope=auto, this only affects graph-service retrieval
+	// shape for graph facts, observations, and thread summaries; source-episode
+	// retrieval uses RRF, and auto search applies its own internal rerank after retrieval.
 	Reranker *Reranker `json:"reranker,omitempty" url:"-"`
 	// When scope=auto, include the selected raw graph results alongside the materialized context block.
+	// For graph-service-backed auto mode, selected raw results may include episodes,
+	// edges, nodes, observations, and thread_summaries.
 	ReturnRawResults *bool `json:"return_raw_results,omitempty" url:"-"`
 	// Defaults to Edges.
 	Scope *GraphSearchScope `json:"scope,omitempty" url:"-"`
