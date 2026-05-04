@@ -230,10 +230,10 @@ type BatchItemDetail struct {
 	Error         map[string]interface{} `json:"error,omitempty" url:"error,omitempty"`
 	GraphID       *string                `json:"graph_id,omitempty" url:"graph_id,omitempty"`
 	ItemID        *string                `json:"item_id,omitempty" url:"item_id,omitempty"`
-	Kind          *ModelsBatchItemKind   `json:"kind,omitempty" url:"kind,omitempty"`
+	Kind          *BatchItemKind         `json:"kind,omitempty" url:"kind,omitempty"`
 	SequenceIndex *int                   `json:"sequence_index,omitempty" url:"sequence_index,omitempty"`
 	SourceUUID    *string                `json:"source_uuid,omitempty" url:"source_uuid,omitempty"`
-	Status        *ModelsBatchItemStatus `json:"status,omitempty" url:"status,omitempty"`
+	Status        *BatchItemStatus       `json:"status,omitempty" url:"status,omitempty"`
 	ThreadID      *string                `json:"thread_id,omitempty" url:"thread_id,omitempty"`
 	UpdatedAt     *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	UserID        *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
@@ -277,7 +277,7 @@ func (b *BatchItemDetail) GetItemID() *string {
 	return b.ItemID
 }
 
-func (b *BatchItemDetail) GetKind() *ModelsBatchItemKind {
+func (b *BatchItemDetail) GetKind() *BatchItemKind {
 	if b == nil {
 		return nil
 	}
@@ -298,7 +298,7 @@ func (b *BatchItemDetail) GetSourceUUID() *string {
 	return b.SourceUUID
 }
 
-func (b *BatchItemDetail) GetStatus() *ModelsBatchItemStatus {
+func (b *BatchItemDetail) GetStatus() *BatchItemStatus {
 	if b == nil {
 		return nil
 	}
@@ -358,6 +358,28 @@ func (b *BatchItemDetail) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+type BatchItemKind string
+
+const (
+	BatchItemKindGraphEpisode  BatchItemKind = "graph_episode"
+	BatchItemKindThreadMessage BatchItemKind = "thread_message"
+)
+
+func NewBatchItemKindFromString(s string) (BatchItemKind, error) {
+	switch s {
+	case "graph_episode":
+		return BatchItemKindGraphEpisode, nil
+	case "thread_message":
+		return BatchItemKindThreadMessage, nil
+	}
+	var t BatchItemKind
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BatchItemKind) Ptr() *BatchItemKind {
+	return &b
+}
+
 type BatchItemListResponse struct {
 	Items      []*BatchItemDetail `json:"items,omitempty" url:"items,omitempty"`
 	NextCursor *int               `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
@@ -410,6 +432,40 @@ func (b *BatchItemListResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+type BatchItemStatus string
+
+const (
+	BatchItemStatusPending    BatchItemStatus = "pending"
+	BatchItemStatusQueued     BatchItemStatus = "queued"
+	BatchItemStatusProcessing BatchItemStatus = "processing"
+	BatchItemStatusSucceeded  BatchItemStatus = "succeeded"
+	BatchItemStatusFailed     BatchItemStatus = "failed"
+	BatchItemStatusSkipped    BatchItemStatus = "skipped"
+)
+
+func NewBatchItemStatusFromString(s string) (BatchItemStatus, error) {
+	switch s {
+	case "pending":
+		return BatchItemStatusPending, nil
+	case "queued":
+		return BatchItemStatusQueued, nil
+	case "processing":
+		return BatchItemStatusProcessing, nil
+	case "succeeded":
+		return BatchItemStatusSucceeded, nil
+	case "failed":
+		return BatchItemStatusFailed, nil
+	case "skipped":
+		return BatchItemStatusSkipped, nil
+	}
+	var t BatchItemStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BatchItemStatus) Ptr() *BatchItemStatus {
+	return &b
 }
 
 type BatchListResponse struct {
@@ -560,6 +616,43 @@ func (b *BatchProgress) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+type BatchStatus string
+
+const (
+	BatchStatusDraft      BatchStatus = "draft"
+	BatchStatusInvalid    BatchStatus = "invalid"
+	BatchStatusQueued     BatchStatus = "queued"
+	BatchStatusProcessing BatchStatus = "processing"
+	BatchStatusSucceeded  BatchStatus = "succeeded"
+	BatchStatusPartial    BatchStatus = "partial"
+	BatchStatusFailed     BatchStatus = "failed"
+)
+
+func NewBatchStatusFromString(s string) (BatchStatus, error) {
+	switch s {
+	case "draft":
+		return BatchStatusDraft, nil
+	case "invalid":
+		return BatchStatusInvalid, nil
+	case "queued":
+		return BatchStatusQueued, nil
+	case "processing":
+		return BatchStatusProcessing, nil
+	case "succeeded":
+		return BatchStatusSucceeded, nil
+	case "partial":
+		return BatchStatusPartial, nil
+	case "failed":
+		return BatchStatusFailed, nil
+	}
+	var t BatchStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BatchStatus) Ptr() *BatchStatus {
+	return &b
+}
+
 type BatchSummary struct {
 	BatchID     *string                `json:"batch_id,omitempty" url:"batch_id,omitempty"`
 	CompletedAt *string                `json:"completed_at,omitempty" url:"completed_at,omitempty"`
@@ -568,7 +661,7 @@ type BatchSummary struct {
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	ProcessedAt *string                `json:"processed_at,omitempty" url:"processed_at,omitempty"`
 	Progress    *BatchProgress         `json:"progress,omitempty" url:"progress,omitempty"`
-	Status      *ModelsBatchStatus     `json:"status,omitempty" url:"status,omitempty"`
+	Status      *BatchStatus           `json:"status,omitempty" url:"status,omitempty"`
 	UpdatedAt   *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -624,7 +717,7 @@ func (b *BatchSummary) GetProgress() *BatchProgress {
 	return b.Progress
 }
 
-func (b *BatchSummary) GetStatus() *ModelsBatchStatus {
+func (b *BatchSummary) GetStatus() *BatchStatus {
 	if b == nil {
 		return nil
 	}
@@ -668,97 +761,4 @@ func (b *BatchSummary) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
-}
-
-type ModelsBatchItemKind string
-
-const (
-	ModelsBatchItemKindGraphEpisode  ModelsBatchItemKind = "graph_episode"
-	ModelsBatchItemKindThreadMessage ModelsBatchItemKind = "thread_message"
-)
-
-func NewModelsBatchItemKindFromString(s string) (ModelsBatchItemKind, error) {
-	switch s {
-	case "graph_episode":
-		return ModelsBatchItemKindGraphEpisode, nil
-	case "thread_message":
-		return ModelsBatchItemKindThreadMessage, nil
-	}
-	var t ModelsBatchItemKind
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (m ModelsBatchItemKind) Ptr() *ModelsBatchItemKind {
-	return &m
-}
-
-type ModelsBatchItemStatus string
-
-const (
-	ModelsBatchItemStatusPending    ModelsBatchItemStatus = "pending"
-	ModelsBatchItemStatusQueued     ModelsBatchItemStatus = "queued"
-	ModelsBatchItemStatusProcessing ModelsBatchItemStatus = "processing"
-	ModelsBatchItemStatusSucceeded  ModelsBatchItemStatus = "succeeded"
-	ModelsBatchItemStatusFailed     ModelsBatchItemStatus = "failed"
-	ModelsBatchItemStatusSkipped    ModelsBatchItemStatus = "skipped"
-)
-
-func NewModelsBatchItemStatusFromString(s string) (ModelsBatchItemStatus, error) {
-	switch s {
-	case "pending":
-		return ModelsBatchItemStatusPending, nil
-	case "queued":
-		return ModelsBatchItemStatusQueued, nil
-	case "processing":
-		return ModelsBatchItemStatusProcessing, nil
-	case "succeeded":
-		return ModelsBatchItemStatusSucceeded, nil
-	case "failed":
-		return ModelsBatchItemStatusFailed, nil
-	case "skipped":
-		return ModelsBatchItemStatusSkipped, nil
-	}
-	var t ModelsBatchItemStatus
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (m ModelsBatchItemStatus) Ptr() *ModelsBatchItemStatus {
-	return &m
-}
-
-type ModelsBatchStatus string
-
-const (
-	ModelsBatchStatusDraft      ModelsBatchStatus = "draft"
-	ModelsBatchStatusInvalid    ModelsBatchStatus = "invalid"
-	ModelsBatchStatusQueued     ModelsBatchStatus = "queued"
-	ModelsBatchStatusProcessing ModelsBatchStatus = "processing"
-	ModelsBatchStatusSucceeded  ModelsBatchStatus = "succeeded"
-	ModelsBatchStatusPartial    ModelsBatchStatus = "partial"
-	ModelsBatchStatusFailed     ModelsBatchStatus = "failed"
-)
-
-func NewModelsBatchStatusFromString(s string) (ModelsBatchStatus, error) {
-	switch s {
-	case "draft":
-		return ModelsBatchStatusDraft, nil
-	case "invalid":
-		return ModelsBatchStatusInvalid, nil
-	case "queued":
-		return ModelsBatchStatusQueued, nil
-	case "processing":
-		return ModelsBatchStatusProcessing, nil
-	case "succeeded":
-		return ModelsBatchStatusSucceeded, nil
-	case "partial":
-		return ModelsBatchStatusPartial, nil
-	case "failed":
-		return ModelsBatchStatusFailed, nil
-	}
-	var t ModelsBatchStatus
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (m ModelsBatchStatus) Ptr() *ModelsBatchStatus {
-	return &m
 }
