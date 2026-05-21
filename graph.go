@@ -61,7 +61,11 @@ type AddTripleRequest struct {
 	// Additional attributes of the source node. Values must be scalar types (string, number, boolean, or null).
 	// Nested objects and arrays are not allowed.
 	SourceNodeAttributes map[string]interface{} `json:"source_node_attributes,omitempty" url:"-"`
-	// The labels for the source node
+	// The labels for the source node. At most one entity-type label may be
+	// provided so that manually-added triples remain consistent with automatic
+	// episode extraction, which assigns one best-match entity type per node.
+	// The base "Entity" label is added implicitly by the graph layer on save
+	// and does not need to be supplied here.
 	SourceNodeLabels []string `json:"source_node_labels,omitempty" url:"-"`
 	// The name of the source node to add
 	SourceNodeName *string `json:"source_node_name,omitempty" url:"-"`
@@ -72,7 +76,11 @@ type AddTripleRequest struct {
 	// Additional attributes of the target node. Values must be scalar types (string, number, boolean, or null).
 	// Nested objects and arrays are not allowed.
 	TargetNodeAttributes map[string]interface{} `json:"target_node_attributes,omitempty" url:"-"`
-	// The labels for the target node
+	// The labels for the target node. At most one entity-type label may be
+	// provided so that manually-added triples remain consistent with automatic
+	// episode extraction, which assigns one best-match entity type per node.
+	// The base "Entity" label is added implicitly by the graph layer on save
+	// and does not need to be supplied here.
 	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"-"`
 	// The name of the target node to add
 	TargetNodeName *string `json:"target_node_name,omitempty" url:"-"`
@@ -175,7 +183,7 @@ type GraphSearchQuery struct {
 	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
 	// The graph_id to search in. When searching user graph, please use user_id instead.
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
-	// The maximum number of facts to retrieve. Defaults to 10. Limited to 50.
+	// The maximum number of facts to retrieve for non-auto scopes. Defaults to 10. Limited to 50. Ignored when scope=auto.
 	Limit *int `json:"limit,omitempty" url:"-"`
 	// Maximum total characters across all selected results when scope=auto. Defaults to 2500. Limited to 50000.
 	MaxCharacters *int `json:"max_characters,omitempty" url:"-"`
@@ -183,9 +191,8 @@ type GraphSearchQuery struct {
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
 	// The string to search for (required)
 	Query string `json:"query" url:"-"`
-	// Defaults to RRF. When scope=auto, this only affects graph-service retrieval
-	// shape for graph facts, observations, and thread summaries; source-episode
-	// retrieval uses RRF, and auto search applies its own internal rerank after retrieval.
+	// Defaults to RRF. Ignored when scope=auto except node_distance and episode_mentions are rejected;
+	// auto search always uses RRF retrieval and applies its own internal rerank after retrieval.
 	Reranker *Reranker `json:"reranker,omitempty" url:"-"`
 	// When scope=auto, include the selected raw graph results alongside the materialized context block.
 	// For graph-service-backed auto mode, selected raw results may include episodes,
@@ -1324,13 +1331,61 @@ func (g *GraphListResponse) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
+type GraphSearchResponseMetadata struct {
+	// Server-side processing latency in milliseconds.
+	ServerLatencyMs *int `json:"server_latency_ms,omitempty" url:"server_latency_ms,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphSearchResponseMetadata) GetServerLatencyMs() *int {
+	if g == nil {
+		return nil
+	}
+	return g.ServerLatencyMs
+}
+
+func (g *GraphSearchResponseMetadata) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphSearchResponseMetadata) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphSearchResponseMetadata
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphSearchResponseMetadata(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphSearchResponseMetadata) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type GraphSearchResults struct {
-	Context         *string             `json:"context,omitempty" url:"context,omitempty"`
-	Edges           []*EntityEdge       `json:"edges,omitempty" url:"edges,omitempty"`
-	Episodes        []*Episode          `json:"episodes,omitempty" url:"episodes,omitempty"`
-	Nodes           []*EntityNode       `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Observations    []*DerivedNode      `json:"observations,omitempty" url:"observations,omitempty"`
-	ThreadSummaries []*GraphitiSagaNode `json:"thread_summaries,omitempty" url:"thread_summaries,omitempty"`
+	Context         *string                      `json:"context,omitempty" url:"context,omitempty"`
+	Edges           []*EntityEdge                `json:"edges,omitempty" url:"edges,omitempty"`
+	Episodes        []*Episode                   `json:"episodes,omitempty" url:"episodes,omitempty"`
+	Nodes           []*EntityNode                `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Observations    []*DerivedNode               `json:"observations,omitempty" url:"observations,omitempty"`
+	Response        *GraphSearchResponseMetadata `json:"response,omitempty" url:"response,omitempty"`
+	ThreadSummaries []*GraphitiSagaNode          `json:"thread_summaries,omitempty" url:"thread_summaries,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -1369,6 +1424,13 @@ func (g *GraphSearchResults) GetObservations() []*DerivedNode {
 		return nil
 	}
 	return g.Observations
+}
+
+func (g *GraphSearchResults) GetResponse() *GraphSearchResponseMetadata {
+	if g == nil {
+		return nil
+	}
+	return g.Response
 }
 
 func (g *GraphSearchResults) GetThreadSummaries() []*GraphitiSagaNode {
@@ -1472,8 +1534,13 @@ type GraphitiSagaNode struct {
 	CreatedAt string `json:"created_at" url:"created_at"`
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
-	// Timestamp of the most recent summary update.
+	// Wall-clock timestamp of the most recent summary update. Used internally
+	// as the watermark for filtering new episodes by ingestion time.
 	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// Maximum episode reference time (valid_at) covered by the most recent
+	// summary. Use this field — not LastSummarizedAt — when answering "how
+	// recent is this summary's content in event-time?".
+	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
 	// Name of the node
 	Name string `json:"name" url:"name"`
 	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
@@ -1511,6 +1578,13 @@ func (g *GraphitiSagaNode) GetLastSummarizedAt() *string {
 		return nil
 	}
 	return g.LastSummarizedAt
+}
+
+func (g *GraphitiSagaNode) GetLastSummarizedEpisodeValidAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.LastSummarizedEpisodeValidAt
 }
 
 func (g *GraphitiSagaNode) GetName() string {

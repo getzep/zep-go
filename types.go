@@ -59,10 +59,17 @@ type DerivedNode struct {
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the node
 	CreatedAt string `json:"created_at" url:"created_at"`
+	// EndAt is the close timestamp of the evidence window. Set when the
+	// underlying pattern is no longer supported (closed observations);
+	// nil for active observations.
+	EndAt *string `json:"end_at,omitempty" url:"end_at,omitempty"`
 	// Episode UUIDs that support this observation. Only populated for observation nodes in web API responses.
 	EpisodeIDs []string `json:"episode_ids,omitempty" url:"episode_ids,omitempty"`
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// LatestEvidenceAt is the most recent source-episode timestamp from
+	// which this observation drew evidence.
+	LatestEvidenceAt *string `json:"latest_evidence_at,omitempty" url:"latest_evidence_at,omitempty"`
 	// Name of the node
 	Name string `json:"name" url:"name"`
 	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
@@ -72,6 +79,9 @@ type DerivedNode struct {
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
 	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// StartAt is the earliest source-episode timestamp from which this
+	// observation was derived. Only populated for observation nodes.
+	StartAt *string `json:"start_at,omitempty" url:"start_at,omitempty"`
 	// Region summary of member nodes
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
 	// UUID of the node
@@ -95,6 +105,13 @@ func (d *DerivedNode) GetCreatedAt() string {
 	return d.CreatedAt
 }
 
+func (d *DerivedNode) GetEndAt() *string {
+	if d == nil {
+		return nil
+	}
+	return d.EndAt
+}
+
 func (d *DerivedNode) GetEpisodeIDs() []string {
 	if d == nil {
 		return nil
@@ -107,6 +124,13 @@ func (d *DerivedNode) GetLabels() []string {
 		return nil
 	}
 	return d.Labels
+}
+
+func (d *DerivedNode) GetLatestEvidenceAt() *string {
+	if d == nil {
+		return nil
+	}
+	return d.LatestEvidenceAt
 }
 
 func (d *DerivedNode) GetName() string {
@@ -135,6 +159,13 @@ func (d *DerivedNode) GetSelectionRank() *int {
 		return nil
 	}
 	return d.SelectionRank
+}
+
+func (d *DerivedNode) GetStartAt() *string {
+	if d == nil {
+		return nil
+	}
+	return d.StartAt
 }
 
 func (d *DerivedNode) GetSummary() *string {
@@ -1249,8 +1280,15 @@ func (t *Thread) String() string {
 type ThreadSummary struct {
 	// CreatedAt is when the summary node was first created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// LastSummarizedAt is the timestamp of the most recent summary update.
+	// LastSummarizedAt is the wall-clock timestamp of the most recent
+	// summary update. This is an ingestion-time watermark; for the
+	// event-time recency of the summary's content, use
+	// LastSummarizedEpisodeValidAt instead.
 	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// LastSummarizedEpisodeValidAt is the maximum episode reference time
+	// (valid_at) covered by the most recent summary. Use this when
+	// answering "how recent is this summary's content in event-time?".
+	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
 	// Summary is the incremental summary content.
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
 	// ThreadID is the ID of the thread this summary belongs to.
@@ -1277,6 +1315,13 @@ func (t *ThreadSummary) GetLastSummarizedAt() *string {
 		return nil
 	}
 	return t.LastSummarizedAt
+}
+
+func (t *ThreadSummary) GetLastSummarizedEpisodeValidAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.LastSummarizedEpisodeValidAt
 }
 
 func (t *ThreadSummary) GetSummary() *string {

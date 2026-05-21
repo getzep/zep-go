@@ -153,7 +153,9 @@ func (c *Client) AddMessages(
 	return response.Body, nil
 }
 
-// Add messages to a thread in batch mode. This will process messages concurrently, which is useful for data migrations.
+// Deprecated. Use the [Batch API](/adding-batch-data) (`client.batch.*` with `type: "thread_message"`) instead.
+//
+// Adds messages to a thread in batch mode, processing messages concurrently.
 func (c *Client) AddMessagesBatch(
 	ctx context.Context,
 	// The ID of the thread to which messages should be added.

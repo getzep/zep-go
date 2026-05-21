@@ -225,7 +225,11 @@ func (b *BatchAddItem) String() string {
 }
 
 type BatchItemDetail struct {
-	CreatedAt     *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// EpisodeUUID is the UUID of the episode that will be (or has been) created
+	// for this batch item. Populated for every item kind and always equal to
+	// SourceUUID — the underlying source row's UUID is reused as the episode
+	// UUID during processing.
 	EpisodeUUID   *string                `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
 	Error         map[string]interface{} `json:"error,omitempty" url:"error,omitempty"`
 	GraphID       *string                `json:"graph_id,omitempty" url:"graph_id,omitempty"`
