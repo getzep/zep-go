@@ -155,7 +155,9 @@ func (c *Client) Add(
 	return response.Body, nil
 }
 
-// Add data to the graph in batch mode. Episodes are processed sequentially in the order provided.
+// Deprecated. Use the [Batch API](/adding-batch-data) (`client.batch.*`) instead.
+//
+// Adds data to the graph in batch mode, processing episodes concurrently.
 func (c *Client) AddBatch(
 	ctx context.Context,
 	request *v3.AddDataBatchRequest,
