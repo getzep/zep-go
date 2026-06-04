@@ -1331,61 +1331,13 @@ func (g *GraphListResponse) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
-type GraphSearchResponseMetadata struct {
-	// Server-side processing latency in milliseconds.
-	ServerLatencyMs *int `json:"server_latency_ms,omitempty" url:"server_latency_ms,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphSearchResponseMetadata) GetServerLatencyMs() *int {
-	if g == nil {
-		return nil
-	}
-	return g.ServerLatencyMs
-}
-
-func (g *GraphSearchResponseMetadata) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphSearchResponseMetadata) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphSearchResponseMetadata
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphSearchResponseMetadata(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphSearchResponseMetadata) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
 type GraphSearchResults struct {
-	Context         *string                      `json:"context,omitempty" url:"context,omitempty"`
-	Edges           []*EntityEdge                `json:"edges,omitempty" url:"edges,omitempty"`
-	Episodes        []*Episode                   `json:"episodes,omitempty" url:"episodes,omitempty"`
-	Nodes           []*EntityNode                `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Observations    []*DerivedNode               `json:"observations,omitempty" url:"observations,omitempty"`
-	Response        *GraphSearchResponseMetadata `json:"response,omitempty" url:"response,omitempty"`
-	ThreadSummaries []*GraphitiSagaNode          `json:"thread_summaries,omitempty" url:"thread_summaries,omitempty"`
+	Context         *string             `json:"context,omitempty" url:"context,omitempty"`
+	Edges           []*EntityEdge       `json:"edges,omitempty" url:"edges,omitempty"`
+	Episodes        []*Episode          `json:"episodes,omitempty" url:"episodes,omitempty"`
+	Nodes           []*EntityNode       `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Observations    []*DerivedNode      `json:"observations,omitempty" url:"observations,omitempty"`
+	ThreadSummaries []*GraphitiSagaNode `json:"thread_summaries,omitempty" url:"thread_summaries,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -1424,13 +1376,6 @@ func (g *GraphSearchResults) GetObservations() []*DerivedNode {
 		return nil
 	}
 	return g.Observations
-}
-
-func (g *GraphSearchResults) GetResponse() *GraphSearchResponseMetadata {
-	if g == nil {
-		return nil
-	}
-	return g.Response
 }
 
 func (g *GraphSearchResults) GetThreadSummaries() []*GraphitiSagaNode {

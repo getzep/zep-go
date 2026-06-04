@@ -334,3 +334,21 @@ func (c *Client) Update(
 	}
 	return response.Body, nil
 }
+
+// Hints Zep to warm a graph for low-latency search
+func (c *Client) Warm(
+	ctx context.Context,
+	// The graph_id of the graph to warm.
+	graphID string,
+	opts ...option.RequestOption,
+) (*v3.SuccessResponse, error) {
+	response, err := c.WithRawResponse.Warm(
+		ctx,
+		graphID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
