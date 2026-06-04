@@ -13,7 +13,12 @@ type ApidataAddBatchItemsRequest struct {
 }
 
 type ApidataCreateBatchRequest struct {
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
+	// Optional list of message role types to skip during graph ingestion for
+	// thread_message items in this batch. The messages are still stored and
+	// retained as context, but no graph extraction is performed for them.
+	// Has no effect on graph_episode items.
+	IgnoreRoles []RoleType             `json:"ignore_roles,omitempty" url:"-"`
+	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }
 
 type BatchListRequest struct {
@@ -447,6 +452,7 @@ const (
 	BatchItemStatusSucceeded  BatchItemStatus = "succeeded"
 	BatchItemStatusFailed     BatchItemStatus = "failed"
 	BatchItemStatusSkipped    BatchItemStatus = "skipped"
+	BatchItemStatusCanceled   BatchItemStatus = "canceled"
 )
 
 func NewBatchItemStatusFromString(s string) (BatchItemStatus, error) {
@@ -463,6 +469,8 @@ func NewBatchItemStatusFromString(s string) (BatchItemStatus, error) {
 		return BatchItemStatusFailed, nil
 	case "skipped":
 		return BatchItemStatusSkipped, nil
+	case "canceled":
+		return BatchItemStatusCanceled, nil
 	}
 	var t BatchItemStatus
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -527,6 +535,7 @@ func (b *BatchListResponse) String() string {
 }
 
 type BatchProgress struct {
+	CanceledItems   *int     `json:"canceled_items,omitempty" url:"canceled_items,omitempty"`
 	FailedItems     *int     `json:"failed_items,omitempty" url:"failed_items,omitempty"`
 	PercentComplete *float64 `json:"percent_complete,omitempty" url:"percent_complete,omitempty"`
 	ProcessingItems *int     `json:"processing_items,omitempty" url:"processing_items,omitempty"`
@@ -537,6 +546,13 @@ type BatchProgress struct {
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (b *BatchProgress) GetCanceledItems() *int {
+	if b == nil {
+		return nil
+	}
+	return b.CanceledItems
 }
 
 func (b *BatchProgress) GetFailedItems() *int {
@@ -630,6 +646,7 @@ const (
 	BatchStatusSucceeded  BatchStatus = "succeeded"
 	BatchStatusPartial    BatchStatus = "partial"
 	BatchStatusFailed     BatchStatus = "failed"
+	BatchStatusCanceled   BatchStatus = "canceled"
 )
 
 func NewBatchStatusFromString(s string) (BatchStatus, error) {
@@ -648,6 +665,8 @@ func NewBatchStatusFromString(s string) (BatchStatus, error) {
 		return BatchStatusPartial, nil
 	case "failed":
 		return BatchStatusFailed, nil
+	case "canceled":
+		return BatchStatusCanceled, nil
 	}
 	var t BatchStatus
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -661,6 +680,7 @@ type BatchSummary struct {
 	BatchID     *string                `json:"batch_id,omitempty" url:"batch_id,omitempty"`
 	CompletedAt *string                `json:"completed_at,omitempty" url:"completed_at,omitempty"`
 	CreatedAt   *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	IgnoreRoles []RoleType             `json:"ignore_roles,omitempty" url:"ignore_roles,omitempty"`
 	ItemCount   *int                   `json:"item_count,omitempty" url:"item_count,omitempty"`
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	ProcessedAt *string                `json:"processed_at,omitempty" url:"processed_at,omitempty"`
@@ -691,6 +711,13 @@ func (b *BatchSummary) GetCreatedAt() *string {
 		return nil
 	}
 	return b.CreatedAt
+}
+
+func (b *BatchSummary) GetIgnoreRoles() []RoleType {
+	if b == nil {
+		return nil
+	}
+	return b.IgnoreRoles
 }
 
 func (b *BatchSummary) GetItemCount() *int {
