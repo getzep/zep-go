@@ -242,6 +242,23 @@ func (c *Client) ListAll(
 	return response.Body, nil
 }
 
+// Add entity nodes to a user or graph directly, without episode ingestion. Up to 100 nodes per request.
+func (c *Client) AddNodes(
+	ctx context.Context,
+	request *v3.GraphitiAddNodesRequest,
+	opts ...option.RequestOption,
+) (*v3.GraphitiAddNodesResponse, error) {
+	response, err := c.WithRawResponse.AddNodes(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Detects structural patterns in a knowledge graph including relationship frequencies,
 // multi-hop paths, co-occurrences, hubs, and clusters.
 // When a query is provided, uses hybrid search to discover seed nodes,

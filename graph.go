@@ -16,7 +16,9 @@ type AddDataRequest struct {
 	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata          map[string]interface{} `json:"metadata,omitempty" url:"-"`
 	SourceDescription *string                `json:"source_description,omitempty" url:"-"`
-	Type              GraphDataType          `json:"type" url:"-"`
+	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
+	StrictOntology *bool         `json:"strict_ontology,omitempty" url:"-"`
+	Type           GraphDataType `json:"type" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -25,6 +27,8 @@ type AddDataBatchRequest struct {
 	Episodes []*EpisodeData `json:"episodes,omitempty" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
+	StrictOntology *bool `json:"strict_ontology,omitempty" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -91,6 +95,13 @@ type AddTripleRequest struct {
 	UserID         *string `json:"user_id,omitempty" url:"-"`
 	// The time at which the fact becomes true
 	ValidAt *string `json:"valid_at,omitempty" url:"-"`
+}
+
+type GraphitiAddNodesRequest struct {
+	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// The nodes to add. 1 to 100 items.
+	Nodes  []*GraphitiAddNodeItem `json:"nodes,omitempty" url:"-"`
+	UserID *string                `json:"user_id,omitempty" url:"-"`
 }
 
 type CloneGraphRequest struct {
@@ -916,9 +927,10 @@ func (e EntityPropertyType) Ptr() *EntityPropertyType {
 }
 
 type EntityType struct {
-	Description string            `json:"description" url:"description"`
-	Name        string            `json:"name" url:"name"`
-	Properties  []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
+	Description        string            `json:"description" url:"description"`
+	IdentityProperties []string          `json:"identity_properties,omitempty" url:"identity_properties,omitempty"`
+	Name               string            `json:"name" url:"name"`
+	Properties         []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -929,6 +941,13 @@ func (e *EntityType) GetDescription() string {
 		return ""
 	}
 	return e.Description
+}
+
+func (e *EntityType) GetIdentityProperties() []string {
+	if e == nil {
+		return nil
+	}
+	return e.IdentityProperties
 }
 
 func (e *EntityType) GetName() string {
@@ -1504,6 +1523,170 @@ func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
 
 func (g GraphSearchScope) Ptr() *GraphSearchScope {
 	return &g
+}
+
+type GraphitiAddNodeItem struct {
+	// Additional attributes of the node. Values must be scalar types (string,
+	// number, boolean, or null). Nested objects and arrays are not allowed.
+	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The node creation time. Defaults to the request time when absent.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The node's entity type. At most one; the base "Entity" label is added
+	// implicitly by the graph layer on save and does not need to be supplied.
+	Label *string `json:"label,omitempty" url:"label,omitempty"`
+	// Optional metadata attached to the node's shadow episode. Max 10 scalar
+	// key-value pairs.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The name of the node. Used to derive the node's search embedding.
+	Name string `json:"name" url:"name"`
+	// A regional summary of the node.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// Optional caller-supplied node UUID. When it matches an existing node the
+	// node is upserted; when well-formed but unknown the node is created with
+	// this UUID; when absent the server assigns one. This is the node's only
+	// identity/dedup key -- there is no name-based resolution.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphitiAddNodeItem) GetAttributes() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.Attributes
+}
+
+func (g *GraphitiAddNodeItem) GetCreatedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedAt
+}
+
+func (g *GraphitiAddNodeItem) GetLabel() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Label
+}
+
+func (g *GraphitiAddNodeItem) GetMetadata() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.Metadata
+}
+
+func (g *GraphitiAddNodeItem) GetName() string {
+	if g == nil {
+		return ""
+	}
+	return g.Name
+}
+
+func (g *GraphitiAddNodeItem) GetSummary() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Summary
+}
+
+func (g *GraphitiAddNodeItem) GetUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUID
+}
+
+func (g *GraphitiAddNodeItem) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphitiAddNodeItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphitiAddNodeItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphitiAddNodeItem(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphitiAddNodeItem) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphitiAddNodesResponse struct {
+	// The accepted nodes, each carrying its resolved (server-assigned or
+	// caller-supplied) UUID, in request order.
+	Nodes []*GraphitiAddNodeItem `json:"nodes,omitempty" url:"nodes,omitempty"`
+	// Task ID of the async add-nodes task.
+	TaskID *string `json:"task_id,omitempty" url:"task_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphitiAddNodesResponse) GetNodes() []*GraphitiAddNodeItem {
+	if g == nil {
+		return nil
+	}
+	return g.Nodes
+}
+
+func (g *GraphitiAddNodesResponse) GetTaskID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.TaskID
+}
+
+func (g *GraphitiAddNodesResponse) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphitiAddNodesResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphitiAddNodesResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphitiAddNodesResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphitiAddNodesResponse) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
 }
 
 // Logical operator: "and" or "or"
