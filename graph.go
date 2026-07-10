@@ -16,9 +16,7 @@ type AddDataRequest struct {
 	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata          map[string]interface{} `json:"metadata,omitempty" url:"-"`
 	SourceDescription *string                `json:"source_description,omitempty" url:"-"`
-	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
-	StrictOntology *bool         `json:"strict_ontology,omitempty" url:"-"`
-	Type           GraphDataType `json:"type" url:"-"`
+	Type              GraphDataType          `json:"type" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -27,8 +25,6 @@ type AddDataBatchRequest struct {
 	Episodes []*EpisodeData `json:"episodes,omitempty" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
-	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
-	StrictOntology *bool `json:"strict_ontology,omitempty" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -95,13 +91,6 @@ type AddTripleRequest struct {
 	UserID         *string `json:"user_id,omitempty" url:"-"`
 	// The time at which the fact becomes true
 	ValidAt *string `json:"valid_at,omitempty" url:"-"`
-}
-
-type GraphitiAddNodesRequest struct {
-	GraphID *string `json:"graph_id,omitempty" url:"-"`
-	// The nodes to add. 1 to 100 items.
-	Nodes  []*GraphitiAddNodeItem `json:"nodes,omitempty" url:"-"`
-	UserID *string                `json:"user_id,omitempty" url:"-"`
 }
 
 type CloneGraphRequest struct {
@@ -408,49 +397,6 @@ func (c *CoOccurrenceDetectConfig) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
-type ComparisonOperator string
-
-const (
-	ComparisonOperatorEquals           ComparisonOperator = "="
-	ComparisonOperatorNotEquals        ComparisonOperator = "<>"
-	ComparisonOperatorGreaterThan      ComparisonOperator = ">"
-	ComparisonOperatorLessThan         ComparisonOperator = "<"
-	ComparisonOperatorGreaterThanEqual ComparisonOperator = ">="
-	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
-	ComparisonOperatorIsNull           ComparisonOperator = "IS NULL"
-	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
-	ComparisonOperatorContains         ComparisonOperator = "CONTAINS"
-)
-
-func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
-	switch s {
-	case "=":
-		return ComparisonOperatorEquals, nil
-	case "<>":
-		return ComparisonOperatorNotEquals, nil
-	case ">":
-		return ComparisonOperatorGreaterThan, nil
-	case "<":
-		return ComparisonOperatorLessThan, nil
-	case ">=":
-		return ComparisonOperatorGreaterThanEqual, nil
-	case "<=":
-		return ComparisonOperatorLessThanEqual, nil
-	case "IS NULL":
-		return ComparisonOperatorIsNull, nil
-	case "IS NOT NULL":
-		return ComparisonOperatorIsNotNull, nil
-	case "CONTAINS":
-		return ComparisonOperatorContains, nil
-	}
-	var t ComparisonOperator
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (c ComparisonOperator) Ptr() *ComparisonOperator {
-	return &c
-}
-
 type CustomInstruction struct {
 	Name string `json:"name" url:"name"`
 	Text string `json:"text" url:"text"`
@@ -503,63 +449,6 @@ func (c *CustomInstruction) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", c)
-}
-
-type DateFilter struct {
-	// Comparison operator for date filter
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Date to filter on. Required for non-null operators (=, \<\>, \>, \<, \>=, \<=).
-	// Should be omitted for IS NULL and IS NOT NULL operators.
-	Date *string `json:"date,omitempty" url:"date,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (d *DateFilter) GetComparisonOperator() ComparisonOperator {
-	if d == nil {
-		return ""
-	}
-	return d.ComparisonOperator
-}
-
-func (d *DateFilter) GetDate() *string {
-	if d == nil {
-		return nil
-	}
-	return d.Date
-}
-
-func (d *DateFilter) GetExtraProperties() map[string]interface{} {
-	return d.extraProperties
-}
-
-func (d *DateFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler DateFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*d = DateFilter(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *d)
-	if err != nil {
-		return err
-	}
-	d.extraProperties = extraProperties
-	d.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (d *DateFilter) String() string {
-	if len(d.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(d); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", d)
 }
 
 type DetectConfig struct {
@@ -927,10 +816,9 @@ func (e EntityPropertyType) Ptr() *EntityPropertyType {
 }
 
 type EntityType struct {
-	Description        string            `json:"description" url:"description"`
-	IdentityProperties []string          `json:"identity_properties,omitempty" url:"identity_properties,omitempty"`
-	Name               string            `json:"name" url:"name"`
-	Properties         []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
+	Description string            `json:"description" url:"description"`
+	Name        string            `json:"name" url:"name"`
+	Properties  []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -941,13 +829,6 @@ func (e *EntityType) GetDescription() string {
 		return ""
 	}
 	return e.Description
-}
-
-func (e *EntityType) GetIdentityProperties() []string {
-	if e == nil {
-		return nil
-	}
-	return e.IdentityProperties
 }
 
 func (e *EntityType) GetName() string {
@@ -1118,71 +999,6 @@ func (e *EpisodeData) UnmarshalJSON(data []byte) error {
 }
 
 func (e *EpisodeData) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EpisodeMetadataFilter struct {
-	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Metadata key to filter on
-	PropertyName string `json:"property_name" url:"property_name"`
-	// Value to compare against. Not required for IS NULL / IS NOT NULL operators.
-	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EpisodeMetadataFilter) GetComparisonOperator() ComparisonOperator {
-	if e == nil {
-		return ""
-	}
-	return e.ComparisonOperator
-}
-
-func (e *EpisodeMetadataFilter) GetPropertyName() string {
-	if e == nil {
-		return ""
-	}
-	return e.PropertyName
-}
-
-func (e *EpisodeMetadataFilter) GetPropertyValue() interface{} {
-	if e == nil {
-		return nil
-	}
-	return e.PropertyValue
-}
-
-func (e *EpisodeMetadataFilter) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EpisodeMetadataFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler EpisodeMetadataFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EpisodeMetadataFilter(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EpisodeMetadataFilter) String() string {
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -1525,193 +1341,6 @@ func (g GraphSearchScope) Ptr() *GraphSearchScope {
 	return &g
 }
 
-type GraphitiAddNodeItem struct {
-	// Additional attributes of the node. Values must be scalar types (string,
-	// number, boolean, or null). Nested objects and arrays are not allowed.
-	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
-	// The node creation time. Defaults to the request time when absent.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// The node's entity type. At most one; the base "Entity" label is added
-	// implicitly by the graph layer on save and does not need to be supplied.
-	Label *string `json:"label,omitempty" url:"label,omitempty"`
-	// Optional metadata attached to the node's shadow episode. Max 10 scalar
-	// key-value pairs.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// The name of the node. Used to derive the node's search embedding.
-	Name string `json:"name" url:"name"`
-	// A regional summary of the node.
-	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
-	// Optional caller-supplied node UUID. When it matches an existing node the
-	// node is upserted; when well-formed but unknown the node is created with
-	// this UUID; when absent the server assigns one. This is the node's only
-	// identity/dedup key -- there is no name-based resolution.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphitiAddNodeItem) GetAttributes() map[string]interface{} {
-	if g == nil {
-		return nil
-	}
-	return g.Attributes
-}
-
-func (g *GraphitiAddNodeItem) GetCreatedAt() *string {
-	if g == nil {
-		return nil
-	}
-	return g.CreatedAt
-}
-
-func (g *GraphitiAddNodeItem) GetLabel() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Label
-}
-
-func (g *GraphitiAddNodeItem) GetMetadata() map[string]interface{} {
-	if g == nil {
-		return nil
-	}
-	return g.Metadata
-}
-
-func (g *GraphitiAddNodeItem) GetName() string {
-	if g == nil {
-		return ""
-	}
-	return g.Name
-}
-
-func (g *GraphitiAddNodeItem) GetSummary() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Summary
-}
-
-func (g *GraphitiAddNodeItem) GetUUID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UUID
-}
-
-func (g *GraphitiAddNodeItem) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphitiAddNodeItem) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphitiAddNodeItem
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphitiAddNodeItem(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphitiAddNodeItem) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type GraphitiAddNodesResponse struct {
-	// The accepted nodes, each carrying its resolved (server-assigned or
-	// caller-supplied) UUID, in request order.
-	Nodes []*GraphitiAddNodeItem `json:"nodes,omitempty" url:"nodes,omitempty"`
-	// Task ID of the async add-nodes task.
-	TaskID *string `json:"task_id,omitempty" url:"task_id,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphitiAddNodesResponse) GetNodes() []*GraphitiAddNodeItem {
-	if g == nil {
-		return nil
-	}
-	return g.Nodes
-}
-
-func (g *GraphitiAddNodesResponse) GetTaskID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.TaskID
-}
-
-func (g *GraphitiAddNodesResponse) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphitiAddNodesResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphitiAddNodesResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphitiAddNodesResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphitiAddNodesResponse) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-// Logical operator: "and" or "or"
-type GraphitiMetadataFilterGroupType string
-
-const (
-	GraphitiMetadataFilterGroupTypeAnd GraphitiMetadataFilterGroupType = "and"
-	GraphitiMetadataFilterGroupTypeOr  GraphitiMetadataFilterGroupType = "or"
-)
-
-func NewGraphitiMetadataFilterGroupTypeFromString(s string) (GraphitiMetadataFilterGroupType, error) {
-	switch s {
-	case "and":
-		return GraphitiMetadataFilterGroupTypeAnd, nil
-	case "or":
-		return GraphitiMetadataFilterGroupTypeOr, nil
-	}
-	var t GraphitiMetadataFilterGroupType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (g GraphitiMetadataFilterGroupType) Ptr() *GraphitiMetadataFilterGroupType {
-	return &g
-}
-
 type GraphitiSagaNode struct {
 	// Creation time of the node
 	CreatedAt string `json:"created_at" url:"created_at"`
@@ -1935,71 +1564,6 @@ func (l *ListCustomInstructionsResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
-}
-
-type MetadataFilterGroup struct {
-	// Leaf filters (predicates on metadata key-value pairs)
-	Filters []*EpisodeMetadataFilter `json:"filters,omitempty" url:"filters,omitempty"`
-	// Nested sub-groups for composing complex boolean expressions
-	Groups []*MetadataFilterGroup `json:"groups,omitempty" url:"groups,omitempty"`
-	// Logical operator: "and" or "or"
-	Type GraphitiMetadataFilterGroupType `json:"type" url:"type"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (m *MetadataFilterGroup) GetFilters() []*EpisodeMetadataFilter {
-	if m == nil {
-		return nil
-	}
-	return m.Filters
-}
-
-func (m *MetadataFilterGroup) GetGroups() []*MetadataFilterGroup {
-	if m == nil {
-		return nil
-	}
-	return m.Groups
-}
-
-func (m *MetadataFilterGroup) GetType() GraphitiMetadataFilterGroupType {
-	if m == nil {
-		return ""
-	}
-	return m.Type
-}
-
-func (m *MetadataFilterGroup) GetExtraProperties() map[string]interface{} {
-	return m.extraProperties
-}
-
-func (m *MetadataFilterGroup) UnmarshalJSON(data []byte) error {
-	type unmarshaler MetadataFilterGroup
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*m = MetadataFilterGroup(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *m)
-	if err != nil {
-		return err
-	}
-	m.extraProperties = extraProperties
-	m.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (m *MetadataFilterGroup) String() string {
-	if len(m.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(m); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", m)
 }
 
 type PathDetectConfig struct {
@@ -2294,73 +1858,6 @@ func (p *PatternSeeds) String() string {
 	return fmt.Sprintf("%#v", p)
 }
 
-type PropertyFilter struct {
-	// Comparison operator for property filter
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Property name to filter on
-	PropertyName string `json:"property_name" url:"property_name"`
-	// Property value to match on. Accepted types: string, int, float64, bool, or nil.
-	// Invalid types (e.g., arrays, objects) will be rejected by validation.
-	// Must be non-nil for non-null operators (=, \<\>, \>, \<, \>=, \<=).
-	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (p *PropertyFilter) GetComparisonOperator() ComparisonOperator {
-	if p == nil {
-		return ""
-	}
-	return p.ComparisonOperator
-}
-
-func (p *PropertyFilter) GetPropertyName() string {
-	if p == nil {
-		return ""
-	}
-	return p.PropertyName
-}
-
-func (p *PropertyFilter) GetPropertyValue() interface{} {
-	if p == nil {
-		return nil
-	}
-	return p.PropertyValue
-}
-
-func (p *PropertyFilter) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PropertyFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler PropertyFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PropertyFilter(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-	p.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PropertyFilter) String() string {
-	if len(p.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
 type RecencyWeight string
 
 const (
@@ -2420,160 +1917,6 @@ func NewRerankerFromString(s string) (Reranker, error) {
 
 func (r Reranker) Ptr() *Reranker {
 	return &r
-}
-
-type SearchFilters struct {
-	// 2D array of date filters for the created_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
-	// This translates to: (created_at \> date1 AND created_at \< date2) OR (created_at = date3)
-	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// List of edge types to filter on
-	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// List of edge UUIDs to filter on. Max 256 to align with graph-service filter limits.
-	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
-	// [Experimental] Episode metadata filter. Restricts results to edges/nodes derived from episodes
-	// matching the metadata predicates. Uses explicit AND/OR groups. This feature is experimental and may change in future releases.
-	EpisodeMetadataFilters *MetadataFilterGroup `json:"episode_metadata_filters,omitempty" url:"episode_metadata_filters,omitempty"`
-	// List of edge types to exclude from results
-	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
-	// List of node labels to exclude from results
-	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
-	// 2D array of date filters for the expired_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
-	// This translates to: (expired_at \> date1 AND expired_at \< date2) OR (expired_at = date3)
-	ExpiredAt [][]*DateFilter `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	// 2D array of date filters for the invalid_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
-	// This translates to: (invalid_at \> date1 AND invalid_at \< date2) OR (invalid_at = date3)
-	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	// List of node labels to filter on
-	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
-	// List of property filters to apply to nodes and edges
-	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
-	// 2D array of date filters for the valid_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
-	// This translates to: (valid_at \> date1 AND valid_at \< date2) OR (valid_at = date3)
-	ValidAt [][]*DateFilter `json:"valid_at,omitempty" url:"valid_at,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (s *SearchFilters) GetCreatedAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.CreatedAt
-}
-
-func (s *SearchFilters) GetEdgeTypes() []string {
-	if s == nil {
-		return nil
-	}
-	return s.EdgeTypes
-}
-
-func (s *SearchFilters) GetEdgeUUIDs() []string {
-	if s == nil {
-		return nil
-	}
-	return s.EdgeUUIDs
-}
-
-func (s *SearchFilters) GetEpisodeMetadataFilters() *MetadataFilterGroup {
-	if s == nil {
-		return nil
-	}
-	return s.EpisodeMetadataFilters
-}
-
-func (s *SearchFilters) GetExcludeEdgeTypes() []string {
-	if s == nil {
-		return nil
-	}
-	return s.ExcludeEdgeTypes
-}
-
-func (s *SearchFilters) GetExcludeNodeLabels() []string {
-	if s == nil {
-		return nil
-	}
-	return s.ExcludeNodeLabels
-}
-
-func (s *SearchFilters) GetExpiredAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.ExpiredAt
-}
-
-func (s *SearchFilters) GetInvalidAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.InvalidAt
-}
-
-func (s *SearchFilters) GetNodeLabels() []string {
-	if s == nil {
-		return nil
-	}
-	return s.NodeLabels
-}
-
-func (s *SearchFilters) GetPropertyFilters() []*PropertyFilter {
-	if s == nil {
-		return nil
-	}
-	return s.PropertyFilters
-}
-
-func (s *SearchFilters) GetValidAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.ValidAt
-}
-
-func (s *SearchFilters) GetExtraProperties() map[string]interface{} {
-	return s.extraProperties
-}
-
-func (s *SearchFilters) UnmarshalJSON(data []byte) error {
-	type unmarshaler SearchFilters
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*s = SearchFilters(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *s)
-	if err != nil {
-		return err
-	}
-	s.extraProperties = extraProperties
-	s.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (s *SearchFilters) String() string {
-	if len(s.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(s); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", s)
 }
 
 type UpdateGraphRequest struct {

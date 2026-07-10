@@ -54,6 +54,106 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type ComparisonOperator string
+
+const (
+	ComparisonOperatorEquals           ComparisonOperator = "="
+	ComparisonOperatorNotEquals        ComparisonOperator = "<>"
+	ComparisonOperatorGreaterThan      ComparisonOperator = ">"
+	ComparisonOperatorLessThan         ComparisonOperator = "<"
+	ComparisonOperatorGreaterThanEqual ComparisonOperator = ">="
+	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
+	ComparisonOperatorIsNull           ComparisonOperator = "IS NULL"
+	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
+	ComparisonOperatorContains         ComparisonOperator = "CONTAINS"
+)
+
+func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
+	switch s {
+	case "=":
+		return ComparisonOperatorEquals, nil
+	case "<>":
+		return ComparisonOperatorNotEquals, nil
+	case ">":
+		return ComparisonOperatorGreaterThan, nil
+	case "<":
+		return ComparisonOperatorLessThan, nil
+	case ">=":
+		return ComparisonOperatorGreaterThanEqual, nil
+	case "<=":
+		return ComparisonOperatorLessThanEqual, nil
+	case "IS NULL":
+		return ComparisonOperatorIsNull, nil
+	case "IS NOT NULL":
+		return ComparisonOperatorIsNotNull, nil
+	case "CONTAINS":
+		return ComparisonOperatorContains, nil
+	}
+	var t ComparisonOperator
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ComparisonOperator) Ptr() *ComparisonOperator {
+	return &c
+}
+
+type DateFilter struct {
+	// Comparison operator for date filter
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Date to filter on. Required for non-null operators (=, \<\>, \>, \<, \>=, \<=).
+	// Should be omitted for IS NULL and IS NOT NULL operators.
+	Date *string `json:"date,omitempty" url:"date,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DateFilter) GetComparisonOperator() ComparisonOperator {
+	if d == nil {
+		return ""
+	}
+	return d.ComparisonOperator
+}
+
+func (d *DateFilter) GetDate() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Date
+}
+
+func (d *DateFilter) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DateFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler DateFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DateFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DateFilter) String() string {
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
 type DerivedNode struct {
 	// Additional attributes of the derived node.
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
@@ -720,6 +820,71 @@ func (e *EpisodeMentions) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type EpisodeMetadataFilter struct {
+	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Metadata key to filter on
+	PropertyName string `json:"property_name" url:"property_name"`
+	// Value to compare against. Not required for IS NULL / IS NOT NULL operators.
+	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeMetadataFilter) GetComparisonOperator() ComparisonOperator {
+	if e == nil {
+		return ""
+	}
+	return e.ComparisonOperator
+}
+
+func (e *EpisodeMetadataFilter) GetPropertyName() string {
+	if e == nil {
+		return ""
+	}
+	return e.PropertyName
+}
+
+func (e *EpisodeMetadataFilter) GetPropertyValue() interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.PropertyValue
+}
+
+func (e *EpisodeMetadataFilter) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EpisodeMetadataFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeMetadataFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeMetadataFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeMetadataFilter) String() string {
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
 type EpisodeResponse struct {
 	Episodes []*Episode `json:"episodes,omitempty" url:"episodes,omitempty"`
 
@@ -795,13 +960,45 @@ func (g GraphDataType) Ptr() *GraphDataType {
 }
 
 type GraphEdgesRequest struct {
+	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
+	// of the previous page. Encodes the sort field, direction, and continuation position.
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+	// Sort direction. One of "asc" or "desc" (default "desc").
+	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
+	// Optional filters applied to the listed artifacts. Reuses the graph.search filter type.
+	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	// Field to sort by. One of "created_at" or "uuid" (default "uuid").
+	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
+	//
+	// Deprecated: prefer Cursor, the opaque cursor returned via the Zep-Next-Cursor response header.
 	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (g *GraphEdgesRequest) GetCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
+func (g *GraphEdgesRequest) GetDirection() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Direction
+}
+
+func (g *GraphEdgesRequest) GetFilters() *SearchFilters {
+	if g == nil {
+		return nil
+	}
+	return g.Filters
 }
 
 func (g *GraphEdgesRequest) GetLimit() *int {
@@ -809,6 +1006,13 @@ func (g *GraphEdgesRequest) GetLimit() *int {
 		return nil
 	}
 	return g.Limit
+}
+
+func (g *GraphEdgesRequest) GetOrderBy() *string {
+	if g == nil {
+		return nil
+	}
+	return g.OrderBy
 }
 
 func (g *GraphEdgesRequest) GetUUIDCursor() *string {
@@ -851,13 +1055,45 @@ func (g *GraphEdgesRequest) String() string {
 }
 
 type GraphNodesRequest struct {
+	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
+	// of the previous page. Encodes the sort field, direction, and continuation position.
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+	// Sort direction. One of "asc" or "desc" (default "desc").
+	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
+	// Optional filters applied to the listed artifacts. Reuses the graph.search filter type.
+	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	// Field to sort by. One of "created_at" or "uuid" (default "uuid").
+	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
+	//
+	// Deprecated: prefer Cursor, the opaque cursor returned via the Zep-Next-Cursor response header.
 	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (g *GraphNodesRequest) GetCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
+func (g *GraphNodesRequest) GetDirection() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Direction
+}
+
+func (g *GraphNodesRequest) GetFilters() *SearchFilters {
+	if g == nil {
+		return nil
+	}
+	return g.Filters
 }
 
 func (g *GraphNodesRequest) GetLimit() *int {
@@ -865,6 +1101,13 @@ func (g *GraphNodesRequest) GetLimit() *int {
 		return nil
 	}
 	return g.Limit
+}
+
+func (g *GraphNodesRequest) GetOrderBy() *string {
+	if g == nil {
+		return nil
+	}
+	return g.OrderBy
 }
 
 func (g *GraphNodesRequest) GetUUIDCursor() *string {
@@ -907,13 +1150,45 @@ func (g *GraphNodesRequest) String() string {
 }
 
 type GraphObservationsRequest struct {
+	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
+	// of the previous page. Encodes the sort field, direction, and continuation position.
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+	// Sort direction. One of "asc" or "desc" (default "desc").
+	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
+	// Optional filters applied to the listed artifacts. Reuses the graph.search filter type.
+	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	// Field to sort by. One of "created_at" or "uuid" (default "uuid").
+	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
+	//
+	// Deprecated: prefer Cursor, the opaque cursor returned via the Zep-Next-Cursor response header.
 	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (g *GraphObservationsRequest) GetCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
+func (g *GraphObservationsRequest) GetDirection() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Direction
+}
+
+func (g *GraphObservationsRequest) GetFilters() *SearchFilters {
+	if g == nil {
+		return nil
+	}
+	return g.Filters
 }
 
 func (g *GraphObservationsRequest) GetLimit() *int {
@@ -921,6 +1196,13 @@ func (g *GraphObservationsRequest) GetLimit() *int {
 		return nil
 	}
 	return g.Limit
+}
+
+func (g *GraphObservationsRequest) GetOrderBy() *string {
+	if g == nil {
+		return nil
+	}
+	return g.OrderBy
 }
 
 func (g *GraphObservationsRequest) GetUUIDCursor() *string {
@@ -963,13 +1245,45 @@ func (g *GraphObservationsRequest) String() string {
 }
 
 type GraphThreadSummariesRequest struct {
+	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
+	// of the previous page. Encodes the sort field, direction, and continuation position.
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+	// Sort direction. One of "asc" or "desc" (default "desc").
+	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
+	// Optional filters applied to the listed artifacts. Reuses the graph.search filter type.
+	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page
+	// Field to sort by. One of "created_at" or "uuid" (default "uuid").
+	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
+	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
+	//
+	// Deprecated: prefer Cursor, the opaque cursor returned via the Zep-Next-Cursor response header.
 	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (g *GraphThreadSummariesRequest) GetCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
+func (g *GraphThreadSummariesRequest) GetDirection() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Direction
+}
+
+func (g *GraphThreadSummariesRequest) GetFilters() *SearchFilters {
+	if g == nil {
+		return nil
+	}
+	return g.Filters
 }
 
 func (g *GraphThreadSummariesRequest) GetLimit() *int {
@@ -977,6 +1291,13 @@ func (g *GraphThreadSummariesRequest) GetLimit() *int {
 		return nil
 	}
 	return g.Limit
+}
+
+func (g *GraphThreadSummariesRequest) GetOrderBy() *string {
+	if g == nil {
+		return nil
+	}
+	return g.OrderBy
 }
 
 func (g *GraphThreadSummariesRequest) GetUUIDCursor() *string {
@@ -1016,6 +1337,29 @@ func (g *GraphThreadSummariesRequest) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", g)
+}
+
+// Logical operator: "and" or "or"
+type GraphitiMetadataFilterGroupType string
+
+const (
+	GraphitiMetadataFilterGroupTypeAnd GraphitiMetadataFilterGroupType = "and"
+	GraphitiMetadataFilterGroupTypeOr  GraphitiMetadataFilterGroupType = "or"
+)
+
+func NewGraphitiMetadataFilterGroupTypeFromString(s string) (GraphitiMetadataFilterGroupType, error) {
+	switch s {
+	case "and":
+		return GraphitiMetadataFilterGroupTypeAnd, nil
+	case "or":
+		return GraphitiMetadataFilterGroupTypeOr, nil
+	}
+	var t GraphitiMetadataFilterGroupType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphitiMetadataFilterGroupType) Ptr() *GraphitiMetadataFilterGroupType {
+	return &g
 }
 
 type Message struct {
@@ -1119,6 +1463,138 @@ func (m *Message) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+type MetadataFilterGroup struct {
+	// Leaf filters (predicates on metadata key-value pairs)
+	Filters []*EpisodeMetadataFilter `json:"filters,omitempty" url:"filters,omitempty"`
+	// Nested sub-groups for composing complex boolean expressions
+	Groups []*MetadataFilterGroup `json:"groups,omitempty" url:"groups,omitempty"`
+	// Logical operator: "and" or "or"
+	Type GraphitiMetadataFilterGroupType `json:"type" url:"type"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *MetadataFilterGroup) GetFilters() []*EpisodeMetadataFilter {
+	if m == nil {
+		return nil
+	}
+	return m.Filters
+}
+
+func (m *MetadataFilterGroup) GetGroups() []*MetadataFilterGroup {
+	if m == nil {
+		return nil
+	}
+	return m.Groups
+}
+
+func (m *MetadataFilterGroup) GetType() GraphitiMetadataFilterGroupType {
+	if m == nil {
+		return ""
+	}
+	return m.Type
+}
+
+func (m *MetadataFilterGroup) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *MetadataFilterGroup) UnmarshalJSON(data []byte) error {
+	type unmarshaler MetadataFilterGroup
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MetadataFilterGroup(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MetadataFilterGroup) String() string {
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type PropertyFilter struct {
+	// Comparison operator for property filter
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Property name to filter on
+	PropertyName string `json:"property_name" url:"property_name"`
+	// Property value to match on. Accepted types: string, int, float64, bool, or nil.
+	// Invalid types (e.g., arrays, objects) will be rejected by validation.
+	// Must be non-nil for non-null operators (=, \<\>, \>, \<, \>=, \<=).
+	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PropertyFilter) GetComparisonOperator() ComparisonOperator {
+	if p == nil {
+		return ""
+	}
+	return p.ComparisonOperator
+}
+
+func (p *PropertyFilter) GetPropertyName() string {
+	if p == nil {
+		return ""
+	}
+	return p.PropertyName
+}
+
+func (p *PropertyFilter) GetPropertyValue() interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.PropertyValue
+}
+
+func (p *PropertyFilter) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PropertyFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler PropertyFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PropertyFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PropertyFilter) String() string {
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type RoleType string
 
 const (
@@ -1151,6 +1627,160 @@ func NewRoleTypeFromString(s string) (RoleType, error) {
 
 func (r RoleType) Ptr() *RoleType {
 	return &r
+}
+
+type SearchFilters struct {
+	// 2D array of date filters for the created_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
+	// This translates to: (created_at \> date1 AND created_at \< date2) OR (created_at = date3)
+	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// List of edge types to filter on
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// List of edge UUIDs to filter on. Max 256 to align with graph-service filter limits.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// [Experimental] Episode metadata filter. Restricts results to edges/nodes derived from episodes
+	// matching the metadata predicates. Uses explicit AND/OR groups. This feature is experimental and may change in future releases.
+	EpisodeMetadataFilters *MetadataFilterGroup `json:"episode_metadata_filters,omitempty" url:"episode_metadata_filters,omitempty"`
+	// List of edge types to exclude from results
+	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
+	// List of node labels to exclude from results
+	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
+	// 2D array of date filters for the expired_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
+	// This translates to: (expired_at \> date1 AND expired_at \< date2) OR (expired_at = date3)
+	ExpiredAt [][]*DateFilter `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// 2D array of date filters for the invalid_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
+	// This translates to: (invalid_at \> date1 AND invalid_at \< date2) OR (invalid_at = date3)
+	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// List of node labels to filter on
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// List of property filters to apply to nodes and edges
+	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
+	// 2D array of date filters for the valid_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
+	// This translates to: (valid_at \> date1 AND valid_at \< date2) OR (valid_at = date3)
+	ValidAt [][]*DateFilter `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SearchFilters) GetCreatedAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.CreatedAt
+}
+
+func (s *SearchFilters) GetEdgeTypes() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EdgeTypes
+}
+
+func (s *SearchFilters) GetEdgeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EdgeUUIDs
+}
+
+func (s *SearchFilters) GetEpisodeMetadataFilters() *MetadataFilterGroup {
+	if s == nil {
+		return nil
+	}
+	return s.EpisodeMetadataFilters
+}
+
+func (s *SearchFilters) GetExcludeEdgeTypes() []string {
+	if s == nil {
+		return nil
+	}
+	return s.ExcludeEdgeTypes
+}
+
+func (s *SearchFilters) GetExcludeNodeLabels() []string {
+	if s == nil {
+		return nil
+	}
+	return s.ExcludeNodeLabels
+}
+
+func (s *SearchFilters) GetExpiredAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.ExpiredAt
+}
+
+func (s *SearchFilters) GetInvalidAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.InvalidAt
+}
+
+func (s *SearchFilters) GetNodeLabels() []string {
+	if s == nil {
+		return nil
+	}
+	return s.NodeLabels
+}
+
+func (s *SearchFilters) GetPropertyFilters() []*PropertyFilter {
+	if s == nil {
+		return nil
+	}
+	return s.PropertyFilters
+}
+
+func (s *SearchFilters) GetValidAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.ValidAt
+}
+
+func (s *SearchFilters) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SearchFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler SearchFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SearchFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SearchFilters) String() string {
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
 }
 
 type SuccessResponse struct {

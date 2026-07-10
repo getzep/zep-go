@@ -49,8 +49,6 @@ type AddThreadMessagesRequest struct {
 	Messages []*Message `json:"messages" url:"messages"`
 	// Optionally return context block relevant to the most recent messages.
 	ReturnContext *bool `json:"return_context,omitempty" url:"return_context,omitempty"`
-	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
-	StrictOntology *bool `json:"strict_ontology,omitempty" url:"strict_ontology,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -75,13 +73,6 @@ func (a *AddThreadMessagesRequest) GetReturnContext() *bool {
 		return nil
 	}
 	return a.ReturnContext
-}
-
-func (a *AddThreadMessagesRequest) GetStrictOntology() *bool {
-	if a == nil {
-		return nil
-	}
-	return a.StrictOntology
 }
 
 func (a *AddThreadMessagesRequest) GetExtraProperties() map[string]interface{} {
