@@ -148,7 +148,7 @@ func (c *Client) Add(
 	return response.Body, nil
 }
 
-// Start processing a filled batch. Repeated calls return the existing batch run.
+// Start processing a filled batch. Repeated calls return a conflict.
 func (c *Client) Process(
 	ctx context.Context,
 	// The batch ID.
