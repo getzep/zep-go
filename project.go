@@ -8,11 +8,148 @@ import (
 	internal "github.com/getzep/zep-go/v3/internal"
 )
 
+type ProjectGetObservationSteeringRequest struct {
+	// User ID for user-specific steering
+	UserID *string `json:"-" url:"user_id,omitempty"`
+	// Graph ID for graph-specific steering
+	GraphID *string `json:"-" url:"graph_id,omitempty"`
+}
+
+type ProjectSetObservationSteeringRequest struct {
+	// User ID for user-specific steering
+	UserID *string `json:"-" url:"user_id,omitempty"`
+	// Graph ID for graph-specific steering
+	GraphID *string                    `json:"-" url:"graph_id,omitempty"`
+	Body    *ObservationSteeringConfig `json:"-" url:"-"`
+}
+
+func (p *ProjectSetObservationSteeringRequest) UnmarshalJSON(data []byte) error {
+	body := new(ObservationSteeringConfig)
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	p.Body = body
+	return nil
+}
+
+func (p *ProjectSetObservationSteeringRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(p.Body)
+}
+
+type ObservationSteeringConfig struct {
+	Instruction *string            `json:"instruction,omitempty" url:"instruction,omitempty"`
+	Types       []*ObservationType `json:"types,omitempty" url:"types,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *ObservationSteeringConfig) GetInstruction() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Instruction
+}
+
+func (o *ObservationSteeringConfig) GetTypes() []*ObservationType {
+	if o == nil {
+		return nil
+	}
+	return o.Types
+}
+
+func (o *ObservationSteeringConfig) GetExtraProperties() map[string]interface{} {
+	return o.extraProperties
+}
+
+func (o *ObservationSteeringConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler ObservationSteeringConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = ObservationSteeringConfig(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *ObservationSteeringConfig) String() string {
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+type ObservationType struct {
+	Description string `json:"description" url:"description"`
+	Name        string `json:"name" url:"name"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *ObservationType) GetDescription() string {
+	if o == nil {
+		return ""
+	}
+	return o.Description
+}
+
+func (o *ObservationType) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+func (o *ObservationType) GetExtraProperties() map[string]interface{} {
+	return o.extraProperties
+}
+
+func (o *ObservationType) UnmarshalJSON(data []byte) error {
+	type unmarshaler ObservationType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = ObservationType(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *ObservationType) String() string {
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
 type ProjectInfo struct {
-	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	Name        *string `json:"name,omitempty" url:"name,omitempty"`
-	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	CreatedAt       *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"default_time_zone,omitempty"`
+	Description     *string `json:"description,omitempty" url:"description,omitempty"`
+	Name            *string `json:"name,omitempty" url:"name,omitempty"`
+	UUID            *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -23,6 +160,13 @@ func (p *ProjectInfo) GetCreatedAt() *string {
 		return nil
 	}
 	return p.CreatedAt
+}
+
+func (p *ProjectInfo) GetDefaultTimeZone() *string {
+	if p == nil {
+		return nil
+	}
+	return p.DefaultTimeZone
 }
 
 func (p *ProjectInfo) GetDescription() *string {
@@ -122,4 +266,9 @@ func (p *ProjectInfoResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", p)
+}
+
+type ApidataUpdateProjectInfoRequest struct {
+	// The project's IANA fallback time zone. Null clears the existing value.
+	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"-"`
 }

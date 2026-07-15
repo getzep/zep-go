@@ -19,7 +19,7 @@ type ThreadGetRequest struct {
 	// Limit the number of results returned
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Cursor for pagination
-	Cursor *int64 `json:"-" url:"cursor,omitempty"`
+	Cursor *int `json:"-" url:"cursor,omitempty"`
 	// Number of most recent messages to return (overrides limit and cursor)
 	Lastn *int `json:"-" url:"lastn,omitempty"`
 }
@@ -49,6 +49,8 @@ type AddThreadMessagesRequest struct {
 	Messages []*Message `json:"messages" url:"messages"`
 	// Optionally return context block relevant to the most recent messages.
 	ReturnContext *bool `json:"return_context,omitempty" url:"return_context,omitempty"`
+	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
+	StrictOntology *bool `json:"strict_ontology,omitempty" url:"strict_ontology,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -73,6 +75,13 @@ func (a *AddThreadMessagesRequest) GetReturnContext() *bool {
 		return nil
 	}
 	return a.ReturnContext
+}
+
+func (a *AddThreadMessagesRequest) GetStrictOntology() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.StrictOntology
 }
 
 func (a *AddThreadMessagesRequest) GetExtraProperties() map[string]interface{} {
@@ -180,6 +189,8 @@ type MessageListResponse struct {
 	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
 	// The user ID associated with this thread.
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	// The opaque user identifier used by dashboard routes.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -218,6 +229,13 @@ func (m *MessageListResponse) GetUserID() *string {
 		return nil
 	}
 	return m.UserID
+}
+
+func (m *MessageListResponse) GetUserUUID() *string {
+	if m == nil {
+		return nil
+	}
+	return m.UserUUID
 }
 
 func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {

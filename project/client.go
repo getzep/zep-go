@@ -52,3 +52,54 @@ func (c *Client) Get(
 	}
 	return response.Body, nil
 }
+
+// Sets or clears the project-level fallback time zone for the API key's project.
+func (c *Client) Update(
+	ctx context.Context,
+	request *v3.ApidataUpdateProjectInfoRequest,
+	opts ...option.RequestOption,
+) (*v3.ProjectInfoResponse, error) {
+	response, err := c.WithRawResponse.Update(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Returns project steering or the effective user/graph steering with project fallback. This API is experimental and may change in future releases.
+func (c *Client) GetObservationSteering(
+	ctx context.Context,
+	request *v3.ProjectGetObservationSteeringRequest,
+	opts ...option.RequestOption,
+) (*v3.ObservationSteeringConfig, error) {
+	response, err := c.WithRawResponse.GetObservationSteering(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Replaces project, user, or graph steering. An empty configuration clears the project default or removes the user/graph override. Changes affect later materializer runs only. This API is experimental and may change in future releases.
+func (c *Client) SetObservationSteering(
+	ctx context.Context,
+	request *v3.ProjectSetObservationSteeringRequest,
+	opts ...option.RequestOption,
+) (*v3.ObservationSteeringConfig, error) {
+	response, err := c.WithRawResponse.SetObservationSteering(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
