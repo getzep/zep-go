@@ -19,6 +19,8 @@ type CreateUserRequest struct {
 	LastName *string `json:"last_name,omitempty" url:"-"`
 	// The metadata associated with the user.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
+	// The user's IANA time zone. Null or omission leaves it unset at creation.
+	TimeZone *string `json:"time_zone,omitempty" url:"-"`
 	// The unique identifier of the user.
 	UserID string `json:"user_id" url:"-"`
 }
@@ -113,7 +115,8 @@ type User struct {
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
 	// Deprecated
-	SessionCount *int `json:"session_count,omitempty" url:"session_count,omitempty"`
+	SessionCount *int    `json:"session_count,omitempty" url:"session_count,omitempty"`
+	TimeZone     *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
 	// Deprecated
 	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	UserID    *string `json:"user_id,omitempty" url:"user_id,omitempty"`
@@ -191,6 +194,13 @@ func (u *User) GetSessionCount() *int {
 		return nil
 	}
 	return u.SessionCount
+}
+
+func (u *User) GetTimeZone() *string {
+	if u == nil {
+		return nil
+	}
+	return u.TimeZone
 }
 
 func (u *User) GetUpdatedAt() *string {
@@ -419,4 +429,6 @@ type UpdateUserRequest struct {
 	LastName *string `json:"last_name,omitempty" url:"-"`
 	// The metadata to update
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
+	// The user's IANA time zone. Null clears the existing value.
+	TimeZone *string `json:"time_zone,omitempty" url:"-"`
 }
