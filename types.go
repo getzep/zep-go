@@ -1834,6 +1834,7 @@ type Thread struct {
 	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
 	ThreadID    *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
 	UserID      *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UserUUID    *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -1866,6 +1867,13 @@ func (t *Thread) GetUserID() *string {
 		return nil
 	}
 	return t.UserID
+}
+
+func (t *Thread) GetUserUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UserUUID
 }
 
 func (t *Thread) GetUUID() *string {

@@ -16,7 +16,9 @@ type AddDataRequest struct {
 	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata          map[string]interface{} `json:"metadata,omitempty" url:"-"`
 	SourceDescription *string                `json:"source_description,omitempty" url:"-"`
-	Type              GraphDataType          `json:"type" url:"-"`
+	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
+	StrictOntology *bool         `json:"strict_ontology,omitempty" url:"-"`
+	Type           GraphDataType `json:"type" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -25,6 +27,8 @@ type AddDataBatchRequest struct {
 	Episodes []*EpisodeData `json:"episodes,omitempty" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
+	StrictOntology *bool `json:"strict_ontology,omitempty" url:"-"`
 	// User ID is the ID of the user to which the data will be added. If not adding to a user graph, please use graph_id field instead.
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
@@ -93,6 +97,13 @@ type AddTripleRequest struct {
 	ValidAt *string `json:"valid_at,omitempty" url:"-"`
 }
 
+type AddNodesRequest struct {
+	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// The nodes to add. 1 to 100 items.
+	Nodes  []*AddNodeItem `json:"nodes,omitempty" url:"-"`
+	UserID *string        `json:"user_id,omitempty" url:"-"`
+}
+
 type CloneGraphRequest struct {
 	// source_graph_id is the ID of the graph to be cloned. Required if source_user_id is not provided
 	SourceGraphID *string `json:"source_graph_id,omitempty" url:"-"`
@@ -108,6 +119,8 @@ type CreateGraphRequest struct {
 	Description *string `json:"description,omitempty" url:"-"`
 	GraphID     string  `json:"graph_id" url:"-"`
 	Name        *string `json:"name,omitempty" url:"-"`
+	// The graph's IANA time zone. Stored on its group-backed subject.
+	TimeZone *string `json:"time_zone,omitempty" url:"-"`
 }
 
 type DeleteCustomInstructionsRequest struct {
@@ -211,6 +224,170 @@ type EntityTypeRequest struct {
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"-"`
 	GraphIDs    []string      `json:"graph_ids,omitempty" url:"-"`
 	UserIDs     []string      `json:"user_ids,omitempty" url:"-"`
+}
+
+type AddNodeItem struct {
+	// Additional attributes of the node. Values must be scalar types (string,
+	// number, boolean, or null). Nested objects and arrays are not allowed.
+	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The node creation time. Defaults to the request time when absent.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The node's entity type. At most one; the base "Entity" label is added
+	// implicitly by the graph layer on save and does not need to be supplied.
+	Label *string `json:"label,omitempty" url:"label,omitempty"`
+	// Optional metadata attached to the node's shadow episode. Max 10 scalar
+	// key-value pairs.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The name of the node. Used to derive the node's search embedding.
+	Name string `json:"name" url:"name"`
+	// A regional summary of the node.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// Optional caller-supplied node UUID. When it matches an existing node the
+	// node is upserted; when well-formed but unknown the node is created with
+	// this UUID; when absent the server assigns one. This is the node's only
+	// identity/dedup key -- there is no name-based resolution.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddNodeItem) GetAttributes() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.Attributes
+}
+
+func (a *AddNodeItem) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AddNodeItem) GetLabel() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Label
+}
+
+func (a *AddNodeItem) GetMetadata() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AddNodeItem) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AddNodeItem) GetSummary() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Summary
+}
+
+func (a *AddNodeItem) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AddNodeItem) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AddNodeItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddNodeItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddNodeItem(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddNodeItem) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AddNodesResponse struct {
+	// The accepted nodes, each carrying its resolved (server-assigned or
+	// caller-supplied) UUID, in request order.
+	Nodes []*AddNodeItem `json:"nodes,omitempty" url:"nodes,omitempty"`
+	// Task ID of the async add-nodes task.
+	TaskID *string `json:"task_id,omitempty" url:"task_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddNodesResponse) GetNodes() []*AddNodeItem {
+	if a == nil {
+		return nil
+	}
+	return a.Nodes
+}
+
+func (a *AddNodesResponse) GetTaskID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskID
+}
+
+func (a *AddNodesResponse) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AddNodesResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddNodesResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddNodesResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddNodesResponse) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
 }
 
 type AddTripleResponse struct {
@@ -816,9 +993,10 @@ func (e EntityPropertyType) Ptr() *EntityPropertyType {
 }
 
 type EntityType struct {
-	Description string            `json:"description" url:"description"`
-	Name        string            `json:"name" url:"name"`
-	Properties  []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
+	Description        string            `json:"description" url:"description"`
+	IdentityProperties []string          `json:"identity_properties,omitempty" url:"identity_properties,omitempty"`
+	Name               string            `json:"name" url:"name"`
+	Properties         []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -829,6 +1007,13 @@ func (e *EntityType) GetDescription() string {
 		return ""
 	}
 	return e.Description
+}
+
+func (e *EntityType) GetIdentityProperties() []string {
+	if e == nil {
+		return nil
+	}
+	return e.IdentityProperties
 }
 
 func (e *EntityType) GetName() string {
@@ -1017,6 +1202,7 @@ type Graph struct {
 	ID          *int    `json:"id,omitempty" url:"id,omitempty"`
 	Name        *string `json:"name,omitempty" url:"name,omitempty"`
 	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	TimeZone    *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
 	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -1063,6 +1249,13 @@ func (g *Graph) GetProjectUUID() *string {
 		return nil
 	}
 	return g.ProjectUUID
+}
+
+func (g *Graph) GetTimeZone() *string {
+	if g == nil {
+		return nil
+	}
+	return g.TimeZone
 }
 
 func (g *Graph) GetUUID() *string {
@@ -1922,4 +2115,6 @@ func (r Reranker) Ptr() *Reranker {
 type UpdateGraphRequest struct {
 	Description *string `json:"description,omitempty" url:"-"`
 	Name        *string `json:"name,omitempty" url:"-"`
+	// The graph's IANA time zone. Stored on its group-backed subject.
+	TimeZone *string `json:"time_zone,omitempty" url:"-"`
 }

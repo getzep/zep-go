@@ -238,6 +238,7 @@ type BatchItemDetail struct {
 	EpisodeUUID   *string                `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
 	Error         map[string]interface{} `json:"error,omitempty" url:"error,omitempty"`
 	GraphID       *string                `json:"graph_id,omitempty" url:"graph_id,omitempty"`
+	GraphUUID     *string                `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	ItemID        *string                `json:"item_id,omitempty" url:"item_id,omitempty"`
 	Kind          *BatchItemKind         `json:"kind,omitempty" url:"kind,omitempty"`
 	SequenceIndex *int                   `json:"sequence_index,omitempty" url:"sequence_index,omitempty"`
@@ -246,6 +247,7 @@ type BatchItemDetail struct {
 	ThreadID      *string                `json:"thread_id,omitempty" url:"thread_id,omitempty"`
 	UpdatedAt     *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	UserID        *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UserUUID      *string                `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -277,6 +279,13 @@ func (b *BatchItemDetail) GetGraphID() *string {
 		return nil
 	}
 	return b.GraphID
+}
+
+func (b *BatchItemDetail) GetGraphUUID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.GraphUUID
 }
 
 func (b *BatchItemDetail) GetItemID() *string {
@@ -333,6 +342,13 @@ func (b *BatchItemDetail) GetUserID() *string {
 		return nil
 	}
 	return b.UserID
+}
+
+func (b *BatchItemDetail) GetUserUUID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.UserUUID
 }
 
 func (b *BatchItemDetail) GetExtraProperties() map[string]interface{} {
