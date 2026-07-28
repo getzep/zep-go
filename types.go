@@ -64,6 +64,7 @@ const (
 	ComparisonOperatorGreaterThanEqual ComparisonOperator = ">="
 	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
 	ComparisonOperatorIsNull           ComparisonOperator = "IS NULL"
+	ComparisonOperatorIsNullAlias      ComparisonOperator = "is_null"
 	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
 	ComparisonOperatorContains         ComparisonOperator = "CONTAINS"
 )
@@ -84,6 +85,8 @@ func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
 		return ComparisonOperatorLessThanEqual, nil
 	case "IS NULL":
 		return ComparisonOperatorIsNull, nil
+	case "is_null":
+		return ComparisonOperatorIsNullAlias, nil
 	case "IS NOT NULL":
 		return ComparisonOperatorIsNotNull, nil
 	case "CONTAINS":
@@ -101,7 +104,7 @@ type DateFilter struct {
 	// Comparison operator for date filter
 	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
 	// Date to filter on. Required for non-null operators (=, \<\>, \>, \<, \>=, \<=).
-	// Should be omitted for IS NULL and IS NOT NULL operators.
+	// Should be omitted for IS NULL (or is_null) and IS NOT NULL operators.
 	Date *string `json:"date,omitempty" url:"date,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -969,7 +972,7 @@ type GraphEdgesRequest struct {
 	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at" or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
@@ -1064,7 +1067,7 @@ type GraphNodesRequest struct {
 	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at" or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
@@ -1159,7 +1162,7 @@ type GraphObservationsRequest struct {
 	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at" or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
@@ -1254,7 +1257,7 @@ type GraphThreadSummariesRequest struct {
 	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at" or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
