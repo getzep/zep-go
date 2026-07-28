@@ -3,6 +3,7 @@
 README.md
 
 .gitignore
+.github
 examples/
 graph/client/base_entity.go
 graph/client/base_edge.go
