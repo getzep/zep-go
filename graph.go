@@ -163,11 +163,11 @@ type DetectPatternsRequest struct {
 type GraphListAllRequest struct {
 	// Page number for pagination, starting from 1.
 	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
-	// Number of graphs to retrieve per page.
+	// Number of graphs to retrieve per page (default 50, range 1-100; explicit 0 is invalid).
 	PageSize *int `json:"-" url:"pageSize,omitempty"`
-	// Search term for filtering graphs by graph_id.
+	// Search term for filtering graphs by graph_id, name, or description. Queries longer than 200 Unicode code points after whitespace normalization are invalid.
 	Search *string `json:"-" url:"search,omitempty"`
-	// Column to sort by (created_at, group_id, name).
+	// Column to sort by (created_at, graph_id, name).
 	OrderBy *string `json:"-" url:"order_by,omitempty"`
 	// Sort in ascending order.
 	Asc *bool `json:"-" url:"asc,omitempty"`
@@ -1290,6 +1290,7 @@ type Graph struct {
 	Name        *string `json:"name,omitempty" url:"name,omitempty"`
 	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
 	TimeZone    *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -1345,6 +1346,13 @@ func (g *Graph) GetTimeZone() *string {
 	return g.TimeZone
 }
 
+func (g *Graph) GetUpdatedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UpdatedAt
+}
+
 func (g *Graph) GetUUID() *string {
 	if g == nil {
 		return nil
@@ -1386,6 +1394,8 @@ func (g *Graph) String() string {
 
 type GraphListResponse struct {
 	Graphs     []*Graph `json:"graphs,omitempty" url:"graphs,omitempty"`
+	PageNumber *int     `json:"page_number,omitempty" url:"page_number,omitempty"`
+	PageSize   *int     `json:"page_size,omitempty" url:"page_size,omitempty"`
 	RowCount   *int     `json:"row_count,omitempty" url:"row_count,omitempty"`
 	TotalCount *int     `json:"total_count,omitempty" url:"total_count,omitempty"`
 
@@ -1398,6 +1408,20 @@ func (g *GraphListResponse) GetGraphs() []*Graph {
 		return nil
 	}
 	return g.Graphs
+}
+
+func (g *GraphListResponse) GetPageNumber() *int {
+	if g == nil {
+		return nil
+	}
+	return g.PageNumber
+}
+
+func (g *GraphListResponse) GetPageSize() *int {
+	if g == nil {
+		return nil
+	}
+	return g.PageSize
 }
 
 func (g *GraphListResponse) GetRowCount() *int {
