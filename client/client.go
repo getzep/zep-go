@@ -13,18 +13,20 @@ import (
 	task "github.com/getzep/zep-go/v3/task"
 	threadclient "github.com/getzep/zep-go/v3/thread/client"
 	user "github.com/getzep/zep-go/v3/user"
+	usergroup "github.com/getzep/zep-go/v3/usergroup"
 	http "net/http"
 	os "os"
 )
 
 type Client struct {
-	Batch   *batch.Client
-	Context *context.Client
-	Graph   *client.Client
-	Project *project.Client
-	Task    *task.Client
-	Thread  *threadclient.Client
-	User    *user.Client
+	UserGroup *usergroup.Client
+	Batch     *batch.Client
+	Context   *context.Client
+	Graph     *client.Client
+	Project   *project.Client
+	Task      *task.Client
+	Thread    *threadclient.Client
+	User      *user.Client
 
 	baseURL string
 	caller  *internal.Caller
@@ -37,14 +39,15 @@ func NewClient(opts ...option.RequestOption) *Client {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
-		Batch:   batch.NewClient(opts...),
-		Context: context.NewClient(opts...),
-		Graph:   client.NewClient(opts...),
-		Project: project.NewClient(opts...),
-		Task:    task.NewClient(opts...),
-		Thread:  threadclient.NewClient(opts...),
-		User:    user.NewClient(opts...),
-		baseURL: options.BaseURL,
+		UserGroup: usergroup.NewClient(opts...),
+		Batch:     batch.NewClient(opts...),
+		Context:   context.NewClient(opts...),
+		Graph:     client.NewClient(opts...),
+		Project:   project.NewClient(opts...),
+		Task:      task.NewClient(opts...),
+		Thread:    threadclient.NewClient(opts...),
+		User:      user.NewClient(opts...),
+		baseURL:   options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
 				Client:      options.HTTPClient,
