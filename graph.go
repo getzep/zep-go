@@ -53,9 +53,7 @@ type AddTripleRequest struct {
 	// The fact relating the two nodes that this edge represents
 	Fact string `json:"fact" url:"-"`
 	// The name of the edge to add. Should be all caps using snake case (eg RELATES_TO)
-	FactName string `json:"fact_name" url:"-"`
-	// The uuid of the edge to add
-	FactUUID *string `json:"fact_uuid,omitempty" url:"-"`
+	FactName string  `json:"fact_name" url:"-"`
 	GraphID  *string `json:"graph_id,omitempty" url:"-"`
 	// The time (if any) at which the fact stops being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
@@ -242,11 +240,6 @@ type AddNodeItem struct {
 	Name string `json:"name" url:"name"`
 	// A regional summary of the node.
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
-	// Optional caller-supplied node UUID. When it matches an existing node the
-	// node is upserted; when well-formed but unknown the node is created with
-	// this UUID; when absent the server assigns one. This is the node's only
-	// identity/dedup key -- there is no name-based resolution.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -294,13 +287,6 @@ func (a *AddNodeItem) GetSummary() *string {
 	return a.Summary
 }
 
-func (a *AddNodeItem) GetUUID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.UUID
-}
-
 func (a *AddNodeItem) GetExtraProperties() map[string]interface{} {
 	return a.extraProperties
 }
@@ -334,9 +320,9 @@ func (a *AddNodeItem) String() string {
 }
 
 type AddNodesResponse struct {
-	// The accepted nodes, each carrying its resolved (server-assigned or
-	// caller-supplied) UUID, in request order.
-	Nodes []*AddNodeItem `json:"nodes,omitempty" url:"nodes,omitempty"`
+	// The accepted nodes, each carrying the UUID Zep assigned to it, in request
+	// order.
+	Nodes []*AddedNode `json:"nodes,omitempty" url:"nodes,omitempty"`
 	// Task ID of the async add-nodes task.
 	TaskID *string `json:"task_id,omitempty" url:"task_id,omitempty"`
 
@@ -344,7 +330,7 @@ type AddNodesResponse struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AddNodesResponse) GetNodes() []*AddNodeItem {
+func (a *AddNodesResponse) GetNodes() []*AddedNode {
 	if a == nil {
 		return nil
 	}
@@ -450,6 +436,107 @@ func (a *AddTripleResponse) UnmarshalJSON(data []byte) error {
 }
 
 func (a *AddTripleResponse) String() string {
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AddedNode struct {
+	// Additional attributes of the node.
+	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The node creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The node's entity type.
+	Label *string `json:"label,omitempty" url:"label,omitempty"`
+	// Metadata attached to the node's shadow episode.
+	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The name of the node.
+	Name string `json:"name" url:"name"`
+	// A regional summary of the node.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The node UUID, assigned by Zep.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddedNode) GetAttributes() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.Attributes
+}
+
+func (a *AddedNode) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AddedNode) GetLabel() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Label
+}
+
+func (a *AddedNode) GetMetadata() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AddedNode) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AddedNode) GetSummary() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Summary
+}
+
+func (a *AddedNode) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AddedNode) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AddedNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddedNode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddedNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddedNode) String() string {
 	if len(a.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
