@@ -59,6 +59,26 @@ func (c *Client) GetByGraphID(
 	return response.Body, nil
 }
 
+// Returns a paginated, filterable list of episodes for a graph.
+func (c *Client) ListByGraphID(
+	ctx context.Context,
+	// Graph ID
+	graphID string,
+	request *v3.GraphEpisodeListRequest,
+	opts ...option.RequestOption,
+) ([]*v3.Episode, error) {
+	response, err := c.WithRawResponse.ListByGraphID(
+		ctx,
+		graphID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Returns episodes by user id.
 func (c *Client) GetByUserID(
 	ctx context.Context,
@@ -68,6 +88,26 @@ func (c *Client) GetByUserID(
 	opts ...option.RequestOption,
 ) (*v3.EpisodeResponse, error) {
 	response, err := c.WithRawResponse.GetByUserID(
+		ctx,
+		userID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Returns a paginated, filterable list of episodes for a user's graph.
+func (c *Client) ListByUserID(
+	ctx context.Context,
+	// User ID
+	userID string,
+	request *v3.GraphEpisodeListRequest,
+	opts ...option.RequestOption,
+) ([]*v3.Episode, error) {
+	response, err := c.WithRawResponse.ListByUserID(
 		ctx,
 		userID,
 		request,
@@ -135,7 +175,7 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
-// Returns nodes and edges mentioned in an episode
+// Deprecated. Use edge and node listing with `filters.episode_uuids` instead. Returns nodes and edges mentioned in an episode, subject to an internal cap; responses reduced by that cap set the Zep-Truncated header.
 func (c *Client) GetNodesAndEdges(
 	ctx context.Context,
 	// Episode uuid

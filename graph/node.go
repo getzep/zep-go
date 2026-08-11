@@ -2,6 +2,35 @@
 
 package graph
 
+import (
+	v3 "github.com/getzep/zep-go/v3"
+)
+
+type GraphNodeNeighborsRequest struct {
+	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor
+	// response header of the previous page.
+	Cursor *string `json:"cursor,omitempty" url:"-"`
+	// Orientation of the connecting edge relative to the anchor node: "out"
+	// (anchor is the edge's source), "in" (anchor is the edge's target), or
+	// "both" (either). Defaults to "both".
+	Direction *string `json:"direction,omitempty" url:"-"`
+	// Sort direction for order_by. One of "asc" or "desc". Defaults to
+	// "desc". Named direction_sort to avoid clashing with the traversal
+	// Direction field above.
+	DirectionSort *string `json:"direction_sort,omitempty" url:"-"`
+	// Filters constraining the connecting edges (edge types, dates, and the
+	// section-3 node-/episode-anchored fields) and the neighbor nodes
+	// (node_labels/exclude_node_labels). Reuses the graph.search filter
+	// type.
+	Filters *v3.SearchFilters `json:"filters,omitempty" url:"-"`
+	// Maximum number of neighbor nodes to return. An explicit value is
+	// clamped to 50; when omitted, the default page size (100) applies.
+	Limit *int `json:"limit,omitempty" url:"-"`
+	// Field to sort neighbor nodes by. One of "uuid" or "created_at".
+	// Defaults to "uuid".
+	OrderBy *string `json:"order_by,omitempty" url:"-"`
+}
+
 type UpdateNodeRequest struct {
 	// Updated attributes. Merged with existing attributes. Set a key to null to delete it.
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"-"`

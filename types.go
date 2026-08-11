@@ -103,7 +103,7 @@ func (c ComparisonOperator) Ptr() *ComparisonOperator {
 type DateFilter struct {
 	// Comparison operator for date filter
 	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Date to filter on. Required for non-null operators (=, \<\>, \>, \<, \>=, \<=).
+	// Date to filter on. Required for non-null operators (`=`, `<>`, `>`, `<`, `>=`, `<=`).
 	// Should be omitted for IS NULL (or is_null) and IS NOT NULL operators.
 	Date *string `json:"date,omitempty" url:"date,omitempty"`
 
@@ -341,8 +341,23 @@ type EntityEdge struct {
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
 	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// SourceNodeLabels are the labels of the source node at read time. Same
+	// read-time-projection semantics as SourceNodeName (spec-2 §4).
+	SourceNodeLabels []string `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
+	// SourceNodeName is the name of the source node at read time. It is a
+	// read-time projection of current node state, not a stored edge
+	// attribute: a subsequent node rename is reflected on the next read.
+	// Omitted (the edge is still returned) if the source node cannot be
+	// resolved, for example if it was deleted concurrently (spec-2 §4).
+	SourceNodeName *string `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
 	// UUID of the source node
 	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
+	// TargetNodeLabels are the labels of the target node at read time. Same
+	// read-time-projection semantics as SourceNodeName (spec-2 §4).
+	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"target_node_labels,omitempty"`
+	// TargetNodeName is the name of the target node at read time. Same
+	// read-time-projection semantics as SourceNodeName (spec-2 §4).
+	TargetNodeName *string `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
 	// UUID of the target node
 	TargetNodeUUID string `json:"target_node_uuid" url:"target_node_uuid"`
 	// UUID of the edge
@@ -431,11 +446,39 @@ func (e *EntityEdge) GetSelectionRank() *int {
 	return e.SelectionRank
 }
 
+func (e *EntityEdge) GetSourceNodeLabels() []string {
+	if e == nil {
+		return nil
+	}
+	return e.SourceNodeLabels
+}
+
+func (e *EntityEdge) GetSourceNodeName() *string {
+	if e == nil {
+		return nil
+	}
+	return e.SourceNodeName
+}
+
 func (e *EntityEdge) GetSourceNodeUUID() string {
 	if e == nil {
 		return ""
 	}
 	return e.SourceNodeUUID
+}
+
+func (e *EntityEdge) GetTargetNodeLabels() []string {
+	if e == nil {
+		return nil
+	}
+	return e.TargetNodeLabels
+}
+
+func (e *EntityEdge) GetTargetNodeName() *string {
+	if e == nil {
+		return nil
+	}
+	return e.TargetNodeName
 }
 
 func (e *EntityEdge) GetTargetNodeUUID() string {
@@ -1057,6 +1100,146 @@ func (g *GraphEdgesRequest) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
+type GraphEpisodeListRequest struct {
+	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor
+	// response header of the previous page.
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+	// Sort direction. One of "asc" or "desc". Defaults to "desc".
+	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
+	// Maximum number of episodes to return. An explicit value is clamped to
+	// 50; when omitted, the default page size (100) applies.
+	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
+	// Restricts results to episodes that mention any of the listed node
+	// UUIDs. At most 256 entries; each must be a syntactically valid UUID.
+	MentionedNodeUUIDs []string `json:"mentioned_node_uuids,omitempty" url:"mentioned_node_uuids,omitempty"`
+	// Field to sort by. One of "uuid" or "created_at". Defaults to "uuid".
+	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphEpisodeListRequest) GetCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Cursor
+}
+
+func (g *GraphEpisodeListRequest) GetDirection() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Direction
+}
+
+func (g *GraphEpisodeListRequest) GetLimit() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Limit
+}
+
+func (g *GraphEpisodeListRequest) GetMentionedNodeUUIDs() []string {
+	if g == nil {
+		return nil
+	}
+	return g.MentionedNodeUUIDs
+}
+
+func (g *GraphEpisodeListRequest) GetOrderBy() *string {
+	if g == nil {
+		return nil
+	}
+	return g.OrderBy
+}
+
+func (g *GraphEpisodeListRequest) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphEpisodeListRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphEpisodeListRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphEpisodeListRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphEpisodeListRequest) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphNodeNeighbor struct {
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	Node  *EntityNode   `json:"node,omitempty" url:"node,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphNodeNeighbor) GetEdges() []*EntityEdge {
+	if g == nil {
+		return nil
+	}
+	return g.Edges
+}
+
+func (g *GraphNodeNeighbor) GetNode() *EntityNode {
+	if g == nil {
+		return nil
+	}
+	return g.Node
+}
+
+func (g *GraphNodeNeighbor) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphNodeNeighbor) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphNodeNeighbor
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphNodeNeighbor(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphNodeNeighbor) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type GraphNodesRequest struct {
 	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
 	// of the previous page. Encodes the sort field, direction, and continuation position.
@@ -1538,7 +1721,7 @@ type PropertyFilter struct {
 	PropertyName string `json:"property_name" url:"property_name"`
 	// Property value to match on. Accepted types: string, int, float64, bool, or nil.
 	// Invalid types (e.g., arrays, objects) will be rejected by validation.
-	// Must be non-nil for non-null operators (=, \<\>, \>, \<, \>=, \<=).
+	// Must be non-nil for non-null operators (`=`, `<>`, `>`, `<`, `>=`, `<=`).
 	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -1633,11 +1816,15 @@ func (r RoleType) Ptr() *RoleType {
 }
 
 type SearchFilters struct {
+	// List of node UUIDs to filter edges on: an edge matches if its source OR
+	// target node UUID is in this list. Applies to edges only; rejected on
+	// requests whose result type contains no edges. Max 256 entries.
+	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
 	// 2D array of date filters for the created_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
-	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
-	// This translates to: (created_at \> date1 AND created_at \< date2) OR (created_at = date3)
+	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
+	// This translates to: `(created_at > date1 AND created_at < date2) OR (created_at = date3)`
 	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// List of edge types to filter on
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
@@ -1646,6 +1833,11 @@ type SearchFilters struct {
 	// [Experimental] Episode metadata filter. Restricts results to edges/nodes derived from episodes
 	// matching the metadata predicates. Uses explicit AND/OR groups. This feature is experimental and may change in future releases.
 	EpisodeMetadataFilters *MetadataFilterGroup `json:"episode_metadata_filters,omitempty" url:"episode_metadata_filters,omitempty"`
+	// List of episode UUIDs to filter on. An edge matches if it was derived
+	// from any listed episode; a node matches if it is mentioned by any
+	// listed episode. Valid for both edge and node result types. Max 256
+	// entries.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
 	// List of edge types to exclude from results
 	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
 	// List of node labels to exclude from results
@@ -1653,28 +1845,43 @@ type SearchFilters struct {
 	// 2D array of date filters for the expired_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
-	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
-	// This translates to: (expired_at \> date1 AND expired_at \< date2) OR (expired_at = date3)
+	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
+	// This translates to: `(expired_at > date1 AND expired_at < date2) OR (expired_at = date3)`
 	ExpiredAt [][]*DateFilter `json:"expired_at,omitempty" url:"expired_at,omitempty"`
 	// 2D array of date filters for the invalid_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
-	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
-	// This translates to: (invalid_at \> date1 AND invalid_at \< date2) OR (invalid_at = date3)
+	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
+	// This translates to: `(invalid_at > date1 AND invalid_at < date2) OR (invalid_at = date3)`
 	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// List of node labels to filter on
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 	// List of property filters to apply to nodes and edges
 	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
+	// List of node UUIDs to filter edges on: an edge matches if its source
+	// node UUID is in this list. Applies to edges only; rejected on requests
+	// whose result type contains no edges. Max 256 entries.
+	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
+	// List of node UUIDs to filter edges on: an edge matches if its target
+	// node UUID is in this list. Applies to edges only; rejected on requests
+	// whose result type contains no edges. Max 256 entries.
+	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
 	// 2D array of date filters for the valid_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
-	// Example: [[\{"\>", date1\}, \{"\<", date2\}], [\{"=", date3\}]]
-	// This translates to: (valid_at \> date1 AND valid_at \< date2) OR (valid_at = date3)
+	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
+	// This translates to: `(valid_at > date1 AND valid_at < date2) OR (valid_at = date3)`
 	ValidAt [][]*DateFilter `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (s *SearchFilters) GetConnectedNodeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.ConnectedNodeUUIDs
 }
 
 func (s *SearchFilters) GetCreatedAt() [][]*DateFilter {
@@ -1703,6 +1910,13 @@ func (s *SearchFilters) GetEpisodeMetadataFilters() *MetadataFilterGroup {
 		return nil
 	}
 	return s.EpisodeMetadataFilters
+}
+
+func (s *SearchFilters) GetEpisodeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EpisodeUUIDs
 }
 
 func (s *SearchFilters) GetExcludeEdgeTypes() []string {
@@ -1745,6 +1959,20 @@ func (s *SearchFilters) GetPropertyFilters() []*PropertyFilter {
 		return nil
 	}
 	return s.PropertyFilters
+}
+
+func (s *SearchFilters) GetSourceNodeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.SourceNodeUUIDs
+}
+
+func (s *SearchFilters) GetTargetNodeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.TargetNodeUUIDs
 }
 
 func (s *SearchFilters) GetValidAt() [][]*DateFilter {

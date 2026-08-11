@@ -96,6 +96,65 @@ func (r *RawClient) GetByGraphID(
 	}, nil
 }
 
+func (r *RawClient) ListByGraphID(
+	ctx context.Context,
+	// Graph ID
+	graphID string,
+	request *v3.GraphEpisodeListRequest,
+	opts ...option.RequestOption,
+) (*core.Response[[]*v3.Episode], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graph/episodes/graph/%v",
+		graphID,
+	)
+	headers := internal.MergeHeaders(
+		r.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v3.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v3.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+	var response []*v3.Episode
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[[]*v3.Episode]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
 func (r *RawClient) GetByUserID(
 	ctx context.Context,
 	// User ID
@@ -155,6 +214,65 @@ func (r *RawClient) GetByUserID(
 		return nil, err
 	}
 	return &core.Response[*v3.EpisodeResponse]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) ListByUserID(
+	ctx context.Context,
+	// User ID
+	userID string,
+	request *v3.GraphEpisodeListRequest,
+	opts ...option.RequestOption,
+) (*core.Response[[]*v3.Episode], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graph/episodes/user/%v",
+		userID,
+	)
+	headers := internal.MergeHeaders(
+		r.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		400: func(apiError *core.APIError) error {
+			return &v3.BadRequestError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v3.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+	var response []*v3.Episode
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[[]*v3.Episode]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
