@@ -296,6 +296,23 @@ func (c *Client) Search(
 	return response.Body, nil
 }
 
+// Returns the bounded neighborhood of a set of seed nodes as a single {nodes, edges} payload: breadth-first expansion up to a caller-specified depth, subject to explicit budgets, with explicit truncation reporting.
+func (c *Client) GetSubgraph(
+	ctx context.Context,
+	request *v3.GraphSubgraphRequest,
+	opts ...option.RequestOption,
+) (*v3.GraphSubgraphResponse, error) {
+	response, err := c.WithRawResponse.GetSubgraph(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Returns a graph.
 func (c *Client) Get(
 	ctx context.Context,

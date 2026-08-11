@@ -160,6 +160,34 @@ type DetectPatternsRequest struct {
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
 
+type GraphSubgraphRequest struct {
+	// Maximum traversal depth from the seeds. 1-3. Defaults to 1.
+	Depth *int `json:"depth,omitempty" url:"-"`
+	// Edge orientation followed during expansion, relative to each frontier
+	// node: "in" | "out" | "both". Defaults to "both".
+	Direction *string `json:"direction,omitempty" url:"-"`
+	// graph_id identifies the target named graph. Exactly one of user_id or
+	// graph_id is required.
+	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// Maximum number of edges in the response. 1-1000. Defaults to 200.
+	MaxEdges *int `json:"max_edges,omitempty" url:"-"`
+	// Maximum number of nodes in the response, including admitted seeds.
+	// 1-500. Defaults to 100.
+	MaxNodes *int `json:"max_nodes,omitempty" url:"-"`
+	// Filters constraining traversed edges and included nodes. Reuses the
+	// graph.search filter type. search_filters.episode_metadata_filters is
+	// rejected: it cannot be enforced during graph traversal (spec-2 §9.4).
+	SearchFilters *SearchFilters `json:"search_filters,omitempty" url:"-"`
+	// Seed node UUIDs to expand from, in traversal-priority order: seeds are
+	// admitted before any expansion, in this order, and count toward
+	// max_nodes first. 1-20 entries, required. Seeds that do not exist in
+	// the target graph are ignored, not an error.
+	SeedNodeUUIDs []string `json:"seed_node_uuids,omitempty" url:"-"`
+	// user_id identifies the target user graph. Exactly one of user_id or
+	// graph_id is required.
+	UserID *string `json:"user_id,omitempty" url:"-"`
+}
+
 type GraphListAllRequest struct {
 	// Page number for pagination, starting from 1.
 	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
@@ -204,6 +232,9 @@ type GraphSearchQuery struct {
 	Query string `json:"query" url:"-"`
 	// Defaults to RRF. Ignored when scope=auto except node_distance and episode_mentions are rejected;
 	// auto search always uses RRF retrieval and applies its own internal rerank after retrieval.
+	// episode_mentions ranks edge candidates by how many of the episodes listed
+	// in search_filters.episode_uuids mention them; without episode_uuids it has
+	// no effect and results are ranked as if no reranker were specified.
 	Reranker *Reranker `json:"reranker,omitempty" url:"-"`
 	// When scope=auto, include the selected raw graph results alongside the materialized context block.
 	// For graph-service-backed auto mode, selected raw results may include episodes,
@@ -1643,6 +1674,82 @@ func NewGraphSearchScopeFromString(s string) (GraphSearchScope, error) {
 
 func (g GraphSearchScope) Ptr() *GraphSearchScope {
 	return &g
+}
+
+type GraphSubgraphResponse struct {
+	// Every traversed edge that passed the request filters. Both endpoints
+	// of every edge are present in Nodes (edge-endpoint closure).
+	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	// Every admitted seed and every node reached within budget.
+	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+	// True whenever any budget or internal limit reduced the result.
+	Truncated *bool `json:"truncated,omitempty" url:"truncated,omitempty"`
+	// Names the binding limit (for example "max_nodes", "max_edges") when
+	// Truncated is true; nil otherwise.
+	TruncationReason *string `json:"truncation_reason,omitempty" url:"truncation_reason,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphSubgraphResponse) GetEdges() []*EntityEdge {
+	if g == nil {
+		return nil
+	}
+	return g.Edges
+}
+
+func (g *GraphSubgraphResponse) GetNodes() []*EntityNode {
+	if g == nil {
+		return nil
+	}
+	return g.Nodes
+}
+
+func (g *GraphSubgraphResponse) GetTruncated() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.Truncated
+}
+
+func (g *GraphSubgraphResponse) GetTruncationReason() *string {
+	if g == nil {
+		return nil
+	}
+	return g.TruncationReason
+}
+
+func (g *GraphSubgraphResponse) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GraphSubgraphResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphSubgraphResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphSubgraphResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphSubgraphResponse) String() string {
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
 }
 
 type GraphitiSagaNode struct {

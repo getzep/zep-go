@@ -79,7 +79,7 @@ func (c *Client) GetByUserID(
 	return response.Body, nil
 }
 
-// Returns all edges for a node
+// Deprecated. Use edge listing with `filters.connected_node_uuids`, or the neighbors endpoint (`POST /graph/node/{node_uuid}/neighbors`), instead. Returns all edges for a node, subject to an internal cap; responses reduced by that cap set the Zep-Truncated header.
 func (c *Client) GetEdges(
 	ctx context.Context,
 	// Node UUID
@@ -97,7 +97,7 @@ func (c *Client) GetEdges(
 	return response.Body, nil
 }
 
-// Returns all episodes that mentioned a given node
+// Deprecated. Use episode listing with `mentioned_node_uuids` (`POST /graph/episodes/graph/{graph_id}` or `POST /graph/episodes/user/{user_id}`) instead. Returns episodes that mentioned a given node, subject to an internal cap; responses reduced by that cap set the Zep-Truncated header.
 func (c *Client) GetEpisodes(
 	ctx context.Context,
 	// Node UUID
@@ -107,6 +107,26 @@ func (c *Client) GetEpisodes(
 	response, err := c.WithRawResponse.GetEpisodes(
 		ctx,
 		nodeUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Enumerates the distinct entity nodes directly connected to a node, together with the edges connecting each to it.
+func (c *Client) GetNeighbors(
+	ctx context.Context,
+	// Node UUID
+	nodeUUID string,
+	request *graph.GraphNodeNeighborsRequest,
+	opts ...option.RequestOption,
+) ([]*v3.GraphNodeNeighbor, error) {
+	response, err := c.WithRawResponse.GetNeighbors(
+		ctx,
+		nodeUUID,
+		request,
 		opts...,
 	)
 	if err != nil {
