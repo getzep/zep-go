@@ -3,157 +3,26 @@
 package threadsummary
 
 import (
-	context "context"
-	v3 "github.com/getzep/zep-go/v4"
 	core "github.com/getzep/zep-go/v4/core"
 	internal "github.com/getzep/zep-go/v4/internal"
-	option "github.com/getzep/zep-go/v4/option"
-	http "net/http"
 )
 
 type RawClient struct {
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
+	options *core.RequestOptions
 }
 
 func NewRawClient(options *core.RequestOptions) *RawClient {
 	return &RawClient{
+		options: options,
 		baseURL: options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
-}
-
-func (r *RawClient) GetByGraphID(
-	ctx context.Context,
-	// Graph ID
-	graphID string,
-	request *v3.GraphThreadSummariesRequest,
-	opts ...option.RequestOption,
-) (*core.Response[[]*v3.ThreadSummary], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		r.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/thread-summary/graph/%v",
-		graphID,
-	)
-	headers := internal.MergeHeaders(
-		r.header.Clone(),
-		options.ToHeader(),
-	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response []*v3.ThreadSummary
-	raw, err := r.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodPost,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Request:         request,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &core.Response[[]*v3.ThreadSummary]{
-		StatusCode: raw.StatusCode,
-		Header:     raw.Header,
-		Body:       response,
-	}, nil
-}
-
-func (r *RawClient) GetByUserID(
-	ctx context.Context,
-	// User ID
-	userID string,
-	request *v3.GraphThreadSummariesRequest,
-	opts ...option.RequestOption,
-) (*core.Response[[]*v3.ThreadSummary], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		r.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/thread-summary/user/%v",
-		userID,
-	)
-	headers := internal.MergeHeaders(
-		r.header.Clone(),
-		options.ToHeader(),
-	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response []*v3.ThreadSummary
-	raw, err := r.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodPost,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Request:         request,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &core.Response[[]*v3.ThreadSummary]{
-		StatusCode: raw.StatusCode,
-		Header:     raw.Header,
-		Body:       response,
-	}, nil
 }
