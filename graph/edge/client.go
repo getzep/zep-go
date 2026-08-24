@@ -4,52 +4,60 @@ package edge
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v4"
+	http "net/http"
+	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
 	core "github.com/getzep/zep-go/v4/core"
 	graph "github.com/getzep/zep-go/v4/graph"
 	internal "github.com/getzep/zep-go/v4/internal"
 	option "github.com/getzep/zep-go/v4/option"
-	http "net/http"
-	os "os"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Returns all edges for a graph.
-func (c *Client) GetByGraphID(
+// Example:
+//
+//	request := &graph.AddEdgeRequest{}
+//	client.Graph.Edge.Add(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) Add(
 	ctx context.Context,
-	// Graph ID
-	graphID string,
-	request *v3.GraphEdgesRequest,
-	opts ...option.RequestOption,
-) ([]*v3.EntityEdge, error) {
-	response, err := c.WithRawResponse.GetByGraphID(
+	// Graph UUID
+	graphUUID string,
+	request *graph.AddEdgeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.AddEdgeResult, error) {
+	response, err := c.WithRawResponse.Add(
 		ctx,
-		graphID,
+		graphUUID,
 		request,
 		opts...,
 	)
@@ -59,36 +67,108 @@ func (c *Client) GetByGraphID(
 	return response.Body, nil
 }
 
-// Returns all edges for a user.
-func (c *Client) GetByUserID(
+// Example:
+//
+//	request := &graph.EdgeListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Body: &zep.ArtifactListRequest{},
+//	}
+//	client.Graph.Edge.List(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) List(
 	ctx context.Context,
-	// User ID
-	userID string,
-	request *v3.GraphEdgesRequest,
-	opts ...option.RequestOption,
-) ([]*v3.EntityEdge, error) {
-	response, err := c.WithRawResponse.GetByUserID(
-		ctx,
-		userID,
-		request,
-		opts...,
+	// Graph UUID
+	graphUUID string,
+	request *graph.EdgeListRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, zep.JSONObject, *zep.JSONObjectPage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
 	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/edges/list",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
 	if err != nil {
 		return nil, err
 	}
-	return response.Body, nil
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.JSONObjectPage) *core.PageResponse[*string, zep.JSONObject, *zep.JSONObjectPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, zep.JSONObject, *zep.JSONObjectPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Returns a specific edge by its UUID.
+// Example:
+//
+//	client.Graph.Edge.Get(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "edge_uuid",
+//	)
 func (c *Client) Get(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Edge UUID
-	uuid string,
+	edgeUUID string,
 	opts ...option.RequestOption,
-) (*v3.EntityEdge, error) {
+) (zep.JSONObject, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
-		uuid,
+		graphUUID,
+		edgeUUID,
 		opts...,
 	)
 	if err != nil {
@@ -97,16 +177,25 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Deletes an edge by UUID.
+// Example:
+//
+//	client.Graph.Edge.Delete(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "edge_uuid",
+//	)
 func (c *Client) Delete(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Edge UUID
-	uuid string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+	edgeUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*zep.AsyncResult, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
-		uuid,
+		graphUUID,
+		edgeUUID,
 		opts...,
 	)
 	if err != nil {
@@ -115,17 +204,28 @@ func (c *Client) Delete(
 	return response.Body, nil
 }
 
-// Updates an entity edge by UUID.
+// Example:
+//
+//	request := &graph.PatchEdgeRequest{}
+//	client.Graph.Edge.Update(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "edge_uuid",
+//	    request,
+//	)
 func (c *Client) Update(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Edge UUID
-	uuid string,
-	request *graph.UpdateEdgeRequest,
-	opts ...option.RequestOption,
-) (*v3.EntityEdge, error) {
+	edgeUUID string,
+	request *graph.PatchEdgeRequest,
+	opts ...option.IdempotentRequestOption,
+) (zep.JSONObject, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
-		uuid,
+		graphUUID,
+		edgeUUID,
 		request,
 		opts...,
 	)

@@ -6,95 +6,414 @@ import (
 	json "encoding/json"
 	fmt "fmt"
 	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
+)
+
+var (
+	addMessagesRequestFieldIgnoreRoles    = big.NewInt(1 << 0)
+	addMessagesRequestFieldMessages       = big.NewInt(1 << 1)
+	addMessagesRequestFieldReturnContext  = big.NewInt(1 << 2)
+	addMessagesRequestFieldStrictOntology = big.NewInt(1 << 3)
+)
+
+type AddMessagesRequest struct {
+	IgnoreRoles    []string      `json:"ignore_roles,omitempty" url:"-"`
+	Messages       []*AddMessage `json:"messages,omitempty" url:"-"`
+	ReturnContext  *bool         `json:"return_context,omitempty" url:"-"`
+	StrictOntology *bool         `json:"strict_ontology,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (a *AddMessagesRequest) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetIgnoreRoles sets the IgnoreRoles field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessagesRequest) SetIgnoreRoles(ignoreRoles []string) {
+	a.IgnoreRoles = ignoreRoles
+	a.require(addMessagesRequestFieldIgnoreRoles)
+}
+
+// SetMessages sets the Messages field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessagesRequest) SetMessages(messages []*AddMessage) {
+	a.Messages = messages
+	a.require(addMessagesRequestFieldMessages)
+}
+
+// SetReturnContext sets the ReturnContext field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessagesRequest) SetReturnContext(returnContext *bool) {
+	a.ReturnContext = returnContext
+	a.require(addMessagesRequestFieldReturnContext)
+}
+
+// SetStrictOntology sets the StrictOntology field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessagesRequest) SetStrictOntology(strictOntology *bool) {
+	a.StrictOntology = strictOntology
+	a.require(addMessagesRequestFieldStrictOntology)
+}
+
+func (a *AddMessagesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddMessagesRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*a = AddMessagesRequest(body)
+	return nil
+}
+
+func (a *AddMessagesRequest) MarshalJSON() ([]byte, error) {
+	type embed AddMessagesRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	createThreadRequestFieldThreadID = big.NewInt(1 << 0)
+	createThreadRequestFieldUserUUID = big.NewInt(1 << 1)
 )
 
 type CreateThreadRequest struct {
-	// The unique identifier of the thread.
-	ThreadID string `json:"thread_id" url:"-"`
-	// The unique identifier of the user associated with the thread
-	UserID string `json:"user_id" url:"-"`
+	ThreadID *string `json:"thread_id,omitempty" url:"-"`
+	UserUUID *string `json:"user_uuid,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type ThreadGetRequest struct {
-	// Limit the number of results returned
+func (c *CreateThreadRequest) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetThreadID sets the ThreadID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateThreadRequest) SetThreadID(threadID *string) {
+	c.ThreadID = threadID
+	c.require(createThreadRequestFieldThreadID)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateThreadRequest) SetUserUUID(userUUID *string) {
+	c.UserUUID = userUUID
+	c.require(createThreadRequestFieldUserUUID)
+}
+
+func (c *CreateThreadRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreateThreadRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*c = CreateThreadRequest(body)
+	return nil
+}
+
+func (c *CreateThreadRequest) MarshalJSON() ([]byte, error) {
+	type embed CreateThreadRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	threadGetContextRequestFieldTemplateUUID = big.NewInt(1 << 0)
+)
+
+type ThreadGetContextRequest struct {
+	// Context template UUID
+	TemplateUUID *string `json:"-" url:"template_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (t *ThreadGetContextRequest) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetTemplateUUID sets the TemplateUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadGetContextRequest) SetTemplateUUID(templateUUID *string) {
+	t.TemplateUUID = templateUUID
+	t.require(threadGetContextRequestFieldTemplateUUID)
+}
+
+var (
+	threadListRequestFieldLimit    = big.NewInt(1 << 0)
+	threadListRequestFieldCursor   = big.NewInt(1 << 1)
+	threadListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	threadListRequestFieldOrder    = big.NewInt(1 << 3)
+	threadListRequestFieldUserUUID = big.NewInt(1 << 4)
+)
+
+type ThreadListRequest struct {
+	// Page size
 	Limit *int `json:"-" url:"limit,omitempty"`
-	// Cursor for pagination
-	Cursor *int `json:"-" url:"cursor,omitempty"`
-	// Number of most recent messages to return (overrides limit and cursor)
-	Lastn *int `json:"-" url:"lastn,omitempty"`
-}
-
-type ThreadGetUserContextRequest struct {
-	// Optional template ID to use for custom context rendering.
-	TemplateID *string `json:"-" url:"template_id,omitempty"`
-}
-
-type ThreadListAllRequest struct {
-	// Page number for pagination, starting from 1
-	PageNumber *int `json:"-" url:"page_number,omitempty"`
-	// Number of threads to retrieve per page.
-	PageSize *int `json:"-" url:"page_size,omitempty"`
-	// Field to order the results by: created_at, updated_at, user_id, thread_id.
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort field
 	OrderBy *string `json:"-" url:"order_by,omitempty"`
-	// Order direction: true for ascending, false for descending.
-	Asc *bool `json:"-" url:"asc,omitempty"`
+	// asc or desc
+	Order *string `json:"-" url:"order,omitempty"`
+	// Filter by user UUID
+	UserUUID *string `json:"-" url:"user_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type AddThreadMessagesRequest struct {
-	// Optional list of role types to ignore when adding messages to graph memory.
-	// The message itself will still be added, retained and used as context for messages
-	// that are added to a user's graph.
-	IgnoreRoles []RoleType `json:"ignore_roles,omitempty" url:"ignore_roles,omitempty"`
-	// A list of message objects, where each message contains a role and content.
-	Messages []*Message `json:"messages" url:"messages"`
-	// Optionally return context block relevant to the most recent messages.
-	ReturnContext *bool `json:"return_context,omitempty" url:"return_context,omitempty"`
-	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
-	StrictOntology *bool `json:"strict_ontology,omitempty" url:"strict_ontology,omitempty"`
+func (t *ThreadListRequest) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListRequest) SetLimit(limit *int) {
+	t.Limit = limit
+	t.require(threadListRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListRequest) SetCursor(cursor *string) {
+	t.Cursor = cursor
+	t.require(threadListRequestFieldCursor)
+}
+
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListRequest) SetOrderBy(orderBy *string) {
+	t.OrderBy = orderBy
+	t.require(threadListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListRequest) SetOrder(order *string) {
+	t.Order = order
+	t.require(threadListRequestFieldOrder)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListRequest) SetUserUUID(userUUID *string) {
+	t.UserUUID = userUUID
+	t.require(threadListRequestFieldUserUUID)
+}
+
+var (
+	threadListEpisodesRequestFieldLimit  = big.NewInt(1 << 0)
+	threadListEpisodesRequestFieldCursor = big.NewInt(1 << 1)
+)
+
+type ThreadListEpisodesRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (t *ThreadListEpisodesRequest) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListEpisodesRequest) SetLimit(limit *int) {
+	t.Limit = limit
+	t.require(threadListEpisodesRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListEpisodesRequest) SetCursor(cursor *string) {
+	t.Cursor = cursor
+	t.require(threadListEpisodesRequestFieldCursor)
+}
+
+var (
+	threadListMessagesRequestFieldLimit  = big.NewInt(1 << 0)
+	threadListMessagesRequestFieldCursor = big.NewInt(1 << 1)
+)
+
+type ThreadListMessagesRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (t *ThreadListMessagesRequest) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListMessagesRequest) SetLimit(limit *int) {
+	t.Limit = limit
+	t.require(threadListMessagesRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListMessagesRequest) SetCursor(cursor *string) {
+	t.Cursor = cursor
+	t.require(threadListMessagesRequestFieldCursor)
+}
+
+var (
+	addMessageFieldContent  = big.NewInt(1 << 0)
+	addMessageFieldMetadata = big.NewInt(1 << 1)
+	addMessageFieldName     = big.NewInt(1 << 2)
+	addMessageFieldRole     = big.NewInt(1 << 3)
+	addMessageFieldUUID     = big.NewInt(1 << 4)
+)
+
+type AddMessage struct {
+	Content  *string        `json:"content,omitempty" url:"content,omitempty"`
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Name     *string        `json:"name,omitempty" url:"name,omitempty"`
+	Role     *string        `json:"role,omitempty" url:"role,omitempty"`
+	UUID     *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *AddThreadMessagesRequest) GetIgnoreRoles() []RoleType {
+func (a *AddMessage) GetContent() *string {
 	if a == nil {
 		return nil
 	}
-	return a.IgnoreRoles
+	return a.Content
 }
 
-func (a *AddThreadMessagesRequest) GetMessages() []*Message {
+func (a *AddMessage) GetMetadata() map[string]any {
 	if a == nil {
 		return nil
 	}
-	return a.Messages
+	return a.Metadata
 }
 
-func (a *AddThreadMessagesRequest) GetReturnContext() *bool {
+func (a *AddMessage) GetName() *string {
 	if a == nil {
 		return nil
 	}
-	return a.ReturnContext
+	return a.Name
 }
 
-func (a *AddThreadMessagesRequest) GetStrictOntology() *bool {
+func (a *AddMessage) GetRole() *string {
 	if a == nil {
 		return nil
 	}
-	return a.StrictOntology
+	return a.Role
 }
 
-func (a *AddThreadMessagesRequest) GetExtraProperties() map[string]interface{} {
+func (a *AddMessage) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AddMessage) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
 	return a.extraProperties
 }
 
-func (a *AddThreadMessagesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler AddThreadMessagesRequest
+func (a *AddMessage) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetContent sets the Content field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessage) SetContent(content *string) {
+	a.Content = content
+	a.require(addMessageFieldContent)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessage) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(addMessageFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessage) SetName(name *string) {
+	a.Name = name
+	a.require(addMessageFieldName)
+}
+
+// SetRole sets the Role field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessage) SetRole(role *string) {
+	a.Role = role
+	a.require(addMessageFieldRole)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessage) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(addMessageFieldUUID)
+}
+
+func (a *AddMessage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddMessage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AddThreadMessagesRequest(value)
+	*a = AddMessage(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -104,7 +423,21 @@ func (a *AddThreadMessagesRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AddThreadMessagesRequest) String() string {
+func (a *AddMessage) MarshalJSON() ([]byte, error) {
+	type embed AddMessage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddMessage) String() string {
+	if a == nil {
+		return "<nil>"
+	}
 	if len(a.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
@@ -116,47 +449,87 @@ func (a *AddThreadMessagesRequest) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AddThreadMessagesResponse struct {
-	Context      *string  `json:"context,omitempty" url:"context,omitempty"`
-	MessageUUIDs []string `json:"message_uuids,omitempty" url:"message_uuids,omitempty"`
-	TaskID       *string  `json:"task_id,omitempty" url:"task_id,omitempty"`
+var (
+	addMessagesResultFieldContext  = big.NewInt(1 << 0)
+	addMessagesResultFieldMessages = big.NewInt(1 << 1)
+	addMessagesResultFieldTask     = big.NewInt(1 << 2)
+)
+
+type AddMessagesResult struct {
+	Context  *string    `json:"context,omitempty" url:"context,omitempty"`
+	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
+	Task     *Task      `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *AddThreadMessagesResponse) GetContext() *string {
+func (a *AddMessagesResult) GetContext() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Context
 }
 
-func (a *AddThreadMessagesResponse) GetMessageUUIDs() []string {
+func (a *AddMessagesResult) GetMessages() []*Message {
 	if a == nil {
 		return nil
 	}
-	return a.MessageUUIDs
+	return a.Messages
 }
 
-func (a *AddThreadMessagesResponse) GetTaskID() *string {
+func (a *AddMessagesResult) GetTask() *Task {
 	if a == nil {
 		return nil
 	}
-	return a.TaskID
+	return a.Task
 }
 
-func (a *AddThreadMessagesResponse) GetExtraProperties() map[string]interface{} {
+func (a *AddMessagesResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
 	return a.extraProperties
 }
 
-func (a *AddThreadMessagesResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler AddThreadMessagesResponse
+func (a *AddMessagesResult) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetContext sets the Context field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessagesResult) SetContext(context *string) {
+	a.Context = context
+	a.require(addMessagesResultFieldContext)
+}
+
+// SetMessages sets the Messages field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessagesResult) SetMessages(messages []*Message) {
+	a.Messages = messages
+	a.require(addMessagesResultFieldMessages)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessagesResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(addMessagesResultFieldTask)
+}
+
+func (a *AddMessagesResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddMessagesResult
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AddThreadMessagesResponse(value)
+	*a = AddMessagesResult(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -166,7 +539,21 @@ func (a *AddThreadMessagesResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AddThreadMessagesResponse) String() string {
+func (a *AddMessagesResult) MarshalJSON() ([]byte, error) {
+	type embed AddMessagesResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddMessagesResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
 	if len(a.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
@@ -178,77 +565,87 @@ func (a *AddThreadMessagesResponse) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type MessageListResponse struct {
-	// A list of message objects.
-	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	// The number of messages returned.
-	RowCount *int `json:"row_count,omitempty" url:"row_count,omitempty"`
-	// The thread creation timestamp.
-	ThreadCreatedAt *string `json:"thread_created_at,omitempty" url:"thread_created_at,omitempty"`
-	// The total number of messages.
-	TotalCount *int `json:"total_count,omitempty" url:"total_count,omitempty"`
-	// The user ID associated with this thread.
-	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
-	// The opaque user identifier used by dashboard routes.
-	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
+var (
+	messagePageFieldItems      = big.NewInt(1 << 0)
+	messagePageFieldNextCursor = big.NewInt(1 << 1)
+	messagePageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type MessagePage struct {
+	Items      []*Message `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string    `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int       `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (m *MessageListResponse) GetMessages() []*Message {
+func (m *MessagePage) GetItems() []*Message {
 	if m == nil {
 		return nil
 	}
-	return m.Messages
+	return m.Items
 }
 
-func (m *MessageListResponse) GetRowCount() *int {
+func (m *MessagePage) GetNextCursor() *string {
 	if m == nil {
 		return nil
 	}
-	return m.RowCount
+	return m.NextCursor
 }
 
-func (m *MessageListResponse) GetThreadCreatedAt() *string {
+func (m *MessagePage) GetTotalSize() *int {
 	if m == nil {
 		return nil
 	}
-	return m.ThreadCreatedAt
+	return m.TotalSize
 }
 
-func (m *MessageListResponse) GetTotalCount() *int {
+func (m *MessagePage) GetExtraProperties() map[string]interface{} {
 	if m == nil {
 		return nil
 	}
-	return m.TotalCount
-}
-
-func (m *MessageListResponse) GetUserID() *string {
-	if m == nil {
-		return nil
-	}
-	return m.UserID
-}
-
-func (m *MessageListResponse) GetUserUUID() *string {
-	if m == nil {
-		return nil
-	}
-	return m.UserUUID
-}
-
-func (m *MessageListResponse) GetExtraProperties() map[string]interface{} {
 	return m.extraProperties
 }
 
-func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler MessageListResponse
+func (m *MessagePage) require(field *big.Int) {
+	if m.explicitFields == nil {
+		m.explicitFields = big.NewInt(0)
+	}
+	m.explicitFields.Or(m.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MessagePage) SetItems(items []*Message) {
+	m.Items = items
+	m.require(messagePageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MessagePage) SetNextCursor(nextCursor *string) {
+	m.NextCursor = nextCursor
+	m.require(messagePageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MessagePage) SetTotalSize(totalSize *int) {
+	m.TotalSize = totalSize
+	m.require(messagePageFieldTotalSize)
+}
+
+func (m *MessagePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler MessagePage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*m = MessageListResponse(value)
+	*m = MessagePage(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *m)
 	if err != nil {
 		return err
@@ -258,7 +655,21 @@ func (m *MessageListResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (m *MessageListResponse) String() string {
+func (m *MessagePage) MarshalJSON() ([]byte, error) {
+	type embed MessagePage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*m),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, m.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (m *MessagePage) String() string {
+	if m == nil {
+		return "<nil>"
+	}
 	if len(m.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
 			return value
@@ -270,9 +681,179 @@ func (m *MessageListResponse) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+var (
+	threadFieldCreatedAt = big.NewInt(1 << 0)
+	threadFieldGraphUUID = big.NewInt(1 << 1)
+	threadFieldThreadID  = big.NewInt(1 << 2)
+	threadFieldUpdatedAt = big.NewInt(1 << 3)
+	threadFieldUserUUID  = big.NewInt(1 << 4)
+	threadFieldUUID      = big.NewInt(1 << 5)
+)
+
+type Thread struct {
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	ThreadID  *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UserUUID  *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
+	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *Thread) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *Thread) GetGraphUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.GraphUUID
+}
+
+func (t *Thread) GetThreadID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ThreadID
+}
+
+func (t *Thread) GetUpdatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UpdatedAt
+}
+
+func (t *Thread) GetUserUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UserUUID
+}
+
+func (t *Thread) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *Thread) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *Thread) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Thread) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(threadFieldCreatedAt)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Thread) SetGraphUUID(graphUUID *string) {
+	t.GraphUUID = graphUUID
+	t.require(threadFieldGraphUUID)
+}
+
+// SetThreadID sets the ThreadID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Thread) SetThreadID(threadID *string) {
+	t.ThreadID = threadID
+	t.require(threadFieldThreadID)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Thread) SetUpdatedAt(updatedAt *string) {
+	t.UpdatedAt = updatedAt
+	t.require(threadFieldUpdatedAt)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Thread) SetUserUUID(userUUID *string) {
+	t.UserUUID = userUUID
+	t.require(threadFieldUserUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Thread) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(threadFieldUUID)
+}
+
+func (t *Thread) UnmarshalJSON(data []byte) error {
+	type unmarshaler Thread
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = Thread(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *Thread) MarshalJSON() ([]byte, error) {
+	type embed Thread
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *Thread) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	threadContextResponseFieldContext = big.NewInt(1 << 0)
+)
+
 type ThreadContextResponse struct {
-	// Context block containing relevant facts, entities, and messages/episodes from the user graph. Meant to be replaced in the system prompt on every chat turn.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -286,7 +867,24 @@ func (t *ThreadContextResponse) GetContext() *string {
 }
 
 func (t *ThreadContextResponse) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
 	return t.extraProperties
+}
+
+func (t *ThreadContextResponse) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetContext sets the Context field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadContextResponse) SetContext(context *string) {
+	t.Context = context
+	t.require(threadContextResponseFieldContext)
 }
 
 func (t *ThreadContextResponse) UnmarshalJSON(data []byte) error {
@@ -305,7 +903,21 @@ func (t *ThreadContextResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (t *ThreadContextResponse) MarshalJSON() ([]byte, error) {
+	type embed ThreadContextResponse
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
 func (t *ThreadContextResponse) String() string {
+	if t == nil {
+		return "<nil>"
+	}
 	if len(t.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value
@@ -317,47 +929,55 @@ func (t *ThreadContextResponse) String() string {
 	return fmt.Sprintf("%#v", t)
 }
 
-type ThreadListResponse struct {
-	ResponseCount *int      `json:"response_count,omitempty" url:"response_count,omitempty"`
-	Threads       []*Thread `json:"threads,omitempty" url:"threads,omitempty"`
-	TotalCount    *int      `json:"total_count,omitempty" url:"total_count,omitempty"`
+var (
+	threadDeleteResultFieldTask = big.NewInt(1 << 0)
+)
+
+type ThreadDeleteResult struct {
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (t *ThreadListResponse) GetResponseCount() *int {
+func (t *ThreadDeleteResult) GetTask() *Task {
 	if t == nil {
 		return nil
 	}
-	return t.ResponseCount
+	return t.Task
 }
 
-func (t *ThreadListResponse) GetThreads() []*Thread {
+func (t *ThreadDeleteResult) GetExtraProperties() map[string]interface{} {
 	if t == nil {
 		return nil
 	}
-	return t.Threads
-}
-
-func (t *ThreadListResponse) GetTotalCount() *int {
-	if t == nil {
-		return nil
-	}
-	return t.TotalCount
-}
-
-func (t *ThreadListResponse) GetExtraProperties() map[string]interface{} {
 	return t.extraProperties
 }
 
-func (t *ThreadListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ThreadListResponse
+func (t *ThreadDeleteResult) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadDeleteResult) SetTask(task *Task) {
+	t.Task = task
+	t.require(threadDeleteResultFieldTask)
+}
+
+func (t *ThreadDeleteResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadDeleteResult
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*t = ThreadListResponse(value)
+	*t = ThreadDeleteResult(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *t)
 	if err != nil {
 		return err
@@ -367,7 +987,301 @@ func (t *ThreadListResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (t *ThreadListResponse) String() string {
+func (t *ThreadDeleteResult) MarshalJSON() ([]byte, error) {
+	type embed ThreadDeleteResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *ThreadDeleteResult) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	threadPageFieldItems      = big.NewInt(1 << 0)
+	threadPageFieldNextCursor = big.NewInt(1 << 1)
+	threadPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type ThreadPage struct {
+	Items      []*Thread `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string   `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int      `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *ThreadPage) GetItems() []*Thread {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *ThreadPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *ThreadPage) GetTotalSize() *int {
+	if t == nil {
+		return nil
+	}
+	return t.TotalSize
+}
+
+func (t *ThreadPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *ThreadPage) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadPage) SetItems(items []*Thread) {
+	t.Items = items
+	t.require(threadPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(threadPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(threadPageFieldTotalSize)
+}
+
+func (t *ThreadPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = ThreadPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *ThreadPage) MarshalJSON() ([]byte, error) {
+	type embed ThreadPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *ThreadPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	threadSummaryFieldCreatedAt                    = big.NewInt(1 << 0)
+	threadSummaryFieldLastSummarizedAt             = big.NewInt(1 << 1)
+	threadSummaryFieldLastSummarizedEpisodeValidAt = big.NewInt(1 << 2)
+	threadSummaryFieldSummary                      = big.NewInt(1 << 3)
+	threadSummaryFieldThreadUUID                   = big.NewInt(1 << 4)
+	threadSummaryFieldUUID                         = big.NewInt(1 << 5)
+)
+
+type ThreadSummary struct {
+	CreatedAt                    *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	LastSummarizedAt             *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
+	Summary                      *string `json:"summary,omitempty" url:"summary,omitempty"`
+	ThreadUUID                   *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	UUID                         *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *ThreadSummary) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *ThreadSummary) GetLastSummarizedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.LastSummarizedAt
+}
+
+func (t *ThreadSummary) GetLastSummarizedEpisodeValidAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.LastSummarizedEpisodeValidAt
+}
+
+func (t *ThreadSummary) GetSummary() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Summary
+}
+
+func (t *ThreadSummary) GetThreadUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ThreadUUID
+}
+
+func (t *ThreadSummary) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *ThreadSummary) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *ThreadSummary) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(threadSummaryFieldCreatedAt)
+}
+
+// SetLastSummarizedAt sets the LastSummarizedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetLastSummarizedAt(lastSummarizedAt *string) {
+	t.LastSummarizedAt = lastSummarizedAt
+	t.require(threadSummaryFieldLastSummarizedAt)
+}
+
+// SetLastSummarizedEpisodeValidAt sets the LastSummarizedEpisodeValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetLastSummarizedEpisodeValidAt(lastSummarizedEpisodeValidAt *string) {
+	t.LastSummarizedEpisodeValidAt = lastSummarizedEpisodeValidAt
+	t.require(threadSummaryFieldLastSummarizedEpisodeValidAt)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetSummary(summary *string) {
+	t.Summary = summary
+	t.require(threadSummaryFieldSummary)
+}
+
+// SetThreadUUID sets the ThreadUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetThreadUUID(threadUUID *string) {
+	t.ThreadUUID = threadUUID
+	t.require(threadSummaryFieldThreadUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(threadSummaryFieldUUID)
+}
+
+func (t *ThreadSummary) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadSummary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = ThreadSummary(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *ThreadSummary) MarshalJSON() ([]byte, error) {
+	type embed ThreadSummary
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *ThreadSummary) String() string {
+	if t == nil {
+		return "<nil>"
+	}
 	if len(t.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value

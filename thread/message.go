@@ -2,6 +2,54 @@
 
 package thread
 
-type ThreadMessageUpdate struct {
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
+import (
+	json "encoding/json"
+	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
+)
+
+var (
+	patchMessageRequestFieldMetadata = big.NewInt(1 << 0)
+)
+
+type PatchMessageRequest struct {
+	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (p *PatchMessageRequest) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchMessageRequest) SetMetadata(metadata map[string]any) {
+	p.Metadata = metadata
+	p.require(patchMessageRequestFieldMetadata)
+}
+
+func (p *PatchMessageRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatchMessageRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*p = PatchMessageRequest(body)
+	return nil
+}
+
+func (p *PatchMessageRequest) MarshalJSON() ([]byte, error) {
+	type embed PatchMessageRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }

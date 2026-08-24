@@ -6,789 +6,330 @@ import (
 	json "encoding/json"
 	fmt "fmt"
 	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
 )
 
-type ApidataAddBatchItemsRequest struct {
-	Items []*BatchAddItem `json:"items,omitempty" url:"-"`
+var (
+	addBatchItemsRequestFieldItems = big.NewInt(1 << 0)
+)
+
+type AddBatchItemsRequest struct {
+	Items []map[string]any `json:"items,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type ApidataCreateBatchRequest struct {
-	// Optional list of message role types to skip during graph ingestion for
-	// thread_message items in this batch. The messages are still stored and
-	// retained as context, but no graph extraction is performed for them.
-	// Has no effect on graph_episode items.
-	IgnoreRoles []RoleType             `json:"ignore_roles,omitempty" url:"-"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"-"`
+func (a *AddBatchItemsRequest) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
 }
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddBatchItemsRequest) SetItems(items []map[string]any) {
+	a.Items = items
+	a.require(addBatchItemsRequestFieldItems)
+}
+
+func (a *AddBatchItemsRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddBatchItemsRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*a = AddBatchItemsRequest(body)
+	return nil
+}
+
+func (a *AddBatchItemsRequest) MarshalJSON() ([]byte, error) {
+	type embed AddBatchItemsRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	createBatchRequestFieldIgnoreRoles    = big.NewInt(1 << 0)
+	createBatchRequestFieldMetadata       = big.NewInt(1 << 1)
+	createBatchRequestFieldStrictOntology = big.NewInt(1 << 2)
+)
+
+type CreateBatchRequest struct {
+	IgnoreRoles    []string       `json:"ignore_roles,omitempty" url:"-"`
+	Metadata       map[string]any `json:"metadata,omitempty" url:"-"`
+	StrictOntology *bool          `json:"strict_ontology,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (c *CreateBatchRequest) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetIgnoreRoles sets the IgnoreRoles field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateBatchRequest) SetIgnoreRoles(ignoreRoles []string) {
+	c.IgnoreRoles = ignoreRoles
+	c.require(createBatchRequestFieldIgnoreRoles)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateBatchRequest) SetMetadata(metadata map[string]any) {
+	c.Metadata = metadata
+	c.require(createBatchRequestFieldMetadata)
+}
+
+// SetStrictOntology sets the StrictOntology field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateBatchRequest) SetStrictOntology(strictOntology *bool) {
+	c.StrictOntology = strictOntology
+	c.require(createBatchRequestFieldStrictOntology)
+}
+
+func (c *CreateBatchRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreateBatchRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*c = CreateBatchRequest(body)
+	return nil
+}
+
+func (c *CreateBatchRequest) MarshalJSON() ([]byte, error) {
+	type embed CreateBatchRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	batchListRequestFieldLimit  = big.NewInt(1 << 0)
+	batchListRequestFieldCursor = big.NewInt(1 << 1)
+	batchListRequestFieldStatus = big.NewInt(1 << 2)
+)
 
 type BatchListRequest struct {
-	// Maximum number of batches to return.
+	// Page size
 	Limit *int `json:"-" url:"limit,omitempty"`
-	// Pagination cursor from a previous response.
-	Cursor *int `json:"-" url:"cursor,omitempty"`
-	// Batch status filter.
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Batch status filter
 	Status *string `json:"-" url:"status,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
+
+func (b *BatchListRequest) require(field *big.Int) {
+	if b.explicitFields == nil {
+		b.explicitFields = big.NewInt(0)
+	}
+	b.explicitFields.Or(b.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchListRequest) SetLimit(limit *int) {
+	b.Limit = limit
+	b.require(batchListRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchListRequest) SetCursor(cursor *string) {
+	b.Cursor = cursor
+	b.require(batchListRequestFieldCursor)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchListRequest) SetStatus(status *string) {
+	b.Status = status
+	b.require(batchListRequestFieldStatus)
+}
+
+var (
+	batchListItemsRequestFieldLimit  = big.NewInt(1 << 0)
+	batchListItemsRequestFieldCursor = big.NewInt(1 << 1)
+)
 
 type BatchListItemsRequest struct {
-	// Maximum number of batch items to return.
+	// Page size
 	Limit *int `json:"-" url:"limit,omitempty"`
-	// Pagination cursor from a previous response.
-	Cursor *int `json:"-" url:"cursor,omitempty"`
-	// Batch item status filter.
-	Status *string `json:"-" url:"status,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type ApidataBatchAddItemRole string
+func (b *BatchListItemsRequest) require(field *big.Int) {
+	if b.explicitFields == nil {
+		b.explicitFields = big.NewInt(0)
+	}
+	b.explicitFields.Or(b.explicitFields, field)
+}
 
-const (
-	ApidataBatchAddItemRoleNorole    ApidataBatchAddItemRole = "norole"
-	ApidataBatchAddItemRoleSystem    ApidataBatchAddItemRole = "system"
-	ApidataBatchAddItemRoleAssistant ApidataBatchAddItemRole = "assistant"
-	ApidataBatchAddItemRoleUser      ApidataBatchAddItemRole = "user"
-	ApidataBatchAddItemRoleFunction  ApidataBatchAddItemRole = "function"
-	ApidataBatchAddItemRoleTool      ApidataBatchAddItemRole = "tool"
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchListItemsRequest) SetLimit(limit *int) {
+	b.Limit = limit
+	b.require(batchListItemsRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchListItemsRequest) SetCursor(cursor *string) {
+	b.Cursor = cursor
+	b.require(batchListItemsRequestFieldCursor)
+}
+
+var (
+	batchFieldCreatedAt      = big.NewInt(1 << 0)
+	batchFieldMetadata       = big.NewInt(1 << 1)
+	batchFieldProgress       = big.NewInt(1 << 2)
+	batchFieldStatus         = big.NewInt(1 << 3)
+	batchFieldStrictOntology = big.NewInt(1 << 4)
+	batchFieldUUID           = big.NewInt(1 << 5)
 )
 
-func NewApidataBatchAddItemRoleFromString(s string) (ApidataBatchAddItemRole, error) {
-	switch s {
-	case "norole":
-		return ApidataBatchAddItemRoleNorole, nil
-	case "system":
-		return ApidataBatchAddItemRoleSystem, nil
-	case "assistant":
-		return ApidataBatchAddItemRoleAssistant, nil
-	case "user":
-		return ApidataBatchAddItemRoleUser, nil
-	case "function":
-		return ApidataBatchAddItemRoleFunction, nil
-	case "tool":
-		return ApidataBatchAddItemRoleTool, nil
-	}
-	var t ApidataBatchAddItemRole
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
+type Batch struct {
+	CreatedAt      *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Metadata       map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Progress       map[string]any `json:"progress,omitempty" url:"progress,omitempty"`
+	Status         *string        `json:"status,omitempty" url:"status,omitempty"`
+	StrictOntology *bool          `json:"strict_ontology,omitempty" url:"strict_ontology,omitempty"`
+	UUID           *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
 
-func (a ApidataBatchAddItemRole) Ptr() *ApidataBatchAddItemRole {
-	return &a
-}
-
-type ApidataBatchAddItemType string
-
-const (
-	ApidataBatchAddItemTypeGraphEpisode  ApidataBatchAddItemType = "graph_episode"
-	ApidataBatchAddItemTypeThreadMessage ApidataBatchAddItemType = "thread_message"
-)
-
-func NewApidataBatchAddItemTypeFromString(s string) (ApidataBatchAddItemType, error) {
-	switch s {
-	case "graph_episode":
-		return ApidataBatchAddItemTypeGraphEpisode, nil
-	case "thread_message":
-		return ApidataBatchAddItemTypeThreadMessage, nil
-	}
-	var t ApidataBatchAddItemType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (a ApidataBatchAddItemType) Ptr() *ApidataBatchAddItemType {
-	return &a
-}
-
-type BatchAddItem struct {
-	Content           *string                  `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt         *string                  `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Data              *string                  `json:"data,omitempty" url:"data,omitempty"`
-	DataType          *GraphDataType           `json:"data_type,omitempty" url:"data_type,omitempty"`
-	GraphID           *string                  `json:"graph_id,omitempty" url:"graph_id,omitempty"`
-	Metadata          map[string]interface{}   `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Name              *string                  `json:"name,omitempty" url:"name,omitempty"`
-	Role              *ApidataBatchAddItemRole `json:"role,omitempty" url:"role,omitempty"`
-	SourceDescription *string                  `json:"source_description,omitempty" url:"source_description,omitempty"`
-	ThreadID          *string                  `json:"thread_id,omitempty" url:"thread_id,omitempty"`
-	Type              ApidataBatchAddItemType  `json:"type" url:"type"`
-	UserID            *string                  `json:"user_id,omitempty" url:"user_id,omitempty"`
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (b *BatchAddItem) GetContent() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Content
-}
-
-func (b *BatchAddItem) GetCreatedAt() *string {
+func (b *Batch) GetCreatedAt() *string {
 	if b == nil {
 		return nil
 	}
 	return b.CreatedAt
 }
 
-func (b *BatchAddItem) GetData() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Data
-}
-
-func (b *BatchAddItem) GetDataType() *GraphDataType {
-	if b == nil {
-		return nil
-	}
-	return b.DataType
-}
-
-func (b *BatchAddItem) GetGraphID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.GraphID
-}
-
-func (b *BatchAddItem) GetMetadata() map[string]interface{} {
+func (b *Batch) GetMetadata() map[string]any {
 	if b == nil {
 		return nil
 	}
 	return b.Metadata
 }
 
-func (b *BatchAddItem) GetName() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Name
-}
-
-func (b *BatchAddItem) GetRole() *ApidataBatchAddItemRole {
-	if b == nil {
-		return nil
-	}
-	return b.Role
-}
-
-func (b *BatchAddItem) GetSourceDescription() *string {
-	if b == nil {
-		return nil
-	}
-	return b.SourceDescription
-}
-
-func (b *BatchAddItem) GetThreadID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.ThreadID
-}
-
-func (b *BatchAddItem) GetType() ApidataBatchAddItemType {
-	if b == nil {
-		return ""
-	}
-	return b.Type
-}
-
-func (b *BatchAddItem) GetUserID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.UserID
-}
-
-func (b *BatchAddItem) GetExtraProperties() map[string]interface{} {
-	return b.extraProperties
-}
-
-func (b *BatchAddItem) UnmarshalJSON(data []byte) error {
-	type unmarshaler BatchAddItem
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*b = BatchAddItem(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *b)
-	if err != nil {
-		return err
-	}
-	b.extraProperties = extraProperties
-	b.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (b *BatchAddItem) String() string {
-	if len(b.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(b); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", b)
-}
-
-type BatchItemDetail struct {
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// EpisodeUUID is the UUID of the episode that will be (or has been) created
-	// for this batch item. Populated for every item kind and always equal to
-	// SourceUUID — the underlying source row's UUID is reused as the episode
-	// UUID during processing.
-	EpisodeUUID   *string                `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
-	Error         map[string]interface{} `json:"error,omitempty" url:"error,omitempty"`
-	GraphID       *string                `json:"graph_id,omitempty" url:"graph_id,omitempty"`
-	GraphUUID     *string                `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	ItemID        *string                `json:"item_id,omitempty" url:"item_id,omitempty"`
-	Kind          *BatchItemKind         `json:"kind,omitempty" url:"kind,omitempty"`
-	SequenceIndex *int                   `json:"sequence_index,omitempty" url:"sequence_index,omitempty"`
-	SourceUUID    *string                `json:"source_uuid,omitempty" url:"source_uuid,omitempty"`
-	Status        *BatchItemStatus       `json:"status,omitempty" url:"status,omitempty"`
-	ThreadID      *string                `json:"thread_id,omitempty" url:"thread_id,omitempty"`
-	UpdatedAt     *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UserID        *string                `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UserUUID      *string                `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (b *BatchItemDetail) GetCreatedAt() *string {
-	if b == nil {
-		return nil
-	}
-	return b.CreatedAt
-}
-
-func (b *BatchItemDetail) GetEpisodeUUID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.EpisodeUUID
-}
-
-func (b *BatchItemDetail) GetError() map[string]interface{} {
-	if b == nil {
-		return nil
-	}
-	return b.Error
-}
-
-func (b *BatchItemDetail) GetGraphID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.GraphID
-}
-
-func (b *BatchItemDetail) GetGraphUUID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.GraphUUID
-}
-
-func (b *BatchItemDetail) GetItemID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.ItemID
-}
-
-func (b *BatchItemDetail) GetKind() *BatchItemKind {
-	if b == nil {
-		return nil
-	}
-	return b.Kind
-}
-
-func (b *BatchItemDetail) GetSequenceIndex() *int {
-	if b == nil {
-		return nil
-	}
-	return b.SequenceIndex
-}
-
-func (b *BatchItemDetail) GetSourceUUID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.SourceUUID
-}
-
-func (b *BatchItemDetail) GetStatus() *BatchItemStatus {
-	if b == nil {
-		return nil
-	}
-	return b.Status
-}
-
-func (b *BatchItemDetail) GetThreadID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.ThreadID
-}
-
-func (b *BatchItemDetail) GetUpdatedAt() *string {
-	if b == nil {
-		return nil
-	}
-	return b.UpdatedAt
-}
-
-func (b *BatchItemDetail) GetUserID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.UserID
-}
-
-func (b *BatchItemDetail) GetUserUUID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.UserUUID
-}
-
-func (b *BatchItemDetail) GetExtraProperties() map[string]interface{} {
-	return b.extraProperties
-}
-
-func (b *BatchItemDetail) UnmarshalJSON(data []byte) error {
-	type unmarshaler BatchItemDetail
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*b = BatchItemDetail(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *b)
-	if err != nil {
-		return err
-	}
-	b.extraProperties = extraProperties
-	b.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (b *BatchItemDetail) String() string {
-	if len(b.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(b); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", b)
-}
-
-type BatchItemKind string
-
-const (
-	BatchItemKindGraphEpisode  BatchItemKind = "graph_episode"
-	BatchItemKindThreadMessage BatchItemKind = "thread_message"
-)
-
-func NewBatchItemKindFromString(s string) (BatchItemKind, error) {
-	switch s {
-	case "graph_episode":
-		return BatchItemKindGraphEpisode, nil
-	case "thread_message":
-		return BatchItemKindThreadMessage, nil
-	}
-	var t BatchItemKind
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (b BatchItemKind) Ptr() *BatchItemKind {
-	return &b
-}
-
-type BatchItemListResponse struct {
-	Items      []*BatchItemDetail `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *int               `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (b *BatchItemListResponse) GetItems() []*BatchItemDetail {
-	if b == nil {
-		return nil
-	}
-	return b.Items
-}
-
-func (b *BatchItemListResponse) GetNextCursor() *int {
-	if b == nil {
-		return nil
-	}
-	return b.NextCursor
-}
-
-func (b *BatchItemListResponse) GetExtraProperties() map[string]interface{} {
-	return b.extraProperties
-}
-
-func (b *BatchItemListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler BatchItemListResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*b = BatchItemListResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *b)
-	if err != nil {
-		return err
-	}
-	b.extraProperties = extraProperties
-	b.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (b *BatchItemListResponse) String() string {
-	if len(b.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(b); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", b)
-}
-
-type BatchItemStatus string
-
-const (
-	BatchItemStatusPending    BatchItemStatus = "pending"
-	BatchItemStatusQueued     BatchItemStatus = "queued"
-	BatchItemStatusProcessing BatchItemStatus = "processing"
-	BatchItemStatusSucceeded  BatchItemStatus = "succeeded"
-	BatchItemStatusFailed     BatchItemStatus = "failed"
-	BatchItemStatusSkipped    BatchItemStatus = "skipped"
-	BatchItemStatusCanceled   BatchItemStatus = "canceled"
-)
-
-func NewBatchItemStatusFromString(s string) (BatchItemStatus, error) {
-	switch s {
-	case "pending":
-		return BatchItemStatusPending, nil
-	case "queued":
-		return BatchItemStatusQueued, nil
-	case "processing":
-		return BatchItemStatusProcessing, nil
-	case "succeeded":
-		return BatchItemStatusSucceeded, nil
-	case "failed":
-		return BatchItemStatusFailed, nil
-	case "skipped":
-		return BatchItemStatusSkipped, nil
-	case "canceled":
-		return BatchItemStatusCanceled, nil
-	}
-	var t BatchItemStatus
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (b BatchItemStatus) Ptr() *BatchItemStatus {
-	return &b
-}
-
-type BatchListResponse struct {
-	Batches    []*BatchSummary `json:"batches,omitempty" url:"batches,omitempty"`
-	NextCursor *int            `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (b *BatchListResponse) GetBatches() []*BatchSummary {
-	if b == nil {
-		return nil
-	}
-	return b.Batches
-}
-
-func (b *BatchListResponse) GetNextCursor() *int {
-	if b == nil {
-		return nil
-	}
-	return b.NextCursor
-}
-
-func (b *BatchListResponse) GetExtraProperties() map[string]interface{} {
-	return b.extraProperties
-}
-
-func (b *BatchListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler BatchListResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*b = BatchListResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *b)
-	if err != nil {
-		return err
-	}
-	b.extraProperties = extraProperties
-	b.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (b *BatchListResponse) String() string {
-	if len(b.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(b); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", b)
-}
-
-type BatchProgress struct {
-	CanceledItems   *int     `json:"canceled_items,omitempty" url:"canceled_items,omitempty"`
-	FailedItems     *int     `json:"failed_items,omitempty" url:"failed_items,omitempty"`
-	PercentComplete *float64 `json:"percent_complete,omitempty" url:"percent_complete,omitempty"`
-	ProcessingItems *int     `json:"processing_items,omitempty" url:"processing_items,omitempty"`
-	QueuedItems     *int     `json:"queued_items,omitempty" url:"queued_items,omitempty"`
-	SkippedItems    *int     `json:"skipped_items,omitempty" url:"skipped_items,omitempty"`
-	SucceededItems  *int     `json:"succeeded_items,omitempty" url:"succeeded_items,omitempty"`
-	TotalItems      *int     `json:"total_items,omitempty" url:"total_items,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (b *BatchProgress) GetCanceledItems() *int {
-	if b == nil {
-		return nil
-	}
-	return b.CanceledItems
-}
-
-func (b *BatchProgress) GetFailedItems() *int {
-	if b == nil {
-		return nil
-	}
-	return b.FailedItems
-}
-
-func (b *BatchProgress) GetPercentComplete() *float64 {
-	if b == nil {
-		return nil
-	}
-	return b.PercentComplete
-}
-
-func (b *BatchProgress) GetProcessingItems() *int {
-	if b == nil {
-		return nil
-	}
-	return b.ProcessingItems
-}
-
-func (b *BatchProgress) GetQueuedItems() *int {
-	if b == nil {
-		return nil
-	}
-	return b.QueuedItems
-}
-
-func (b *BatchProgress) GetSkippedItems() *int {
-	if b == nil {
-		return nil
-	}
-	return b.SkippedItems
-}
-
-func (b *BatchProgress) GetSucceededItems() *int {
-	if b == nil {
-		return nil
-	}
-	return b.SucceededItems
-}
-
-func (b *BatchProgress) GetTotalItems() *int {
-	if b == nil {
-		return nil
-	}
-	return b.TotalItems
-}
-
-func (b *BatchProgress) GetExtraProperties() map[string]interface{} {
-	return b.extraProperties
-}
-
-func (b *BatchProgress) UnmarshalJSON(data []byte) error {
-	type unmarshaler BatchProgress
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*b = BatchProgress(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *b)
-	if err != nil {
-		return err
-	}
-	b.extraProperties = extraProperties
-	b.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (b *BatchProgress) String() string {
-	if len(b.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(b); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", b)
-}
-
-type BatchStatus string
-
-const (
-	BatchStatusDraft      BatchStatus = "draft"
-	BatchStatusInvalid    BatchStatus = "invalid"
-	BatchStatusQueued     BatchStatus = "queued"
-	BatchStatusProcessing BatchStatus = "processing"
-	BatchStatusSucceeded  BatchStatus = "succeeded"
-	BatchStatusPartial    BatchStatus = "partial"
-	BatchStatusFailed     BatchStatus = "failed"
-	BatchStatusCanceled   BatchStatus = "canceled"
-)
-
-func NewBatchStatusFromString(s string) (BatchStatus, error) {
-	switch s {
-	case "draft":
-		return BatchStatusDraft, nil
-	case "invalid":
-		return BatchStatusInvalid, nil
-	case "queued":
-		return BatchStatusQueued, nil
-	case "processing":
-		return BatchStatusProcessing, nil
-	case "succeeded":
-		return BatchStatusSucceeded, nil
-	case "partial":
-		return BatchStatusPartial, nil
-	case "failed":
-		return BatchStatusFailed, nil
-	case "canceled":
-		return BatchStatusCanceled, nil
-	}
-	var t BatchStatus
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (b BatchStatus) Ptr() *BatchStatus {
-	return &b
-}
-
-type BatchSummary struct {
-	BatchID     *string                `json:"batch_id,omitempty" url:"batch_id,omitempty"`
-	CompletedAt *string                `json:"completed_at,omitempty" url:"completed_at,omitempty"`
-	CreatedAt   *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	IgnoreRoles []RoleType             `json:"ignore_roles,omitempty" url:"ignore_roles,omitempty"`
-	ItemCount   *int                   `json:"item_count,omitempty" url:"item_count,omitempty"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProcessedAt *string                `json:"processed_at,omitempty" url:"processed_at,omitempty"`
-	Progress    *BatchProgress         `json:"progress,omitempty" url:"progress,omitempty"`
-	Status      *BatchStatus           `json:"status,omitempty" url:"status,omitempty"`
-	UpdatedAt   *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (b *BatchSummary) GetBatchID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.BatchID
-}
-
-func (b *BatchSummary) GetCompletedAt() *string {
-	if b == nil {
-		return nil
-	}
-	return b.CompletedAt
-}
-
-func (b *BatchSummary) GetCreatedAt() *string {
-	if b == nil {
-		return nil
-	}
-	return b.CreatedAt
-}
-
-func (b *BatchSummary) GetIgnoreRoles() []RoleType {
-	if b == nil {
-		return nil
-	}
-	return b.IgnoreRoles
-}
-
-func (b *BatchSummary) GetItemCount() *int {
-	if b == nil {
-		return nil
-	}
-	return b.ItemCount
-}
-
-func (b *BatchSummary) GetMetadata() map[string]interface{} {
-	if b == nil {
-		return nil
-	}
-	return b.Metadata
-}
-
-func (b *BatchSummary) GetProcessedAt() *string {
-	if b == nil {
-		return nil
-	}
-	return b.ProcessedAt
-}
-
-func (b *BatchSummary) GetProgress() *BatchProgress {
+func (b *Batch) GetProgress() map[string]any {
 	if b == nil {
 		return nil
 	}
 	return b.Progress
 }
 
-func (b *BatchSummary) GetStatus() *BatchStatus {
+func (b *Batch) GetStatus() *string {
 	if b == nil {
 		return nil
 	}
 	return b.Status
 }
 
-func (b *BatchSummary) GetUpdatedAt() *string {
+func (b *Batch) GetStrictOntology() *bool {
 	if b == nil {
 		return nil
 	}
-	return b.UpdatedAt
+	return b.StrictOntology
 }
 
-func (b *BatchSummary) GetExtraProperties() map[string]interface{} {
+func (b *Batch) GetUUID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.UUID
+}
+
+func (b *Batch) GetExtraProperties() map[string]interface{} {
+	if b == nil {
+		return nil
+	}
 	return b.extraProperties
 }
 
-func (b *BatchSummary) UnmarshalJSON(data []byte) error {
-	type unmarshaler BatchSummary
+func (b *Batch) require(field *big.Int) {
+	if b.explicitFields == nil {
+		b.explicitFields = big.NewInt(0)
+	}
+	b.explicitFields.Or(b.explicitFields, field)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *Batch) SetCreatedAt(createdAt *string) {
+	b.CreatedAt = createdAt
+	b.require(batchFieldCreatedAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *Batch) SetMetadata(metadata map[string]any) {
+	b.Metadata = metadata
+	b.require(batchFieldMetadata)
+}
+
+// SetProgress sets the Progress field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *Batch) SetProgress(progress map[string]any) {
+	b.Progress = progress
+	b.require(batchFieldProgress)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *Batch) SetStatus(status *string) {
+	b.Status = status
+	b.require(batchFieldStatus)
+}
+
+// SetStrictOntology sets the StrictOntology field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *Batch) SetStrictOntology(strictOntology *bool) {
+	b.StrictOntology = strictOntology
+	b.require(batchFieldStrictOntology)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *Batch) SetUUID(uuid *string) {
+	b.UUID = uuid
+	b.require(batchFieldUUID)
+}
+
+func (b *Batch) UnmarshalJSON(data []byte) error {
+	type unmarshaler Batch
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*b = BatchSummary(value)
+	*b = Batch(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *b)
 	if err != nil {
 		return err
@@ -798,7 +339,21 @@ func (b *BatchSummary) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (b *BatchSummary) String() string {
+func (b *Batch) MarshalJSON() ([]byte, error) {
+	type embed Batch
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, b.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (b *Batch) String() string {
+	if b == nil {
+		return "<nil>"
+	}
 	if len(b.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
 			return value
@@ -808,4 +363,304 @@ func (b *BatchSummary) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+var (
+	batchItemsResponseFieldItems = big.NewInt(1 << 0)
+)
+
+type BatchItemsResponse struct {
+	Items []map[string]any `json:"items,omitempty" url:"items,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (b *BatchItemsResponse) GetItems() []map[string]any {
+	if b == nil {
+		return nil
+	}
+	return b.Items
+}
+
+func (b *BatchItemsResponse) GetExtraProperties() map[string]interface{} {
+	if b == nil {
+		return nil
+	}
+	return b.extraProperties
+}
+
+func (b *BatchItemsResponse) require(field *big.Int) {
+	if b.explicitFields == nil {
+		b.explicitFields = big.NewInt(0)
+	}
+	b.explicitFields.Or(b.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemsResponse) SetItems(items []map[string]any) {
+	b.Items = items
+	b.require(batchItemsResponseFieldItems)
+}
+
+func (b *BatchItemsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler BatchItemsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BatchItemsResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+	b.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BatchItemsResponse) MarshalJSON() ([]byte, error) {
+	type embed BatchItemsResponse
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, b.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (b *BatchItemsResponse) String() string {
+	if b == nil {
+		return "<nil>"
+	}
+	if len(b.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+var (
+	batchPageFieldItems      = big.NewInt(1 << 0)
+	batchPageFieldNextCursor = big.NewInt(1 << 1)
+	batchPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type BatchPage struct {
+	Items      []*Batch `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string  `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int     `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (b *BatchPage) GetItems() []*Batch {
+	if b == nil {
+		return nil
+	}
+	return b.Items
+}
+
+func (b *BatchPage) GetNextCursor() *string {
+	if b == nil {
+		return nil
+	}
+	return b.NextCursor
+}
+
+func (b *BatchPage) GetTotalSize() *int {
+	if b == nil {
+		return nil
+	}
+	return b.TotalSize
+}
+
+func (b *BatchPage) GetExtraProperties() map[string]interface{} {
+	if b == nil {
+		return nil
+	}
+	return b.extraProperties
+}
+
+func (b *BatchPage) require(field *big.Int) {
+	if b.explicitFields == nil {
+		b.explicitFields = big.NewInt(0)
+	}
+	b.explicitFields.Or(b.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchPage) SetItems(items []*Batch) {
+	b.Items = items
+	b.require(batchPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchPage) SetNextCursor(nextCursor *string) {
+	b.NextCursor = nextCursor
+	b.require(batchPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchPage) SetTotalSize(totalSize *int) {
+	b.TotalSize = totalSize
+	b.require(batchPageFieldTotalSize)
+}
+
+func (b *BatchPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler BatchPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BatchPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+	b.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BatchPage) MarshalJSON() ([]byte, error) {
+	type embed BatchPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, b.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (b *BatchPage) String() string {
+	if b == nil {
+		return "<nil>"
+	}
+	if len(b.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+var (
+	processBatchResultFieldBatch = big.NewInt(1 << 0)
+	processBatchResultFieldTask  = big.NewInt(1 << 1)
+)
+
+type ProcessBatchResult struct {
+	Batch *Batch `json:"batch,omitempty" url:"batch,omitempty"`
+	Task  *Task  `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *ProcessBatchResult) GetBatch() *Batch {
+	if p == nil {
+		return nil
+	}
+	return p.Batch
+}
+
+func (p *ProcessBatchResult) GetTask() *Task {
+	if p == nil {
+		return nil
+	}
+	return p.Task
+}
+
+func (p *ProcessBatchResult) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *ProcessBatchResult) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetBatch sets the Batch field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *ProcessBatchResult) SetBatch(batch *Batch) {
+	p.Batch = batch
+	p.require(processBatchResultFieldBatch)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *ProcessBatchResult) SetTask(task *Task) {
+	p.Task = task
+	p.require(processBatchResultFieldTask)
+}
+
+func (p *ProcessBatchResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler ProcessBatchResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = ProcessBatchResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *ProcessBatchResult) MarshalJSON() ([]byte, error) {
+	type embed ProcessBatchResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *ProcessBatchResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
 }

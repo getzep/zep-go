@@ -18,13 +18,17 @@ type RequestOption interface {
 // This type is primarily used by the generated code and is not meant
 // to be used directly; use the option package instead.
 type RequestOptions struct {
-	BaseURL         string
-	HTTPClient      HTTPClient
-	HTTPHeader      http.Header
-	BodyProperties  map[string]interface{}
-	QueryParameters url.Values
-	MaxAttempts     uint
-	APIKey          string
+	BaseURL                    string
+	HTTPClient                 HTTPClient
+	HTTPHeader                 http.Header
+	BodyProperties             map[string]interface{}
+	QueryParameters            url.Values
+	MaxAttempts                uint
+	MaxBufSize                 int
+	MaxStreamReconnectAttempts uint
+	DisableStreamReconnection  bool
+	DisableRetries             bool
+	APIKey                     string
 }
 
 // NewRequestOptions returns a new *RequestOptions value.
@@ -57,8 +61,8 @@ func (r *RequestOptions) cloneHeader() http.Header {
 	headers := r.HTTPHeader.Clone()
 	headers.Set("X-Fern-Language", "Go")
 	headers.Set("X-Fern-SDK-Name", "github.com/getzep/zep-go/v4")
-	headers.Set("X-Fern-SDK-Version", "v3.28.0")
-	headers.Set("User-Agent", "github.com/getzep/zep-go/3.28.0")
+	headers.Set("X-Fern-SDK-Version", "v4.0.0-alpha.1")
+	headers.Set("User-Agent", "github.com/getzep/zep-go/4.0.0-alpha.1")
 	return headers
 }
 
@@ -71,12 +75,20 @@ func (b *BaseURLOption) applyRequestOptions(opts *RequestOptions) {
 	opts.BaseURL = b.BaseURL
 }
 
+func (b *BaseURLOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
+	opts.BaseURL = b.BaseURL
+}
+
 // HTTPClientOption implements the RequestOption interface.
 type HTTPClientOption struct {
 	HTTPClient HTTPClient
 }
 
 func (h *HTTPClientOption) applyRequestOptions(opts *RequestOptions) {
+	opts.HTTPClient = h.HTTPClient
+}
+
+func (h *HTTPClientOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
 	opts.HTTPClient = h.HTTPClient
 }
 
@@ -89,12 +101,20 @@ func (h *HTTPHeaderOption) applyRequestOptions(opts *RequestOptions) {
 	opts.HTTPHeader = h.HTTPHeader
 }
 
+func (h *HTTPHeaderOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
+	opts.HTTPHeader = h.HTTPHeader
+}
+
 // BodyPropertiesOption implements the RequestOption interface.
 type BodyPropertiesOption struct {
 	BodyProperties map[string]interface{}
 }
 
 func (b *BodyPropertiesOption) applyRequestOptions(opts *RequestOptions) {
+	opts.BodyProperties = b.BodyProperties
+}
+
+func (b *BodyPropertiesOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
 	opts.BodyProperties = b.BodyProperties
 }
 
@@ -107,6 +127,10 @@ func (q *QueryParametersOption) applyRequestOptions(opts *RequestOptions) {
 	opts.QueryParameters = q.QueryParameters
 }
 
+func (q *QueryParametersOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
+	opts.QueryParameters = q.QueryParameters
+}
+
 // MaxAttemptsOption implements the RequestOption interface.
 type MaxAttemptsOption struct {
 	MaxAttempts uint
@@ -116,11 +140,67 @@ func (m *MaxAttemptsOption) applyRequestOptions(opts *RequestOptions) {
 	opts.MaxAttempts = m.MaxAttempts
 }
 
+func (m *MaxAttemptsOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
+	opts.MaxAttempts = m.MaxAttempts
+}
+
+// MaxBufSizeOption implements the RequestOption interface.
+type MaxBufSizeOption struct {
+	MaxBufSize int
+}
+
+func (m *MaxBufSizeOption) applyRequestOptions(opts *RequestOptions) {
+	opts.MaxBufSize = m.MaxBufSize
+}
+
+func (m *MaxBufSizeOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
+	opts.MaxBufSize = m.MaxBufSize
+}
+
+// MaxStreamReconnectAttemptsOption implements the RequestOption interface.
+type MaxStreamReconnectAttemptsOption struct {
+	MaxStreamReconnectAttempts uint
+}
+
+func (m *MaxStreamReconnectAttemptsOption) applyRequestOptions(opts *RequestOptions) {
+	opts.MaxStreamReconnectAttempts = m.MaxStreamReconnectAttempts
+}
+
+func (m *MaxStreamReconnectAttemptsOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
+	opts.MaxStreamReconnectAttempts = m.MaxStreamReconnectAttempts
+}
+
+// WithoutStreamReconnectionOption implements the RequestOption interface.
+type WithoutStreamReconnectionOption struct{}
+
+func (w *WithoutStreamReconnectionOption) applyRequestOptions(opts *RequestOptions) {
+	opts.DisableStreamReconnection = true
+}
+
+func (w *WithoutStreamReconnectionOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
+	opts.DisableStreamReconnection = true
+}
+
+// WithoutRetriesOption implements the RequestOption interface.
+type WithoutRetriesOption struct{}
+
+func (w *WithoutRetriesOption) applyRequestOptions(opts *RequestOptions) {
+	opts.DisableRetries = true
+}
+
+func (w *WithoutRetriesOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
+	opts.DisableRetries = true
+}
+
 // APIKeyOption implements the RequestOption interface.
 type APIKeyOption struct {
 	APIKey string
 }
 
 func (a *APIKeyOption) applyRequestOptions(opts *RequestOptions) {
+	opts.APIKey = a.APIKey
+}
+
+func (a *APIKeyOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {
 	opts.APIKey = a.APIKey
 }

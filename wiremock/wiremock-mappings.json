@@ -1,0 +1,3305 @@
+{
+  "mappings": [
+    {
+      "id": "dc4e3bcf-0472-4882-9635-0e98374f0ff5",
+      "name": "List batches - default",
+      "request": {
+        "urlPathTemplate": "/batches",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          },
+          "status": {
+            "equalTo": "status"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"progress\": {\n        \"key\": \"value\"\n      },\n      \"status\": \"status\",\n      \"strict_ontology\": true,\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "dc4e3bcf-0472-4882-9635-0e98374f0ff5",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "a904fd85-420c-4e3e-8b62-f44dc64afe9b",
+      "name": "Create batch - default",
+      "request": {
+        "urlPathTemplate": "/batches",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"progress\": {\n    \"key\": \"value\"\n  },\n  \"status\": \"status\",\n  \"strict_ontology\": true,\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "a904fd85-420c-4e3e-8b62-f44dc64afe9b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "62857c94-194a-4378-a5c1-1bcbc7b87a6b",
+      "name": "Get batch - default",
+      "request": {
+        "urlPathTemplate": "/batches/{batch_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "batch_uuid": {
+            "equalTo": "batch_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"progress\": {\n    \"key\": \"value\"\n  },\n  \"status\": \"status\",\n  \"strict_ontology\": true,\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "62857c94-194a-4378-a5c1-1bcbc7b87a6b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0c665edb-0366-42bc-b897-ee5b4f2a32a6",
+      "name": "Delete batch - default",
+      "request": {
+        "urlPathTemplate": "/batches/{batch_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "batch_uuid": {
+            "equalTo": "batch_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "\"\"",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0c665edb-0366-42bc-b897-ee5b4f2a32a6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c5540d6c-1e26-488b-8540-a8629750cce7",
+      "name": "List batch items - default",
+      "request": {
+        "urlPathTemplate": "/batches/{batch_uuid}/items",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "batch_uuid": {
+            "equalTo": "batch_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c5540d6c-1e26-488b-8540-a8629750cce7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "6a34c0fe-50b5-44c9-9cc5-7a38d64f2bb6",
+      "name": "Add batch items - default",
+      "request": {
+        "urlPathTemplate": "/batches/{batch_uuid}/items",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "batch_uuid": {
+            "equalTo": "batch_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "6a34c0fe-50b5-44c9-9cc5-7a38d64f2bb6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "6bc60c88-1b52-4968-b760-b814c166bfe9",
+      "name": "Process batch - default",
+      "request": {
+        "urlPathTemplate": "/batches/{batch_uuid}/process",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "batch_uuid": {
+            "equalTo": "batch_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"batch\": {\n    \"created_at\": \"created_at\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"progress\": {\n      \"key\": \"value\"\n    },\n    \"status\": \"status\",\n    \"strict_ontology\": true,\n    \"uuid\": \"uuid\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "6bc60c88-1b52-4968-b760-b814c166bfe9",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "b3ae66f1-e3ce-41d9-9ae5-a8d0500cfa0b",
+      "name": "Create context template - default",
+      "request": {
+        "urlPathTemplate": "/context-templates",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"name\": \"name\",\n  \"template\": \"template\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "b3ae66f1-e3ce-41d9-9ae5-a8d0500cfa0b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "256d5c86-c7fe-44e5-9344-f78a917400f3",
+      "name": "List context templates - default",
+      "request": {
+        "urlPathTemplate": "/context-templates/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"name\": \"name\",\n      \"template\": \"template\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "256d5c86-c7fe-44e5-9344-f78a917400f3",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3a8034b1-d695-41e6-b80d-12d2263db4aa",
+      "name": "Get context template - default",
+      "request": {
+        "urlPathTemplate": "/context-templates/{template_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "template_uuid": {
+            "equalTo": "template_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"name\": \"name\",\n  \"template\": \"template\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3a8034b1-d695-41e6-b80d-12d2263db4aa",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "90105d58-5451-4d0c-b9bd-e7c769b93d27",
+      "name": "Update context template - default",
+      "request": {
+        "urlPathTemplate": "/context-templates/{template_uuid}",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "template_uuid": {
+            "equalTo": "template_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"name\": \"name\",\n  \"template\": \"template\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "90105d58-5451-4d0c-b9bd-e7c769b93d27",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "15605a1a-0507-4bcc-8ec4-de3e3a05b86c",
+      "name": "Delete context template - default",
+      "request": {
+        "urlPathTemplate": "/context-templates/{template_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "template_uuid": {
+            "equalTo": "template_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "\"\"",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "15605a1a-0507-4bcc-8ec4-de3e3a05b86c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "66c08ce2-57ac-4e2c-a198-a17f4d6c4874",
+      "name": "Create graph - default",
+      "request": {
+        "urlPathTemplate": "/graphs",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"description\": \"description\",\n  \"graph_id\": \"graph_id\",\n  \"name\": \"name\",\n  \"time_zone\": \"time_zone\",\n  \"type\": \"type\",\n  \"updated_at\": \"updated_at\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "66c08ce2-57ac-4e2c-a198-a17f4d6c4874",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3d4ce9a4-3f1e-440d-b350-35c5c5018a2b",
+      "name": "List graphs - default",
+      "request": {
+        "urlPathTemplate": "/graphs/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          },
+          "order_by": {
+            "equalTo": "order_by"
+          },
+          "order": {
+            "equalTo": "order"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"description\": \"description\",\n      \"graph_id\": \"graph_id\",\n      \"name\": \"name\",\n      \"time_zone\": \"time_zone\",\n      \"type\": \"type\",\n      \"updated_at\": \"updated_at\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3d4ce9a4-3f1e-440d-b350-35c5c5018a2b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "897e2f89-e930-4027-9b4f-394ce54eb54a",
+      "name": "Lookup graph by developer id - default",
+      "request": {
+        "urlPathTemplate": "/graphs/lookup",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"description\": \"description\",\n  \"graph_id\": \"graph_id\",\n  \"name\": \"name\",\n  \"time_zone\": \"time_zone\",\n  \"type\": \"type\",\n  \"updated_at\": \"updated_at\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "897e2f89-e930-4027-9b4f-394ce54eb54a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "732a7519-f206-4da9-831a-3ef13a6b3668",
+      "name": "Get graph - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"description\": \"description\",\n  \"graph_id\": \"graph_id\",\n  \"name\": \"name\",\n  \"time_zone\": \"time_zone\",\n  \"type\": \"type\",\n  \"updated_at\": \"updated_at\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "732a7519-f206-4da9-831a-3ef13a6b3668",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3697896f-431c-4ab5-9d0f-8219ad102cc6",
+      "name": "Delete graph - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3697896f-431c-4ab5-9d0f-8219ad102cc6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "2e5ae1b1-da67-4152-813c-f891647bf8d4",
+      "name": "Update graph - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"description\": \"description\",\n  \"graph_id\": \"graph_id\",\n  \"name\": \"name\",\n  \"time_zone\": \"time_zone\",\n  \"type\": \"type\",\n  \"updated_at\": \"updated_at\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "2e5ae1b1-da67-4152-813c-f891647bf8d4",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "16ed13f1-78f7-4fe4-ae81-2551eb4d9cfb",
+      "name": "Clone graph - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/clone",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"graph\": {\n    \"created_at\": \"created_at\",\n    \"description\": \"description\",\n    \"graph_id\": \"graph_id\",\n    \"name\": \"name\",\n    \"time_zone\": \"time_zone\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"user_uuid\": \"user_uuid\",\n    \"uuid\": \"uuid\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "16ed13f1-78f7-4fe4-ae81-2551eb4d9cfb",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "fb269919-56bb-447f-8fab-97ffdf7d074a",
+      "name": "Assemble graph context - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/context",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"context\": \"context\",\n  \"results\": {\n    \"key\": \"value\"\n  },\n  \"truncated\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "fb269919-56bb-447f-8fab-97ffdf7d074a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "5a70a0a0-0c72-48c3-bb83-543dd29b1e9e",
+      "name": "Get graph instructions - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/instructions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5a70a0a0-0c72-48c3-bb83-543dd29b1e9e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "07b0402a-3202-4685-a843-004719411e89",
+      "name": "Set graph instructions - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/instructions",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "07b0402a-3202-4685-a843-004719411e89",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "437555a0-fd7a-4b75-bcb6-cd020b4e93fd",
+      "name": "Get graph observation steering - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/observation-steering",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "437555a0-fd7a-4b75-bcb6-cd020b4e93fd",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "a4a6fbeb-d5ea-4bf7-b93e-ffe42ff105d3",
+      "name": "Set graph observation steering - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/observation-steering",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "a4a6fbeb-d5ea-4bf7-b93e-ffe42ff105d3",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "fcb567c7-900f-4ac9-917a-346e8af5db37",
+      "name": "Get graph ontology - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/ontology",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"edge_types\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"inherited\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "fcb567c7-900f-4ac9-917a-346e8af5db37",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "91b75110-2b87-41f5-9b81-b71b438a5a1f",
+      "name": "Set graph ontology - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/ontology",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"edge_types\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"inherited\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "91b75110-2b87-41f5-9b81-b71b438a5a1f",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "7020a5bc-5d31-4841-aecf-da7fed7f5b6c",
+      "name": "Search edges - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/search/edges",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7020a5bc-5d31-4841-aecf-da7fed7f5b6c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "cd1ddd0f-8808-4ec3-b487-42962c3a2dd5",
+      "name": "Search episodes - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/search/episodes",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "cd1ddd0f-8808-4ec3-b487-42962c3a2dd5",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "f34f9efc-c157-4aae-9c8a-8f95be8c9d01",
+      "name": "Search nodes - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/search/nodes",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "f34f9efc-c157-4aae-9c8a-8f95be8c9d01",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "05c8a0d3-68c7-45c9-8371-090a4924de33",
+      "name": "Search observations - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/search/observations",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "05c8a0d3-68c7-45c9-8371-090a4924de33",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "566c078f-c3a1-417a-9309-bb74768806fe",
+      "name": "Search thread summaries - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/search/thread-summaries",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "566c078f-c3a1-417a-9309-bb74768806fe",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "4176d618-a0d8-4cb7-9a21-4babc19c20da",
+      "name": "Get subgraph - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/subgraph",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4176d618-a0d8-4cb7-9a21-4babc19c20da",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "02a1c22b-14d8-4093-a544-2596525b4713",
+      "name": "Warm graph - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/warm",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "02a1c22b-14d8-4093-a544-2596525b4713",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c7405fa5-629b-4a6a-8cad-cf448f6087bc",
+      "name": "Batch lookup of developer ids - default",
+      "request": {
+        "urlPathTemplate": "/lookup",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"found\": true,\n      \"legacy_id\": \"legacy_id\",\n      \"resource_type\": \"resource_type\",\n      \"uuid\": \"uuid\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c7405fa5-629b-4a6a-8cad-cf448f6087bc",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "6f18d4d2-dea7-40c8-a3a6-8cfeb5b335a3",
+      "name": "Get project - default",
+      "request": {
+        "urlPathTemplate": "/project",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"default_time_zone\": \"default_time_zone\",\n  \"description\": \"description\",\n  \"name\": \"name\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "6f18d4d2-dea7-40c8-a3a6-8cfeb5b335a3",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "412bb48d-236d-48e3-9b7e-79d980b9f7c2",
+      "name": "Update project - default",
+      "request": {
+        "urlPathTemplate": "/project",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"default_time_zone\": \"default_time_zone\",\n  \"description\": \"description\",\n  \"name\": \"name\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "412bb48d-236d-48e3-9b7e-79d980b9f7c2",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e6d9d24a-071b-47e1-9ed1-e2b08141a709",
+      "name": "Get project instructions - default",
+      "request": {
+        "urlPathTemplate": "/project/instructions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e6d9d24a-071b-47e1-9ed1-e2b08141a709",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "dafef1ac-f35c-4952-ba0f-cef13e9b3c89",
+      "name": "Set project instructions - default",
+      "request": {
+        "urlPathTemplate": "/project/instructions",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "dafef1ac-f35c-4952-ba0f-cef13e9b3c89",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "39fff9cf-5460-4045-a54c-7446618d4bfb",
+      "name": "Get project observation steering - default",
+      "request": {
+        "urlPathTemplate": "/project/observation-steering",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "39fff9cf-5460-4045-a54c-7446618d4bfb",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "48e8368b-2518-4c81-b1bc-d209f68e6a26",
+      "name": "Set project observation steering - default",
+      "request": {
+        "urlPathTemplate": "/project/observation-steering",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "48e8368b-2518-4c81-b1bc-d209f68e6a26",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "1d9bccb5-e882-4f2b-9a1d-1a510528ca84",
+      "name": "Get project ontology - default",
+      "request": {
+        "urlPathTemplate": "/project/ontology",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"edge_types\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"inherited\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "1d9bccb5-e882-4f2b-9a1d-1a510528ca84",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "591783b7-f367-416b-a74d-a893db845373",
+      "name": "Set project ontology - default",
+      "request": {
+        "urlPathTemplate": "/project/ontology",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"edge_types\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"inherited\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "591783b7-f367-416b-a74d-a893db845373",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8be89919-348d-4a1c-9646-2db737de158a",
+      "name": "Get project user-summary instructions - default",
+      "request": {
+        "urlPathTemplate": "/project/user-summary-instructions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8be89919-348d-4a1c-9646-2db737de158a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "fe726941-08a9-4a45-bc68-f5e23b5cdef1",
+      "name": "Set project user-summary instructions - default",
+      "request": {
+        "urlPathTemplate": "/project/user-summary-instructions",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "fe726941-08a9-4a45-bc68-f5e23b5cdef1",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c96e9d5a-bb9c-4a56-b926-63c9cc2425cd",
+      "name": "List tasks - default",
+      "request": {
+        "urlPathTemplate": "/tasks",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"completed_at\": \"completed_at\",\n      \"created_at\": \"created_at\",\n      \"result\": {\n        \"key\": \"value\"\n      },\n      \"started_at\": \"started_at\",\n      \"status\": \"status\",\n      \"type\": \"type\",\n      \"updated_at\": \"updated_at\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c96e9d5a-bb9c-4a56-b926-63c9cc2425cd",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "b50cf37b-4956-4665-8726-a12a3fdb0924",
+      "name": "Get task - default",
+      "request": {
+        "urlPathTemplate": "/tasks/{task_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "task_uuid": {
+            "equalTo": "task_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"completed_at\": \"completed_at\",\n  \"created_at\": \"created_at\",\n  \"error\": {\n    \"code\": \"code\",\n    \"details\": {\n      \"key\": \"value\"\n    },\n    \"message\": \"message\",\n    \"param\": \"param\",\n    \"request_id\": \"request_id\"\n  },\n  \"progress\": {\n    \"stage\": \"stage\"\n  },\n  \"result\": {\n    \"key\": \"value\"\n  },\n  \"started_at\": \"started_at\",\n  \"status\": \"status\",\n  \"type\": \"type\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "b50cf37b-4956-4665-8726-a12a3fdb0924",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "9e6d7df4-2bc0-42ff-9224-5fd34b216e49",
+      "name": "List threads - default",
+      "request": {
+        "urlPathTemplate": "/threads",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          },
+          "order_by": {
+            "equalTo": "order_by"
+          },
+          "order": {
+            "equalTo": "order"
+          },
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"thread_id\": \"thread_id\",\n      \"updated_at\": \"updated_at\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9e6d7df4-2bc0-42ff-9224-5fd34b216e49",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "d4bab54e-68e4-451e-8b34-e599ae5772bc",
+      "name": "Create thread - default",
+      "request": {
+        "urlPathTemplate": "/threads",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"thread_id\": \"thread_id\",\n  \"updated_at\": \"updated_at\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d4bab54e-68e4-451e-8b34-e599ae5772bc",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "6dc6337e-6b6a-4a91-b180-adf82fd62bff",
+      "name": "Lookup thread by developer id - default",
+      "request": {
+        "urlPathTemplate": "/threads/lookup",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"thread_id\": \"thread_id\",\n  \"updated_at\": \"updated_at\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "6dc6337e-6b6a-4a91-b180-adf82fd62bff",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "72af6598-2c02-4dd4-a403-e880949d8f6e",
+      "name": "Get thread - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"thread_id\": \"thread_id\",\n  \"updated_at\": \"updated_at\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "72af6598-2c02-4dd4-a403-e880949d8f6e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "830be68e-339b-448a-bd59-cfc3777d2c88",
+      "name": "Delete thread - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "830be68e-339b-448a-bd59-cfc3777d2c88",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "2a9556f8-b689-4417-a1b3-d584d42a871a",
+      "name": "Get thread context - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}/context",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          }
+        },
+        "queryParameters": {
+          "template_uuid": {
+            "equalTo": "template_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"context\": \"context\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "2a9556f8-b689-4417-a1b3-d584d42a871a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c5297674-90f5-4689-b27f-a907f1511779",
+      "name": "List thread episodes - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}/episodes",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c5297674-90f5-4689-b27f-a907f1511779",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d9ccdcc4-d1d5-4f02-871b-e2ded69b78e7",
+      "name": "List thread messages - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}/messages",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"role\": \"role\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d9ccdcc4-d1d5-4f02-871b-e2ded69b78e7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "9ad60de2-8a4b-4d21-ac5a-04ded1648889",
+      "name": "Add thread messages - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}/messages",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"context\": \"context\",\n  \"messages\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"role\": \"role\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9ad60de2-8a4b-4d21-ac5a-04ded1648889",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "fe5da477-80e9-4a54-b3ec-f421a4e3131b",
+      "name": "Get thread summary - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}/summary",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"last_summarized_at\": \"last_summarized_at\",\n  \"last_summarized_episode_valid_at\": \"last_summarized_episode_valid_at\",\n  \"summary\": \"summary\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "fe5da477-80e9-4a54-b3ec-f421a4e3131b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "5da22e46-2b55-4fe7-bf67-930ea5d8eeb8",
+      "name": "Create user - default",
+      "request": {
+        "urlPathTemplate": "/users",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"disable_default_ontology\": true,\n  \"email\": \"email\",\n  \"first_name\": \"first_name\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"last_name\": \"last_name\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"time_zone\": \"time_zone\",\n  \"user_id\": \"user_id\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5da22e46-2b55-4fe7-bf67-930ea5d8eeb8",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "30e14270-943b-4a53-9011-03b07defeca2",
+      "name": "List users - default",
+      "request": {
+        "urlPathTemplate": "/users/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          },
+          "order_by": {
+            "equalTo": "order_by"
+          },
+          "order": {
+            "equalTo": "order"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"disable_default_ontology\": true,\n      \"email\": \"email\",\n      \"first_name\": \"first_name\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"last_name\": \"last_name\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"time_zone\": \"time_zone\",\n      \"user_id\": \"user_id\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "30e14270-943b-4a53-9011-03b07defeca2",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0eaa028e-5ba4-4092-934e-71562a24a17c",
+      "name": "Lookup user by developer id - default",
+      "request": {
+        "urlPathTemplate": "/users/lookup",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"disable_default_ontology\": true,\n  \"email\": \"email\",\n  \"first_name\": \"first_name\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"last_name\": \"last_name\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"time_zone\": \"time_zone\",\n  \"user_id\": \"user_id\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0eaa028e-5ba4-4092-934e-71562a24a17c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e26f92b6-52b7-4c50-a035-efa9490a3f4e",
+      "name": "Get user - default",
+      "request": {
+        "urlPathTemplate": "/users/{user_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"disable_default_ontology\": true,\n  \"email\": \"email\",\n  \"first_name\": \"first_name\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"last_name\": \"last_name\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"time_zone\": \"time_zone\",\n  \"user_id\": \"user_id\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e26f92b6-52b7-4c50-a035-efa9490a3f4e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "73e7d563-38c6-4e04-a516-ed1a478d5fd9",
+      "name": "Delete user - default",
+      "request": {
+        "urlPathTemplate": "/users/{user_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "73e7d563-38c6-4e04-a516-ed1a478d5fd9",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "7658fbc1-a6d8-4bd7-9642-8cc0bc739be9",
+      "name": "Update user - default",
+      "request": {
+        "urlPathTemplate": "/users/{user_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"disable_default_ontology\": true,\n  \"email\": \"email\",\n  \"first_name\": \"first_name\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"last_name\": \"last_name\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"time_zone\": \"time_zone\",\n  \"user_id\": \"user_id\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7658fbc1-a6d8-4bd7-9642-8cc0bc739be9",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "227e8181-427a-46c2-aec3-5c5078666d7e",
+      "name": "Get user node - default",
+      "request": {
+        "urlPathTemplate": "/users/{user_uuid}/node",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "227e8181-427a-46c2-aec3-5c5078666d7e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "abee67a5-147f-4528-b1dd-e2f7f53f5fbf",
+      "name": "Get user summary instructions - default",
+      "request": {
+        "urlPathTemplate": "/users/{user_uuid}/summary-instructions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "abee67a5-147f-4528-b1dd-e2f7f53f5fbf",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c63b2e61-8f8a-4573-a3f0-05f839d2e33e",
+      "name": "Set user summary instructions - default",
+      "request": {
+        "urlPathTemplate": "/users/{user_uuid}/summary-instructions",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c63b2e61-8f8a-4573-a3f0-05f839d2e33e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "dbcdb914-0f87-40f3-8c80-5824564dcd61",
+      "name": "List document summaries - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/document-summaries/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "dbcdb914-0f87-40f3-8c80-5824564dcd61",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e7e1086f-8991-4be2-b3a7-b2717689948c",
+      "name": "List document episodes - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/documents/{document_id}/episodes",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "document_id": {
+            "equalTo": "document_id"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e7e1086f-8991-4be2-b3a7-b2717689948c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "86fb2ad2-0b7d-4202-b707-d6d292502745",
+      "name": "Add episode - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/episodes",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"episode\": {\n    \"key\": \"value\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "86fb2ad2-0b7d-4202-b707-d6d292502745",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "35ad4f51-2a0e-4bb2-8d79-7dd5b9e7fc8f",
+      "name": "List episodes - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/episodes/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "35ad4f51-2a0e-4bb2-8d79-7dd5b9e7fc8f",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "ab809911-bf1c-4148-831a-98ec698545fe",
+      "name": "Get episode - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/episodes/{episode_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "episode_uuid": {
+            "equalTo": "episode_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ab809911-bf1c-4148-831a-98ec698545fe",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "7b4dbefd-dbb4-4ee1-a34e-7dd52918f0e0",
+      "name": "Delete episode - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/episodes/{episode_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "episode_uuid": {
+            "equalTo": "episode_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7b4dbefd-dbb4-4ee1-a34e-7dd52918f0e0",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "ba808d61-2419-4dc5-a0e8-a97dd728ea4e",
+      "name": "Update episode - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/episodes/{episode_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "episode_uuid": {
+            "equalTo": "episode_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ba808d61-2419-4dc5-a0e8-a97dd728ea4e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "9a696ea4-f7c1-4e6f-b3ab-4d1d67f25221",
+      "name": "Add edge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"edge\": {\n    \"key\": \"value\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9a696ea4-f7c1-4e6f-b3ab-4d1d67f25221",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0ee6cd27-0f03-470b-98ab-57d9d6c64cdd",
+      "name": "List edges - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0ee6cd27-0f03-470b-98ab-57d9d6c64cdd",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "21363119-41cd-4859-9113-4b687dc351f6",
+      "name": "Get edge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "edge_uuid": {
+            "equalTo": "edge_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "21363119-41cd-4859-9113-4b687dc351f6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "51f8436e-e328-4009-b662-d253352129ac",
+      "name": "Delete edge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "edge_uuid": {
+            "equalTo": "edge_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "51f8436e-e328-4009-b662-d253352129ac",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "1450b220-8447-4b6b-ac26-1e3e93900069",
+      "name": "Update edge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "edge_uuid": {
+            "equalTo": "edge_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "1450b220-8447-4b6b-ac26-1e3e93900069",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8a0ad47b-528f-4386-a44e-0e2059a952ad",
+      "name": "Add nodes - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/nodes",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"nodes\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8a0ad47b-528f-4386-a44e-0e2059a952ad",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "425e9fd4-f376-4fa2-829b-0d77f5635883",
+      "name": "List nodes - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/nodes/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "425e9fd4-f376-4fa2-829b-0d77f5635883",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "b6e5b8fa-76d2-4436-bd3f-9e8b93b2e0e7",
+      "name": "Get node - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/nodes/{node_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "node_uuid": {
+            "equalTo": "node_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "b6e5b8fa-76d2-4436-bd3f-9e8b93b2e0e7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "13e15cf2-d2c5-4851-90ce-307e1c2c7767",
+      "name": "Delete node - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/nodes/{node_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "node_uuid": {
+            "equalTo": "node_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "13e15cf2-d2c5-4851-90ce-307e1c2c7767",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e7ef9b08-a59e-48c7-9cb0-0a89645f55a6",
+      "name": "Update node - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/nodes/{node_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "node_uuid": {
+            "equalTo": "node_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e7ef9b08-a59e-48c7-9cb0-0a89645f55a6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "f9d51d5a-4c33-4902-8a65-2b2301a084bf",
+      "name": "List node neighbors - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/nodes/{node_uuid}/neighbors",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "node_uuid": {
+            "equalTo": "node_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"edges\": [\n        {\n          \"key\": \"value\"\n        }\n      ],\n      \"node\": {\n        \"key\": \"value\"\n      }\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "f9d51d5a-4c33-4902-8a65-2b2301a084bf",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "4961c166-498b-456b-9730-49fcda2f7906",
+      "name": "List observations - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/observations/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4961c166-498b-456b-9730-49fcda2f7906",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "ffbd1013-262a-4227-bbf7-6c1353ee2fa4",
+      "name": "Get observation - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/observations/{observation_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "observation_uuid": {
+            "equalTo": "observation_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ffbd1013-262a-4227-bbf7-6c1353ee2fa4",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "f9d70960-a69d-4228-9f17-0db4d096594e",
+      "name": "List thread summaries - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/thread-summaries/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"key\": \"value\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "f9d70960-a69d-4228-9f17-0db4d096594e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "77f502fc-c8bd-46da-bb0a-8a5738cc1b71",
+      "name": "Get message - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}/messages/{message_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          },
+          "message_uuid": {
+            "equalTo": "message_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"role\": \"role\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "77f502fc-c8bd-46da-bb0a-8a5738cc1b71",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0e3e97f9-759f-483a-9607-00556ee0db7b",
+      "name": "Update message - default",
+      "request": {
+        "urlPathTemplate": "/threads/{thread_uuid}/messages/{message_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "thread_uuid": {
+            "equalTo": "thread_uuid"
+          },
+          "message_uuid": {
+            "equalTo": "message_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"role\": \"role\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0e3e97f9-759f-483a-9607-00556ee0db7b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "total": 88
+  }
+}
