@@ -2,17 +2,233 @@
 
 package graph
 
-type UpdateEdgeRequest struct {
-	// Updated attributes. Merged with existing attributes. Set a key to null to delete it.
-	Attributes map[string]interface{} `json:"attributes,omitempty" url:"-"`
-	// Updated time at which the edge expires
-	ExpiredAt *string `json:"expired_at,omitempty" url:"-"`
-	// Updated fact for the edge
+import (
+	json "encoding/json"
+	v4 "github.com/getzep/zep-go/v4"
+	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
+)
+
+var (
+	addEdgeRequestFieldAttributes = big.NewInt(1 << 0)
+	addEdgeRequestFieldExpiredAt  = big.NewInt(1 << 1)
+	addEdgeRequestFieldFact       = big.NewInt(1 << 2)
+	addEdgeRequestFieldFactName   = big.NewInt(1 << 3)
+	addEdgeRequestFieldInvalidAt  = big.NewInt(1 << 4)
+	addEdgeRequestFieldMetadata   = big.NewInt(1 << 5)
+	addEdgeRequestFieldSourceNode = big.NewInt(1 << 6)
+	addEdgeRequestFieldTargetNode = big.NewInt(1 << 7)
+	addEdgeRequestFieldValidAt    = big.NewInt(1 << 8)
+)
+
+type AddEdgeRequest struct {
+	Attributes map[string]any `json:"attributes,omitempty" url:"-"`
+	ExpiredAt  *string        `json:"expired_at,omitempty" url:"-"`
+	Fact       *string        `json:"fact,omitempty" url:"-"`
+	FactName   *string        `json:"fact_name,omitempty" url:"-"`
+	InvalidAt  *string        `json:"invalid_at,omitempty" url:"-"`
+	Metadata   map[string]any `json:"metadata,omitempty" url:"-"`
+	SourceNode map[string]any `json:"source_node,omitempty" url:"-"`
+	TargetNode map[string]any `json:"target_node,omitempty" url:"-"`
+	ValidAt    *string        `json:"valid_at,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (a *AddEdgeRequest) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetAttributes(attributes map[string]any) {
+	a.Attributes = attributes
+	a.require(addEdgeRequestFieldAttributes)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetExpiredAt(expiredAt *string) {
+	a.ExpiredAt = expiredAt
+	a.require(addEdgeRequestFieldExpiredAt)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetFact(fact *string) {
+	a.Fact = fact
+	a.require(addEdgeRequestFieldFact)
+}
+
+// SetFactName sets the FactName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetFactName(factName *string) {
+	a.FactName = factName
+	a.require(addEdgeRequestFieldFactName)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetInvalidAt(invalidAt *string) {
+	a.InvalidAt = invalidAt
+	a.require(addEdgeRequestFieldInvalidAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(addEdgeRequestFieldMetadata)
+}
+
+// SetSourceNode sets the SourceNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetSourceNode(sourceNode map[string]any) {
+	a.SourceNode = sourceNode
+	a.require(addEdgeRequestFieldSourceNode)
+}
+
+// SetTargetNode sets the TargetNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetTargetNode(targetNode map[string]any) {
+	a.TargetNode = targetNode
+	a.require(addEdgeRequestFieldTargetNode)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeRequest) SetValidAt(validAt *string) {
+	a.ValidAt = validAt
+	a.require(addEdgeRequestFieldValidAt)
+}
+
+func (a *AddEdgeRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddEdgeRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*a = AddEdgeRequest(body)
+	return nil
+}
+
+func (a *AddEdgeRequest) MarshalJSON() ([]byte, error) {
+	type embed AddEdgeRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	edgeListRequestFieldLimit  = big.NewInt(1 << 0)
+	edgeListRequestFieldCursor = big.NewInt(1 << 1)
+)
+
+type EdgeListRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string                 `json:"-" url:"cursor,omitempty"`
+	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (e *EdgeListRequest) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListRequest) SetLimit(limit *int) {
+	e.Limit = limit
+	e.require(edgeListRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListRequest) SetCursor(cursor *string) {
+	e.Cursor = cursor
+	e.require(edgeListRequestFieldCursor)
+}
+
+func (e *EdgeListRequest) UnmarshalJSON(data []byte) error {
+	body := new(v4.ArtifactListRequest)
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	e.Body = body
+	return nil
+}
+
+func (e *EdgeListRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(e.Body)
+}
+
+var (
+	patchEdgeRequestFieldAttributes = big.NewInt(1 << 0)
+	patchEdgeRequestFieldFact       = big.NewInt(1 << 1)
+)
+
+type PatchEdgeRequest struct {
+	Attributes map[string]any `json:"attributes,omitempty" url:"-"`
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
 	Fact *string `json:"fact,omitempty" url:"-"`
-	// Updated time at which the fact stopped being true
-	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
-	// Updated name (relationship type) for the edge
-	Name *string `json:"name,omitempty" url:"-"`
-	// Updated time at which the fact becomes true
-	ValidAt *string `json:"valid_at,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (p *PatchEdgeRequest) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchEdgeRequest) SetAttributes(attributes map[string]any) {
+	p.Attributes = attributes
+	p.require(patchEdgeRequestFieldAttributes)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchEdgeRequest) SetFact(fact *string) {
+	p.Fact = fact
+	p.require(patchEdgeRequestFieldFact)
+}
+
+func (p *PatchEdgeRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatchEdgeRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*p = PatchEdgeRequest(body)
+	return nil
+}
+
+func (p *PatchEdgeRequest) MarshalJSON() ([]byte, error) {
+	type embed PatchEdgeRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }

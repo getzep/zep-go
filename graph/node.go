@@ -3,41 +3,245 @@
 package graph
 
 import (
-	v3 "github.com/getzep/zep-go/v3"
+	json "encoding/json"
+	v4 "github.com/getzep/zep-go/v4"
+	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
 )
 
-type GraphNodeNeighborsRequest struct {
-	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor
-	// response header of the previous page.
-	Cursor *string `json:"cursor,omitempty" url:"-"`
-	// Orientation of the connecting edge relative to the anchor node: "out"
-	// (anchor is the edge's source), "in" (anchor is the edge's target), or
-	// "both" (either). Defaults to "both".
-	Direction *string `json:"direction,omitempty" url:"-"`
-	// Sort direction for order_by. One of "asc" or "desc". Defaults to
-	// "desc". Named direction_sort to avoid clashing with the traversal
-	// Direction field above.
-	DirectionSort *string `json:"direction_sort,omitempty" url:"-"`
-	// Filters constraining the connecting edges (edge types, dates, and the
-	// section-3 node-/episode-anchored fields) and the neighbor nodes
-	// (node_labels/exclude_node_labels). Reuses the graph.search filter
-	// type.
-	Filters *v3.SearchFilters `json:"filters,omitempty" url:"-"`
-	// Maximum number of neighbor nodes to return. An explicit value is
-	// clamped to 50; when omitted, the default page size (100) applies.
-	Limit *int `json:"limit,omitempty" url:"-"`
-	// Field to sort neighbor nodes by. One of "uuid" or "created_at".
-	// Defaults to "uuid".
-	OrderBy *string `json:"order_by,omitempty" url:"-"`
+var (
+	addNodesRequestFieldNodes = big.NewInt(1 << 0)
+)
+
+type AddNodesRequest struct {
+	Nodes []map[string]any `json:"nodes,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type UpdateNodeRequest struct {
-	// Updated attributes. Merged with existing attributes. Set a key to null to delete it.
-	Attributes map[string]interface{} `json:"attributes,omitempty" url:"-"`
-	// Updated labels for the node
-	Labels []string `json:"labels,omitempty" url:"-"`
-	// Updated name for the node
+func (a *AddNodesRequest) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetNodes sets the Nodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddNodesRequest) SetNodes(nodes []map[string]any) {
+	a.Nodes = nodes
+	a.require(addNodesRequestFieldNodes)
+}
+
+func (a *AddNodesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddNodesRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*a = AddNodesRequest(body)
+	return nil
+}
+
+func (a *AddNodesRequest) MarshalJSON() ([]byte, error) {
+	type embed AddNodesRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	nodeListRequestFieldLimit  = big.NewInt(1 << 0)
+	nodeListRequestFieldCursor = big.NewInt(1 << 1)
+)
+
+type NodeListRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string                 `json:"-" url:"cursor,omitempty"`
+	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (n *NodeListRequest) require(field *big.Int) {
+	if n.explicitFields == nil {
+		n.explicitFields = big.NewInt(0)
+	}
+	n.explicitFields.Or(n.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListRequest) SetLimit(limit *int) {
+	n.Limit = limit
+	n.require(nodeListRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListRequest) SetCursor(cursor *string) {
+	n.Cursor = cursor
+	n.require(nodeListRequestFieldCursor)
+}
+
+func (n *NodeListRequest) UnmarshalJSON(data []byte) error {
+	body := new(v4.ArtifactListRequest)
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	n.Body = body
+	return nil
+}
+
+func (n *NodeListRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(n.Body)
+}
+
+var (
+	neighborsRequestFieldLimit     = big.NewInt(1 << 0)
+	neighborsRequestFieldCursor    = big.NewInt(1 << 1)
+	neighborsRequestFieldDirection = big.NewInt(1 << 2)
+	neighborsRequestFieldFilters   = big.NewInt(1 << 3)
+)
+
+type NeighborsRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor    *string        `json:"-" url:"cursor,omitempty"`
+	Direction *string        `json:"direction,omitempty" url:"-"`
+	Filters   map[string]any `json:"filters,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (n *NeighborsRequest) require(field *big.Int) {
+	if n.explicitFields == nil {
+		n.explicitFields = big.NewInt(0)
+	}
+	n.explicitFields.Or(n.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborsRequest) SetLimit(limit *int) {
+	n.Limit = limit
+	n.require(neighborsRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborsRequest) SetCursor(cursor *string) {
+	n.Cursor = cursor
+	n.require(neighborsRequestFieldCursor)
+}
+
+// SetDirection sets the Direction field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborsRequest) SetDirection(direction *string) {
+	n.Direction = direction
+	n.require(neighborsRequestFieldDirection)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborsRequest) SetFilters(filters map[string]any) {
+	n.Filters = filters
+	n.require(neighborsRequestFieldFilters)
+}
+
+func (n *NeighborsRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler NeighborsRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*n = NeighborsRequest(body)
+	return nil
+}
+
+func (n *NeighborsRequest) MarshalJSON() ([]byte, error) {
+	type embed NeighborsRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, n.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	patchNodeRequestFieldAttributes = big.NewInt(1 << 0)
+	patchNodeRequestFieldName       = big.NewInt(1 << 1)
+	patchNodeRequestFieldSummary    = big.NewInt(1 << 2)
+)
+
+type PatchNodeRequest struct {
+	Attributes map[string]any `json:"attributes,omitempty" url:"-"`
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
 	Name *string `json:"name,omitempty" url:"-"`
-	// Updated summary for the node
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
 	Summary *string `json:"summary,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (p *PatchNodeRequest) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchNodeRequest) SetAttributes(attributes map[string]any) {
+	p.Attributes = attributes
+	p.require(patchNodeRequestFieldAttributes)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchNodeRequest) SetName(name *string) {
+	p.Name = name
+	p.require(patchNodeRequestFieldName)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchNodeRequest) SetSummary(summary *string) {
+	p.Summary = summary
+	p.require(patchNodeRequestFieldSummary)
+}
+
+func (p *PatchNodeRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatchNodeRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*p = PatchNodeRequest(body)
+	return nil
+}
+
+func (p *PatchNodeRequest) MarshalJSON() ([]byte, error) {
+	type embed PatchNodeRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }

@@ -5,25 +5,50 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	internal "github.com/getzep/zep-go/v3/internal"
+	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
+)
+
+var (
+	aPIErrorFieldError = big.NewInt(1 << 0)
 )
 
 type APIError struct {
-	Message *string `json:"message,omitempty" url:"message,omitempty"`
+	Error *ErrorBody `json:"error,omitempty" url:"error,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (a *APIError) GetMessage() *string {
+func (a *APIError) GetError() *ErrorBody {
 	if a == nil {
 		return nil
 	}
-	return a.Message
+	return a.Error
 }
 
 func (a *APIError) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
 	return a.extraProperties
+}
+
+func (a *APIError) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetError sets the Error field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *APIError) SetError(error_ *ErrorBody) {
+	a.Error = error_
+	a.require(aPIErrorFieldError)
 }
 
 func (a *APIError) UnmarshalJSON(data []byte) error {
@@ -42,7 +67,21 @@ func (a *APIError) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (a *APIError) MarshalJSON() ([]byte, error) {
+	type embed APIError
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
 func (a *APIError) String() string {
+	if a == nil {
+		return "<nil>"
+	}
 	if len(a.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
@@ -54,248 +93,1023 @@ func (a *APIError) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ComparisonOperator string
-
-const (
-	ComparisonOperatorEquals           ComparisonOperator = "="
-	ComparisonOperatorNotEquals        ComparisonOperator = "<>"
-	ComparisonOperatorGreaterThan      ComparisonOperator = ">"
-	ComparisonOperatorLessThan         ComparisonOperator = "<"
-	ComparisonOperatorGreaterThanEqual ComparisonOperator = ">="
-	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
-	ComparisonOperatorIsNull           ComparisonOperator = "IS NULL"
-	ComparisonOperatorIsNullAlias      ComparisonOperator = "is_null"
-	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
-	ComparisonOperatorContains         ComparisonOperator = "CONTAINS"
+var (
+	addEdgeResultFieldEdge = big.NewInt(1 << 0)
+	addEdgeResultFieldTask = big.NewInt(1 << 1)
 )
 
-func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
-	switch s {
-	case "=":
-		return ComparisonOperatorEquals, nil
-	case "<>":
-		return ComparisonOperatorNotEquals, nil
-	case ">":
-		return ComparisonOperatorGreaterThan, nil
-	case "<":
-		return ComparisonOperatorLessThan, nil
-	case ">=":
-		return ComparisonOperatorGreaterThanEqual, nil
-	case "<=":
-		return ComparisonOperatorLessThanEqual, nil
-	case "IS NULL":
-		return ComparisonOperatorIsNull, nil
-	case "is_null":
-		return ComparisonOperatorIsNullAlias, nil
-	case "IS NOT NULL":
-		return ComparisonOperatorIsNotNull, nil
-	case "CONTAINS":
-		return ComparisonOperatorContains, nil
-	}
-	var t ComparisonOperator
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
+type AddEdgeResult struct {
+	// 8.6: edge is an accept-time acknowledgement, not a full Edge.
+	Edge *AddedEdge `json:"edge,omitempty" url:"edge,omitempty"`
+	Task *Task      `json:"task,omitempty" url:"task,omitempty"`
 
-func (c ComparisonOperator) Ptr() *ComparisonOperator {
-	return &c
-}
-
-type DateFilter struct {
-	// Comparison operator for date filter
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Date to filter on. Required for non-null operators (`=`, `<>`, `>`, `<`, `>=`, `<=`).
-	// Should be omitted for IS NULL (or is_null) and IS NOT NULL operators.
-	Date *string `json:"date,omitempty" url:"date,omitempty"`
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (d *DateFilter) GetComparisonOperator() ComparisonOperator {
-	if d == nil {
-		return ""
-	}
-	return d.ComparisonOperator
-}
-
-func (d *DateFilter) GetDate() *string {
-	if d == nil {
+func (a *AddEdgeResult) GetEdge() *AddedEdge {
+	if a == nil {
 		return nil
 	}
-	return d.Date
+	return a.Edge
 }
 
-func (d *DateFilter) GetExtraProperties() map[string]interface{} {
-	return d.extraProperties
+func (a *AddEdgeResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
 }
 
-func (d *DateFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler DateFilter
+func (a *AddEdgeResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddEdgeResult) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetEdge sets the Edge field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeResult) SetEdge(edge *AddedEdge) {
+	a.Edge = edge
+	a.require(addEdgeResultFieldEdge)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgeResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(addEdgeResultFieldTask)
+}
+
+func (a *AddEdgeResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddEdgeResult
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*d = DateFilter(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	*a = AddEdgeResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
 	}
-	d.extraProperties = extraProperties
-	d.rawJSON = json.RawMessage(data)
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (d *DateFilter) String() string {
-	if len(d.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+func (a *AddEdgeResult) MarshalJSON() ([]byte, error) {
+	type embed AddEdgeResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddEdgeResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(d); err == nil {
+	if value, err := internal.StringifyJSON(a); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", d)
+	return fmt.Sprintf("%#v", a)
 }
 
-type DerivedNode struct {
-	// Additional attributes of the derived node.
-	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
-	// Creation time of the node
-	CreatedAt string `json:"created_at" url:"created_at"`
-	// EndAt is the close timestamp of the evidence window. Set when the
-	// underlying pattern is no longer supported (closed observations);
-	// nil for active observations.
-	EndAt *string `json:"end_at,omitempty" url:"end_at,omitempty"`
-	// Episode UUIDs that support this observation. Only populated for observation nodes in web API responses.
-	EpisodeIDs []string `json:"episode_ids,omitempty" url:"episode_ids,omitempty"`
-	// Labels associated with the node
-	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
-	// LatestEvidenceAt is the most recent source-episode timestamp from
-	// which this observation drew evidence.
-	LatestEvidenceAt *string `json:"latest_evidence_at,omitempty" url:"latest_evidence_at,omitempty"`
-	// Name of the node
-	Name string `json:"name" url:"name"`
-	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
-	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
-	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
-	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
-	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
-	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
-	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	// StartAt is the earliest source-episode timestamp from which this
-	// observation was derived. Only populated for observation nodes.
-	StartAt *string `json:"start_at,omitempty" url:"start_at,omitempty"`
-	// Region summary of member nodes
-	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
-	// UUID of the node
-	UUID string `json:"uuid" url:"uuid"`
+var (
+	addEpisodeResultFieldEpisode = big.NewInt(1 << 0)
+	addEpisodeResultFieldTask    = big.NewInt(1 << 1)
+)
+
+type AddEpisodeResult struct {
+	// 8.6: only the episode response is a stored resource, so it is a full
+	// Episode readable immediately with processed false.
+	Episode *Episode `json:"episode,omitempty" url:"episode,omitempty"`
+	Task    *Task    `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (d *DerivedNode) GetAttributes() map[string]interface{} {
-	if d == nil {
+func (a *AddEpisodeResult) GetEpisode() *Episode {
+	if a == nil {
 		return nil
 	}
-	return d.Attributes
+	return a.Episode
 }
 
-func (d *DerivedNode) GetCreatedAt() string {
-	if d == nil {
+func (a *AddEpisodeResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
+}
+
+func (a *AddEpisodeResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddEpisodeResult) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetEpisode sets the Episode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeResult) SetEpisode(episode *Episode) {
+	a.Episode = episode
+	a.require(addEpisodeResultFieldEpisode)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(addEpisodeResultFieldTask)
+}
+
+func (a *AddEpisodeResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddEpisodeResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddEpisodeResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddEpisodeResult) MarshalJSON() ([]byte, error) {
+	type embed AddEpisodeResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddEpisodeResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	addNodesResultFieldNodes = big.NewInt(1 << 0)
+	addNodesResultFieldTask  = big.NewInt(1 << 1)
+)
+
+type AddNodesResult struct {
+	// 8.6: nodes is an accept-time acknowledgement carrying the assigned
+	// identifier plus the fields the caller supplied, not a full Node.
+	Nodes []*AddedNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+	Task  *Task        `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddNodesResult) GetNodes() []*AddedNode {
+	if a == nil {
+		return nil
+	}
+	return a.Nodes
+}
+
+func (a *AddNodesResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
+}
+
+func (a *AddNodesResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddNodesResult) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetNodes sets the Nodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddNodesResult) SetNodes(nodes []*AddedNode) {
+	a.Nodes = nodes
+	a.require(addNodesResultFieldNodes)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddNodesResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(addNodesResultFieldTask)
+}
+
+func (a *AddNodesResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddNodesResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddNodesResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddNodesResult) MarshalJSON() ([]byte, error) {
+	type embed AddNodesResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddNodesResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	addedEdgeFieldAttributes = big.NewInt(1 << 0)
+	addedEdgeFieldExpiredAt  = big.NewInt(1 << 1)
+	addedEdgeFieldFact       = big.NewInt(1 << 2)
+	addedEdgeFieldFactName   = big.NewInt(1 << 3)
+	addedEdgeFieldInvalidAt  = big.NewInt(1 << 4)
+	addedEdgeFieldMetadata   = big.NewInt(1 << 5)
+	addedEdgeFieldSourceNode = big.NewInt(1 << 6)
+	addedEdgeFieldTargetNode = big.NewInt(1 << 7)
+	addedEdgeFieldUUID       = big.NewInt(1 << 8)
+	addedEdgeFieldValidAt    = big.NewInt(1 << 9)
+)
+
+type AddedEdge struct {
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	ExpiredAt  *string        `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	Fact       *string        `json:"fact,omitempty" url:"fact,omitempty"`
+	FactName   *string        `json:"fact_name,omitempty" url:"fact_name,omitempty"`
+	InvalidAt  *string        `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	Metadata   map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	SourceNode map[string]any `json:"source_node,omitempty" url:"source_node,omitempty"`
+	TargetNode map[string]any `json:"target_node,omitempty" url:"target_node,omitempty"`
+	UUID       *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	ValidAt    *string        `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddedEdge) GetAttributes() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Attributes
+}
+
+func (a *AddedEdge) GetExpiredAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ExpiredAt
+}
+
+func (a *AddedEdge) GetFact() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Fact
+}
+
+func (a *AddedEdge) GetFactName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.FactName
+}
+
+func (a *AddedEdge) GetInvalidAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.InvalidAt
+}
+
+func (a *AddedEdge) GetMetadata() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AddedEdge) GetSourceNode() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.SourceNode
+}
+
+func (a *AddedEdge) GetTargetNode() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.TargetNode
+}
+
+func (a *AddedEdge) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AddedEdge) GetValidAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ValidAt
+}
+
+func (a *AddedEdge) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddedEdge) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetAttributes(attributes map[string]any) {
+	a.Attributes = attributes
+	a.require(addedEdgeFieldAttributes)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetExpiredAt(expiredAt *string) {
+	a.ExpiredAt = expiredAt
+	a.require(addedEdgeFieldExpiredAt)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetFact(fact *string) {
+	a.Fact = fact
+	a.require(addedEdgeFieldFact)
+}
+
+// SetFactName sets the FactName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetFactName(factName *string) {
+	a.FactName = factName
+	a.require(addedEdgeFieldFactName)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetInvalidAt(invalidAt *string) {
+	a.InvalidAt = invalidAt
+	a.require(addedEdgeFieldInvalidAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(addedEdgeFieldMetadata)
+}
+
+// SetSourceNode sets the SourceNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetSourceNode(sourceNode map[string]any) {
+	a.SourceNode = sourceNode
+	a.require(addedEdgeFieldSourceNode)
+}
+
+// SetTargetNode sets the TargetNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetTargetNode(targetNode map[string]any) {
+	a.TargetNode = targetNode
+	a.require(addedEdgeFieldTargetNode)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(addedEdgeFieldUUID)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetValidAt(validAt *string) {
+	a.ValidAt = validAt
+	a.require(addedEdgeFieldValidAt)
+}
+
+func (a *AddedEdge) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddedEdge
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddedEdge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddedEdge) MarshalJSON() ([]byte, error) {
+	type embed AddedEdge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddedEdge) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	addedNodeFieldAttributes = big.NewInt(1 << 0)
+	addedNodeFieldCreatedAt  = big.NewInt(1 << 1)
+	addedNodeFieldLabel      = big.NewInt(1 << 2)
+	addedNodeFieldMetadata   = big.NewInt(1 << 3)
+	addedNodeFieldName       = big.NewInt(1 << 4)
+	addedNodeFieldSummary    = big.NewInt(1 << 5)
+	addedNodeFieldUUID       = big.NewInt(1 << 6)
+)
+
+type AddedNode struct {
+	// Additional attributes of the node.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The node creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The node's entity type.
+	Label *string `json:"label,omitempty" url:"label,omitempty"`
+	// Metadata attached to the node's shadow episode.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The name of the node.
+	Name string `json:"name" url:"name"`
+	// A regional summary of the node.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The node UUID, assigned by Zep.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddedNode) GetAttributes() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Attributes
+}
+
+func (a *AddedNode) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AddedNode) GetLabel() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Label
+}
+
+func (a *AddedNode) GetMetadata() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AddedNode) GetName() string {
+	if a == nil {
 		return ""
+	}
+	return a.Name
+}
+
+func (a *AddedNode) GetSummary() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Summary
+}
+
+func (a *AddedNode) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AddedNode) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddedNode) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedNode) SetAttributes(attributes map[string]any) {
+	a.Attributes = attributes
+	a.require(addedNodeFieldAttributes)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedNode) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(addedNodeFieldCreatedAt)
+}
+
+// SetLabel sets the Label field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedNode) SetLabel(label *string) {
+	a.Label = label
+	a.require(addedNodeFieldLabel)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedNode) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(addedNodeFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedNode) SetName(name string) {
+	a.Name = name
+	a.require(addedNodeFieldName)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedNode) SetSummary(summary *string) {
+	a.Summary = summary
+	a.require(addedNodeFieldSummary)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedNode) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(addedNodeFieldUUID)
+}
+
+func (a *AddedNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddedNode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddedNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddedNode) MarshalJSON() ([]byte, error) {
+	type embed AddedNode
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddedNode) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	artifactListRequestFieldFilters = big.NewInt(1 << 0)
+)
+
+type ArtifactListRequest struct {
+	Filters map[string]any `json:"filters,omitempty" url:"filters,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *ArtifactListRequest) GetFilters() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Filters
+}
+
+func (a *ArtifactListRequest) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *ArtifactListRequest) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *ArtifactListRequest) SetFilters(filters map[string]any) {
+	a.Filters = filters
+	a.require(artifactListRequestFieldFilters)
+}
+
+func (a *ArtifactListRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ArtifactListRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = ArtifactListRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *ArtifactListRequest) MarshalJSON() ([]byte, error) {
+	type embed ArtifactListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *ArtifactListRequest) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	asyncResultFieldTask = big.NewInt(1 << 0)
+)
+
+type AsyncResult struct {
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AsyncResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
+}
+
+func (a *AsyncResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AsyncResult) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AsyncResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(asyncResultFieldTask)
+}
+
+func (a *AsyncResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AsyncResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AsyncResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AsyncResult) MarshalJSON() ([]byte, error) {
+	type embed AsyncResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AsyncResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	documentSummaryFieldCreatedAt                    = big.NewInt(1 << 0)
+	documentSummaryFieldDocumentID                   = big.NewInt(1 << 1)
+	documentSummaryFieldLastSummarizedAt             = big.NewInt(1 << 2)
+	documentSummaryFieldLastSummarizedEpisodeValidAt = big.NewInt(1 << 3)
+	documentSummaryFieldSummary                      = big.NewInt(1 << 4)
+	documentSummaryFieldUUID                         = big.NewInt(1 << 5)
+)
+
+type DocumentSummary struct {
+	CreatedAt                    *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DocumentID                   *string `json:"document_id,omitempty" url:"document_id,omitempty"`
+	LastSummarizedAt             *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
+	Summary                      *string `json:"summary,omitempty" url:"summary,omitempty"`
+	UUID                         *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DocumentSummary) GetCreatedAt() *string {
+	if d == nil {
+		return nil
 	}
 	return d.CreatedAt
 }
 
-func (d *DerivedNode) GetEndAt() *string {
+func (d *DocumentSummary) GetDocumentID() *string {
 	if d == nil {
 		return nil
 	}
-	return d.EndAt
+	return d.DocumentID
 }
 
-func (d *DerivedNode) GetEpisodeIDs() []string {
+func (d *DocumentSummary) GetLastSummarizedAt() *string {
 	if d == nil {
 		return nil
 	}
-	return d.EpisodeIDs
+	return d.LastSummarizedAt
 }
 
-func (d *DerivedNode) GetLabels() []string {
+func (d *DocumentSummary) GetLastSummarizedEpisodeValidAt() *string {
 	if d == nil {
 		return nil
 	}
-	return d.Labels
+	return d.LastSummarizedEpisodeValidAt
 }
 
-func (d *DerivedNode) GetLatestEvidenceAt() *string {
-	if d == nil {
-		return nil
-	}
-	return d.LatestEvidenceAt
-}
-
-func (d *DerivedNode) GetName() string {
-	if d == nil {
-		return ""
-	}
-	return d.Name
-}
-
-func (d *DerivedNode) GetRelevance() *float64 {
-	if d == nil {
-		return nil
-	}
-	return d.Relevance
-}
-
-func (d *DerivedNode) GetScore() *float64 {
-	if d == nil {
-		return nil
-	}
-	return d.Score
-}
-
-func (d *DerivedNode) GetSelectionRank() *int {
-	if d == nil {
-		return nil
-	}
-	return d.SelectionRank
-}
-
-func (d *DerivedNode) GetStartAt() *string {
-	if d == nil {
-		return nil
-	}
-	return d.StartAt
-}
-
-func (d *DerivedNode) GetSummary() *string {
+func (d *DocumentSummary) GetSummary() *string {
 	if d == nil {
 		return nil
 	}
 	return d.Summary
 }
 
-func (d *DerivedNode) GetUUID() string {
+func (d *DocumentSummary) GetUUID() *string {
 	if d == nil {
-		return ""
+		return nil
 	}
 	return d.UUID
 }
 
-func (d *DerivedNode) GetExtraProperties() map[string]interface{} {
+func (d *DocumentSummary) GetExtraProperties() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
 	return d.extraProperties
 }
 
-func (d *DerivedNode) UnmarshalJSON(data []byte) error {
-	type unmarshaler DerivedNode
+func (d *DocumentSummary) require(field *big.Int) {
+	if d.explicitFields == nil {
+		d.explicitFields = big.NewInt(0)
+	}
+	d.explicitFields.Or(d.explicitFields, field)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummary) SetCreatedAt(createdAt *string) {
+	d.CreatedAt = createdAt
+	d.require(documentSummaryFieldCreatedAt)
+}
+
+// SetDocumentID sets the DocumentID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummary) SetDocumentID(documentID *string) {
+	d.DocumentID = documentID
+	d.require(documentSummaryFieldDocumentID)
+}
+
+// SetLastSummarizedAt sets the LastSummarizedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummary) SetLastSummarizedAt(lastSummarizedAt *string) {
+	d.LastSummarizedAt = lastSummarizedAt
+	d.require(documentSummaryFieldLastSummarizedAt)
+}
+
+// SetLastSummarizedEpisodeValidAt sets the LastSummarizedEpisodeValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummary) SetLastSummarizedEpisodeValidAt(lastSummarizedEpisodeValidAt *string) {
+	d.LastSummarizedEpisodeValidAt = lastSummarizedEpisodeValidAt
+	d.require(documentSummaryFieldLastSummarizedEpisodeValidAt)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummary) SetSummary(summary *string) {
+	d.Summary = summary
+	d.require(documentSummaryFieldSummary)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummary) SetUUID(uuid *string) {
+	d.UUID = uuid
+	d.require(documentSummaryFieldUUID)
+}
+
+func (d *DocumentSummary) UnmarshalJSON(data []byte) error {
+	type unmarshaler DocumentSummary
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*d = DerivedNode(value)
+	*d = DocumentSummary(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *d)
 	if err != nil {
 		return err
@@ -305,7 +1119,21 @@ func (d *DerivedNode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (d *DerivedNode) String() string {
+func (d *DocumentSummary) MarshalJSON() ([]byte, error) {
+	type embed DocumentSummary
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (d *DocumentSummary) String() string {
+	if d == nil {
+		return "<nil>"
+	}
 	if len(d.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
 			return value
@@ -317,202 +1145,461 @@ func (d *DerivedNode) String() string {
 	return fmt.Sprintf("%#v", d)
 }
 
-type EntityEdge struct {
-	// Additional attributes of the edge. Dependent on edge types
-	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
-	// Creation time of the edge
-	CreatedAt string `json:"created_at" url:"created_at"`
-	// List of episode ids that reference these entity edges
-	Episodes []string `json:"episodes,omitempty" url:"episodes,omitempty"`
-	// Datetime of when the node was invalidated
-	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	// Fact representing the edge and nodes that it connects
-	Fact string `json:"fact" url:"fact"`
-	// Datetime of when the fact stopped being true
-	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	// Name of the edge, relation name
-	Name string `json:"name" url:"name"`
-	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
-	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
-	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
-	// Scope of the edge (e.g. "entity", "maybe_related")
-	Scope *string `json:"scope,omitempty" url:"scope,omitempty"`
-	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
-	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
-	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
-	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	// SourceNodeLabels are the labels of the source node at read time. Same
-	// read-time-projection semantics as SourceNodeName (spec-2 §4).
-	SourceNodeLabels []string `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
-	// SourceNodeName is the name of the source node at read time. It is a
-	// read-time projection of current node state, not a stored edge
-	// attribute: a subsequent node rename is reflected on the next read.
-	// Omitted (the edge is still returned) if the source node cannot be
-	// resolved, for example if it was deleted concurrently (spec-2 §4).
-	SourceNodeName *string `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
-	// UUID of the source node
-	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
-	// TargetNodeLabels are the labels of the target node at read time. Same
-	// read-time-projection semantics as SourceNodeName (spec-2 §4).
-	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"target_node_labels,omitempty"`
-	// TargetNodeName is the name of the target node at read time. Same
-	// read-time-projection semantics as SourceNodeName (spec-2 §4).
-	TargetNodeName *string `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
-	// UUID of the target node
-	TargetNodeUUID string `json:"target_node_uuid" url:"target_node_uuid"`
-	// UUID of the edge
-	UUID string `json:"uuid" url:"uuid"`
-	// Datetime of when the fact became true
-	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+var (
+	documentSummaryPageFieldItems      = big.NewInt(1 << 0)
+	documentSummaryPageFieldNextCursor = big.NewInt(1 << 1)
+	documentSummaryPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type DocumentSummaryPage struct {
+	Items      []*DocumentSummary `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string            `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int               `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (e *EntityEdge) GetAttributes() map[string]interface{} {
+func (d *DocumentSummaryPage) GetItems() []*DocumentSummary {
+	if d == nil {
+		return nil
+	}
+	return d.Items
+}
+
+func (d *DocumentSummaryPage) GetNextCursor() *string {
+	if d == nil {
+		return nil
+	}
+	return d.NextCursor
+}
+
+func (d *DocumentSummaryPage) GetTotalSize() *int {
+	if d == nil {
+		return nil
+	}
+	return d.TotalSize
+}
+
+func (d *DocumentSummaryPage) GetExtraProperties() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
+	return d.extraProperties
+}
+
+func (d *DocumentSummaryPage) require(field *big.Int) {
+	if d.explicitFields == nil {
+		d.explicitFields = big.NewInt(0)
+	}
+	d.explicitFields.Or(d.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryPage) SetItems(items []*DocumentSummary) {
+	d.Items = items
+	d.require(documentSummaryPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryPage) SetNextCursor(nextCursor *string) {
+	d.NextCursor = nextCursor
+	d.require(documentSummaryPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryPage) SetTotalSize(totalSize *int) {
+	d.TotalSize = totalSize
+	d.require(documentSummaryPageFieldTotalSize)
+}
+
+func (d *DocumentSummaryPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler DocumentSummaryPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DocumentSummaryPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DocumentSummaryPage) MarshalJSON() ([]byte, error) {
+	type embed DocumentSummaryPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (d *DocumentSummaryPage) String() string {
+	if d == nil {
+		return "<nil>"
+	}
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+var (
+	edgeFieldAttributes       = big.NewInt(1 << 0)
+	edgeFieldCreatedAt        = big.NewInt(1 << 1)
+	edgeFieldEpisodeUUIDs     = big.NewInt(1 << 2)
+	edgeFieldExpiredAt        = big.NewInt(1 << 3)
+	edgeFieldFact             = big.NewInt(1 << 4)
+	edgeFieldGraphUUID        = big.NewInt(1 << 5)
+	edgeFieldInvalidAt        = big.NewInt(1 << 6)
+	edgeFieldName             = big.NewInt(1 << 7)
+	edgeFieldRelevance        = big.NewInt(1 << 8)
+	edgeFieldScope            = big.NewInt(1 << 9)
+	edgeFieldScore            = big.NewInt(1 << 10)
+	edgeFieldSourceNodeLabels = big.NewInt(1 << 11)
+	edgeFieldSourceNodeName   = big.NewInt(1 << 12)
+	edgeFieldSourceNodeUUID   = big.NewInt(1 << 13)
+	edgeFieldTargetNodeLabels = big.NewInt(1 << 14)
+	edgeFieldTargetNodeName   = big.NewInt(1 << 15)
+	edgeFieldTargetNodeUUID   = big.NewInt(1 << 16)
+	edgeFieldUUID             = big.NewInt(1 << 17)
+	edgeFieldValidAt          = big.NewInt(1 << 18)
+)
+
+type Edge struct {
+	Attributes       map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	CreatedAt        *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	EpisodeUUIDs     []string       `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	ExpiredAt        *string        `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	Fact             *string        `json:"fact,omitempty" url:"fact,omitempty"`
+	GraphUUID        *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	InvalidAt        *string        `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	Name             *string        `json:"name,omitempty" url:"name,omitempty"`
+	Relevance        *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
+	Scope            *string        `json:"scope,omitempty" url:"scope,omitempty"`
+	Score            *float64       `json:"score,omitempty" url:"score,omitempty"`
+	SourceNodeLabels []string       `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
+	// Endpoint-name and label projections are read-time and subject to the
+	// ABAC omission rule of spec-2 section 4, so each is omitted when denied.
+	SourceNodeName   *string  `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
+	SourceNodeUUID   *string  `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"target_node_labels,omitempty"`
+	TargetNodeName   *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
+	TargetNodeUUID   *string  `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	UUID             *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
+	ValidAt          *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *Edge) GetAttributes() map[string]any {
 	if e == nil {
 		return nil
 	}
 	return e.Attributes
 }
 
-func (e *EntityEdge) GetCreatedAt() string {
+func (e *Edge) GetCreatedAt() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.CreatedAt
 }
 
-func (e *EntityEdge) GetEpisodes() []string {
+func (e *Edge) GetEpisodeUUIDs() []string {
 	if e == nil {
 		return nil
 	}
-	return e.Episodes
+	return e.EpisodeUUIDs
 }
 
-func (e *EntityEdge) GetExpiredAt() *string {
+func (e *Edge) GetExpiredAt() *string {
 	if e == nil {
 		return nil
 	}
 	return e.ExpiredAt
 }
 
-func (e *EntityEdge) GetFact() string {
+func (e *Edge) GetFact() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Fact
 }
 
-func (e *EntityEdge) GetInvalidAt() *string {
+func (e *Edge) GetGraphUUID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.GraphUUID
+}
+
+func (e *Edge) GetInvalidAt() *string {
 	if e == nil {
 		return nil
 	}
 	return e.InvalidAt
 }
 
-func (e *EntityEdge) GetName() string {
+func (e *Edge) GetName() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Name
 }
 
-func (e *EntityEdge) GetRelevance() *float64 {
+func (e *Edge) GetRelevance() *float64 {
 	if e == nil {
 		return nil
 	}
 	return e.Relevance
 }
 
-func (e *EntityEdge) GetScope() *string {
+func (e *Edge) GetScope() *string {
 	if e == nil {
 		return nil
 	}
 	return e.Scope
 }
 
-func (e *EntityEdge) GetScore() *float64 {
+func (e *Edge) GetScore() *float64 {
 	if e == nil {
 		return nil
 	}
 	return e.Score
 }
 
-func (e *EntityEdge) GetSelectionRank() *int {
-	if e == nil {
-		return nil
-	}
-	return e.SelectionRank
-}
-
-func (e *EntityEdge) GetSourceNodeLabels() []string {
+func (e *Edge) GetSourceNodeLabels() []string {
 	if e == nil {
 		return nil
 	}
 	return e.SourceNodeLabels
 }
 
-func (e *EntityEdge) GetSourceNodeName() *string {
+func (e *Edge) GetSourceNodeName() *string {
 	if e == nil {
 		return nil
 	}
 	return e.SourceNodeName
 }
 
-func (e *EntityEdge) GetSourceNodeUUID() string {
+func (e *Edge) GetSourceNodeUUID() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.SourceNodeUUID
 }
 
-func (e *EntityEdge) GetTargetNodeLabels() []string {
+func (e *Edge) GetTargetNodeLabels() []string {
 	if e == nil {
 		return nil
 	}
 	return e.TargetNodeLabels
 }
 
-func (e *EntityEdge) GetTargetNodeName() *string {
+func (e *Edge) GetTargetNodeName() *string {
 	if e == nil {
 		return nil
 	}
 	return e.TargetNodeName
 }
 
-func (e *EntityEdge) GetTargetNodeUUID() string {
+func (e *Edge) GetTargetNodeUUID() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.TargetNodeUUID
 }
 
-func (e *EntityEdge) GetUUID() string {
+func (e *Edge) GetUUID() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.UUID
 }
 
-func (e *EntityEdge) GetValidAt() *string {
+func (e *Edge) GetValidAt() *string {
 	if e == nil {
 		return nil
 	}
 	return e.ValidAt
 }
 
-func (e *EntityEdge) GetExtraProperties() map[string]interface{} {
+func (e *Edge) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
-func (e *EntityEdge) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityEdge
+func (e *Edge) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetAttributes(attributes map[string]any) {
+	e.Attributes = attributes
+	e.require(edgeFieldAttributes)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetCreatedAt(createdAt *string) {
+	e.CreatedAt = createdAt
+	e.require(edgeFieldCreatedAt)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetEpisodeUUIDs(episodeUUIDs []string) {
+	e.EpisodeUUIDs = episodeUUIDs
+	e.require(edgeFieldEpisodeUUIDs)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetExpiredAt(expiredAt *string) {
+	e.ExpiredAt = expiredAt
+	e.require(edgeFieldExpiredAt)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetFact(fact *string) {
+	e.Fact = fact
+	e.require(edgeFieldFact)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetGraphUUID(graphUUID *string) {
+	e.GraphUUID = graphUUID
+	e.require(edgeFieldGraphUUID)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetInvalidAt(invalidAt *string) {
+	e.InvalidAt = invalidAt
+	e.require(edgeFieldInvalidAt)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetName(name *string) {
+	e.Name = name
+	e.require(edgeFieldName)
+}
+
+// SetRelevance sets the Relevance field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetRelevance(relevance *float64) {
+	e.Relevance = relevance
+	e.require(edgeFieldRelevance)
+}
+
+// SetScope sets the Scope field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetScope(scope *string) {
+	e.Scope = scope
+	e.require(edgeFieldScope)
+}
+
+// SetScore sets the Score field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetScore(score *float64) {
+	e.Score = score
+	e.require(edgeFieldScore)
+}
+
+// SetSourceNodeLabels sets the SourceNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetSourceNodeLabels(sourceNodeLabels []string) {
+	e.SourceNodeLabels = sourceNodeLabels
+	e.require(edgeFieldSourceNodeLabels)
+}
+
+// SetSourceNodeName sets the SourceNodeName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetSourceNodeName(sourceNodeName *string) {
+	e.SourceNodeName = sourceNodeName
+	e.require(edgeFieldSourceNodeName)
+}
+
+// SetSourceNodeUUID sets the SourceNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetSourceNodeUUID(sourceNodeUUID *string) {
+	e.SourceNodeUUID = sourceNodeUUID
+	e.require(edgeFieldSourceNodeUUID)
+}
+
+// SetTargetNodeLabels sets the TargetNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetTargetNodeLabels(targetNodeLabels []string) {
+	e.TargetNodeLabels = targetNodeLabels
+	e.require(edgeFieldTargetNodeLabels)
+}
+
+// SetTargetNodeName sets the TargetNodeName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetTargetNodeName(targetNodeName *string) {
+	e.TargetNodeName = targetNodeName
+	e.require(edgeFieldTargetNodeName)
+}
+
+// SetTargetNodeUUID sets the TargetNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetTargetNodeUUID(targetNodeUUID *string) {
+	e.TargetNodeUUID = targetNodeUUID
+	e.require(edgeFieldTargetNodeUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetUUID(uuid *string) {
+	e.UUID = uuid
+	e.require(edgeFieldUUID)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetValidAt(validAt *string) {
+	e.ValidAt = validAt
+	e.require(edgeFieldValidAt)
+}
+
+func (e *Edge) UnmarshalJSON(data []byte) error {
+	type unmarshaler Edge
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*e = EntityEdge(value)
+	*e = Edge(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
@@ -522,7 +1609,21 @@ func (e *EntityEdge) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (e *EntityEdge) String() string {
+func (e *Edge) MarshalJSON() ([]byte, error) {
+	type embed Edge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *Edge) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -534,105 +1635,319 @@ func (e *EntityEdge) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type EntityNode struct {
-	// Additional attributes of the node. Dependent on node labels
-	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
-	// Creation time of the node
-	CreatedAt string `json:"created_at" url:"created_at"`
-	// Labels associated with the node
-	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
-	// Name of the node
-	Name string `json:"name" url:"name"`
-	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
-	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
-	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
-	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
-	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
-	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
-	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	// Regional summary of surrounding edges
-	Summary string `json:"summary" url:"summary"`
-	// UUID of the node
-	UUID string `json:"uuid" url:"uuid"`
+var (
+	edgePageFieldItems      = big.NewInt(1 << 0)
+	edgePageFieldNextCursor = big.NewInt(1 << 1)
+	edgePageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type EdgePage struct {
+	Items      []*Edge `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int    `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (e *EntityNode) GetAttributes() map[string]interface{} {
+func (e *EdgePage) GetItems() []*Edge {
 	if e == nil {
 		return nil
 	}
-	return e.Attributes
+	return e.Items
 }
 
-func (e *EntityNode) GetCreatedAt() string {
+func (e *EdgePage) GetNextCursor() *string {
+	if e == nil {
+		return nil
+	}
+	return e.NextCursor
+}
+
+func (e *EdgePage) GetTotalSize() *int {
+	if e == nil {
+		return nil
+	}
+	return e.TotalSize
+}
+
+func (e *EdgePage) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EdgePage) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgePage) SetItems(items []*Edge) {
+	e.Items = items
+	e.require(edgePageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgePage) SetNextCursor(nextCursor *string) {
+	e.NextCursor = nextCursor
+	e.require(edgePageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgePage) SetTotalSize(totalSize *int) {
+	e.TotalSize = totalSize
+	e.require(edgePageFieldTotalSize)
+}
+
+func (e *EdgePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler EdgePage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EdgePage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EdgePage) MarshalJSON() ([]byte, error) {
+	type embed EdgePage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EdgePage) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
+	edgeSourceTargetFieldSourceEntityType = big.NewInt(1 << 0)
+	edgeSourceTargetFieldTargetEntityType = big.NewInt(1 << 1)
+)
+
+type EdgeSourceTarget struct {
+	SourceEntityType *string `json:"source_entity_type,omitempty" url:"source_entity_type,omitempty"`
+	TargetEntityType *string `json:"target_entity_type,omitempty" url:"target_entity_type,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EdgeSourceTarget) GetSourceEntityType() *string {
+	if e == nil {
+		return nil
+	}
+	return e.SourceEntityType
+}
+
+func (e *EdgeSourceTarget) GetTargetEntityType() *string {
+	if e == nil {
+		return nil
+	}
+	return e.TargetEntityType
+}
+
+func (e *EdgeSourceTarget) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EdgeSourceTarget) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetSourceEntityType sets the SourceEntityType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeSourceTarget) SetSourceEntityType(sourceEntityType *string) {
+	e.SourceEntityType = sourceEntityType
+	e.require(edgeSourceTargetFieldSourceEntityType)
+}
+
+// SetTargetEntityType sets the TargetEntityType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeSourceTarget) SetTargetEntityType(targetEntityType *string) {
+	e.TargetEntityType = targetEntityType
+	e.require(edgeSourceTargetFieldTargetEntityType)
+}
+
+func (e *EdgeSourceTarget) UnmarshalJSON(data []byte) error {
+	type unmarshaler EdgeSourceTarget
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EdgeSourceTarget(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EdgeSourceTarget) MarshalJSON() ([]byte, error) {
+	type embed EdgeSourceTarget
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EdgeSourceTarget) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
+	edgeTypeFieldDescription   = big.NewInt(1 << 0)
+	edgeTypeFieldName          = big.NewInt(1 << 1)
+	edgeTypeFieldProperties    = big.NewInt(1 << 2)
+	edgeTypeFieldSourceTargets = big.NewInt(1 << 3)
+)
+
+type EdgeType struct {
+	Description   string              `json:"description" url:"description"`
+	Name          string              `json:"name" url:"name"`
+	Properties    []*EntityProperty   `json:"properties,omitempty" url:"properties,omitempty"`
+	SourceTargets []*EdgeSourceTarget `json:"source_targets,omitempty" url:"source_targets,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EdgeType) GetDescription() string {
 	if e == nil {
 		return ""
 	}
-	return e.CreatedAt
+	return e.Description
 }
 
-func (e *EntityNode) GetLabels() []string {
-	if e == nil {
-		return nil
-	}
-	return e.Labels
-}
-
-func (e *EntityNode) GetName() string {
+func (e *EdgeType) GetName() string {
 	if e == nil {
 		return ""
 	}
 	return e.Name
 }
 
-func (e *EntityNode) GetRelevance() *float64 {
+func (e *EdgeType) GetProperties() []*EntityProperty {
 	if e == nil {
 		return nil
 	}
-	return e.Relevance
+	return e.Properties
 }
 
-func (e *EntityNode) GetScore() *float64 {
+func (e *EdgeType) GetSourceTargets() []*EdgeSourceTarget {
 	if e == nil {
 		return nil
 	}
-	return e.Score
+	return e.SourceTargets
 }
 
-func (e *EntityNode) GetSelectionRank() *int {
+func (e *EdgeType) GetExtraProperties() map[string]interface{} {
 	if e == nil {
 		return nil
 	}
-	return e.SelectionRank
-}
-
-func (e *EntityNode) GetSummary() string {
-	if e == nil {
-		return ""
-	}
-	return e.Summary
-}
-
-func (e *EntityNode) GetUUID() string {
-	if e == nil {
-		return ""
-	}
-	return e.UUID
-}
-
-func (e *EntityNode) GetExtraProperties() map[string]interface{} {
 	return e.extraProperties
 }
 
-func (e *EntityNode) UnmarshalJSON(data []byte) error {
-	type unmarshaler EntityNode
+func (e *EdgeType) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeType) SetDescription(description string) {
+	e.Description = description
+	e.require(edgeTypeFieldDescription)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeType) SetName(name string) {
+	e.Name = name
+	e.require(edgeTypeFieldName)
+}
+
+// SetProperties sets the Properties field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeType) SetProperties(properties []*EntityProperty) {
+	e.Properties = properties
+	e.require(edgeTypeFieldProperties)
+}
+
+// SetSourceTargets sets the SourceTargets field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeType) SetSourceTargets(sourceTargets []*EdgeSourceTarget) {
+	e.SourceTargets = sourceTargets
+	e.require(edgeTypeFieldSourceTargets)
+}
+
+func (e *EdgeType) UnmarshalJSON(data []byte) error {
+	type unmarshaler EdgeType
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*e = EntityNode(value)
+	*e = EdgeType(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
@@ -642,7 +1957,21 @@ func (e *EntityNode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (e *EntityNode) String() string {
+func (e *EdgeType) MarshalJSON() ([]byte, error) {
+	type embed EdgeType
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EdgeType) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -654,49 +1983,353 @@ func (e *EntityNode) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type Episode struct {
-	Content   string                 `json:"content" url:"content"`
-	CreatedAt string                 `json:"created_at" url:"created_at"`
-	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Processed *bool                  `json:"processed,omitempty" url:"processed,omitempty"`
-	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
-	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
-	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
-	// Optional role, will only be present if the episode was created using memory.add API
-	Role *string `json:"role,omitempty" url:"role,omitempty"`
-	// Optional role_type, will only be present if the episode was created using memory.add API
-	RoleType *RoleType `json:"role_type,omitempty" url:"role_type,omitempty"`
-	// Score is the reranker output: sigmoid-distributed logits [0,1] when using cross_encoder reranker, or RRF ordinal rank when using rrf reranker
-	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
-	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
-	SelectionRank     *int           `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
-	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
-	// Optional task ID to poll episode processing status. Currently only available for batch ingestion.
-	TaskID *string `json:"task_id,omitempty" url:"task_id,omitempty"`
-	// Optional thread ID, will be present if the episode is part of a thread
-	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
-	UUID     string  `json:"uuid" url:"uuid"`
+var (
+	entityPropertyFieldDescription = big.NewInt(1 << 0)
+	entityPropertyFieldName        = big.NewInt(1 << 1)
+	entityPropertyFieldType        = big.NewInt(1 << 2)
+)
+
+type EntityProperty struct {
+	Description string             `json:"description" url:"description"`
+	Name        string             `json:"name" url:"name"`
+	Type        EntityPropertyType `json:"type" url:"type"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (e *Episode) GetContent() string {
+func (e *EntityProperty) GetDescription() string {
 	if e == nil {
 		return ""
+	}
+	return e.Description
+}
+
+func (e *EntityProperty) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+func (e *EntityProperty) GetType() EntityPropertyType {
+	if e == nil {
+		return ""
+	}
+	return e.Type
+}
+
+func (e *EntityProperty) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EntityProperty) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EntityProperty) SetDescription(description string) {
+	e.Description = description
+	e.require(entityPropertyFieldDescription)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EntityProperty) SetName(name string) {
+	e.Name = name
+	e.require(entityPropertyFieldName)
+}
+
+// SetType sets the Type field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EntityProperty) SetType(type_ EntityPropertyType) {
+	e.Type = type_
+	e.require(entityPropertyFieldType)
+}
+
+func (e *EntityProperty) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityProperty
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EntityProperty(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EntityProperty) MarshalJSON() ([]byte, error) {
+	type embed EntityProperty
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EntityProperty) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EntityPropertyType string
+
+const (
+	EntityPropertyTypeText    EntityPropertyType = "Text"
+	EntityPropertyTypeInt     EntityPropertyType = "Int"
+	EntityPropertyTypeFloat   EntityPropertyType = "Float"
+	EntityPropertyTypeBoolean EntityPropertyType = "Boolean"
+)
+
+func NewEntityPropertyTypeFromString(s string) (EntityPropertyType, error) {
+	switch s {
+	case "Text":
+		return EntityPropertyTypeText, nil
+	case "Int":
+		return EntityPropertyTypeInt, nil
+	case "Float":
+		return EntityPropertyTypeFloat, nil
+	case "Boolean":
+		return EntityPropertyTypeBoolean, nil
+	}
+	var t EntityPropertyType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EntityPropertyType) Ptr() *EntityPropertyType {
+	return &e
+}
+
+var (
+	entityTypeFieldDescription        = big.NewInt(1 << 0)
+	entityTypeFieldIdentityProperties = big.NewInt(1 << 1)
+	entityTypeFieldName               = big.NewInt(1 << 2)
+	entityTypeFieldProperties         = big.NewInt(1 << 3)
+)
+
+type EntityType struct {
+	Description        string            `json:"description" url:"description"`
+	IdentityProperties []string          `json:"identity_properties,omitempty" url:"identity_properties,omitempty"`
+	Name               string            `json:"name" url:"name"`
+	Properties         []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EntityType) GetDescription() string {
+	if e == nil {
+		return ""
+	}
+	return e.Description
+}
+
+func (e *EntityType) GetIdentityProperties() []string {
+	if e == nil {
+		return nil
+	}
+	return e.IdentityProperties
+}
+
+func (e *EntityType) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+func (e *EntityType) GetProperties() []*EntityProperty {
+	if e == nil {
+		return nil
+	}
+	return e.Properties
+}
+
+func (e *EntityType) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EntityType) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EntityType) SetDescription(description string) {
+	e.Description = description
+	e.require(entityTypeFieldDescription)
+}
+
+// SetIdentityProperties sets the IdentityProperties field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EntityType) SetIdentityProperties(identityProperties []string) {
+	e.IdentityProperties = identityProperties
+	e.require(entityTypeFieldIdentityProperties)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EntityType) SetName(name string) {
+	e.Name = name
+	e.require(entityTypeFieldName)
+}
+
+// SetProperties sets the Properties field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EntityType) SetProperties(properties []*EntityProperty) {
+	e.Properties = properties
+	e.require(entityTypeFieldProperties)
+}
+
+func (e *EntityType) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EntityType(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EntityType) MarshalJSON() ([]byte, error) {
+	type embed EntityType
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EntityType) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
+	episodeFieldContent           = big.NewInt(1 << 0)
+	episodeFieldCreatedAt         = big.NewInt(1 << 1)
+	episodeFieldDocumentID        = big.NewInt(1 << 2)
+	episodeFieldGraphUUID         = big.NewInt(1 << 3)
+	episodeFieldMetadata          = big.NewInt(1 << 4)
+	episodeFieldProcessed         = big.NewInt(1 << 5)
+	episodeFieldRelevance         = big.NewInt(1 << 6)
+	episodeFieldRole              = big.NewInt(1 << 7)
+	episodeFieldRoleName          = big.NewInt(1 << 8)
+	episodeFieldScore             = big.NewInt(1 << 9)
+	episodeFieldSource            = big.NewInt(1 << 10)
+	episodeFieldSourceDescription = big.NewInt(1 << 11)
+	episodeFieldThreadUUID        = big.NewInt(1 << 12)
+	episodeFieldUUID              = big.NewInt(1 << 13)
+	episodeFieldValidAt           = big.NewInt(1 << 14)
+)
+
+type Episode struct {
+	Content           *string        `json:"content,omitempty" url:"content,omitempty"`
+	CreatedAt         *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DocumentID        *string        `json:"document_id,omitempty" url:"document_id,omitempty"`
+	GraphUUID         *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	Metadata          map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Processed         *bool          `json:"processed,omitempty" url:"processed,omitempty"`
+	Relevance         *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
+	Role              *string        `json:"role,omitempty" url:"role,omitempty"`
+	RoleName          *string        `json:"role_name,omitempty" url:"role_name,omitempty"`
+	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
+	Source            *string        `json:"source,omitempty" url:"source,omitempty"`
+	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
+	ThreadUUID        *string        `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	UUID              *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	ValidAt           *string        `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *Episode) GetContent() *string {
+	if e == nil {
+		return nil
 	}
 	return e.Content
 }
 
-func (e *Episode) GetCreatedAt() string {
+func (e *Episode) GetCreatedAt() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.CreatedAt
 }
 
-func (e *Episode) GetMetadata() map[string]interface{} {
+func (e *Episode) GetDocumentID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.DocumentID
+}
+
+func (e *Episode) GetGraphUUID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.GraphUUID
+}
+
+func (e *Episode) GetMetadata() map[string]any {
 	if e == nil {
 		return nil
 	}
@@ -724,11 +2357,11 @@ func (e *Episode) GetRole() *string {
 	return e.Role
 }
 
-func (e *Episode) GetRoleType() *RoleType {
+func (e *Episode) GetRoleName() *string {
 	if e == nil {
 		return nil
 	}
-	return e.RoleType
+	return e.RoleName
 }
 
 func (e *Episode) GetScore() *float64 {
@@ -738,14 +2371,7 @@ func (e *Episode) GetScore() *float64 {
 	return e.Score
 }
 
-func (e *Episode) GetSelectionRank() *int {
-	if e == nil {
-		return nil
-	}
-	return e.SelectionRank
-}
-
-func (e *Episode) GetSource() *GraphDataType {
+func (e *Episode) GetSource() *string {
 	if e == nil {
 		return nil
 	}
@@ -759,29 +2385,144 @@ func (e *Episode) GetSourceDescription() *string {
 	return e.SourceDescription
 }
 
-func (e *Episode) GetTaskID() *string {
+func (e *Episode) GetThreadUUID() *string {
 	if e == nil {
 		return nil
 	}
-	return e.TaskID
+	return e.ThreadUUID
 }
 
-func (e *Episode) GetThreadID() *string {
+func (e *Episode) GetUUID() *string {
 	if e == nil {
 		return nil
-	}
-	return e.ThreadID
-}
-
-func (e *Episode) GetUUID() string {
-	if e == nil {
-		return ""
 	}
 	return e.UUID
 }
 
+func (e *Episode) GetValidAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ValidAt
+}
+
 func (e *Episode) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
+}
+
+func (e *Episode) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetContent sets the Content field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetContent(content *string) {
+	e.Content = content
+	e.require(episodeFieldContent)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetCreatedAt(createdAt *string) {
+	e.CreatedAt = createdAt
+	e.require(episodeFieldCreatedAt)
+}
+
+// SetDocumentID sets the DocumentID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetDocumentID(documentID *string) {
+	e.DocumentID = documentID
+	e.require(episodeFieldDocumentID)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetGraphUUID(graphUUID *string) {
+	e.GraphUUID = graphUUID
+	e.require(episodeFieldGraphUUID)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetMetadata(metadata map[string]any) {
+	e.Metadata = metadata
+	e.require(episodeFieldMetadata)
+}
+
+// SetProcessed sets the Processed field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetProcessed(processed *bool) {
+	e.Processed = processed
+	e.require(episodeFieldProcessed)
+}
+
+// SetRelevance sets the Relevance field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetRelevance(relevance *float64) {
+	e.Relevance = relevance
+	e.require(episodeFieldRelevance)
+}
+
+// SetRole sets the Role field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetRole(role *string) {
+	e.Role = role
+	e.require(episodeFieldRole)
+}
+
+// SetRoleName sets the RoleName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetRoleName(roleName *string) {
+	e.RoleName = roleName
+	e.require(episodeFieldRoleName)
+}
+
+// SetScore sets the Score field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetScore(score *float64) {
+	e.Score = score
+	e.require(episodeFieldScore)
+}
+
+// SetSource sets the Source field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetSource(source *string) {
+	e.Source = source
+	e.require(episodeFieldSource)
+}
+
+// SetSourceDescription sets the SourceDescription field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetSourceDescription(sourceDescription *string) {
+	e.SourceDescription = sourceDescription
+	e.require(episodeFieldSourceDescription)
+}
+
+// SetThreadUUID sets the ThreadUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetThreadUUID(threadUUID *string) {
+	e.ThreadUUID = threadUUID
+	e.require(episodeFieldThreadUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetUUID(uuid *string) {
+	e.UUID = uuid
+	e.require(episodeFieldUUID)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetValidAt(validAt *string) {
+	e.ValidAt = validAt
+	e.require(episodeFieldValidAt)
 }
 
 func (e *Episode) UnmarshalJSON(data []byte) error {
@@ -800,7 +2541,21 @@ func (e *Episode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (e *Episode) MarshalJSON() ([]byte, error) {
+	type embed Episode
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
 func (e *Episode) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -812,765 +2567,517 @@ func (e *Episode) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
-type EpisodeMentions struct {
-	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
-	Nodes []*EntityNode `json:"nodes,omitempty" url:"nodes,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EpisodeMentions) GetEdges() []*EntityEdge {
-	if e == nil {
-		return nil
-	}
-	return e.Edges
-}
-
-func (e *EpisodeMentions) GetNodes() []*EntityNode {
-	if e == nil {
-		return nil
-	}
-	return e.Nodes
-}
-
-func (e *EpisodeMentions) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EpisodeMentions) UnmarshalJSON(data []byte) error {
-	type unmarshaler EpisodeMentions
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EpisodeMentions(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EpisodeMentions) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EpisodeMetadataFilter struct {
-	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Metadata key to filter on
-	PropertyName string `json:"property_name" url:"property_name"`
-	// Value to compare against. Not required for IS NULL / IS NOT NULL operators.
-	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EpisodeMetadataFilter) GetComparisonOperator() ComparisonOperator {
-	if e == nil {
-		return ""
-	}
-	return e.ComparisonOperator
-}
-
-func (e *EpisodeMetadataFilter) GetPropertyName() string {
-	if e == nil {
-		return ""
-	}
-	return e.PropertyName
-}
-
-func (e *EpisodeMetadataFilter) GetPropertyValue() interface{} {
-	if e == nil {
-		return nil
-	}
-	return e.PropertyValue
-}
-
-func (e *EpisodeMetadataFilter) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EpisodeMetadataFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler EpisodeMetadataFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EpisodeMetadataFilter(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EpisodeMetadataFilter) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type EpisodeResponse struct {
-	Episodes []*Episode `json:"episodes,omitempty" url:"episodes,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (e *EpisodeResponse) GetEpisodes() []*Episode {
-	if e == nil {
-		return nil
-	}
-	return e.Episodes
-}
-
-func (e *EpisodeResponse) GetExtraProperties() map[string]interface{} {
-	return e.extraProperties
-}
-
-func (e *EpisodeResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler EpisodeResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*e = EpisodeResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *e)
-	if err != nil {
-		return err
-	}
-	e.extraProperties = extraProperties
-	e.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (e *EpisodeResponse) String() string {
-	if len(e.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(e); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", e)
-}
-
-type GraphDataType string
-
-const (
-	GraphDataTypeText       GraphDataType = "text"
-	GraphDataTypeJSON       GraphDataType = "json"
-	GraphDataTypeMessage    GraphDataType = "message"
-	GraphDataTypeFactTriple GraphDataType = "fact_triple"
+var (
+	episodePageFieldItems      = big.NewInt(1 << 0)
+	episodePageFieldNextCursor = big.NewInt(1 << 1)
+	episodePageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
-func NewGraphDataTypeFromString(s string) (GraphDataType, error) {
-	switch s {
-	case "text":
-		return GraphDataTypeText, nil
-	case "json":
-		return GraphDataTypeJSON, nil
-	case "message":
-		return GraphDataTypeMessage, nil
-	case "fact_triple":
-		return GraphDataTypeFactTriple, nil
-	}
-	var t GraphDataType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
+type EpisodePage struct {
+	Items      []*Episode `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string    `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int       `json:"total_size,omitempty" url:"total_size,omitempty"`
 
-func (g GraphDataType) Ptr() *GraphDataType {
-	return &g
-}
-
-type GraphEdgesRequest struct {
-	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
-	// of the previous page. Encodes the sort field, direction, and continuation position.
-	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
-	// Sort direction. One of "asc" or "desc" (default "desc").
-	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
-	// Optional filters applied to the listed artifacts. Reuses the graph.search filter type.
-	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
-	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
-	//
-	// Deprecated: prefer Cursor, the opaque cursor returned via the Zep-Next-Cursor response header.
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (g *GraphEdgesRequest) GetCursor() *string {
-	if g == nil {
+func (e *EpisodePage) GetItems() []*Episode {
+	if e == nil {
 		return nil
 	}
-	return g.Cursor
+	return e.Items
 }
 
-func (g *GraphEdgesRequest) GetDirection() *string {
-	if g == nil {
+func (e *EpisodePage) GetNextCursor() *string {
+	if e == nil {
 		return nil
 	}
-	return g.Direction
+	return e.NextCursor
 }
 
-func (g *GraphEdgesRequest) GetFilters() *SearchFilters {
-	if g == nil {
+func (e *EpisodePage) GetTotalSize() *int {
+	if e == nil {
 		return nil
 	}
-	return g.Filters
+	return e.TotalSize
 }
 
-func (g *GraphEdgesRequest) GetLimit() *int {
-	if g == nil {
+func (e *EpisodePage) GetExtraProperties() map[string]interface{} {
+	if e == nil {
 		return nil
 	}
-	return g.Limit
+	return e.extraProperties
 }
 
-func (g *GraphEdgesRequest) GetOrderBy() *string {
-	if g == nil {
-		return nil
+func (e *EpisodePage) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
 	}
-	return g.OrderBy
+	e.explicitFields.Or(e.explicitFields, field)
 }
 
-func (g *GraphEdgesRequest) GetUUIDCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UUIDCursor
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodePage) SetItems(items []*Episode) {
+	e.Items = items
+	e.require(episodePageFieldItems)
 }
 
-func (g *GraphEdgesRequest) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodePage) SetNextCursor(nextCursor *string) {
+	e.NextCursor = nextCursor
+	e.require(episodePageFieldNextCursor)
 }
 
-func (g *GraphEdgesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphEdgesRequest
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodePage) SetTotalSize(totalSize *int) {
+	e.TotalSize = totalSize
+	e.require(episodePageFieldTotalSize)
+}
+
+func (e *EpisodePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodePage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*g = GraphEdgesRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	*e = EpisodePage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
 	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (g *GraphEdgesRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+func (e *EpisodePage) MarshalJSON() ([]byte, error) {
+	type embed EpisodePage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EpisodePage) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(g); err == nil {
+	if value, err := internal.StringifyJSON(e); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", g)
+	return fmt.Sprintf("%#v", e)
 }
 
-type GraphEpisodeListRequest struct {
-	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor
-	// response header of the previous page.
-	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
-	// Sort direction. One of "asc" or "desc". Defaults to "desc".
-	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
-	// Maximum number of episodes to return. An explicit value is clamped to
-	// 50; when omitted, the default page size (100) applies.
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Restricts results to episodes that mention any of the listed node
-	// UUIDs. At most 256 entries; each must be a syntactically valid UUID.
-	MentionedNodeUUIDs []string `json:"mentioned_node_uuids,omitempty" url:"mentioned_node_uuids,omitempty"`
-	// Field to sort by. One of "uuid" or "created_at". Defaults to "uuid".
-	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphEpisodeListRequest) GetCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Cursor
-}
-
-func (g *GraphEpisodeListRequest) GetDirection() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Direction
-}
-
-func (g *GraphEpisodeListRequest) GetLimit() *int {
-	if g == nil {
-		return nil
-	}
-	return g.Limit
-}
-
-func (g *GraphEpisodeListRequest) GetMentionedNodeUUIDs() []string {
-	if g == nil {
-		return nil
-	}
-	return g.MentionedNodeUUIDs
-}
-
-func (g *GraphEpisodeListRequest) GetOrderBy() *string {
-	if g == nil {
-		return nil
-	}
-	return g.OrderBy
-}
-
-func (g *GraphEpisodeListRequest) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphEpisodeListRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphEpisodeListRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphEpisodeListRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphEpisodeListRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type GraphNodeNeighbor struct {
-	Edges []*EntityEdge `json:"edges,omitempty" url:"edges,omitempty"`
-	Node  *EntityNode   `json:"node,omitempty" url:"node,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphNodeNeighbor) GetEdges() []*EntityEdge {
-	if g == nil {
-		return nil
-	}
-	return g.Edges
-}
-
-func (g *GraphNodeNeighbor) GetNode() *EntityNode {
-	if g == nil {
-		return nil
-	}
-	return g.Node
-}
-
-func (g *GraphNodeNeighbor) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphNodeNeighbor) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphNodeNeighbor
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphNodeNeighbor(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphNodeNeighbor) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type GraphNodesRequest struct {
-	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
-	// of the previous page. Encodes the sort field, direction, and continuation position.
-	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
-	// Sort direction. One of "asc" or "desc" (default "desc").
-	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
-	// Optional filters applied to the listed artifacts. Reuses the graph.search filter type.
-	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
-	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
-	//
-	// Deprecated: prefer Cursor, the opaque cursor returned via the Zep-Next-Cursor response header.
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphNodesRequest) GetCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Cursor
-}
-
-func (g *GraphNodesRequest) GetDirection() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Direction
-}
-
-func (g *GraphNodesRequest) GetFilters() *SearchFilters {
-	if g == nil {
-		return nil
-	}
-	return g.Filters
-}
-
-func (g *GraphNodesRequest) GetLimit() *int {
-	if g == nil {
-		return nil
-	}
-	return g.Limit
-}
-
-func (g *GraphNodesRequest) GetOrderBy() *string {
-	if g == nil {
-		return nil
-	}
-	return g.OrderBy
-}
-
-func (g *GraphNodesRequest) GetUUIDCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UUIDCursor
-}
-
-func (g *GraphNodesRequest) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphNodesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphNodesRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphNodesRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphNodesRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type GraphObservationsRequest struct {
-	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
-	// of the previous page. Encodes the sort field, direction, and continuation position.
-	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
-	// Sort direction. One of "asc" or "desc" (default "desc").
-	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
-	// Optional filters applied to the listed artifacts. Reuses the graph.search filter type.
-	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
-	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
-	//
-	// Deprecated: prefer Cursor, the opaque cursor returned via the Zep-Next-Cursor response header.
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphObservationsRequest) GetCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Cursor
-}
-
-func (g *GraphObservationsRequest) GetDirection() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Direction
-}
-
-func (g *GraphObservationsRequest) GetFilters() *SearchFilters {
-	if g == nil {
-		return nil
-	}
-	return g.Filters
-}
-
-func (g *GraphObservationsRequest) GetLimit() *int {
-	if g == nil {
-		return nil
-	}
-	return g.Limit
-}
-
-func (g *GraphObservationsRequest) GetOrderBy() *string {
-	if g == nil {
-		return nil
-	}
-	return g.OrderBy
-}
-
-func (g *GraphObservationsRequest) GetUUIDCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UUIDCursor
-}
-
-func (g *GraphObservationsRequest) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphObservationsRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphObservationsRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphObservationsRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphObservationsRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type GraphThreadSummariesRequest struct {
-	// Opaque cursor for pagination, obtained from the Zep-Next-Cursor response header
-	// of the previous page. Encodes the sort field, direction, and continuation position.
-	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
-	// Sort direction. One of "asc" or "desc" (default "desc").
-	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
-	// Optional filters applied to the listed artifacts. Reuses the graph.search filter type.
-	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
-	// Maximum number of items to return
-	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
-	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
-	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
-	//
-	// Deprecated: prefer Cursor, the opaque cursor returned via the Zep-Next-Cursor response header.
-	UUIDCursor *string `json:"uuid_cursor,omitempty" url:"uuid_cursor,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (g *GraphThreadSummariesRequest) GetCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Cursor
-}
-
-func (g *GraphThreadSummariesRequest) GetDirection() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Direction
-}
-
-func (g *GraphThreadSummariesRequest) GetFilters() *SearchFilters {
-	if g == nil {
-		return nil
-	}
-	return g.Filters
-}
-
-func (g *GraphThreadSummariesRequest) GetLimit() *int {
-	if g == nil {
-		return nil
-	}
-	return g.Limit
-}
-
-func (g *GraphThreadSummariesRequest) GetOrderBy() *string {
-	if g == nil {
-		return nil
-	}
-	return g.OrderBy
-}
-
-func (g *GraphThreadSummariesRequest) GetUUIDCursor() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UUIDCursor
-}
-
-func (g *GraphThreadSummariesRequest) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GraphThreadSummariesRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler GraphThreadSummariesRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GraphThreadSummariesRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GraphThreadSummariesRequest) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-// Logical operator: "and" or "or"
-type GraphitiMetadataFilterGroupType string
-
-const (
-	GraphitiMetadataFilterGroupTypeAnd GraphitiMetadataFilterGroupType = "and"
-	GraphitiMetadataFilterGroupTypeOr  GraphitiMetadataFilterGroupType = "or"
+var (
+	errorBodyFieldCode      = big.NewInt(1 << 0)
+	errorBodyFieldDetails   = big.NewInt(1 << 1)
+	errorBodyFieldMessage   = big.NewInt(1 << 2)
+	errorBodyFieldParam     = big.NewInt(1 << 3)
+	errorBodyFieldRequestID = big.NewInt(1 << 4)
 )
 
-func NewGraphitiMetadataFilterGroupTypeFromString(s string) (GraphitiMetadataFilterGroupType, error) {
-	switch s {
-	case "and":
-		return GraphitiMetadataFilterGroupTypeAnd, nil
-	case "or":
-		return GraphitiMetadataFilterGroupTypeOr, nil
-	}
-	var t GraphitiMetadataFilterGroupType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
+type ErrorBody struct {
+	Code      *string        `json:"code,omitempty" url:"code,omitempty"`
+	Details   map[string]any `json:"details,omitempty" url:"details,omitempty"`
+	Message   *string        `json:"message,omitempty" url:"message,omitempty"`
+	Param     *string        `json:"param,omitempty" url:"param,omitempty"`
+	RequestID *string        `json:"request_id,omitempty" url:"request_id,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
 }
 
-func (g GraphitiMetadataFilterGroupType) Ptr() *GraphitiMetadataFilterGroupType {
-	return &g
+func (e *ErrorBody) GetCode() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Code
 }
+
+func (e *ErrorBody) GetDetails() map[string]any {
+	if e == nil {
+		return nil
+	}
+	return e.Details
+}
+
+func (e *ErrorBody) GetMessage() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Message
+}
+
+func (e *ErrorBody) GetParam() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Param
+}
+
+func (e *ErrorBody) GetRequestID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.RequestID
+}
+
+func (e *ErrorBody) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *ErrorBody) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetCode sets the Code field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *ErrorBody) SetCode(code *string) {
+	e.Code = code
+	e.require(errorBodyFieldCode)
+}
+
+// SetDetails sets the Details field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *ErrorBody) SetDetails(details map[string]any) {
+	e.Details = details
+	e.require(errorBodyFieldDetails)
+}
+
+// SetMessage sets the Message field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *ErrorBody) SetMessage(message *string) {
+	e.Message = message
+	e.require(errorBodyFieldMessage)
+}
+
+// SetParam sets the Param field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *ErrorBody) SetParam(param *string) {
+	e.Param = param
+	e.require(errorBodyFieldParam)
+}
+
+// SetRequestID sets the RequestID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *ErrorBody) SetRequestID(requestID *string) {
+	e.RequestID = requestID
+	e.require(errorBodyFieldRequestID)
+}
+
+func (e *ErrorBody) UnmarshalJSON(data []byte) error {
+	type unmarshaler ErrorBody
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = ErrorBody(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *ErrorBody) MarshalJSON() ([]byte, error) {
+	type embed ErrorBody
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *ErrorBody) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
+	instructionsFieldInherited    = big.NewInt(1 << 0)
+	instructionsFieldInstructions = big.NewInt(1 << 1)
+)
+
+type Instructions struct {
+	Inherited    *bool            `json:"inherited,omitempty" url:"inherited,omitempty"`
+	Instructions []map[string]any `json:"instructions,omitempty" url:"instructions,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *Instructions) GetInherited() *bool {
+	if i == nil {
+		return nil
+	}
+	return i.Inherited
+}
+
+func (i *Instructions) GetInstructions() []map[string]any {
+	if i == nil {
+		return nil
+	}
+	return i.Instructions
+}
+
+func (i *Instructions) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *Instructions) require(field *big.Int) {
+	if i.explicitFields == nil {
+		i.explicitFields = big.NewInt(0)
+	}
+	i.explicitFields.Or(i.explicitFields, field)
+}
+
+// SetInherited sets the Inherited field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *Instructions) SetInherited(inherited *bool) {
+	i.Inherited = inherited
+	i.require(instructionsFieldInherited)
+}
+
+// SetInstructions sets the Instructions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *Instructions) SetInstructions(instructions []map[string]any) {
+	i.Instructions = instructions
+	i.require(instructionsFieldInstructions)
+}
+
+func (i *Instructions) UnmarshalJSON(data []byte) error {
+	type unmarshaler Instructions
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = Instructions(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *Instructions) MarshalJSON() ([]byte, error) {
+	type embed Instructions
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *Instructions) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	lookupRequestFieldGraphID  = big.NewInt(1 << 0)
+	lookupRequestFieldThreadID = big.NewInt(1 << 1)
+	lookupRequestFieldUserID   = big.NewInt(1 << 2)
+)
+
+type LookupRequest struct {
+	GraphID  *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
+	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
+	UserID   *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (l *LookupRequest) GetGraphID() *string {
+	if l == nil {
+		return nil
+	}
+	return l.GraphID
+}
+
+func (l *LookupRequest) GetThreadID() *string {
+	if l == nil {
+		return nil
+	}
+	return l.ThreadID
+}
+
+func (l *LookupRequest) GetUserID() *string {
+	if l == nil {
+		return nil
+	}
+	return l.UserID
+}
+
+func (l *LookupRequest) GetExtraProperties() map[string]interface{} {
+	if l == nil {
+		return nil
+	}
+	return l.extraProperties
+}
+
+func (l *LookupRequest) require(field *big.Int) {
+	if l.explicitFields == nil {
+		l.explicitFields = big.NewInt(0)
+	}
+	l.explicitFields.Or(l.explicitFields, field)
+}
+
+// SetGraphID sets the GraphID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (l *LookupRequest) SetGraphID(graphID *string) {
+	l.GraphID = graphID
+	l.require(lookupRequestFieldGraphID)
+}
+
+// SetThreadID sets the ThreadID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (l *LookupRequest) SetThreadID(threadID *string) {
+	l.ThreadID = threadID
+	l.require(lookupRequestFieldThreadID)
+}
+
+// SetUserID sets the UserID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (l *LookupRequest) SetUserID(userID *string) {
+	l.UserID = userID
+	l.require(lookupRequestFieldUserID)
+}
+
+func (l *LookupRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler LookupRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = LookupRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *l)
+	if err != nil {
+		return err
+	}
+	l.extraProperties = extraProperties
+	l.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *LookupRequest) MarshalJSON() ([]byte, error) {
+	type embed LookupRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*l),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, l.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (l *LookupRequest) String() string {
+	if l == nil {
+		return "<nil>"
+	}
+	if len(l.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
+var (
+	messageFieldContent    = big.NewInt(1 << 0)
+	messageFieldCreatedAt  = big.NewInt(1 << 1)
+	messageFieldMetadata   = big.NewInt(1 << 2)
+	messageFieldName       = big.NewInt(1 << 3)
+	messageFieldProcessed  = big.NewInt(1 << 4)
+	messageFieldRole       = big.NewInt(1 << 5)
+	messageFieldThreadUUID = big.NewInt(1 << 6)
+	messageFieldUUID       = big.NewInt(1 << 7)
+)
 
 type Message struct {
-	// The content of the message.
-	Content string `json:"content" url:"content"`
-	// The timestamp of when the message was created.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// The metadata associated with the message.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// Customizable name of the sender of the message (e.g., "john", "sales_agent").
-	Name *string `json:"name,omitempty" url:"name,omitempty"`
-	// Whether the message has been processed.
-	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
-	// The role of message sender (e.g., "user", "system").
-	Role RoleType `json:"role" url:"role"`
-	// The unique identifier of the message.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Content    *string        `json:"content,omitempty" url:"content,omitempty"`
+	CreatedAt  *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Metadata   map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Name       *string        `json:"name,omitempty" url:"name,omitempty"`
+	Processed  *bool          `json:"processed,omitempty" url:"processed,omitempty"`
+	Role       *string        `json:"role,omitempty" url:"role,omitempty"`
+	ThreadUUID *string        `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	UUID       *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (m *Message) GetContent() string {
+func (m *Message) GetContent() *string {
 	if m == nil {
-		return ""
+		return nil
 	}
 	return m.Content
 }
@@ -1582,7 +3089,7 @@ func (m *Message) GetCreatedAt() *string {
 	return m.CreatedAt
 }
 
-func (m *Message) GetMetadata() map[string]interface{} {
+func (m *Message) GetMetadata() map[string]any {
 	if m == nil {
 		return nil
 	}
@@ -1603,11 +3110,18 @@ func (m *Message) GetProcessed() *bool {
 	return m.Processed
 }
 
-func (m *Message) GetRole() RoleType {
+func (m *Message) GetRole() *string {
 	if m == nil {
-		return ""
+		return nil
 	}
 	return m.Role
+}
+
+func (m *Message) GetThreadUUID() *string {
+	if m == nil {
+		return nil
+	}
+	return m.ThreadUUID
 }
 
 func (m *Message) GetUUID() *string {
@@ -1618,7 +3132,73 @@ func (m *Message) GetUUID() *string {
 }
 
 func (m *Message) GetExtraProperties() map[string]interface{} {
+	if m == nil {
+		return nil
+	}
 	return m.extraProperties
+}
+
+func (m *Message) require(field *big.Int) {
+	if m.explicitFields == nil {
+		m.explicitFields = big.NewInt(0)
+	}
+	m.explicitFields.Or(m.explicitFields, field)
+}
+
+// SetContent sets the Content field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetContent(content *string) {
+	m.Content = content
+	m.require(messageFieldContent)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetCreatedAt(createdAt *string) {
+	m.CreatedAt = createdAt
+	m.require(messageFieldCreatedAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetMetadata(metadata map[string]any) {
+	m.Metadata = metadata
+	m.require(messageFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetName(name *string) {
+	m.Name = name
+	m.require(messageFieldName)
+}
+
+// SetProcessed sets the Processed field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetProcessed(processed *bool) {
+	m.Processed = processed
+	m.require(messageFieldProcessed)
+}
+
+// SetRole sets the Role field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetRole(role *string) {
+	m.Role = role
+	m.require(messageFieldRole)
+}
+
+// SetThreadUUID sets the ThreadUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetThreadUUID(threadUUID *string) {
+	m.ThreadUUID = threadUUID
+	m.require(messageFieldThreadUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetUUID(uuid *string) {
+	m.UUID = uuid
+	m.require(messageFieldUUID)
 }
 
 func (m *Message) UnmarshalJSON(data []byte) error {
@@ -1637,7 +3217,21 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (m *Message) MarshalJSON() ([]byte, error) {
+	type embed Message
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*m),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, m.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
 func (m *Message) String() string {
+	if m == nil {
+		return "<nil>"
+	}
 	if len(m.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
 			return value
@@ -1649,482 +3243,1319 @@ func (m *Message) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
-type MetadataFilterGroup struct {
-	// Leaf filters (predicates on metadata key-value pairs)
-	Filters []*EpisodeMetadataFilter `json:"filters,omitempty" url:"filters,omitempty"`
-	// Nested sub-groups for composing complex boolean expressions
-	Groups []*MetadataFilterGroup `json:"groups,omitempty" url:"groups,omitempty"`
-	// Logical operator: "and" or "or"
-	Type GraphitiMetadataFilterGroupType `json:"type" url:"type"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (m *MetadataFilterGroup) GetFilters() []*EpisodeMetadataFilter {
-	if m == nil {
-		return nil
-	}
-	return m.Filters
-}
-
-func (m *MetadataFilterGroup) GetGroups() []*MetadataFilterGroup {
-	if m == nil {
-		return nil
-	}
-	return m.Groups
-}
-
-func (m *MetadataFilterGroup) GetType() GraphitiMetadataFilterGroupType {
-	if m == nil {
-		return ""
-	}
-	return m.Type
-}
-
-func (m *MetadataFilterGroup) GetExtraProperties() map[string]interface{} {
-	return m.extraProperties
-}
-
-func (m *MetadataFilterGroup) UnmarshalJSON(data []byte) error {
-	type unmarshaler MetadataFilterGroup
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*m = MetadataFilterGroup(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *m)
-	if err != nil {
-		return err
-	}
-	m.extraProperties = extraProperties
-	m.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (m *MetadataFilterGroup) String() string {
-	if len(m.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(m); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", m)
-}
-
-type PropertyFilter struct {
-	// Comparison operator for property filter
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Property name to filter on
-	PropertyName string `json:"property_name" url:"property_name"`
-	// Property value to match on. Accepted types: string, int, float64, bool, or nil.
-	// Invalid types (e.g., arrays, objects) will be rejected by validation.
-	// Must be non-nil for non-null operators (`=`, `<>`, `>`, `<`, `>=`, `<=`).
-	PropertyValue interface{} `json:"property_value,omitempty" url:"property_value,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (p *PropertyFilter) GetComparisonOperator() ComparisonOperator {
-	if p == nil {
-		return ""
-	}
-	return p.ComparisonOperator
-}
-
-func (p *PropertyFilter) GetPropertyName() string {
-	if p == nil {
-		return ""
-	}
-	return p.PropertyName
-}
-
-func (p *PropertyFilter) GetPropertyValue() interface{} {
-	if p == nil {
-		return nil
-	}
-	return p.PropertyValue
-}
-
-func (p *PropertyFilter) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PropertyFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler PropertyFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PropertyFilter(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-	p.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PropertyFilter) String() string {
-	if len(p.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type RoleType string
-
-const (
-	RoleTypeNoRole        RoleType = "norole"
-	RoleTypeSystemRole    RoleType = "system"
-	RoleTypeAssistantRole RoleType = "assistant"
-	RoleTypeUserRole      RoleType = "user"
-	RoleTypeFunctionRole  RoleType = "function"
-	RoleTypeToolRole      RoleType = "tool"
+var (
+	neighborEntryFieldEdges = big.NewInt(1 << 0)
+	neighborEntryFieldNode  = big.NewInt(1 << 1)
 )
 
-func NewRoleTypeFromString(s string) (RoleType, error) {
-	switch s {
-	case "norole":
-		return RoleTypeNoRole, nil
-	case "system":
-		return RoleTypeSystemRole, nil
-	case "assistant":
-		return RoleTypeAssistantRole, nil
-	case "user":
-		return RoleTypeUserRole, nil
-	case "function":
-		return RoleTypeFunctionRole, nil
-	case "tool":
-		return RoleTypeToolRole, nil
-	}
-	var t RoleType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
+type NeighborEntry struct {
+	Edges []*Edge `json:"edges,omitempty" url:"edges,omitempty"`
+	Node  *Node   `json:"node,omitempty" url:"node,omitempty"`
 
-func (r RoleType) Ptr() *RoleType {
-	return &r
-}
-
-type SearchFilters struct {
-	// List of node UUIDs to filter edges on: an edge matches if its source OR
-	// target node UUID is in this list. Applies to edges only; rejected on
-	// requests whose result type contains no edges. Max 256 entries.
-	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// 2D array of date filters for the created_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
-	// This translates to: `(created_at > date1 AND created_at < date2) OR (created_at = date3)`
-	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// List of edge types to filter on
-	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// List of edge UUIDs to filter on. Max 256 to align with graph-service filter limits.
-	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
-	// [Experimental] Episode metadata filter. Restricts results to edges/nodes derived from episodes
-	// matching the metadata predicates. Uses explicit AND/OR groups. This feature is experimental and may change in future releases.
-	EpisodeMetadataFilters *MetadataFilterGroup `json:"episode_metadata_filters,omitempty" url:"episode_metadata_filters,omitempty"`
-	// List of episode UUIDs to filter on. An edge matches if it was derived
-	// from any listed episode; a node matches if it is mentioned by any
-	// listed episode. Valid for both edge and node result types. Max 256
-	// entries.
-	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	// List of edge types to exclude from results
-	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
-	// List of node labels to exclude from results
-	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
-	// 2D array of date filters for the expired_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
-	// This translates to: `(expired_at > date1 AND expired_at < date2) OR (expired_at = date3)`
-	ExpiredAt [][]*DateFilter `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	// 2D array of date filters for the invalid_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
-	// This translates to: `(invalid_at > date1 AND invalid_at < date2) OR (invalid_at = date3)`
-	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	// List of node labels to filter on
-	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
-	// List of property filters to apply to nodes and edges
-	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
-	// List of node UUIDs to filter edges on: an edge matches if its source
-	// node UUID is in this list. Applies to edges only; rejected on requests
-	// whose result type contains no edges. Max 256 entries.
-	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
-	// List of node UUIDs to filter edges on: an edge matches if its target
-	// node UUID is in this list. Applies to edges only; rejected on requests
-	// whose result type contains no edges. Max 256 entries.
-	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
-	// 2D array of date filters for the valid_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
-	// This translates to: `(valid_at > date1 AND valid_at < date2) OR (valid_at = date3)`
-	ValidAt [][]*DateFilter `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *SearchFilters) GetConnectedNodeUUIDs() []string {
-	if s == nil {
+func (n *NeighborEntry) GetEdges() []*Edge {
+	if n == nil {
 		return nil
 	}
-	return s.ConnectedNodeUUIDs
+	return n.Edges
 }
 
-func (s *SearchFilters) GetCreatedAt() [][]*DateFilter {
-	if s == nil {
+func (n *NeighborEntry) GetNode() *Node {
+	if n == nil {
 		return nil
 	}
-	return s.CreatedAt
+	return n.Node
 }
 
-func (s *SearchFilters) GetEdgeTypes() []string {
-	if s == nil {
+func (n *NeighborEntry) GetExtraProperties() map[string]interface{} {
+	if n == nil {
 		return nil
 	}
-	return s.EdgeTypes
+	return n.extraProperties
 }
 
-func (s *SearchFilters) GetEdgeUUIDs() []string {
-	if s == nil {
-		return nil
+func (n *NeighborEntry) require(field *big.Int) {
+	if n.explicitFields == nil {
+		n.explicitFields = big.NewInt(0)
 	}
-	return s.EdgeUUIDs
+	n.explicitFields.Or(n.explicitFields, field)
 }
 
-func (s *SearchFilters) GetEpisodeMetadataFilters() *MetadataFilterGroup {
-	if s == nil {
-		return nil
-	}
-	return s.EpisodeMetadataFilters
+// SetEdges sets the Edges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborEntry) SetEdges(edges []*Edge) {
+	n.Edges = edges
+	n.require(neighborEntryFieldEdges)
 }
 
-func (s *SearchFilters) GetEpisodeUUIDs() []string {
-	if s == nil {
-		return nil
-	}
-	return s.EpisodeUUIDs
+// SetNode sets the Node field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborEntry) SetNode(node *Node) {
+	n.Node = node
+	n.require(neighborEntryFieldNode)
 }
 
-func (s *SearchFilters) GetExcludeEdgeTypes() []string {
-	if s == nil {
-		return nil
-	}
-	return s.ExcludeEdgeTypes
-}
-
-func (s *SearchFilters) GetExcludeNodeLabels() []string {
-	if s == nil {
-		return nil
-	}
-	return s.ExcludeNodeLabels
-}
-
-func (s *SearchFilters) GetExpiredAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.ExpiredAt
-}
-
-func (s *SearchFilters) GetInvalidAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.InvalidAt
-}
-
-func (s *SearchFilters) GetNodeLabels() []string {
-	if s == nil {
-		return nil
-	}
-	return s.NodeLabels
-}
-
-func (s *SearchFilters) GetPropertyFilters() []*PropertyFilter {
-	if s == nil {
-		return nil
-	}
-	return s.PropertyFilters
-}
-
-func (s *SearchFilters) GetSourceNodeUUIDs() []string {
-	if s == nil {
-		return nil
-	}
-	return s.SourceNodeUUIDs
-}
-
-func (s *SearchFilters) GetTargetNodeUUIDs() []string {
-	if s == nil {
-		return nil
-	}
-	return s.TargetNodeUUIDs
-}
-
-func (s *SearchFilters) GetValidAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.ValidAt
-}
-
-func (s *SearchFilters) GetExtraProperties() map[string]interface{} {
-	return s.extraProperties
-}
-
-func (s *SearchFilters) UnmarshalJSON(data []byte) error {
-	type unmarshaler SearchFilters
+func (n *NeighborEntry) UnmarshalJSON(data []byte) error {
+	type unmarshaler NeighborEntry
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*s = SearchFilters(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	*n = NeighborEntry(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *n)
 	if err != nil {
 		return err
 	}
-	s.extraProperties = extraProperties
-	s.rawJSON = json.RawMessage(data)
+	n.extraProperties = extraProperties
+	n.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (s *SearchFilters) String() string {
-	if len(s.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+func (n *NeighborEntry) MarshalJSON() ([]byte, error) {
+	type embed NeighborEntry
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, n.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (n *NeighborEntry) String() string {
+	if n == nil {
+		return "<nil>"
+	}
+	if len(n.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(s); err == nil {
+	if value, err := internal.StringifyJSON(n); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", s)
+	return fmt.Sprintf("%#v", n)
 }
 
-type SuccessResponse struct {
-	Message *string `json:"message,omitempty" url:"message,omitempty"`
+var (
+	neighborPageFieldItems      = big.NewInt(1 << 0)
+	neighborPageFieldNextCursor = big.NewInt(1 << 1)
+	neighborPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type NeighborPage struct {
+	Items      []*NeighborEntry `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string          `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int             `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (s *SuccessResponse) GetMessage() *string {
-	if s == nil {
+func (n *NeighborPage) GetItems() []*NeighborEntry {
+	if n == nil {
 		return nil
 	}
-	return s.Message
+	return n.Items
 }
 
-func (s *SuccessResponse) GetExtraProperties() map[string]interface{} {
-	return s.extraProperties
+func (n *NeighborPage) GetNextCursor() *string {
+	if n == nil {
+		return nil
+	}
+	return n.NextCursor
 }
 
-func (s *SuccessResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler SuccessResponse
+func (n *NeighborPage) GetTotalSize() *int {
+	if n == nil {
+		return nil
+	}
+	return n.TotalSize
+}
+
+func (n *NeighborPage) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
+	return n.extraProperties
+}
+
+func (n *NeighborPage) require(field *big.Int) {
+	if n.explicitFields == nil {
+		n.explicitFields = big.NewInt(0)
+	}
+	n.explicitFields.Or(n.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborPage) SetItems(items []*NeighborEntry) {
+	n.Items = items
+	n.require(neighborPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborPage) SetNextCursor(nextCursor *string) {
+	n.NextCursor = nextCursor
+	n.require(neighborPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborPage) SetTotalSize(totalSize *int) {
+	n.TotalSize = totalSize
+	n.require(neighborPageFieldTotalSize)
+}
+
+func (n *NeighborPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler NeighborPage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*s = SuccessResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	*n = NeighborPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *n)
 	if err != nil {
 		return err
 	}
-	s.extraProperties = extraProperties
-	s.rawJSON = json.RawMessage(data)
+	n.extraProperties = extraProperties
+	n.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (s *SuccessResponse) String() string {
-	if len(s.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+func (n *NeighborPage) MarshalJSON() ([]byte, error) {
+	type embed NeighborPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, n.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (n *NeighborPage) String() string {
+	if n == nil {
+		return "<nil>"
+	}
+	if len(n.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(s); err == nil {
+	if value, err := internal.StringifyJSON(n); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", s)
+	return fmt.Sprintf("%#v", n)
 }
 
-type Thread struct {
-	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	ThreadID    *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
-	UserID      *string `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UserUUID    *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
-	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+var (
+	nodeFieldAttributes = big.NewInt(1 << 0)
+	nodeFieldCreatedAt  = big.NewInt(1 << 1)
+	nodeFieldGraphUUID  = big.NewInt(1 << 2)
+	nodeFieldLabels     = big.NewInt(1 << 3)
+	nodeFieldName       = big.NewInt(1 << 4)
+	nodeFieldRelevance  = big.NewInt(1 << 5)
+	nodeFieldScore      = big.NewInt(1 << 6)
+	nodeFieldSummary    = big.NewInt(1 << 7)
+	nodeFieldUUID       = big.NewInt(1 << 8)
+)
+
+type Node struct {
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	CreatedAt  *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	GraphUUID  *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	Labels     []string       `json:"labels,omitempty" url:"labels,omitempty"`
+	Name       *string        `json:"name,omitempty" url:"name,omitempty"`
+	Relevance  *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
+	Score      *float64       `json:"score,omitempty" url:"score,omitempty"`
+	Summary    *string        `json:"summary,omitempty" url:"summary,omitempty"`
+	UUID       *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (t *Thread) GetCreatedAt() *string {
+func (n *Node) GetAttributes() map[string]any {
+	if n == nil {
+		return nil
+	}
+	return n.Attributes
+}
+
+func (n *Node) GetCreatedAt() *string {
+	if n == nil {
+		return nil
+	}
+	return n.CreatedAt
+}
+
+func (n *Node) GetGraphUUID() *string {
+	if n == nil {
+		return nil
+	}
+	return n.GraphUUID
+}
+
+func (n *Node) GetLabels() []string {
+	if n == nil {
+		return nil
+	}
+	return n.Labels
+}
+
+func (n *Node) GetName() *string {
+	if n == nil {
+		return nil
+	}
+	return n.Name
+}
+
+func (n *Node) GetRelevance() *float64 {
+	if n == nil {
+		return nil
+	}
+	return n.Relevance
+}
+
+func (n *Node) GetScore() *float64 {
+	if n == nil {
+		return nil
+	}
+	return n.Score
+}
+
+func (n *Node) GetSummary() *string {
+	if n == nil {
+		return nil
+	}
+	return n.Summary
+}
+
+func (n *Node) GetUUID() *string {
+	if n == nil {
+		return nil
+	}
+	return n.UUID
+}
+
+func (n *Node) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
+	return n.extraProperties
+}
+
+func (n *Node) require(field *big.Int) {
+	if n.explicitFields == nil {
+		n.explicitFields = big.NewInt(0)
+	}
+	n.explicitFields.Or(n.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetAttributes(attributes map[string]any) {
+	n.Attributes = attributes
+	n.require(nodeFieldAttributes)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetCreatedAt(createdAt *string) {
+	n.CreatedAt = createdAt
+	n.require(nodeFieldCreatedAt)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetGraphUUID(graphUUID *string) {
+	n.GraphUUID = graphUUID
+	n.require(nodeFieldGraphUUID)
+}
+
+// SetLabels sets the Labels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetLabels(labels []string) {
+	n.Labels = labels
+	n.require(nodeFieldLabels)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetName(name *string) {
+	n.Name = name
+	n.require(nodeFieldName)
+}
+
+// SetRelevance sets the Relevance field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetRelevance(relevance *float64) {
+	n.Relevance = relevance
+	n.require(nodeFieldRelevance)
+}
+
+// SetScore sets the Score field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetScore(score *float64) {
+	n.Score = score
+	n.require(nodeFieldScore)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetSummary(summary *string) {
+	n.Summary = summary
+	n.require(nodeFieldSummary)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetUUID(uuid *string) {
+	n.UUID = uuid
+	n.require(nodeFieldUUID)
+}
+
+func (n *Node) UnmarshalJSON(data []byte) error {
+	type unmarshaler Node
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = Node(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *n)
+	if err != nil {
+		return err
+	}
+	n.extraProperties = extraProperties
+	n.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *Node) MarshalJSON() ([]byte, error) {
+	type embed Node
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, n.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (n *Node) String() string {
+	if n == nil {
+		return "<nil>"
+	}
+	if len(n.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+var (
+	nodePageFieldItems      = big.NewInt(1 << 0)
+	nodePageFieldNextCursor = big.NewInt(1 << 1)
+	nodePageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type NodePage struct {
+	Items      []*Node `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int    `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (n *NodePage) GetItems() []*Node {
+	if n == nil {
+		return nil
+	}
+	return n.Items
+}
+
+func (n *NodePage) GetNextCursor() *string {
+	if n == nil {
+		return nil
+	}
+	return n.NextCursor
+}
+
+func (n *NodePage) GetTotalSize() *int {
+	if n == nil {
+		return nil
+	}
+	return n.TotalSize
+}
+
+func (n *NodePage) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
+	return n.extraProperties
+}
+
+func (n *NodePage) require(field *big.Int) {
+	if n.explicitFields == nil {
+		n.explicitFields = big.NewInt(0)
+	}
+	n.explicitFields.Or(n.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodePage) SetItems(items []*Node) {
+	n.Items = items
+	n.require(nodePageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodePage) SetNextCursor(nextCursor *string) {
+	n.NextCursor = nextCursor
+	n.require(nodePageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodePage) SetTotalSize(totalSize *int) {
+	n.TotalSize = totalSize
+	n.require(nodePageFieldTotalSize)
+}
+
+func (n *NodePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler NodePage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NodePage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *n)
+	if err != nil {
+		return err
+	}
+	n.extraProperties = extraProperties
+	n.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NodePage) MarshalJSON() ([]byte, error) {
+	type embed NodePage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, n.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (n *NodePage) String() string {
+	if n == nil {
+		return "<nil>"
+	}
+	if len(n.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+var (
+	observationFieldAttributes   = big.NewInt(1 << 0)
+	observationFieldCreatedAt    = big.NewInt(1 << 1)
+	observationFieldEpisodeUUIDs = big.NewInt(1 << 2)
+	observationFieldGraphUUID    = big.NewInt(1 << 3)
+	observationFieldLabels       = big.NewInt(1 << 4)
+	observationFieldName         = big.NewInt(1 << 5)
+	observationFieldRelevance    = big.NewInt(1 << 6)
+	observationFieldScore        = big.NewInt(1 << 7)
+	observationFieldSummary      = big.NewInt(1 << 8)
+	observationFieldUUID         = big.NewInt(1 << 9)
+)
+
+type Observation struct {
+	Attributes   map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	CreatedAt    *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	EpisodeUUIDs []string       `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	GraphUUID    *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	Labels       []string       `json:"labels,omitempty" url:"labels,omitempty"`
+	Name         *string        `json:"name,omitempty" url:"name,omitempty"`
+	Relevance    *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
+	Score        *float64       `json:"score,omitempty" url:"score,omitempty"`
+	Summary      *string        `json:"summary,omitempty" url:"summary,omitempty"`
+	UUID         *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *Observation) GetAttributes() map[string]any {
+	if o == nil {
+		return nil
+	}
+	return o.Attributes
+}
+
+func (o *Observation) GetCreatedAt() *string {
+	if o == nil {
+		return nil
+	}
+	return o.CreatedAt
+}
+
+func (o *Observation) GetEpisodeUUIDs() []string {
+	if o == nil {
+		return nil
+	}
+	return o.EpisodeUUIDs
+}
+
+func (o *Observation) GetGraphUUID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.GraphUUID
+}
+
+func (o *Observation) GetLabels() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Labels
+}
+
+func (o *Observation) GetName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Name
+}
+
+func (o *Observation) GetRelevance() *float64 {
+	if o == nil {
+		return nil
+	}
+	return o.Relevance
+}
+
+func (o *Observation) GetScore() *float64 {
+	if o == nil {
+		return nil
+	}
+	return o.Score
+}
+
+func (o *Observation) GetSummary() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Summary
+}
+
+func (o *Observation) GetUUID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.UUID
+}
+
+func (o *Observation) GetExtraProperties() map[string]interface{} {
+	if o == nil {
+		return nil
+	}
+	return o.extraProperties
+}
+
+func (o *Observation) require(field *big.Int) {
+	if o.explicitFields == nil {
+		o.explicitFields = big.NewInt(0)
+	}
+	o.explicitFields.Or(o.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetAttributes(attributes map[string]any) {
+	o.Attributes = attributes
+	o.require(observationFieldAttributes)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetCreatedAt(createdAt *string) {
+	o.CreatedAt = createdAt
+	o.require(observationFieldCreatedAt)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetEpisodeUUIDs(episodeUUIDs []string) {
+	o.EpisodeUUIDs = episodeUUIDs
+	o.require(observationFieldEpisodeUUIDs)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetGraphUUID(graphUUID *string) {
+	o.GraphUUID = graphUUID
+	o.require(observationFieldGraphUUID)
+}
+
+// SetLabels sets the Labels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetLabels(labels []string) {
+	o.Labels = labels
+	o.require(observationFieldLabels)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetName(name *string) {
+	o.Name = name
+	o.require(observationFieldName)
+}
+
+// SetRelevance sets the Relevance field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetRelevance(relevance *float64) {
+	o.Relevance = relevance
+	o.require(observationFieldRelevance)
+}
+
+// SetScore sets the Score field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetScore(score *float64) {
+	o.Score = score
+	o.require(observationFieldScore)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetSummary(summary *string) {
+	o.Summary = summary
+	o.require(observationFieldSummary)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetUUID(uuid *string) {
+	o.UUID = uuid
+	o.require(observationFieldUUID)
+}
+
+func (o *Observation) UnmarshalJSON(data []byte) error {
+	type unmarshaler Observation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = Observation(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *Observation) MarshalJSON() ([]byte, error) {
+	type embed Observation
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (o *Observation) String() string {
+	if o == nil {
+		return "<nil>"
+	}
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+var (
+	observationPageFieldItems      = big.NewInt(1 << 0)
+	observationPageFieldNextCursor = big.NewInt(1 << 1)
+	observationPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type ObservationPage struct {
+	Items      []*Observation `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string        `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int           `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *ObservationPage) GetItems() []*Observation {
+	if o == nil {
+		return nil
+	}
+	return o.Items
+}
+
+func (o *ObservationPage) GetNextCursor() *string {
+	if o == nil {
+		return nil
+	}
+	return o.NextCursor
+}
+
+func (o *ObservationPage) GetTotalSize() *int {
+	if o == nil {
+		return nil
+	}
+	return o.TotalSize
+}
+
+func (o *ObservationPage) GetExtraProperties() map[string]interface{} {
+	if o == nil {
+		return nil
+	}
+	return o.extraProperties
+}
+
+func (o *ObservationPage) require(field *big.Int) {
+	if o.explicitFields == nil {
+		o.explicitFields = big.NewInt(0)
+	}
+	o.explicitFields.Or(o.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationPage) SetItems(items []*Observation) {
+	o.Items = items
+	o.require(observationPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationPage) SetNextCursor(nextCursor *string) {
+	o.NextCursor = nextCursor
+	o.require(observationPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationPage) SetTotalSize(totalSize *int) {
+	o.TotalSize = totalSize
+	o.require(observationPageFieldTotalSize)
+}
+
+func (o *ObservationPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler ObservationPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = ObservationPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *ObservationPage) MarshalJSON() ([]byte, error) {
+	type embed ObservationPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (o *ObservationPage) String() string {
+	if o == nil {
+		return "<nil>"
+	}
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+var (
+	observationSteeringFieldInherited   = big.NewInt(1 << 0)
+	observationSteeringFieldInstruction = big.NewInt(1 << 1)
+	observationSteeringFieldTypes       = big.NewInt(1 << 2)
+)
+
+type ObservationSteering struct {
+	Inherited   *bool            `json:"inherited,omitempty" url:"inherited,omitempty"`
+	Instruction *string          `json:"instruction,omitempty" url:"instruction,omitempty"`
+	Types       []map[string]any `json:"types,omitempty" url:"types,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *ObservationSteering) GetInherited() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.Inherited
+}
+
+func (o *ObservationSteering) GetInstruction() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Instruction
+}
+
+func (o *ObservationSteering) GetTypes() []map[string]any {
+	if o == nil {
+		return nil
+	}
+	return o.Types
+}
+
+func (o *ObservationSteering) GetExtraProperties() map[string]interface{} {
+	if o == nil {
+		return nil
+	}
+	return o.extraProperties
+}
+
+func (o *ObservationSteering) require(field *big.Int) {
+	if o.explicitFields == nil {
+		o.explicitFields = big.NewInt(0)
+	}
+	o.explicitFields.Or(o.explicitFields, field)
+}
+
+// SetInherited sets the Inherited field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationSteering) SetInherited(inherited *bool) {
+	o.Inherited = inherited
+	o.require(observationSteeringFieldInherited)
+}
+
+// SetInstruction sets the Instruction field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationSteering) SetInstruction(instruction *string) {
+	o.Instruction = instruction
+	o.require(observationSteeringFieldInstruction)
+}
+
+// SetTypes sets the Types field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationSteering) SetTypes(types []map[string]any) {
+	o.Types = types
+	o.require(observationSteeringFieldTypes)
+}
+
+func (o *ObservationSteering) UnmarshalJSON(data []byte) error {
+	type unmarshaler ObservationSteering
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = ObservationSteering(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *ObservationSteering) MarshalJSON() ([]byte, error) {
+	type embed ObservationSteering
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (o *ObservationSteering) String() string {
+	if o == nil {
+		return "<nil>"
+	}
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+var (
+	ontologyFieldEdgeTypes   = big.NewInt(1 << 0)
+	ontologyFieldEntityTypes = big.NewInt(1 << 1)
+	ontologyFieldInherited   = big.NewInt(1 << 2)
+)
+
+type Ontology struct {
+	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
+	Inherited   *bool         `json:"inherited,omitempty" url:"inherited,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *Ontology) GetEdgeTypes() []*EdgeType {
+	if o == nil {
+		return nil
+	}
+	return o.EdgeTypes
+}
+
+func (o *Ontology) GetEntityTypes() []*EntityType {
+	if o == nil {
+		return nil
+	}
+	return o.EntityTypes
+}
+
+func (o *Ontology) GetInherited() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.Inherited
+}
+
+func (o *Ontology) GetExtraProperties() map[string]interface{} {
+	if o == nil {
+		return nil
+	}
+	return o.extraProperties
+}
+
+func (o *Ontology) require(field *big.Int) {
+	if o.explicitFields == nil {
+		o.explicitFields = big.NewInt(0)
+	}
+	o.explicitFields.Or(o.explicitFields, field)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Ontology) SetEdgeTypes(edgeTypes []*EdgeType) {
+	o.EdgeTypes = edgeTypes
+	o.require(ontologyFieldEdgeTypes)
+}
+
+// SetEntityTypes sets the EntityTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Ontology) SetEntityTypes(entityTypes []*EntityType) {
+	o.EntityTypes = entityTypes
+	o.require(ontologyFieldEntityTypes)
+}
+
+// SetInherited sets the Inherited field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Ontology) SetInherited(inherited *bool) {
+	o.Inherited = inherited
+	o.require(ontologyFieldInherited)
+}
+
+func (o *Ontology) UnmarshalJSON(data []byte) error {
+	type unmarshaler Ontology
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = Ontology(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *Ontology) MarshalJSON() ([]byte, error) {
+	type embed Ontology
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (o *Ontology) String() string {
+	if o == nil {
+		return "<nil>"
+	}
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+var (
+	taskFieldCompletedAt = big.NewInt(1 << 0)
+	taskFieldCreatedAt   = big.NewInt(1 << 1)
+	taskFieldError       = big.NewInt(1 << 2)
+	taskFieldProgress    = big.NewInt(1 << 3)
+	taskFieldResult      = big.NewInt(1 << 4)
+	taskFieldStartedAt   = big.NewInt(1 << 5)
+	taskFieldStatus      = big.NewInt(1 << 6)
+	taskFieldType        = big.NewInt(1 << 7)
+	taskFieldUpdatedAt   = big.NewInt(1 << 8)
+	taskFieldUUID        = big.NewInt(1 << 9)
+)
+
+type Task struct {
+	CompletedAt *string        `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	CreatedAt   *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Error       *ErrorBody     `json:"error,omitempty" url:"error,omitempty"`
+	Progress    *TaskProgress  `json:"progress,omitempty" url:"progress,omitempty"`
+	Result      map[string]any `json:"result,omitempty" url:"result,omitempty"`
+	StartedAt   *string        `json:"started_at,omitempty" url:"started_at,omitempty"`
+	Status      *string        `json:"status,omitempty" url:"status,omitempty"`
+	Type        *string        `json:"type,omitempty" url:"type,omitempty"`
+	UpdatedAt   *string        `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID        *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *Task) GetCompletedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CompletedAt
+}
+
+func (t *Task) GetCreatedAt() *string {
 	if t == nil {
 		return nil
 	}
 	return t.CreatedAt
 }
 
-func (t *Thread) GetProjectUUID() *string {
+func (t *Task) GetError() *ErrorBody {
 	if t == nil {
 		return nil
 	}
-	return t.ProjectUUID
+	return t.Error
 }
 
-func (t *Thread) GetThreadID() *string {
+func (t *Task) GetProgress() *TaskProgress {
 	if t == nil {
 		return nil
 	}
-	return t.ThreadID
+	return t.Progress
 }
 
-func (t *Thread) GetUserID() *string {
+func (t *Task) GetResult() map[string]any {
 	if t == nil {
 		return nil
 	}
-	return t.UserID
+	return t.Result
 }
 
-func (t *Thread) GetUserUUID() *string {
+func (t *Task) GetStartedAt() *string {
 	if t == nil {
 		return nil
 	}
-	return t.UserUUID
+	return t.StartedAt
 }
 
-func (t *Thread) GetUUID() *string {
+func (t *Task) GetStatus() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *Task) GetType() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Type
+}
+
+func (t *Task) GetUpdatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UpdatedAt
+}
+
+func (t *Task) GetUUID() *string {
 	if t == nil {
 		return nil
 	}
 	return t.UUID
 }
 
-func (t *Thread) GetExtraProperties() map[string]interface{} {
+func (t *Task) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
 	return t.extraProperties
 }
 
-func (t *Thread) UnmarshalJSON(data []byte) error {
-	type unmarshaler Thread
+func (t *Task) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetCompletedAt sets the CompletedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetCompletedAt(completedAt *string) {
+	t.CompletedAt = completedAt
+	t.require(taskFieldCompletedAt)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(taskFieldCreatedAt)
+}
+
+// SetError sets the Error field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetError(error_ *ErrorBody) {
+	t.Error = error_
+	t.require(taskFieldError)
+}
+
+// SetProgress sets the Progress field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetProgress(progress *TaskProgress) {
+	t.Progress = progress
+	t.require(taskFieldProgress)
+}
+
+// SetResult sets the Result field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetResult(result map[string]any) {
+	t.Result = result
+	t.require(taskFieldResult)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetStartedAt(startedAt *string) {
+	t.StartedAt = startedAt
+	t.require(taskFieldStartedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetStatus(status *string) {
+	t.Status = status
+	t.require(taskFieldStatus)
+}
+
+// SetType sets the Type field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetType(type_ *string) {
+	t.Type = type_
+	t.require(taskFieldType)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetUpdatedAt(updatedAt *string) {
+	t.UpdatedAt = updatedAt
+	t.require(taskFieldUpdatedAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *Task) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(taskFieldUUID)
+}
+
+func (t *Task) UnmarshalJSON(data []byte) error {
+	type unmarshaler Task
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*t = Thread(value)
+	*t = Task(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *t)
 	if err != nil {
 		return err
@@ -2134,7 +4565,21 @@ func (t *Thread) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (t *Thread) String() string {
+func (t *Task) MarshalJSON() ([]byte, error) {
+	type embed Task
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *Task) String() string {
+	if t == nil {
+		return "<nil>"
+	}
 	if len(t.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value
@@ -2146,27 +4591,115 @@ func (t *Thread) String() string {
 	return fmt.Sprintf("%#v", t)
 }
 
+var (
+	taskProgressFieldStage = big.NewInt(1 << 0)
+)
+
+type TaskProgress struct {
+	Stage *string `json:"stage,omitempty" url:"stage,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TaskProgress) GetStage() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Stage
+}
+
+func (t *TaskProgress) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TaskProgress) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetStage sets the Stage field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskProgress) SetStage(stage *string) {
+	t.Stage = stage
+	t.require(taskProgressFieldStage)
+}
+
+func (t *TaskProgress) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskProgress
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TaskProgress(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TaskProgress) MarshalJSON() ([]byte, error) {
+	type embed TaskProgress
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TaskProgress) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	threadSummaryFieldCreatedAt                    = big.NewInt(1 << 0)
+	threadSummaryFieldLastSummarizedAt             = big.NewInt(1 << 1)
+	threadSummaryFieldLastSummarizedEpisodeValidAt = big.NewInt(1 << 2)
+	threadSummaryFieldRelevance                    = big.NewInt(1 << 3)
+	threadSummaryFieldScore                        = big.NewInt(1 << 4)
+	threadSummaryFieldSummary                      = big.NewInt(1 << 5)
+	threadSummaryFieldThreadUUID                   = big.NewInt(1 << 6)
+	threadSummaryFieldUUID                         = big.NewInt(1 << 7)
+)
+
 type ThreadSummary struct {
-	// CreatedAt is when the summary node was first created.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// LastSummarizedAt is the wall-clock timestamp of the most recent
-	// summary update. This is an ingestion-time watermark; for the
-	// event-time recency of the summary's content, use
-	// LastSummarizedEpisodeValidAt instead.
-	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
-	// LastSummarizedEpisodeValidAt is the maximum episode reference time
-	// (valid_at) covered by the most recent summary. Use this when
-	// answering "how recent is this summary's content in event-time?".
-	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
-	// Summary is the incremental summary content.
-	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
-	// ThreadID is the ID of the thread this summary belongs to.
-	// When a thread was created without an explicit thread_id, this
-	// field falls back to the thread's UUID. Clients should treat it
-	// as an opaque identifier.
-	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
-	// UUID of the thread summary node.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	CreatedAt                    *string  `json:"created_at,omitempty" url:"created_at,omitempty"`
+	LastSummarizedAt             *string  `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	LastSummarizedEpisodeValidAt *string  `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
+	Relevance                    *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// 8.7 puts score on every search result and relevance on the ones the
+	// cross-encoder scored. Pointers keep both off the listing (8.4).
+	Score      *float64 `json:"score,omitempty" url:"score,omitempty"`
+	Summary    *string  `json:"summary,omitempty" url:"summary,omitempty"`
+	ThreadUUID *string  `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	UUID       *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -2193,6 +4726,20 @@ func (t *ThreadSummary) GetLastSummarizedEpisodeValidAt() *string {
 	return t.LastSummarizedEpisodeValidAt
 }
 
+func (t *ThreadSummary) GetRelevance() *float64 {
+	if t == nil {
+		return nil
+	}
+	return t.Relevance
+}
+
+func (t *ThreadSummary) GetScore() *float64 {
+	if t == nil {
+		return nil
+	}
+	return t.Score
+}
+
 func (t *ThreadSummary) GetSummary() *string {
 	if t == nil {
 		return nil
@@ -2200,11 +4747,11 @@ func (t *ThreadSummary) GetSummary() *string {
 	return t.Summary
 }
 
-func (t *ThreadSummary) GetThreadID() *string {
+func (t *ThreadSummary) GetThreadUUID() *string {
 	if t == nil {
 		return nil
 	}
-	return t.ThreadID
+	return t.ThreadUUID
 }
 
 func (t *ThreadSummary) GetUUID() *string {
@@ -2215,7 +4762,73 @@ func (t *ThreadSummary) GetUUID() *string {
 }
 
 func (t *ThreadSummary) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
 	return t.extraProperties
+}
+
+func (t *ThreadSummary) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(threadSummaryFieldCreatedAt)
+}
+
+// SetLastSummarizedAt sets the LastSummarizedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetLastSummarizedAt(lastSummarizedAt *string) {
+	t.LastSummarizedAt = lastSummarizedAt
+	t.require(threadSummaryFieldLastSummarizedAt)
+}
+
+// SetLastSummarizedEpisodeValidAt sets the LastSummarizedEpisodeValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetLastSummarizedEpisodeValidAt(lastSummarizedEpisodeValidAt *string) {
+	t.LastSummarizedEpisodeValidAt = lastSummarizedEpisodeValidAt
+	t.require(threadSummaryFieldLastSummarizedEpisodeValidAt)
+}
+
+// SetRelevance sets the Relevance field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetRelevance(relevance *float64) {
+	t.Relevance = relevance
+	t.require(threadSummaryFieldRelevance)
+}
+
+// SetScore sets the Score field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetScore(score *float64) {
+	t.Score = score
+	t.require(threadSummaryFieldScore)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetSummary(summary *string) {
+	t.Summary = summary
+	t.require(threadSummaryFieldSummary)
+}
+
+// SetThreadUUID sets the ThreadUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetThreadUUID(threadUUID *string) {
+	t.ThreadUUID = threadUUID
+	t.require(threadSummaryFieldThreadUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(threadSummaryFieldUUID)
 }
 
 func (t *ThreadSummary) UnmarshalJSON(data []byte) error {
@@ -2234,7 +4847,21 @@ func (t *ThreadSummary) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (t *ThreadSummary) MarshalJSON() ([]byte, error) {
+	type embed ThreadSummary
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
 func (t *ThreadSummary) String() string {
+	if t == nil {
+		return "<nil>"
+	}
 	if len(t.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value
@@ -2246,24 +4873,149 @@ func (t *ThreadSummary) String() string {
 	return fmt.Sprintf("%#v", t)
 }
 
+var (
+	threadSummaryPageFieldItems      = big.NewInt(1 << 0)
+	threadSummaryPageFieldNextCursor = big.NewInt(1 << 1)
+	threadSummaryPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type ThreadSummaryPage struct {
+	Items      []*ThreadSummary `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string          `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int             `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *ThreadSummaryPage) GetItems() []*ThreadSummary {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *ThreadSummaryPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *ThreadSummaryPage) GetTotalSize() *int {
+	if t == nil {
+		return nil
+	}
+	return t.TotalSize
+}
+
+func (t *ThreadSummaryPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *ThreadSummaryPage) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryPage) SetItems(items []*ThreadSummary) {
+	t.Items = items
+	t.require(threadSummaryPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(threadSummaryPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(threadSummaryPageFieldTotalSize)
+}
+
+func (t *ThreadSummaryPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadSummaryPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = ThreadSummaryPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *ThreadSummaryPage) MarshalJSON() ([]byte, error) {
+	type embed ThreadSummaryPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *ThreadSummaryPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	userFieldCreatedAt              = big.NewInt(1 << 0)
+	userFieldDisableDefaultOntology = big.NewInt(1 << 1)
+	userFieldEmail                  = big.NewInt(1 << 2)
+	userFieldFirstName              = big.NewInt(1 << 3)
+	userFieldGraphUUID              = big.NewInt(1 << 4)
+	userFieldLastName               = big.NewInt(1 << 5)
+	userFieldMetadata               = big.NewInt(1 << 6)
+	userFieldTimeZone               = big.NewInt(1 << 7)
+	userFieldUserID                 = big.NewInt(1 << 8)
+	userFieldUUID                   = big.NewInt(1 << 9)
+)
+
 type User struct {
-	CreatedAt              *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DeletedAt              *string `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
-	DisableDefaultOntology *bool   `json:"disable_default_ontology,omitempty" url:"disable_default_ontology,omitempty"`
-	Email                  *string `json:"email,omitempty" url:"email,omitempty"`
-	FirstName              *string `json:"first_name,omitempty" url:"first_name,omitempty"`
-	ID                     *int    `json:"id,omitempty" url:"id,omitempty"`
-	LastName               *string `json:"last_name,omitempty" url:"last_name,omitempty"`
-	// Deprecated
-	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	// Deprecated
-	SessionCount *int    `json:"session_count,omitempty" url:"session_count,omitempty"`
-	TimeZone     *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
-	// Deprecated
-	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UserID    *string `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	CreatedAt              *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DisableDefaultOntology *bool          `json:"disable_default_ontology,omitempty" url:"disable_default_ontology,omitempty"`
+	Email                  *string        `json:"email,omitempty" url:"email,omitempty"`
+	FirstName              *string        `json:"first_name,omitempty" url:"first_name,omitempty"`
+	GraphUUID              *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	LastName               *string        `json:"last_name,omitempty" url:"last_name,omitempty"`
+	Metadata               map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	TimeZone               *string        `json:"time_zone,omitempty" url:"time_zone,omitempty"`
+	UserID                 *string        `json:"user_id,omitempty" url:"user_id,omitempty"`
+	UUID                   *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -2274,13 +5026,6 @@ func (u *User) GetCreatedAt() *string {
 		return nil
 	}
 	return u.CreatedAt
-}
-
-func (u *User) GetDeletedAt() *string {
-	if u == nil {
-		return nil
-	}
-	return u.DeletedAt
 }
 
 func (u *User) GetDisableDefaultOntology() *bool {
@@ -2304,11 +5049,11 @@ func (u *User) GetFirstName() *string {
 	return u.FirstName
 }
 
-func (u *User) GetID() *int {
+func (u *User) GetGraphUUID() *string {
 	if u == nil {
 		return nil
 	}
-	return u.ID
+	return u.GraphUUID
 }
 
 func (u *User) GetLastName() *string {
@@ -2318,25 +5063,11 @@ func (u *User) GetLastName() *string {
 	return u.LastName
 }
 
-func (u *User) GetMetadata() map[string]interface{} {
+func (u *User) GetMetadata() map[string]any {
 	if u == nil {
 		return nil
 	}
 	return u.Metadata
-}
-
-func (u *User) GetProjectUUID() *string {
-	if u == nil {
-		return nil
-	}
-	return u.ProjectUUID
-}
-
-func (u *User) GetSessionCount() *int {
-	if u == nil {
-		return nil
-	}
-	return u.SessionCount
 }
 
 func (u *User) GetTimeZone() *string {
@@ -2344,13 +5075,6 @@ func (u *User) GetTimeZone() *string {
 		return nil
 	}
 	return u.TimeZone
-}
-
-func (u *User) GetUpdatedAt() *string {
-	if u == nil {
-		return nil
-	}
-	return u.UpdatedAt
 }
 
 func (u *User) GetUserID() *string {
@@ -2368,7 +5092,87 @@ func (u *User) GetUUID() *string {
 }
 
 func (u *User) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.extraProperties
+}
+
+func (u *User) require(field *big.Int) {
+	if u.explicitFields == nil {
+		u.explicitFields = big.NewInt(0)
+	}
+	u.explicitFields.Or(u.explicitFields, field)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetCreatedAt(createdAt *string) {
+	u.CreatedAt = createdAt
+	u.require(userFieldCreatedAt)
+}
+
+// SetDisableDefaultOntology sets the DisableDefaultOntology field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetDisableDefaultOntology(disableDefaultOntology *bool) {
+	u.DisableDefaultOntology = disableDefaultOntology
+	u.require(userFieldDisableDefaultOntology)
+}
+
+// SetEmail sets the Email field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetEmail(email *string) {
+	u.Email = email
+	u.require(userFieldEmail)
+}
+
+// SetFirstName sets the FirstName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetFirstName(firstName *string) {
+	u.FirstName = firstName
+	u.require(userFieldFirstName)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetGraphUUID(graphUUID *string) {
+	u.GraphUUID = graphUUID
+	u.require(userFieldGraphUUID)
+}
+
+// SetLastName sets the LastName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetLastName(lastName *string) {
+	u.LastName = lastName
+	u.require(userFieldLastName)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetMetadata(metadata map[string]any) {
+	u.Metadata = metadata
+	u.require(userFieldMetadata)
+}
+
+// SetTimeZone sets the TimeZone field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetTimeZone(timeZone *string) {
+	u.TimeZone = timeZone
+	u.require(userFieldTimeZone)
+}
+
+// SetUserID sets the UserID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetUserID(userID *string) {
+	u.UserID = userID
+	u.require(userFieldUserID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *User) SetUUID(uuid *string) {
+	u.UUID = uuid
+	u.require(userFieldUUID)
 }
 
 func (u *User) UnmarshalJSON(data []byte) error {
@@ -2387,7 +5191,237 @@ func (u *User) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (u *User) MarshalJSON() ([]byte, error) {
+	type embed User
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*u),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, u.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
 func (u *User) String() string {
+	if u == nil {
+		return "<nil>"
+	}
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
+var (
+	userPageFieldItems      = big.NewInt(1 << 0)
+	userPageFieldNextCursor = big.NewInt(1 << 1)
+	userPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type UserPage struct {
+	Items      []*User `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int    `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (u *UserPage) GetItems() []*User {
+	if u == nil {
+		return nil
+	}
+	return u.Items
+}
+
+func (u *UserPage) GetNextCursor() *string {
+	if u == nil {
+		return nil
+	}
+	return u.NextCursor
+}
+
+func (u *UserPage) GetTotalSize() *int {
+	if u == nil {
+		return nil
+	}
+	return u.TotalSize
+}
+
+func (u *UserPage) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
+	return u.extraProperties
+}
+
+func (u *UserPage) require(field *big.Int) {
+	if u.explicitFields == nil {
+		u.explicitFields = big.NewInt(0)
+	}
+	u.explicitFields.Or(u.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserPage) SetItems(items []*User) {
+	u.Items = items
+	u.require(userPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserPage) SetNextCursor(nextCursor *string) {
+	u.NextCursor = nextCursor
+	u.require(userPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserPage) SetTotalSize(totalSize *int) {
+	u.TotalSize = totalSize
+	u.require(userPageFieldTotalSize)
+}
+
+func (u *UserPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+	u.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserPage) MarshalJSON() ([]byte, error) {
+	type embed UserPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*u),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, u.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (u *UserPage) String() string {
+	if u == nil {
+		return "<nil>"
+	}
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
+var (
+	userSummaryInstructionsFieldInherited    = big.NewInt(1 << 0)
+	userSummaryInstructionsFieldInstructions = big.NewInt(1 << 1)
+)
+
+type UserSummaryInstructions struct {
+	Inherited    *bool            `json:"inherited,omitempty" url:"inherited,omitempty"`
+	Instructions []map[string]any `json:"instructions,omitempty" url:"instructions,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (u *UserSummaryInstructions) GetInherited() *bool {
+	if u == nil {
+		return nil
+	}
+	return u.Inherited
+}
+
+func (u *UserSummaryInstructions) GetInstructions() []map[string]any {
+	if u == nil {
+		return nil
+	}
+	return u.Instructions
+}
+
+func (u *UserSummaryInstructions) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
+	return u.extraProperties
+}
+
+func (u *UserSummaryInstructions) require(field *big.Int) {
+	if u.explicitFields == nil {
+		u.explicitFields = big.NewInt(0)
+	}
+	u.explicitFields.Or(u.explicitFields, field)
+}
+
+// SetInherited sets the Inherited field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserSummaryInstructions) SetInherited(inherited *bool) {
+	u.Inherited = inherited
+	u.require(userSummaryInstructionsFieldInherited)
+}
+
+// SetInstructions sets the Instructions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserSummaryInstructions) SetInstructions(instructions []map[string]any) {
+	u.Instructions = instructions
+	u.require(userSummaryInstructionsFieldInstructions)
+}
+
+func (u *UserSummaryInstructions) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserSummaryInstructions
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserSummaryInstructions(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+	u.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserSummaryInstructions) MarshalJSON() ([]byte, error) {
+	type embed UserSummaryInstructions
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*u),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, u.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (u *UserSummaryInstructions) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value

@@ -4,216 +4,71 @@ package client
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	edge "github.com/getzep/zep-go/v3/graph/edge"
-	episode "github.com/getzep/zep-go/v3/graph/episode"
-	node "github.com/getzep/zep-go/v3/graph/node"
-	observation "github.com/getzep/zep-go/v3/graph/observation"
-	threadsummary "github.com/getzep/zep-go/v3/graph/threadsummary"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	documentsummary "github.com/getzep/zep-go/v4/graph/documentsummary"
+	edge "github.com/getzep/zep-go/v4/graph/edge"
+	episode "github.com/getzep/zep-go/v4/graph/episode"
+	node "github.com/getzep/zep-go/v4/graph/node"
+	observation "github.com/getzep/zep-go/v4/graph/observation"
+	threadsummary "github.com/getzep/zep-go/v4/graph/threadsummary"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
-	Edge            *edge.Client
+	DocumentSummary *documentsummary.Client
 	Episode         *episode.Client
+	Edge            *edge.Client
 	Node            *node.Client
 	Observation     *observation.Client
 	ThreadSummary   *threadsummary.Client
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
-		Edge:            edge.NewClient(opts...),
-		Episode:         episode.NewClient(opts...),
-		Node:            node.NewClient(opts...),
-		Observation:     observation.NewClient(opts...),
-		ThreadSummary:   threadsummary.NewClient(opts...),
+		DocumentSummary: documentsummary.NewClient(options),
+		Episode:         episode.NewClient(options),
+		Edge:            edge.NewClient(options),
+		Node:            node.NewClient(options),
+		Observation:     observation.NewClient(options),
+		ThreadSummary:   threadsummary.NewClient(options),
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Lists all custom instructions for a project, user, or graph.
-func (c *Client) ListCustomInstructions(
-	ctx context.Context,
-	request *v3.GraphListCustomInstructionsRequest,
-	opts ...option.RequestOption,
-) (*v3.ListCustomInstructionsResponse, error) {
-	response, err := c.WithRawResponse.ListCustomInstructions(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Adds new custom instructions for graphs without removing existing ones. If user_ids or graph_ids is empty, adds to project-wide default instructions.
-func (c *Client) AddCustomInstructions(
-	ctx context.Context,
-	request *v3.AddCustomInstructionsRequest,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.AddCustomInstructions(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Deletes custom instructions for graphs or project wide defaults.
-func (c *Client) DeleteCustomInstructions(
-	ctx context.Context,
-	request *v3.DeleteCustomInstructionsRequest,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.DeleteCustomInstructions(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Returns all entity types for a project, user, or graph.
-func (c *Client) ListEntityTypes(
-	ctx context.Context,
-	request *v3.GraphListEntityTypesRequest,
-	opts ...option.RequestOption,
-) (*v3.EntityTypeResponse, error) {
-	response, err := c.WithRawResponse.ListEntityTypes(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Sets the entity types for multiple users and graphs, replacing any existing ones.
-func (c *Client) SetEntityTypesInternal(
-	ctx context.Context,
-	request *v3.EntityTypeRequest,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.SetEntityTypesInternal(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Add data to the graph.
-func (c *Client) Add(
-	ctx context.Context,
-	request *v3.AddDataRequest,
-	opts ...option.RequestOption,
-) (*v3.Episode, error) {
-	response, err := c.WithRawResponse.Add(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Deprecated. Use the [Batch API](/adding-batch-data) (`client.batch.*`) instead.
+// Example:
 //
-// Adds data to the graph in batch mode, processing episodes concurrently.
-func (c *Client) AddBatch(
-	ctx context.Context,
-	request *v3.AddDataBatchRequest,
-	opts ...option.RequestOption,
-) ([]*v3.Episode, error) {
-	response, err := c.WithRawResponse.AddBatch(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Add a fact triple for a user or group
-func (c *Client) AddFactTriple(
-	ctx context.Context,
-	request *v3.AddTripleRequest,
-	opts ...option.RequestOption,
-) (*v3.AddTripleResponse, error) {
-	response, err := c.WithRawResponse.AddFactTriple(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Clone a user or group graph.
-func (c *Client) Clone(
-	ctx context.Context,
-	request *v3.CloneGraphRequest,
-	opts ...option.RequestOption,
-) (*v3.CloneGraphResponse, error) {
-	response, err := c.WithRawResponse.Clone(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Creates a new graph.
+//	request := &zep.CreateGraphRequest{}
+//	client.Graph.Create(
+//	    context.TODO(),
+//	    request,
+//	)
 func (c *Client) Create(
 	ctx context.Context,
-	request *v3.CreateGraphRequest,
-	opts ...option.RequestOption,
-) (*v3.Graph, error) {
+	request *zep.CreateGraphRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Graph, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		request,
@@ -225,13 +80,101 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Returns all graphs. In order to list users, use user.list_ordered instead
-func (c *Client) ListAll(
+// Example:
+//
+//	request := &zep.GraphListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    OrderBy: zep.String(
+//	        "order_by",
+//	    ),
+//	    Order: zep.String(
+//	        "order",
+//	    ),
+//	}
+//	client.Graph.List(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) List(
 	ctx context.Context,
-	request *v3.GraphListAllRequest,
-	opts ...option.RequestOption,
-) (*v3.GraphListResponse, error) {
-	response, err := c.WithRawResponse.ListAll(
+	request *zep.GraphListRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.Graph, *zep.GraphPage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := baseURL + "/graphs/list"
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.GraphPage) *core.PageResponse[*string, *zep.Graph, *zep.GraphPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Graph, *zep.GraphPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.LookupRequest{}
+//	client.Graph.Lookup(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) Lookup(
+	ctx context.Context,
+	request *zep.LookupRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Graph, error) {
+	response, err := c.WithRawResponse.Lookup(
 		ctx,
 		request,
 		opts...,
@@ -242,87 +185,21 @@ func (c *Client) ListAll(
 	return response.Body, nil
 }
 
-// Add entity nodes to a user or graph directly, without episode ingestion. Up to 100 nodes per request.
-func (c *Client) AddNodes(
-	ctx context.Context,
-	request *v3.AddNodesRequest,
-	opts ...option.RequestOption,
-) (*v3.AddNodesResponse, error) {
-	response, err := c.WithRawResponse.AddNodes(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Detects structural patterns in a knowledge graph including relationship frequencies,
-// multi-hop paths, co-occurrences, hubs, and clusters.
-// When a query is provided, uses hybrid search to discover seed nodes,
-// detects triple-frequency patterns, and returns resolved edges ranked by relevance.
-func (c *Client) DetectPatterns(
-	ctx context.Context,
-	request *v3.DetectPatternsRequest,
-	opts ...option.RequestOption,
-) (*v3.DetectPatternsResponse, error) {
-	response, err := c.WithRawResponse.DetectPatterns(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Perform a graph search query.
-func (c *Client) Search(
-	ctx context.Context,
-	request *v3.GraphSearchQuery,
-	opts ...option.RequestOption,
-) (*v3.GraphSearchResults, error) {
-	response, err := c.WithRawResponse.Search(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Returns the bounded neighborhood of a set of seed nodes as a single {nodes, edges} payload: breadth-first expansion up to a caller-specified depth, subject to explicit budgets, with explicit truncation reporting.
-func (c *Client) GetSubgraph(
-	ctx context.Context,
-	request *v3.GraphSubgraphRequest,
-	opts ...option.RequestOption,
-) (*v3.GraphSubgraphResponse, error) {
-	response, err := c.WithRawResponse.GetSubgraph(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Returns a graph.
+// Example:
+//
+//	client.Graph.Get(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
 func (c *Client) Get(
 	ctx context.Context,
-	// The graph_id of the graph to get.
-	graphID string,
+	// Graph UUID
+	graphUUID string,
 	opts ...option.RequestOption,
-) (*v3.Graph, error) {
+) (*zep.Graph, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
-		graphID,
+		graphUUID,
 		opts...,
 	)
 	if err != nil {
@@ -331,16 +208,21 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Deletes a graph. If you would like to delete a user graph, make sure to use user.delete instead.
+// Example:
+//
+//	client.Graph.Delete(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
 func (c *Client) Delete(
 	ctx context.Context,
-	// Graph ID
-	graphID string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+	// Graph UUID
+	graphUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*zep.GraphDeleteResult, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
-		graphID,
+		graphUUID,
 		opts...,
 	)
 	if err != nil {
@@ -349,17 +231,24 @@ func (c *Client) Delete(
 	return response.Body, nil
 }
 
-// Updates information about a graph.
+// Example:
+//
+//	request := &zep.PatchGraphRequest{}
+//	client.Graph.Update(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
 func (c *Client) Update(
 	ctx context.Context,
-	// Graph ID
-	graphID string,
-	request *v3.UpdateGraphRequest,
-	opts ...option.RequestOption,
-) (*v3.Graph, error) {
+	// Graph UUID
+	graphUUID string,
+	request *zep.PatchGraphRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Graph, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
-		graphID,
+		graphUUID,
 		request,
 		opts...,
 	)
@@ -369,16 +258,667 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
-// Hints Zep to warm a graph for low-latency search
+// Example:
+//
+//	request := &zep.CloneGraphRequest{}
+//	client.Graph.Clone(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) Clone(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.CloneGraphRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.CloneGraphResult, error) {
+	response, err := c.WithRawResponse.Clone(
+		ctx,
+		graphUUID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.GraphContextRequest{}
+//	client.Graph.GetContext(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) GetContext(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.GraphContextRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.GraphContextResponse, error) {
+	response, err := c.WithRawResponse.GetContext(
+		ctx,
+		graphUUID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	client.Graph.GetInstructions(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
+func (c *Client) GetInstructions(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	opts ...option.RequestOption,
+) (*zep.Instructions, error) {
+	response, err := c.WithRawResponse.GetInstructions(
+		ctx,
+		graphUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.Instructions{}
+//	client.Graph.SetInstructions(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SetInstructions(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.Instructions,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Instructions, error) {
+	response, err := c.WithRawResponse.SetInstructions(
+		ctx,
+		graphUUID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	client.Graph.GetObservationSteering(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
+func (c *Client) GetObservationSteering(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	opts ...option.RequestOption,
+) (*zep.ObservationSteering, error) {
+	response, err := c.WithRawResponse.GetObservationSteering(
+		ctx,
+		graphUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.ObservationSteering{}
+//	client.Graph.SetObservationSteering(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SetObservationSteering(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.ObservationSteering,
+	opts ...option.IdempotentRequestOption,
+) (*zep.ObservationSteering, error) {
+	response, err := c.WithRawResponse.SetObservationSteering(
+		ctx,
+		graphUUID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	client.Graph.GetOntology(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
+func (c *Client) GetOntology(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	opts ...option.RequestOption,
+) (*zep.Ontology, error) {
+	response, err := c.WithRawResponse.GetOntology(
+		ctx,
+		graphUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.Ontology{}
+//	client.Graph.SetOntology(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SetOntology(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.Ontology,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Ontology, error) {
+	response, err := c.WithRawResponse.SetOntology(
+		ctx,
+		graphUUID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.GraphSearchEdgesRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Body: &zep.SearchRequest{},
+//	}
+//	client.Graph.SearchEdges(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SearchEdges(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.GraphSearchEdgesRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.Edge, *zep.EdgePage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/search/edges",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.EdgePage) *core.PageResponse[*string, *zep.Edge, *zep.EdgePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Edge, *zep.EdgePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.GraphSearchEpisodesRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Body: &zep.SearchRequest{},
+//	}
+//	client.Graph.SearchEpisodes(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SearchEpisodes(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.GraphSearchEpisodesRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/search/episodes",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.EpisodePage) *core.PageResponse[*string, *zep.Episode, *zep.EpisodePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Episode, *zep.EpisodePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.GraphSearchNodesRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Body: &zep.SearchRequest{},
+//	}
+//	client.Graph.SearchNodes(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SearchNodes(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.GraphSearchNodesRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.Node, *zep.NodePage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/search/nodes",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.NodePage) *core.PageResponse[*string, *zep.Node, *zep.NodePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Node, *zep.NodePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.GraphSearchObservationsRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Body: &zep.SearchRequest{},
+//	}
+//	client.Graph.SearchObservations(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SearchObservations(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.GraphSearchObservationsRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.Observation, *zep.ObservationPage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/search/observations",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.ObservationPage) *core.PageResponse[*string, *zep.Observation, *zep.ObservationPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Observation, *zep.ObservationPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.GraphSearchThreadSummariesRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Body: &zep.SearchRequest{},
+//	}
+//	client.Graph.SearchThreadSummaries(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SearchThreadSummaries(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.GraphSearchThreadSummariesRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.ThreadSummary, *zep.ThreadSummaryPage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/search/thread-summaries",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.ThreadSummaryPage) *core.PageResponse[*string, *zep.ThreadSummary, *zep.ThreadSummaryPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.ThreadSummary, *zep.ThreadSummaryPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.SubgraphRequest{}
+//	client.Graph.GetSubgraph(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) GetSubgraph(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.SubgraphRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.SubgraphResponse, error) {
+	response, err := c.WithRawResponse.GetSubgraph(
+		ctx,
+		graphUUID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	client.Graph.Warm(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
 func (c *Client) Warm(
 	ctx context.Context,
-	// The graph_id of the graph to warm.
-	graphID string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+	// Graph UUID
+	graphUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*zep.AsyncResult, error) {
 	response, err := c.WithRawResponse.Warm(
 		ctx,
-		graphID,
+		graphUUID,
 		opts...,
 	)
 	if err != nil {

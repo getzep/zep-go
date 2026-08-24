@@ -5,168 +5,127 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	internal "github.com/getzep/zep-go/v3/internal"
+	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
 )
 
-type GetTaskResponse struct {
-	CompletedAt *string                `json:"completed_at,omitempty" url:"completed_at,omitempty"`
-	CreatedAt   *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Error       *TaskErrorResponse     `json:"error,omitempty" url:"error,omitempty"`
-	Params      map[string]interface{} `json:"params,omitempty" url:"params,omitempty"`
-	Progress    *TaskProgress          `json:"progress,omitempty" url:"progress,omitempty"`
-	StartedAt   *string                `json:"started_at,omitempty" url:"started_at,omitempty"`
-	Status      *string                `json:"status,omitempty" url:"status,omitempty"`
-	TaskID      *string                `json:"task_id,omitempty" url:"task_id,omitempty"`
-	Type        *string                `json:"type,omitempty" url:"type,omitempty"`
-	UpdatedAt   *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+var (
+	taskListRequestFieldLimit  = big.NewInt(1 << 0)
+	taskListRequestFieldCursor = big.NewInt(1 << 1)
+)
+
+type TaskListRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (t *TaskListRequest) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskListRequest) SetLimit(limit *int) {
+	t.Limit = limit
+	t.require(taskListRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskListRequest) SetCursor(cursor *string) {
+	t.Cursor = cursor
+	t.require(taskListRequestFieldCursor)
+}
+
+var (
+	taskPageFieldItems      = big.NewInt(1 << 0)
+	taskPageFieldNextCursor = big.NewInt(1 << 1)
+	taskPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type TaskPage struct {
+	Items      []*Task `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int    `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (g *GetTaskResponse) GetCompletedAt() *string {
-	if g == nil {
-		return nil
-	}
-	return g.CompletedAt
-}
-
-func (g *GetTaskResponse) GetCreatedAt() *string {
-	if g == nil {
-		return nil
-	}
-	return g.CreatedAt
-}
-
-func (g *GetTaskResponse) GetError() *TaskErrorResponse {
-	if g == nil {
-		return nil
-	}
-	return g.Error
-}
-
-func (g *GetTaskResponse) GetParams() map[string]interface{} {
-	if g == nil {
-		return nil
-	}
-	return g.Params
-}
-
-func (g *GetTaskResponse) GetProgress() *TaskProgress {
-	if g == nil {
-		return nil
-	}
-	return g.Progress
-}
-
-func (g *GetTaskResponse) GetStartedAt() *string {
-	if g == nil {
-		return nil
-	}
-	return g.StartedAt
-}
-
-func (g *GetTaskResponse) GetStatus() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Status
-}
-
-func (g *GetTaskResponse) GetTaskID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.TaskID
-}
-
-func (g *GetTaskResponse) GetType() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Type
-}
-
-func (g *GetTaskResponse) GetUpdatedAt() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UpdatedAt
-}
-
-func (g *GetTaskResponse) GetExtraProperties() map[string]interface{} {
-	return g.extraProperties
-}
-
-func (g *GetTaskResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler GetTaskResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*g = GetTaskResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *g)
-	if err != nil {
-		return err
-	}
-	g.extraProperties = extraProperties
-	g.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (g *GetTaskResponse) String() string {
-	if len(g.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(g); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", g)
-}
-
-type TaskErrorResponse struct {
-	Code    *string                `json:"code,omitempty" url:"code,omitempty"`
-	Details map[string]interface{} `json:"details,omitempty" url:"details,omitempty"`
-	Message *string                `json:"message,omitempty" url:"message,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TaskErrorResponse) GetCode() *string {
+func (t *TaskPage) GetItems() []*Task {
 	if t == nil {
 		return nil
 	}
-	return t.Code
+	return t.Items
 }
 
-func (t *TaskErrorResponse) GetDetails() map[string]interface{} {
+func (t *TaskPage) GetNextCursor() *string {
 	if t == nil {
 		return nil
 	}
-	return t.Details
+	return t.NextCursor
 }
 
-func (t *TaskErrorResponse) GetMessage() *string {
+func (t *TaskPage) GetTotalSize() *int {
 	if t == nil {
 		return nil
 	}
-	return t.Message
+	return t.TotalSize
 }
 
-func (t *TaskErrorResponse) GetExtraProperties() map[string]interface{} {
+func (t *TaskPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
 	return t.extraProperties
 }
 
-func (t *TaskErrorResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler TaskErrorResponse
+func (t *TaskPage) require(field *big.Int) {
+	if t.explicitFields == nil {
+		t.explicitFields = big.NewInt(0)
+	}
+	t.explicitFields.Or(t.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskPage) SetItems(items []*Task) {
+	t.Items = items
+	t.require(taskPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(taskPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(taskPageFieldTotalSize)
+}
+
+func (t *TaskPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskPage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*t = TaskErrorResponse(value)
+	*t = TaskPage(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *t)
 	if err != nil {
 		return err
@@ -176,61 +135,21 @@ func (t *TaskErrorResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (t *TaskErrorResponse) String() string {
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
+func (t *TaskPage) MarshalJSON() ([]byte, error) {
+	type embed TaskPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
 	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }
 
-type TaskProgress struct {
-	Message *string `json:"message,omitempty" url:"message,omitempty"`
-	Stage   *string `json:"stage,omitempty" url:"stage,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TaskProgress) GetMessage() *string {
+func (t *TaskPage) String() string {
 	if t == nil {
-		return nil
+		return "<nil>"
 	}
-	return t.Message
-}
-
-func (t *TaskProgress) GetStage() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Stage
-}
-
-func (t *TaskProgress) GetExtraProperties() map[string]interface{} {
-	return t.extraProperties
-}
-
-func (t *TaskProgress) UnmarshalJSON(data []byte) error {
-	type unmarshaler TaskProgress
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TaskProgress(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TaskProgress) String() string {
 	if len(t.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
 			return value

@@ -4,65 +4,55 @@ package task
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type RawClient struct {
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
+	options *core.RequestOptions
 }
 
 func NewRawClient(options *core.RequestOptions) *RawClient {
 	return &RawClient{
+		options: options,
 		baseURL: options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
 func (r *RawClient) Get(
 	ctx context.Context,
-	// Task ID
-	taskID string,
+	// Task UUID
+	taskUUID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.GetTaskResponse], error) {
+) (*core.Response[*zep.Task], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
 		baseURL+"/tasks/%v",
-		taskID,
+		taskUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.GetTaskResponse
+	var response *zep.Task
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -70,17 +60,18 @@ func (r *RawClient) Get(
 			Method:          http.MethodGet,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.GetTaskResponse]{
+	return &core.Response[*zep.Task]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

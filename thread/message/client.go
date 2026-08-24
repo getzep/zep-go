@@ -4,51 +4,89 @@ package message
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
-	thread "github.com/getzep/zep-go/v3/thread"
-	http "net/http"
 	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
+	thread "github.com/getzep/zep-go/v4/thread"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Updates a message.
+// Example:
+//
+//	client.Thread.Message.Get(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	    "message_uuid",
+//	)
+func (c *Client) Get(
+	ctx context.Context,
+	// Thread UUID
+	threadUUID string,
+	// Message UUID
+	messageUUID string,
+	opts ...option.RequestOption,
+) (*zep.Message, error) {
+	response, err := c.WithRawResponse.Get(
+		ctx,
+		threadUUID,
+		messageUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &thread.PatchMessageRequest{}
+//	client.Thread.Message.Update(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	    "message_uuid",
+//	    request,
+//	)
 func (c *Client) Update(
 	ctx context.Context,
-	// The UUID of the message.
+	// Thread UUID
+	threadUUID string,
+	// Message UUID
 	messageUUID string,
-	request *thread.ThreadMessageUpdate,
-	opts ...option.RequestOption,
-) (*v3.Message, error) {
+	request *thread.PatchMessageRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Message, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
+		threadUUID,
 		messageUUID,
 		request,
 		opts...,

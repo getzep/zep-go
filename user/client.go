@@ -4,47 +4,54 @@ package user
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Lists all user summary instructions for a project, user.
-func (c *Client) ListUserSummaryInstructions(
+// Example:
+//
+//	request := &zep.CreateUserRequest{}
+//	client.User.Create(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) Create(
 	ctx context.Context,
-	request *v3.UserListUserSummaryInstructionsRequest,
-	opts ...option.RequestOption,
-) (*v3.ListUserInstructionsResponse, error) {
-	response, err := c.WithRawResponse.ListUserSummaryInstructions(
+	request *zep.CreateUserRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.User, error) {
+	response, err := c.WithRawResponse.Create(
 		ctx,
 		request,
 		opts...,
@@ -55,13 +62,101 @@ func (c *Client) ListUserSummaryInstructions(
 	return response.Body, nil
 }
 
-// Adds new summary instructions for users graphs without removing existing ones. If user_ids is empty, adds to project-wide default instructions.
-func (c *Client) AddUserSummaryInstructions(
+// Example:
+//
+//	request := &zep.UserListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    OrderBy: zep.String(
+//	        "order_by",
+//	    ),
+//	    Order: zep.String(
+//	        "order",
+//	    ),
+//	}
+//	client.User.List(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) List(
 	ctx context.Context,
-	request *v3.AddUserInstructionsRequest,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.AddUserSummaryInstructions(
+	request *zep.UserListRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.User, *zep.UserPage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := baseURL + "/users/list"
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.UserPage) *core.PageResponse[*string, *zep.User, *zep.UserPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.User, *zep.UserPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.LookupRequest{}
+//	client.User.Lookup(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) Lookup(
+	ctx context.Context,
+	request *zep.LookupRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.User, error) {
+	response, err := c.WithRawResponse.Lookup(
 		ctx,
 		request,
 		opts...,
@@ -72,67 +167,21 @@ func (c *Client) AddUserSummaryInstructions(
 	return response.Body, nil
 }
 
-// Deletes user summary/instructions for users or project wide defaults.
-func (c *Client) DeleteUserSummaryInstructions(
-	ctx context.Context,
-	request *v3.DeleteUserInstructionsRequest,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.DeleteUserSummaryInstructions(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Adds a user.
-func (c *Client) Add(
-	ctx context.Context,
-	request *v3.CreateUserRequest,
-	opts ...option.RequestOption,
-) (*v3.User, error) {
-	response, err := c.WithRawResponse.Add(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Returns all users.
-func (c *Client) ListOrdered(
-	ctx context.Context,
-	request *v3.UserListOrderedRequest,
-	opts ...option.RequestOption,
-) (*v3.UserListResponse, error) {
-	response, err := c.WithRawResponse.ListOrdered(
-		ctx,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Returns a user.
+// Example:
+//
+//	client.User.Get(
+//	    context.TODO(),
+//	    "user_uuid",
+//	)
 func (c *Client) Get(
 	ctx context.Context,
-	// The user_id of the user to get.
-	userID string,
+	// User UUID
+	userUUID string,
 	opts ...option.RequestOption,
-) (*v3.User, error) {
+) (*zep.User, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
-		userID,
+		userUUID,
 		opts...,
 	)
 	if err != nil {
@@ -141,16 +190,21 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Deletes a user.
+// Example:
+//
+//	client.User.Delete(
+//	    context.TODO(),
+//	    "user_uuid",
+//	)
 func (c *Client) Delete(
 	ctx context.Context,
-	// User ID
-	userID string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+	// User UUID
+	userUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*zep.UserDeleteResult, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
-		userID,
+		userUUID,
 		opts...,
 	)
 	if err != nil {
@@ -159,17 +213,24 @@ func (c *Client) Delete(
 	return response.Body, nil
 }
 
-// Updates a user.
+// Example:
+//
+//	request := &zep.PatchUserRequest{}
+//	client.User.Update(
+//	    context.TODO(),
+//	    "user_uuid",
+//	    request,
+//	)
 func (c *Client) Update(
 	ctx context.Context,
-	// User ID
-	userID string,
-	request *v3.UpdateUserRequest,
-	opts ...option.RequestOption,
-) (*v3.User, error) {
+	// User UUID
+	userUUID string,
+	request *zep.PatchUserRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.User, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
-		userID,
+		userUUID,
 		request,
 		opts...,
 	)
@@ -179,16 +240,21 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
-// Returns a user's node.
+// Example:
+//
+//	client.User.GetNode(
+//	    context.TODO(),
+//	    "user_uuid",
+//	)
 func (c *Client) GetNode(
 	ctx context.Context,
-	// The user_id of the user to get the node for.
-	userID string,
+	// User UUID
+	userUUID string,
 	opts ...option.RequestOption,
-) (*v3.UserNodeResponse, error) {
+) (*zep.Node, error) {
 	response, err := c.WithRawResponse.GetNode(
 		ctx,
-		userID,
+		userUUID,
 		opts...,
 	)
 	if err != nil {
@@ -197,16 +263,21 @@ func (c *Client) GetNode(
 	return response.Body, nil
 }
 
-// Returns all threads for a user.
-func (c *Client) GetThreads(
+// Example:
+//
+//	client.User.GetSummaryInstructions(
+//	    context.TODO(),
+//	    "user_uuid",
+//	)
+func (c *Client) GetSummaryInstructions(
 	ctx context.Context,
-	// User ID
-	userID string,
+	// User UUID
+	userUUID string,
 	opts ...option.RequestOption,
-) ([]*v3.Thread, error) {
-	response, err := c.WithRawResponse.GetThreads(
+) (*zep.UserSummaryInstructions, error) {
+	response, err := c.WithRawResponse.GetSummaryInstructions(
 		ctx,
-		userID,
+		userUUID,
 		opts...,
 	)
 	if err != nil {
@@ -215,16 +286,25 @@ func (c *Client) GetThreads(
 	return response.Body, nil
 }
 
-// Hints Zep to warm a user's graph for low-latency search
-func (c *Client) Warm(
+// Example:
+//
+//	request := &zep.UserSummaryInstructions{}
+//	client.User.SetSummaryInstructions(
+//	    context.TODO(),
+//	    "user_uuid",
+//	    request,
+//	)
+func (c *Client) SetSummaryInstructions(
 	ctx context.Context,
-	// User ID
-	userID string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.Warm(
+	// User UUID
+	userUUID string,
+	request *zep.UserSummaryInstructions,
+	opts ...option.IdempotentRequestOption,
+) (*zep.UserSummaryInstructions, error) {
+	response, err := c.WithRawResponse.SetSummaryInstructions(
 		ctx,
-		userID,
+		userUUID,
+		request,
 		opts...,
 	)
 	if err != nil {

@@ -4,50 +4,130 @@ package task
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Gets a task by its ID
+// Example:
+//
+//	request := &zep.TaskListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	}
+//	client.Task.List(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) List(
+	ctx context.Context,
+	request *zep.TaskListRequest,
+	opts ...option.RequestOption,
+) (*core.Page[*string, *zep.Task, *zep.TaskPage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := baseURL + "/tasks"
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.TaskPage) *core.PageResponse[*string, *zep.Task, *zep.TaskPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Task, *zep.TaskPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	client.Task.Get(
+//	    context.TODO(),
+//	    "task_uuid",
+//	)
 func (c *Client) Get(
 	ctx context.Context,
-	// Task ID
-	taskID string,
+	// Task UUID
+	taskUUID string,
 	opts ...option.RequestOption,
-) (*v3.GetTaskResponse, error) {
+) (*zep.Task, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
-		taskID,
+		taskUUID,
 		opts...,
 	)
 	if err != nil {

@@ -5,248 +5,123 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	internal "github.com/getzep/zep-go/v3/internal"
+	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
 )
 
-type GetObservationSteeringRequest struct {
-	// User ID for user-specific steering
-	UserID *string `json:"-" url:"user_id,omitempty"`
-	// Graph ID for graph-specific steering
-	GraphID *string `json:"-" url:"graph_id,omitempty"`
-}
+var (
+	projectFieldCreatedAt       = big.NewInt(1 << 0)
+	projectFieldDefaultTimeZone = big.NewInt(1 << 1)
+	projectFieldDescription     = big.NewInt(1 << 2)
+	projectFieldName            = big.NewInt(1 << 3)
+	projectFieldUUID            = big.NewInt(1 << 4)
+)
 
-type SetObservationSteeringRequest struct {
-	// User ID for user-specific steering
-	UserID *string `json:"-" url:"user_id,omitempty"`
-	// Graph ID for graph-specific steering
-	GraphID *string                    `json:"-" url:"graph_id,omitempty"`
-	Body    *ObservationSteeringConfig `json:"-" url:"-"`
-}
-
-func (s *SetObservationSteeringRequest) UnmarshalJSON(data []byte) error {
-	body := new(ObservationSteeringConfig)
-	if err := json.Unmarshal(data, &body); err != nil {
-		return err
-	}
-	s.Body = body
-	return nil
-}
-
-func (s *SetObservationSteeringRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(s.Body)
-}
-
-type ObservationSteeringConfig struct {
-	Instruction *string            `json:"instruction,omitempty" url:"instruction,omitempty"`
-	Types       []*ObservationType `json:"types,omitempty" url:"types,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (o *ObservationSteeringConfig) GetInstruction() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Instruction
-}
-
-func (o *ObservationSteeringConfig) GetTypes() []*ObservationType {
-	if o == nil {
-		return nil
-	}
-	return o.Types
-}
-
-func (o *ObservationSteeringConfig) GetExtraProperties() map[string]interface{} {
-	return o.extraProperties
-}
-
-func (o *ObservationSteeringConfig) UnmarshalJSON(data []byte) error {
-	type unmarshaler ObservationSteeringConfig
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*o = ObservationSteeringConfig(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *o)
-	if err != nil {
-		return err
-	}
-	o.extraProperties = extraProperties
-	o.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (o *ObservationSteeringConfig) String() string {
-	if len(o.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(o); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", o)
-}
-
-type ObservationType struct {
-	Description string `json:"description" url:"description"`
-	Name        string `json:"name" url:"name"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (o *ObservationType) GetDescription() string {
-	if o == nil {
-		return ""
-	}
-	return o.Description
-}
-
-func (o *ObservationType) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-func (o *ObservationType) GetExtraProperties() map[string]interface{} {
-	return o.extraProperties
-}
-
-func (o *ObservationType) UnmarshalJSON(data []byte) error {
-	type unmarshaler ObservationType
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*o = ObservationType(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *o)
-	if err != nil {
-		return err
-	}
-	o.extraProperties = extraProperties
-	o.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (o *ObservationType) String() string {
-	if len(o.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(o); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", o)
-}
-
-type ProjectInfo struct {
+type Project struct {
 	CreatedAt       *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"default_time_zone,omitempty"`
 	Description     *string `json:"description,omitempty" url:"description,omitempty"`
 	Name            *string `json:"name,omitempty" url:"name,omitempty"`
 	UUID            *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (p *ProjectInfo) GetCreatedAt() *string {
+func (p *Project) GetCreatedAt() *string {
 	if p == nil {
 		return nil
 	}
 	return p.CreatedAt
 }
 
-func (p *ProjectInfo) GetDefaultTimeZone() *string {
+func (p *Project) GetDefaultTimeZone() *string {
 	if p == nil {
 		return nil
 	}
 	return p.DefaultTimeZone
 }
 
-func (p *ProjectInfo) GetDescription() *string {
+func (p *Project) GetDescription() *string {
 	if p == nil {
 		return nil
 	}
 	return p.Description
 }
 
-func (p *ProjectInfo) GetName() *string {
+func (p *Project) GetName() *string {
 	if p == nil {
 		return nil
 	}
 	return p.Name
 }
 
-func (p *ProjectInfo) GetUUID() *string {
+func (p *Project) GetUUID() *string {
 	if p == nil {
 		return nil
 	}
 	return p.UUID
 }
 
-func (p *ProjectInfo) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *ProjectInfo) UnmarshalJSON(data []byte) error {
-	type unmarshaler ProjectInfo
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = ProjectInfo(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-	p.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *ProjectInfo) String() string {
-	if len(p.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type ProjectInfoResponse struct {
-	Project *ProjectInfo `json:"project,omitempty" url:"project,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (p *ProjectInfoResponse) GetProject() *ProjectInfo {
+func (p *Project) GetExtraProperties() map[string]interface{} {
 	if p == nil {
 		return nil
 	}
-	return p.Project
-}
-
-func (p *ProjectInfoResponse) GetExtraProperties() map[string]interface{} {
 	return p.extraProperties
 }
 
-func (p *ProjectInfoResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ProjectInfoResponse
+func (p *Project) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Project) SetCreatedAt(createdAt *string) {
+	p.CreatedAt = createdAt
+	p.require(projectFieldCreatedAt)
+}
+
+// SetDefaultTimeZone sets the DefaultTimeZone field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Project) SetDefaultTimeZone(defaultTimeZone *string) {
+	p.DefaultTimeZone = defaultTimeZone
+	p.require(projectFieldDefaultTimeZone)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Project) SetDescription(description *string) {
+	p.Description = description
+	p.require(projectFieldDescription)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Project) SetName(name *string) {
+	p.Name = name
+	p.require(projectFieldName)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Project) SetUUID(uuid *string) {
+	p.UUID = uuid
+	p.require(projectFieldUUID)
+}
+
+func (p *Project) UnmarshalJSON(data []byte) error {
+	type unmarshaler Project
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*p = ProjectInfoResponse(value)
+	*p = Project(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *p)
 	if err != nil {
 		return err
@@ -256,7 +131,21 @@ func (p *ProjectInfoResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (p *ProjectInfoResponse) String() string {
+func (p *Project) MarshalJSON() ([]byte, error) {
+	type embed Project
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *Project) String() string {
+	if p == nil {
+		return "<nil>"
+	}
 	if len(p.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
 			return value
@@ -268,7 +157,49 @@ func (p *ProjectInfoResponse) String() string {
 	return fmt.Sprintf("%#v", p)
 }
 
-type UpdateProjectInfoRequest struct {
-	// The project's IANA fallback time zone. Null clears the existing value.
+var (
+	patchProjectRequestFieldDefaultTimeZone = big.NewInt(1 << 0)
+)
+
+type PatchProjectRequest struct {
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
 	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (p *PatchProjectRequest) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetDefaultTimeZone sets the DefaultTimeZone field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchProjectRequest) SetDefaultTimeZone(defaultTimeZone *string) {
+	p.DefaultTimeZone = defaultTimeZone
+	p.require(patchProjectRequestFieldDefaultTimeZone)
+}
+
+func (p *PatchProjectRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatchProjectRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*p = PatchProjectRequest(body)
+	return nil
+}
+
+func (p *PatchProjectRequest) MarshalJSON() ([]byte, error) {
+	type embed PatchProjectRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }

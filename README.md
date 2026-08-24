@@ -1,45 +1,29 @@
 # Zep Go Library
 
-<p align="center">
-  <a href="https://www.getzep.com/">
-    <img src="https://raw.githubusercontent.com/getzep/zep/main/assets/zep-logo-icon-gradient-rgb.svg" width="150" alt="Zep Logo">
-  </a>
-</p>
+[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fgetzep%2Fzep-go)
 
-<h1 align="center">
-Zep: Context Engineering for AI Agents.
-</h1>
-<h2 align="center">Assemble the right context from chat history, business data, and user behavior. Build agents that work.</h2>
-<br />
-<p align="center">
-  <a href="https://discord.gg/W8Kw6bsgXQ"><img
-    src="https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white"
-    alt="Chat on Discord"
-  /></a>
-  <a href="https://twitter.com/intent/follow?screen_name=zep_ai" target="_new"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/zep_ai"></a>
- <a href="https://pkg.go.dev/github.com/getzep/zep-go/v2"><img src="https://pkg.go.dev/badge/github.com/getzep/zep-go/v2.svg" alt="Go Reference"></a> 
-  <a href="https://goreportcard.com/report/github.com/getzep/zep-go/v2"><img src="https://goreportcard.com/badge/github.com/getzep/zep-go/v2" alt="Go Report Card"></a> 
-  <img
-  src="https://github.com/getzep/zep-go/actions/workflows/ci.yml/badge.svg"
-  alt="CI"
-  />
-<a href="https://github.com/fern-api/fern">
-    <img
-      src="https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen"
-      alt="CI"
-      />
-</a>
-</p>
-<p align="center">
-<a href="https://help.getzep.com/">Documentation</a> | 
-<a href="https://help.getzep.com/langchain/">LangChain</a> | 
-<a href="https://discord.gg/W8Kw6bsgXQ">Discord</a><br />
-<a href="https://www.getzep.com">www.getzep.com</a>
-</p>
+The Zep Go library provides convenient access to the Zep APIs from Go.
 
+## Table of Contents
 
-
-The Zep Go library provides convenient access to the Zep Cloud API from Go.
+- [Requirements](#requirements)
+- [Initialize Client](#initialize-client)
+- [Add Messages to Thread](#add-messages-to-thread)
+- [Get User Context](#get-user-context)
+- [Optionals](#optionals)
+- [Request Options](#request-options)
+- [Automatic Retries](#automatic-retries)
+- [Reference](#reference)
+- [Usage](#usage)
+- [Environments](#environments)
+- [Pagination](#pagination)
+- [Errors](#errors)
+- [Advanced](#advanced)
+  - [Response Headers](#response-headers)
+  - [Retries](#retries)
+  - [Timeouts](#timeouts)
+  - [Explicit Null](#explicit-null)
+- [Contributing](#contributing)
 
 ## Requirements
 
@@ -100,31 +84,38 @@ helper functions are provided to easily map a primitive or enum to its pointer-e
 
 ## Request Options
 
-A variety of request options are included to adapt the behavior of the library, which includes
-configuring authorization tokens, or providing your own instrumented `*http.Client`. Both of
-these options are shown below:
+A variety of request options are included to adapt the behavior of the library, which includes configuring
+authorization tokens, or providing your own instrumented `*http.Client`.
 
-```go
-client := zepclient.NewClient(
-  option.WithAPIKey("<YOUR_API_KEY>"),
-  option.WithHTTPClient(
-    &http.Client{
-      Timeout: 5 * time.Second,
-    },
-  ),
-)
-```
-
-These request options can either be specified on the client so that they're applied on _every_
-request (shown above), or for an individual request like so:
-
-```go
-_, _ = client.Thread.GetUserContext(ctx, "thread_id", nil, option.WithAPIKey("<YOUR_API_KEY>"))
-```
+These request options can either be
+specified on the client so that they're applied on every request, or for an individual request, like so:
 
 > Providing your own `*http.Client` is recommended. Otherwise, the `http.DefaultClient` will be used,
 > and your client will wait indefinitely for a response (unless the per-request, context-based timeout
 > is used).
+
+```go
+// Specify default options applied on every request.
+client := client.NewClient(
+    option.WithAPIKey("<YOUR_API_KEY>"),
+    option.WithHTTPClient(
+        &http.Client{
+            Timeout: 5 * time.Second,
+        },
+    ),
+)
+
+// Specify options for an individual request.
+response, err := client.Batch.Create(
+    ...,
+    option.WithAPIKey("<YOUR_API_KEY>"),
+)
+```
+
+When credentials are not explicitly provided, the client reads them from the
+following environment variables:
+
+- `ZEP_API_KEY`
 
 ## Automatic Retries
 
@@ -155,43 +146,215 @@ This can be done for an individual request, too:
 _, _ = client.Thread.GetUserContext(ctx, "thread_id", nil, option.WithMaxAttempts(1))
 ```
 
+## Reference
+
+A full reference for this library is available [here](https://github.com/getzep/zep-go/blob/HEAD/./reference.md).
+
+## Usage
+
+Instantiate and use the client with the following:
+
+```go
+package example
+
+import (
+    context "context"
+
+    zep "github.com/getzep/zep-go/v4"
+    client "github.com/getzep/zep-go/v4/client"
+    option "github.com/getzep/zep-go/v4/option"
+)
+
+func do() {
+    client := client.NewClient(
+        option.WithAPIKey(
+            "<value>",
+        ),
+    )
+    request := &zep.CreateBatchRequest{}
+    client.Batch.Create(
+        context.TODO(),
+        request,
+    )
+}
+```
+
+## Environments
+
+You can choose between different environments by using the `option.WithBaseURL` option. You can configure any arbitrary base
+URL, which is particularly useful in test environments.
+
+```go
+client := client.NewClient(
+    option.WithBaseURL(zep.Environments.Default),
+)
+```
+
+## Pagination
+
+List endpoints are paginated. The SDK provides an iterator so that you can simply loop over the items.
+You can also iterate page-by-page using the `GetNextPage` helper method.
+
+The `Page.Results` attribute, which contains the relevant list of items returned by the call to the server,
+is the only attribute you will need for most use cases. But if need be, several other attributes are available:
+
+- `Page.Response` contains the full spec-defined response as returned by the server.
+- `Page.StatusCode` and `Page.Header` returns HTTP metadata associated with the call to the server.
+- `Page.RawResponse` returns the pagination object if you need to access its fields (like `Next`).
+
+```go
+// Loop over the items using the provided iterator.
+ctx := context.TODO()
+page, err := client.Batch.List(
+    ctx,
+    ...
+)
+if err != nil {
+    return err
+}
+iter := page.Iterator()
+for iter.Next(ctx) {
+    item := iter.Current()
+    fmt.Printf("Got item: %v", *item)
+}
+if err := iter.Err(); err != nil {
+    return err
+}
+
+// Alternatively, iterate page-by-page.
+for page != nil {
+    for _, item := range page.Results {
+        fmt.Printf("Got item: %v", *item)
+    }
+    page, err = page.GetNextPage(ctx)
+    if errors.Is(err, core.ErrNoPages) {
+        break
+    }
+    if err != nil {
+        return err
+    }
+}
+
+// Paginated endpoints return a Page with directly accessible headers, status code, and full response
+page, err = client.Batch.List(
+    ctx,
+    ...
+)
+if err != nil {
+    return err
+}
+
+// Access response metadata directly from the page
+fmt.Printf("Got headers: %v", page.Header)
+fmt.Printf("Got status code: %d", page.StatusCode)
+
+// Access the full spec-defined response object
+fullResponse := page.Response
+
+// Access individual fields from the pagination object
+nextCursor := page.RawResponse.Next
+```
+
 ## Errors
 
-Structured error types are returned from API calls that return non-success status codes. For example,
-you can check if the error was due to a bad request (i.e. status code 400) with the following:
+Structured error types are returned from API calls that return non-success status codes. These errors are compatible
+with the `errors.Is` and `errors.As` APIs, so you can access the error like so:
 
 ```go
-_, err := client.Thread.GetUserContext(ctx, "thread_id", nil)
+response, err := client.Batch.Create(...)
 if err != nil {
-  if badRequestErr, ok := err.(*zep.BadRequestError);
-    // Do something with the bad request ...
-  }
-  return err
+    var apiError *core.APIError
+    if errors.As(err, &apiError) {
+        // Do something with the API error ...
+    }
+    return err
 }
 ```
 
-These errors are also compatible with the `errors.Is` and `errors.As` APIs, so you can access the error
-like so:
+## Advanced
+
+### Response Headers
+
+You can access the raw HTTP response data by using the `WithRawResponse` field on the client. This is useful
+when you need to examine the response headers received from the API call. (When the endpoint is paginated,
+the raw HTTP response data will be included automatically in the Page response object.)
 
 ```go
-_, err := client.Thread.GetUserContext(ctx, "thread_id", nil)
+response, err := client.Batch.WithRawResponse.Create(...)
 if err != nil {
-  var badRequestErr *zep.BadRequestError
-  if errors.As(err, badRequestErr) {
-    // Do something with the bad request ...
-  }
-  return err
+    return err
 }
+fmt.Printf("Got response headers: %v", response.Header)
+fmt.Printf("Got status code: %d", response.StatusCode)
 ```
 
-If you'd like to wrap the errors with additional information and still retain the ability
-to access the type with `errors.Is` and `errors.As`, you can use the `%w` directive:
+### Retries
+
+The SDK is instrumented with automatic retries with exponential backoff. A request will be retried as long
+as the request is deemed retryable and the number of retry attempts has not grown larger than the configured
+retry limit (default: 2).
+
+Which status codes are retried depends on the `retryStatusCodes` generator configuration:
+
+**`legacy`** (current default): retries on
+- [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
+- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#server_error_responses) (All server errors, including 500)
+
+**`recommended`**: retries on
+- [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
+- [502](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) (Bad Gateway)
+- [503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) (Service Unavailable)
+- [504](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504) (Gateway Timeout)
+
+If the `Retry-After` header is present in the response, the SDK will prioritize respecting its value exactly
+over the default exponential backoff.
+
+Use the `option.WithMaxAttempts` option to configure this behavior for the entire client or an individual request:
 
 ```go
-_, err := client.Thread.GetUserContext(ctx, "thread_id", nil)
-if err != nil {
-  return fmt.Errorf("failed to get context: %w", err)
+client := client.NewClient(
+    option.WithMaxAttempts(1),
+)
+
+response, err := client.Batch.Create(
+    ...,
+    option.WithMaxAttempts(1),
+)
+```
+
+### Timeouts
+
+Setting a timeout for each individual request is as simple as using the standard context library. Setting a one second timeout for an individual API call looks like the following:
+
+```go
+ctx, cancel := context.WithTimeout(ctx, time.Second)
+defer cancel()
+
+response, err := client.Batch.Create(ctx, ...)
+```
+
+### Explicit Null
+
+If you want to send the explicit `null` JSON value through an optional parameter, you can use the setters\
+that come with every object. Calling a setter method for a property will flip a bit in the `explicitFields`
+bitfield for that setter's object; during serialization, any property with a flipped bit will have its
+omittable status stripped, so zero or `nil` values will be sent explicitly rather than omitted altogether:
+
+```go
+type ExampleRequest struct {
+    // An optional string parameter.
+    Name *string `json:"name,omitempty" url:"-"`
+
+    // Private bitmask of fields set to an explicit value and therefore not to be omitted
+    explicitFields *big.Int `json:"-" url:"-"`
 }
+
+request := &ExampleRequest{}
+request.SetName(nil)
+
+response, err := client.Batch.Create(ctx, request, ...)
 ```
 
 ## Contributing
@@ -202,4 +365,4 @@ otherwise they would be overwritten upon the next generated release. Feel free t
 a proof of concept, but know that we will not be able to merge it as-is. We suggest opening
 an issue first to discuss with us!
 
-On the other hand, contributions to the `README.md` are always very welcome!
+On the other hand, contributions to the README are always very welcome!

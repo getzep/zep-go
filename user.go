@@ -5,137 +5,245 @@ package zep
 import (
 	json "encoding/json"
 	fmt "fmt"
-	internal "github.com/getzep/zep-go/v3/internal"
+	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
+)
+
+var (
+	createUserRequestFieldDisableDefaultOntology = big.NewInt(1 << 0)
+	createUserRequestFieldEmail                  = big.NewInt(1 << 1)
+	createUserRequestFieldFirstName              = big.NewInt(1 << 2)
+	createUserRequestFieldLastName               = big.NewInt(1 << 3)
+	createUserRequestFieldMetadata               = big.NewInt(1 << 4)
+	createUserRequestFieldTimeZone               = big.NewInt(1 << 5)
+	createUserRequestFieldUserID                 = big.NewInt(1 << 6)
 )
 
 type CreateUserRequest struct {
-	// When true, disables the use of default/fallback ontology for the user's graph.
-	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
-	// The email address of the user.
-	Email *string `json:"email,omitempty" url:"-"`
-	// The first name of the user.
-	FirstName *string `json:"first_name,omitempty" url:"-"`
-	// The last name of the user.
-	LastName *string `json:"last_name,omitempty" url:"-"`
-	// The metadata associated with the user.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
-	// The user's IANA time zone. Null or omission leaves it unset at creation.
-	TimeZone *string `json:"time_zone,omitempty" url:"-"`
-	// The unique identifier of the user.
-	UserID string `json:"user_id" url:"-"`
+	DisableDefaultOntology *bool          `json:"disable_default_ontology,omitempty" url:"-"`
+	Email                  *string        `json:"email,omitempty" url:"-"`
+	FirstName              *string        `json:"first_name,omitempty" url:"-"`
+	LastName               *string        `json:"last_name,omitempty" url:"-"`
+	Metadata               map[string]any `json:"metadata,omitempty" url:"-"`
+	TimeZone               *string        `json:"time_zone,omitempty" url:"-"`
+	UserID                 *string        `json:"user_id,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type AddUserInstructionsRequest struct {
-	// Instructions to add to the user summary generation.
-	Instructions []*UserInstruction `json:"instructions,omitempty" url:"-"`
-	// User IDs to add the instructions to. If empty, the instructions are added to the project-wide default.
-	UserIDs []string `json:"user_ids,omitempty" url:"-"`
+func (c *CreateUserRequest) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
 }
 
-type DeleteUserInstructionsRequest struct {
-	// Unique identifier for the instructions to be deleted. If empty deletes all instructions.
-	InstructionNames []string `json:"instruction_names,omitempty" url:"-"`
-	// Determines which users will have their custom instructions deleted. If no users are provided, the project-wide custom instructions will be effected.
-	UserIDs []string `json:"user_ids,omitempty" url:"-"`
+// SetDisableDefaultOntology sets the DisableDefaultOntology field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetDisableDefaultOntology(disableDefaultOntology *bool) {
+	c.DisableDefaultOntology = disableDefaultOntology
+	c.require(createUserRequestFieldDisableDefaultOntology)
 }
 
-type UserListOrderedRequest struct {
-	// Page number for pagination, starting from 1
-	PageNumber *int `json:"-" url:"pageNumber,omitempty"`
-	// Number of users to retrieve per page
-	PageSize *int `json:"-" url:"pageSize,omitempty"`
-	// Search term for filtering users by user_id, name, or email
-	Search *string `json:"-" url:"search,omitempty"`
-	// Column to sort by (created_at, user_id, email)
+// SetEmail sets the Email field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetEmail(email *string) {
+	c.Email = email
+	c.require(createUserRequestFieldEmail)
+}
+
+// SetFirstName sets the FirstName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetFirstName(firstName *string) {
+	c.FirstName = firstName
+	c.require(createUserRequestFieldFirstName)
+}
+
+// SetLastName sets the LastName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetLastName(lastName *string) {
+	c.LastName = lastName
+	c.require(createUserRequestFieldLastName)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetMetadata(metadata map[string]any) {
+	c.Metadata = metadata
+	c.require(createUserRequestFieldMetadata)
+}
+
+// SetTimeZone sets the TimeZone field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetTimeZone(timeZone *string) {
+	c.TimeZone = timeZone
+	c.require(createUserRequestFieldTimeZone)
+}
+
+// SetUserID sets the UserID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetUserID(userID *string) {
+	c.UserID = userID
+	c.require(createUserRequestFieldUserID)
+}
+
+func (c *CreateUserRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreateUserRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*c = CreateUserRequest(body)
+	return nil
+}
+
+func (c *CreateUserRequest) MarshalJSON() ([]byte, error) {
+	type embed CreateUserRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	userListRequestFieldLimit   = big.NewInt(1 << 0)
+	userListRequestFieldCursor  = big.NewInt(1 << 1)
+	userListRequestFieldOrderBy = big.NewInt(1 << 2)
+	userListRequestFieldOrder   = big.NewInt(1 << 3)
+	userListRequestFieldSearch  = big.NewInt(1 << 4)
+)
+
+type UserListRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort field
 	OrderBy *string `json:"-" url:"order_by,omitempty"`
-	// Sort in ascending order
-	Asc *bool `json:"-" url:"asc,omitempty"`
+	// asc or desc
+	Order  *string `json:"-" url:"order,omitempty"`
+	Search *string `json:"search,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type UserListUserSummaryInstructionsRequest struct {
-	// User ID to get user-specific instructions
-	UserID *string `json:"-" url:"user_id,omitempty"`
-}
-
-type ListUserInstructionsResponse struct {
-	Instructions []*UserInstruction `json:"instructions,omitempty" url:"instructions,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (l *ListUserInstructionsResponse) GetInstructions() []*UserInstruction {
-	if l == nil {
-		return nil
+func (u *UserListRequest) require(field *big.Int) {
+	if u.explicitFields == nil {
+		u.explicitFields = big.NewInt(0)
 	}
-	return l.Instructions
+	u.explicitFields.Or(u.explicitFields, field)
 }
 
-func (l *ListUserInstructionsResponse) GetExtraProperties() map[string]interface{} {
-	return l.extraProperties
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserListRequest) SetLimit(limit *int) {
+	u.Limit = limit
+	u.require(userListRequestFieldLimit)
 }
 
-func (l *ListUserInstructionsResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ListUserInstructionsResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserListRequest) SetCursor(cursor *string) {
+	u.Cursor = cursor
+	u.require(userListRequestFieldCursor)
+}
+
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserListRequest) SetOrderBy(orderBy *string) {
+	u.OrderBy = orderBy
+	u.require(userListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserListRequest) SetOrder(order *string) {
+	u.Order = order
+	u.require(userListRequestFieldOrder)
+}
+
+// SetSearch sets the Search field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserListRequest) SetSearch(search *string) {
+	u.Search = search
+	u.require(userListRequestFieldSearch)
+}
+
+func (u *UserListRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserListRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	*l = ListUserInstructionsResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *l)
-	if err != nil {
-		return err
-	}
-	l.extraProperties = extraProperties
-	l.rawJSON = json.RawMessage(data)
+	*u = UserListRequest(body)
 	return nil
 }
 
-func (l *ListUserInstructionsResponse) String() string {
-	if len(l.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
-			return value
-		}
+func (u *UserListRequest) MarshalJSON() ([]byte, error) {
+	type embed UserListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*u),
 	}
-	if value, err := internal.StringifyJSON(l); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", l)
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, u.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }
 
-type UserInstruction struct {
-	Name string `json:"name" url:"name"`
-	Text string `json:"text" url:"text"`
+var (
+	userDeleteResultFieldTask = big.NewInt(1 << 0)
+)
+
+type UserDeleteResult struct {
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (u *UserInstruction) GetName() string {
+func (u *UserDeleteResult) GetTask() *Task {
 	if u == nil {
-		return ""
+		return nil
 	}
-	return u.Name
+	return u.Task
 }
 
-func (u *UserInstruction) GetText() string {
+func (u *UserDeleteResult) GetExtraProperties() map[string]interface{} {
 	if u == nil {
-		return ""
+		return nil
 	}
-	return u.Text
-}
-
-func (u *UserInstruction) GetExtraProperties() map[string]interface{} {
 	return u.extraProperties
 }
 
-func (u *UserInstruction) UnmarshalJSON(data []byte) error {
-	type unmarshaler UserInstruction
+func (u *UserDeleteResult) require(field *big.Int) {
+	if u.explicitFields == nil {
+		u.explicitFields = big.NewInt(0)
+	}
+	u.explicitFields.Or(u.explicitFields, field)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserDeleteResult) SetTask(task *Task) {
+	u.Task = task
+	u.require(userDeleteResultFieldTask)
+}
+
+func (u *UserDeleteResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserDeleteResult
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*u = UserInstruction(value)
+	*u = UserDeleteResult(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *u)
 	if err != nil {
 		return err
@@ -145,7 +253,21 @@ func (u *UserInstruction) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (u *UserInstruction) String() string {
+func (u *UserDeleteResult) MarshalJSON() ([]byte, error) {
+	type embed UserDeleteResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*u),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, u.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (u *UserDeleteResult) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
@@ -157,125 +279,98 @@ func (u *UserInstruction) String() string {
 	return fmt.Sprintf("%#v", u)
 }
 
-type UserListResponse struct {
-	RowCount   *int    `json:"row_count,omitempty" url:"row_count,omitempty"`
-	TotalCount *int    `json:"total_count,omitempty" url:"total_count,omitempty"`
-	Users      []*User `json:"users,omitempty" url:"users,omitempty"`
+var (
+	patchUserRequestFieldDisableDefaultOntology = big.NewInt(1 << 0)
+	patchUserRequestFieldEmail                  = big.NewInt(1 << 1)
+	patchUserRequestFieldFirstName              = big.NewInt(1 << 2)
+	patchUserRequestFieldLastName               = big.NewInt(1 << 3)
+	patchUserRequestFieldMetadata               = big.NewInt(1 << 4)
+	patchUserRequestFieldTimeZone               = big.NewInt(1 << 5)
+)
 
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (u *UserListResponse) GetRowCount() *int {
-	if u == nil {
-		return nil
-	}
-	return u.RowCount
-}
-
-func (u *UserListResponse) GetTotalCount() *int {
-	if u == nil {
-		return nil
-	}
-	return u.TotalCount
-}
-
-func (u *UserListResponse) GetUsers() []*User {
-	if u == nil {
-		return nil
-	}
-	return u.Users
-}
-
-func (u *UserListResponse) GetExtraProperties() map[string]interface{} {
-	return u.extraProperties
-}
-
-func (u *UserListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler UserListResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*u = UserListResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *u)
-	if err != nil {
-		return err
-	}
-	u.extraProperties = extraProperties
-	u.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (u *UserListResponse) String() string {
-	if len(u.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(u); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", u)
-}
-
-type UserNodeResponse struct {
-	Node *EntityNode `json:"node,omitempty" url:"node,omitempty"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (u *UserNodeResponse) GetNode() *EntityNode {
-	if u == nil {
-		return nil
-	}
-	return u.Node
-}
-
-func (u *UserNodeResponse) GetExtraProperties() map[string]interface{} {
-	return u.extraProperties
-}
-
-func (u *UserNodeResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler UserNodeResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*u = UserNodeResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *u)
-	if err != nil {
-		return err
-	}
-	u.extraProperties = extraProperties
-	u.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (u *UserNodeResponse) String() string {
-	if len(u.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(u); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", u)
-}
-
-type UpdateUserRequest struct {
-	// When true, disables the use of default/fallback ontology for the user's graph.
+type PatchUserRequest struct {
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
 	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
-	// The email address of the user.
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
 	Email *string `json:"email,omitempty" url:"-"`
-	// The first name of the user.
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
 	FirstName *string `json:"first_name,omitempty" url:"-"`
-	// The last name of the user.
-	LastName *string `json:"last_name,omitempty" url:"-"`
-	// The metadata to update
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
-	// The user's IANA time zone. Null clears the existing value.
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	LastName *string        `json:"last_name,omitempty" url:"-"`
+	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
 	TimeZone *string `json:"time_zone,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (p *PatchUserRequest) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetDisableDefaultOntology sets the DisableDefaultOntology field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchUserRequest) SetDisableDefaultOntology(disableDefaultOntology *bool) {
+	p.DisableDefaultOntology = disableDefaultOntology
+	p.require(patchUserRequestFieldDisableDefaultOntology)
+}
+
+// SetEmail sets the Email field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchUserRequest) SetEmail(email *string) {
+	p.Email = email
+	p.require(patchUserRequestFieldEmail)
+}
+
+// SetFirstName sets the FirstName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchUserRequest) SetFirstName(firstName *string) {
+	p.FirstName = firstName
+	p.require(patchUserRequestFieldFirstName)
+}
+
+// SetLastName sets the LastName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchUserRequest) SetLastName(lastName *string) {
+	p.LastName = lastName
+	p.require(patchUserRequestFieldLastName)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchUserRequest) SetMetadata(metadata map[string]any) {
+	p.Metadata = metadata
+	p.require(patchUserRequestFieldMetadata)
+}
+
+// SetTimeZone sets the TimeZone field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchUserRequest) SetTimeZone(timeZone *string) {
+	p.TimeZone = timeZone
+	p.require(patchUserRequestFieldTimeZone)
+}
+
+func (p *PatchUserRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatchUserRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*p = PatchUserRequest(body)
+	return nil
+}
+
+func (p *PatchUserRequest) MarshalJSON() ([]byte, error) {
+	type embed PatchUserRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }

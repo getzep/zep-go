@@ -4,114 +4,51 @@ package context
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type RawClient struct {
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
+	options *core.RequestOptions
 }
 
 func NewRawClient(options *core.RequestOptions) *RawClient {
 	return &RawClient{
+		options: options,
 		baseURL: options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-func (r *RawClient) ListContextTemplates(
+func (r *RawClient) CreateTemplate(
 	ctx context.Context,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.ListContextTemplatesResponse], error) {
-	options := core.NewRequestOptions(opts...)
+	request *zep.CreateContextTemplateRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.ContextTemplate], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := baseURL + "/context-templates"
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.ListContextTemplatesResponse
-	raw, err := r.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodGet,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &core.Response[*v3.ListContextTemplatesResponse]{
-		StatusCode: raw.StatusCode,
-		Header:     raw.Header,
-		Body:       response,
-	}, nil
-}
-
-func (r *RawClient) CreateContextTemplate(
-	ctx context.Context,
-	request *v3.CreateContextTemplateRequest,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.ContextTemplateResponse], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		r.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := baseURL + "/context-templates"
-	headers := internal.MergeHeaders(
-		r.header.Clone(),
-		options.ToHeader(),
-	)
-	headers.Add("Content-Type", "application/json")
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.ContextTemplateResponse
+	var response *zep.ContextTemplate
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -119,62 +56,46 @@ func (r *RawClient) CreateContextTemplate(
 			Method:          http.MethodPost,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ContextTemplateResponse]{
+	return &core.Response[*zep.ContextTemplate]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
 	}, nil
 }
 
-func (r *RawClient) GetContextTemplate(
+func (r *RawClient) GetTemplate(
 	ctx context.Context,
-	// Template ID
-	templateID string,
+	// Template UUID
+	templateUUID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.ContextTemplateResponse], error) {
+) (*core.Response[*zep.ContextTemplate], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
 		baseURL+"/context-templates/%v",
-		templateID,
+		templateUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.ContextTemplateResponse
+	var response *zep.ContextTemplate
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -182,63 +103,46 @@ func (r *RawClient) GetContextTemplate(
 			Method:          http.MethodGet,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ContextTemplateResponse]{
+	return &core.Response[*zep.ContextTemplate]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
 	}, nil
 }
 
-func (r *RawClient) UpdateContextTemplate(
+func (r *RawClient) UpdateTemplate(
 	ctx context.Context,
-	// Template ID
-	templateID string,
-	request *v3.UpdateContextTemplateRequest,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.ContextTemplateResponse], error) {
-	options := core.NewRequestOptions(opts...)
+	// Template UUID
+	templateUUID string,
+	request *zep.CreateContextTemplateRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.ContextTemplate], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
 		baseURL+"/context-templates/%v",
-		templateID,
+		templateUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	headers.Add("Content-Type", "application/json")
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.ContextTemplateResponse
+	var response *zep.ContextTemplate
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -246,62 +150,45 @@ func (r *RawClient) UpdateContextTemplate(
 			Method:          http.MethodPut,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.ContextTemplateResponse]{
+	return &core.Response[*zep.ContextTemplate]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
 	}, nil
 }
 
-func (r *RawClient) DeleteContextTemplate(
+func (r *RawClient) DeleteTemplate(
 	ctx context.Context,
-	// Template ID
-	templateID string,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.SuccessResponse], error) {
-	options := core.NewRequestOptions(opts...)
+	// Template UUID
+	templateUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[any], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
 		baseURL+"/context-templates/%v",
-		templateID,
+		templateUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.SuccessResponse
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -309,19 +196,19 @@ func (r *RawClient) DeleteContextTemplate(
 			Method:          http.MethodDelete,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.SuccessResponse]{
+	return &core.Response[any]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
-		Body:       response,
+		Body:       nil,
 	}, nil
 }

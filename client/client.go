@@ -3,34 +3,34 @@
 package client
 
 import (
-	batch "github.com/getzep/zep-go/v3/batch"
-	context "github.com/getzep/zep-go/v3/context"
-	core "github.com/getzep/zep-go/v3/core"
-	client "github.com/getzep/zep-go/v3/graph/client"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
-	project "github.com/getzep/zep-go/v3/project"
-	task "github.com/getzep/zep-go/v3/task"
-	threadclient "github.com/getzep/zep-go/v3/thread/client"
-	user "github.com/getzep/zep-go/v3/user"
-	usergroup "github.com/getzep/zep-go/v3/usergroup"
-	http "net/http"
 	os "os"
+
+	batch "github.com/getzep/zep-go/v4/batch"
+	context "github.com/getzep/zep-go/v4/context"
+	core "github.com/getzep/zep-go/v4/core"
+	client "github.com/getzep/zep-go/v4/graph/client"
+	internal "github.com/getzep/zep-go/v4/internal"
+	lookup "github.com/getzep/zep-go/v4/lookup"
+	option "github.com/getzep/zep-go/v4/option"
+	project "github.com/getzep/zep-go/v4/project"
+	task "github.com/getzep/zep-go/v4/task"
+	threadclient "github.com/getzep/zep-go/v4/thread/client"
+	user "github.com/getzep/zep-go/v4/user"
 )
 
 type Client struct {
-	UserGroup *usergroup.Client
-	Batch     *batch.Client
-	Context   *context.Client
-	Graph     *client.Client
-	Project   *project.Client
-	Task      *task.Client
-	Thread    *threadclient.Client
-	User      *user.Client
+	Batch   *batch.Client
+	Context *context.Client
+	Graph   *client.Client
+	Lookup  *lookup.Client
+	Project *project.Client
+	Task    *task.Client
+	Thread  *threadclient.Client
+	User    *user.Client
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
 func NewClient(opts ...option.RequestOption) *Client {
@@ -39,21 +39,22 @@ func NewClient(opts ...option.RequestOption) *Client {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
-		UserGroup: usergroup.NewClient(opts...),
-		Batch:     batch.NewClient(opts...),
-		Context:   context.NewClient(opts...),
-		Graph:     client.NewClient(opts...),
-		Project:   project.NewClient(opts...),
-		Task:      task.NewClient(opts...),
-		Thread:    threadclient.NewClient(opts...),
-		User:      user.NewClient(opts...),
-		baseURL:   options.BaseURL,
+		Batch:   batch.NewClient(options),
+		Context: context.NewClient(options),
+		Graph:   client.NewClient(options),
+		Lookup:  lookup.NewClient(options),
+		Project: project.NewClient(options),
+		Task:    task.NewClient(options),
+		Thread:  threadclient.NewClient(options),
+		User:    user.NewClient(options),
+		options: options,
+		baseURL: options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }

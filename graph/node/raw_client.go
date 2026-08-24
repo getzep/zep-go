@@ -4,305 +4,58 @@ package node
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	graph "github.com/getzep/zep-go/v3/graph"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	graph "github.com/getzep/zep-go/v4/graph"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type RawClient struct {
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
+	options *core.RequestOptions
 }
 
 func NewRawClient(options *core.RequestOptions) *RawClient {
 	return &RawClient{
+		options: options,
 		baseURL: options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-func (r *RawClient) GetByGraphID(
+func (r *RawClient) Add(
 	ctx context.Context,
-	// Graph ID
-	graphID string,
-	request *v3.GraphNodesRequest,
-	opts ...option.RequestOption,
-) (*core.Response[[]*v3.EntityNode], error) {
-	options := core.NewRequestOptions(opts...)
+	// Graph UUID
+	graphUUID string,
+	request *graph.AddNodesRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.AddNodesResult], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/node/graph/%v",
-		graphID,
+		baseURL+"/graphs/%v/nodes",
+		graphUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
-		options.ToHeader(),
-	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response []*v3.EntityNode
-	raw, err := r.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodPost,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Request:         request,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &core.Response[[]*v3.EntityNode]{
-		StatusCode: raw.StatusCode,
-		Header:     raw.Header,
-		Body:       response,
-	}, nil
-}
-
-func (r *RawClient) GetByUserID(
-	ctx context.Context,
-	// User ID
-	userID string,
-	request *v3.GraphNodesRequest,
-	opts ...option.RequestOption,
-) (*core.Response[[]*v3.EntityNode], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		r.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/node/user/%v",
-		userID,
-	)
-	headers := internal.MergeHeaders(
-		r.header.Clone(),
-		options.ToHeader(),
-	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response []*v3.EntityNode
-	raw, err := r.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodPost,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Request:         request,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &core.Response[[]*v3.EntityNode]{
-		StatusCode: raw.StatusCode,
-		Header:     raw.Header,
-		Body:       response,
-	}, nil
-}
-
-func (r *RawClient) GetEdges(
-	ctx context.Context,
-	// Node UUID
-	nodeUUID string,
-	opts ...option.RequestOption,
-) (*core.Response[[]*v3.EntityEdge], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		r.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/node/%v/entity-edges",
-		nodeUUID,
-	)
-	headers := internal.MergeHeaders(
-		r.header.Clone(),
-		options.ToHeader(),
-	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response []*v3.EntityEdge
-	raw, err := r.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodGet,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &core.Response[[]*v3.EntityEdge]{
-		StatusCode: raw.StatusCode,
-		Header:     raw.Header,
-		Body:       response,
-	}, nil
-}
-
-func (r *RawClient) GetEpisodes(
-	ctx context.Context,
-	// Node UUID
-	nodeUUID string,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.EpisodeResponse], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		r.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/node/%v/episodes",
-		nodeUUID,
-	)
-	headers := internal.MergeHeaders(
-		r.header.Clone(),
-		options.ToHeader(),
-	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.EpisodeResponse
-	raw, err := r.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodGet,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &core.Response[*v3.EpisodeResponse]{
-		StatusCode: raw.StatusCode,
-		Header:     raw.Header,
-		Body:       response,
-	}, nil
-}
-
-func (r *RawClient) GetNeighbors(
-	ctx context.Context,
-	// Node UUID
-	nodeUUID string,
-	request *graph.GraphNodeNeighborsRequest,
-	opts ...option.RequestOption,
-) (*core.Response[[]*v3.GraphNodeNeighbor], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		r.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/node/%v/neighbors",
-		nodeUUID,
-	)
-	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response []*v3.GraphNodeNeighbor
+	var response *zep.AddNodesResult
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -310,18 +63,19 @@ func (r *RawClient) GetNeighbors(
 			Method:          http.MethodPost,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.GraphNodeNeighbor]{
+	return &core.Response[*zep.AddNodesResult]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -330,42 +84,28 @@ func (r *RawClient) GetNeighbors(
 
 func (r *RawClient) Get(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Node UUID
-	uuid string,
+	nodeUUID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.EntityNode], error) {
+) (*core.Response[*zep.Node], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/node/%v",
-		uuid,
+		baseURL+"/graphs/%v/nodes/%v",
+		graphUUID,
+		nodeUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.EntityNode
+	var response *zep.Node
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -373,17 +113,18 @@ func (r *RawClient) Get(
 			Method:          http.MethodGet,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.EntityNode]{
+	return &core.Response[*zep.Node]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -392,42 +133,28 @@ func (r *RawClient) Get(
 
 func (r *RawClient) Delete(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Node UUID
-	uuid string,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.SuccessResponse], error) {
-	options := core.NewRequestOptions(opts...)
+	nodeUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.AsyncResult], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/node/%v",
-		uuid,
+		baseURL+"/graphs/%v/nodes/%v",
+		graphUUID,
+		nodeUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.SuccessResponse
+	var response *zep.AsyncResult
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -435,17 +162,18 @@ func (r *RawClient) Delete(
 			Method:          http.MethodDelete,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.SuccessResponse]{
+	return &core.Response[*zep.AsyncResult]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -454,44 +182,30 @@ func (r *RawClient) Delete(
 
 func (r *RawClient) Update(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Node UUID
-	uuid string,
-	request *graph.UpdateNodeRequest,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.EntityNode], error) {
-	options := core.NewRequestOptions(opts...)
+	nodeUUID string,
+	request *graph.PatchNodeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.Node], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/node/%v",
-		uuid,
+		baseURL+"/graphs/%v/nodes/%v",
+		graphUUID,
+		nodeUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.EntityNode
+	var response *zep.Node
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -499,18 +213,19 @@ func (r *RawClient) Update(
 			Method:          http.MethodPatch,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.EntityNode]{
+	return &core.Response[*zep.Node]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

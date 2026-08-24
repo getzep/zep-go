@@ -4,52 +4,60 @@ package node
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	graph "github.com/getzep/zep-go/v3/graph"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	graph "github.com/getzep/zep-go/v4/graph"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Returns all nodes for a graph.
-func (c *Client) GetByGraphID(
+// Example:
+//
+//	request := &graph.AddNodesRequest{}
+//	client.Graph.Node.Add(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) Add(
 	ctx context.Context,
-	// Graph ID
-	graphID string,
-	request *v3.GraphNodesRequest,
-	opts ...option.RequestOption,
-) ([]*v3.EntityNode, error) {
-	response, err := c.WithRawResponse.GetByGraphID(
+	// Graph UUID
+	graphUUID string,
+	request *graph.AddNodesRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.AddNodesResult, error) {
+	response, err := c.WithRawResponse.Add(
 		ctx,
-		graphID,
+		graphUUID,
 		request,
 		opts...,
 	)
@@ -59,92 +67,108 @@ func (c *Client) GetByGraphID(
 	return response.Body, nil
 }
 
-// Returns all nodes for a user
-func (c *Client) GetByUserID(
+// Example:
+//
+//	request := &graph.NodeListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Body: &zep.ArtifactListRequest{},
+//	}
+//	client.Graph.Node.List(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) List(
 	ctx context.Context,
-	// User ID
-	userID string,
-	request *v3.GraphNodesRequest,
-	opts ...option.RequestOption,
-) ([]*v3.EntityNode, error) {
-	response, err := c.WithRawResponse.GetByUserID(
-		ctx,
-		userID,
-		request,
-		opts...,
+	// Graph UUID
+	graphUUID string,
+	request *graph.NodeListRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.Node, *zep.NodePage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
 	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/nodes/list",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
 	if err != nil {
 		return nil, err
 	}
-	return response.Body, nil
-}
-
-// Deprecated. Use edge listing with `filters.connected_node_uuids`, or the neighbors endpoint (`POST /graph/node/{node_uuid}/neighbors`), instead. Returns all edges for a node, subject to an internal cap; responses reduced by that cap set the Zep-Truncated header.
-func (c *Client) GetEdges(
-	ctx context.Context,
-	// Node UUID
-	nodeUUID string,
-	opts ...option.RequestOption,
-) ([]*v3.EntityEdge, error) {
-	response, err := c.WithRawResponse.GetEdges(
-		ctx,
-		nodeUUID,
-		opts...,
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
 	)
-	if err != nil {
-		return nil, err
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
 	}
-	return response.Body, nil
-}
-
-// Deprecated. Use episode listing with `mentioned_node_uuids` (`POST /graph/episodes/graph/{graph_id}` or `POST /graph/episodes/user/{user_id}`) instead. Returns episodes that mentioned a given node, subject to an internal cap; responses reduced by that cap set the Zep-Truncated header.
-func (c *Client) GetEpisodes(
-	ctx context.Context,
-	// Node UUID
-	nodeUUID string,
-	opts ...option.RequestOption,
-) (*v3.EpisodeResponse, error) {
-	response, err := c.WithRawResponse.GetEpisodes(
-		ctx,
-		nodeUUID,
-		opts...,
+	readPageResponse := func(response *zep.NodePage) *core.PageResponse[*string, *zep.Node, *zep.NodePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Node, *zep.NodePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
 	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
+	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Enumerates the distinct entity nodes directly connected to a node, together with the edges connecting each to it.
-func (c *Client) GetNeighbors(
-	ctx context.Context,
-	// Node UUID
-	nodeUUID string,
-	request *graph.GraphNodeNeighborsRequest,
-	opts ...option.RequestOption,
-) ([]*v3.GraphNodeNeighbor, error) {
-	response, err := c.WithRawResponse.GetNeighbors(
-		ctx,
-		nodeUUID,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Returns a specific node by its UUID.
+// Example:
+//
+//	client.Graph.Node.Get(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "node_uuid",
+//	)
 func (c *Client) Get(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Node UUID
-	uuid string,
+	nodeUUID string,
 	opts ...option.RequestOption,
-) (*v3.EntityNode, error) {
+) (*zep.Node, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
-		uuid,
+		graphUUID,
+		nodeUUID,
 		opts...,
 	)
 	if err != nil {
@@ -153,16 +177,25 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Deletes a node by UUID.
+// Example:
+//
+//	client.Graph.Node.Delete(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "node_uuid",
+//	)
 func (c *Client) Delete(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Node UUID
-	uuid string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+	nodeUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*zep.AsyncResult, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
-		uuid,
+		graphUUID,
+		nodeUUID,
 		opts...,
 	)
 	if err != nil {
@@ -171,17 +204,28 @@ func (c *Client) Delete(
 	return response.Body, nil
 }
 
-// Updates an entity node by UUID.
+// Example:
+//
+//	request := &graph.PatchNodeRequest{}
+//	client.Graph.Node.Update(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "node_uuid",
+//	    request,
+//	)
 func (c *Client) Update(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Node UUID
-	uuid string,
-	request *graph.UpdateNodeRequest,
-	opts ...option.RequestOption,
-) (*v3.EntityNode, error) {
+	nodeUUID string,
+	request *graph.PatchNodeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Node, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
-		uuid,
+		graphUUID,
+		nodeUUID,
 		request,
 		opts...,
 	)
@@ -189,4 +233,90 @@ func (c *Client) Update(
 		return nil, err
 	}
 	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &graph.NeighborsRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	}
+//	client.Graph.Node.ListNeighbors(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "node_uuid",
+//	    request,
+//	)
+func (c *Client) ListNeighbors(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	// Node UUID
+	nodeUUID string,
+	request *graph.NeighborsRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.NeighborEntry, *zep.NeighborPage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/nodes/%v/neighbors",
+		graphUUID,
+		nodeUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.NeighborPage) *core.PageResponse[*string, *zep.NeighborEntry, *zep.NeighborPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.NeighborEntry, *zep.NeighborPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
 }

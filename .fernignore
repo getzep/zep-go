@@ -1,17 +1,15 @@
 # Specify files that shouldn't be modified by Fern
-
-README.md
-
-.gitignore
+#
+# v4 starts from Fern's generated SDK rather than v3's hand-written layer. Only
+# what must not be regenerated stays here:
+#   .github            — the SDK Release audit fails closed unless CI is protected
+#   LICENSE            — legal text, not a generated artifact
+#   go.mod, go.sum     — the audit requires them, and the /v4 module path is
+#                        ours to set: Go encodes the major in the module path
+#   .fern/             — Fern's own replay state
+#
+# Anything ported forward from v3 is re-added deliberately, file by file.
 .github
-examples/
-graph/client/base_entity.go
-graph/client/base_edge.go
-graph/client/schema.go
-graph/client/ontology.go
-entity_types.go
-context_string.go
-context_string_test.go
 LICENSE
 go.mod
 go.sum

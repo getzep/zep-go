@@ -4,68 +4,110 @@ package message
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
-	thread "github.com/getzep/zep-go/v3/thread"
 	http "net/http"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
+	thread "github.com/getzep/zep-go/v4/thread"
 )
 
 type RawClient struct {
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
+	options *core.RequestOptions
 }
 
 func NewRawClient(options *core.RequestOptions) *RawClient {
 	return &RawClient{
+		options: options,
 		baseURL: options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-func (r *RawClient) Update(
+func (r *RawClient) Get(
 	ctx context.Context,
-	// The UUID of the message.
+	// Thread UUID
+	threadUUID string,
+	// Message UUID
 	messageUUID string,
-	request *thread.ThreadMessageUpdate,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.Message], error) {
+) (*core.Response[*zep.Message], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/messages/%v",
+		baseURL+"/threads/%v/messages/%v",
+		threadUUID,
 		messageUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
+		options.ToHeader(),
+	)
+	var response *zep.Message
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(thread.ErrorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*zep.Message]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) Update(
+	ctx context.Context,
+	// Thread UUID
+	threadUUID string,
+	// Message UUID
+	messageUUID string,
+	request *thread.PatchMessageRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.Message], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/threads/%v/messages/%v",
+		threadUUID,
+		messageUUID,
+	)
+	headers := internal.MergeHeaders(
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
-	errorCodes := internal.ErrorCodes{
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.Message
+	var response *zep.Message
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -73,18 +115,19 @@ func (r *RawClient) Update(
 			Method:          http.MethodPatch,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(thread.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.Message]{
+	return &core.Response[*zep.Message]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

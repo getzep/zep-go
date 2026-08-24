@@ -3,7 +3,7 @@
 package option
 
 import (
-	core "github.com/getzep/zep-go/v3/core"
+	core "github.com/getzep/zep-go/v4/core"
 	http "net/http"
 	url "net/url"
 )
@@ -61,6 +61,38 @@ func WithMaxAttempts(attempts uint) *core.MaxAttemptsOption {
 	return &core.MaxAttemptsOption{
 		MaxAttempts: attempts,
 	}
+}
+
+// WithMaxStreamBufSize configures the maximum buffer size for streaming responses.
+// This controls the maximum size of a single message (in bytes) that the stream
+// can process. By default, this is set to 1MB.
+func WithMaxStreamBufSize(size int) *core.MaxBufSizeOption {
+	return &core.MaxBufSizeOption{
+		MaxBufSize: size,
+	}
+}
+
+// WithMaxStreamReconnectAttempts caps the number of transparent mid-stream
+// reconnect attempts on streaming endpoints that support resumption. The
+// reconnect loop honors Last-Event-ID and any server-sent `retry:` directives.
+// Has no effect on endpoints that don't support resumption.
+func WithMaxStreamReconnectAttempts(attempts uint) *core.MaxStreamReconnectAttemptsOption {
+	return &core.MaxStreamReconnectAttemptsOption{
+		MaxStreamReconnectAttempts: attempts,
+	}
+}
+
+// WithoutStreamReconnection disables transparent mid-stream reconnection on
+// resumable SSE endpoints. Has no effect on non-resumable endpoints.
+func WithoutStreamReconnection() *core.WithoutStreamReconnectionOption {
+	return &core.WithoutStreamReconnectionOption{}
+}
+
+// WithoutRetries disables HTTP-level retry attempts for the request. Use this
+// instead of WithMaxAttempts(0), which falls through to the default of 2
+// attempts.
+func WithoutRetries() *core.WithoutRetriesOption {
+	return &core.WithoutRetriesOption{}
 }
 
 // WithAPIKey sets the apiKey auth request header.

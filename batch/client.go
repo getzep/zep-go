@@ -4,63 +4,130 @@ package batch
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
 	http "net/http"
 	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// List batches for the current project, optionally filtered by batch status.
+// Example:
+//
+//	request := &zep.BatchListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Status: zep.String(
+//	        "status",
+//	    ),
+//	}
+//	client.Batch.List(
+//	    context.TODO(),
+//	    request,
+//	)
 func (c *Client) List(
 	ctx context.Context,
-	request *v3.BatchListRequest,
+	request *zep.BatchListRequest,
 	opts ...option.RequestOption,
-) (*v3.BatchListResponse, error) {
-	response, err := c.WithRawResponse.List(
-		ctx,
-		request,
-		opts...,
+) (*core.Page[*string, *zep.Batch, *zep.BatchPage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
 	)
+	endpointURL := baseURL + "/batches"
+	queryParams, err := internal.QueryValues(request)
 	if err != nil {
 		return nil, err
 	}
-	return response.Body, nil
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.BatchPage) *core.PageResponse[*string, *zep.Batch, *zep.BatchPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Batch, *zep.BatchPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Create a draft batch that can be filled with graph episodes and thread messages.
+// Example:
+//
+//	request := &zep.CreateBatchRequest{}
+//	client.Batch.Create(
+//	    context.TODO(),
+//	    request,
+//	)
 func (c *Client) Create(
 	ctx context.Context,
-	request *v3.ApidataCreateBatchRequest,
-	opts ...option.RequestOption,
-) (*v3.BatchSummary, error) {
+	request *zep.CreateBatchRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Batch, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		request,
@@ -72,16 +139,21 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Get a batch summary, including runtime progress when the batch has been processed.
+// Example:
+//
+//	client.Batch.Get(
+//	    context.TODO(),
+//	    "batch_uuid",
+//	)
 func (c *Client) Get(
 	ctx context.Context,
-	// The batch ID.
-	batchID string,
+	// Batch UUID
+	batchUUID string,
 	opts ...option.RequestOption,
-) (*v3.BatchSummary, error) {
+) (*zep.Batch, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
-		batchID,
+		batchUUID,
 		opts...,
 	)
 	if err != nil {
@@ -90,55 +162,127 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Delete a draft or invalid unprocessed batch. Processed batches cannot be deleted.
+// Example:
+//
+//	client.Batch.Delete(
+//	    context.TODO(),
+//	    "batch_uuid",
+//	)
 func (c *Client) Delete(
 	ctx context.Context,
-	// The batch ID.
-	batchID string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.Delete(
+	// Batch UUID
+	batchUUID string,
+	opts ...option.IdempotentRequestOption,
+) error {
+	_, err := c.WithRawResponse.Delete(
 		ctx,
-		batchID,
+		batchUUID,
 		opts...,
 	)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return response.Body, nil
+	return nil
 }
 
-// List items in a batch, including derived runtime status when the batch has been processed.
+// Example:
+//
+//	request := &zep.BatchListItemsRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	}
+//	client.Batch.ListItems(
+//	    context.TODO(),
+//	    "batch_uuid",
+//	    request,
+//	)
 func (c *Client) ListItems(
 	ctx context.Context,
-	// The batch ID.
-	batchID string,
-	request *v3.BatchListItemsRequest,
+	// Batch UUID
+	batchUUID string,
+	request *zep.BatchListItemsRequest,
 	opts ...option.RequestOption,
-) (*v3.BatchItemListResponse, error) {
-	response, err := c.WithRawResponse.ListItems(
-		ctx,
-		batchID,
-		request,
-		opts...,
+) (*core.Page[*string, *zep.BatchItem, *zep.BatchItemPage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
 	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/batches/%v/items",
+		batchUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
 	if err != nil {
 		return nil, err
 	}
-	return response.Body, nil
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.BatchItemPage) *core.PageResponse[*string, *zep.BatchItem, *zep.BatchItemPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.BatchItem, *zep.BatchItemPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Add graph episodes and thread messages to a draft batch. Items are appended in request order.
-func (c *Client) Add(
+// Example:
+//
+//	request := &zep.AddBatchItemsRequest{}
+//	client.Batch.AddItems(
+//	    context.TODO(),
+//	    "batch_uuid",
+//	    request,
+//	)
+func (c *Client) AddItems(
 	ctx context.Context,
-	// The batch ID.
-	batchID string,
-	request *v3.ApidataAddBatchItemsRequest,
-	opts ...option.RequestOption,
-) ([]*v3.BatchItemDetail, error) {
-	response, err := c.WithRawResponse.Add(
+	// Batch UUID
+	batchUUID string,
+	request *zep.AddBatchItemsRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.BatchItemsResponse, error) {
+	response, err := c.WithRawResponse.AddItems(
 		ctx,
-		batchID,
+		batchUUID,
 		request,
 		opts...,
 	)
@@ -148,16 +292,21 @@ func (c *Client) Add(
 	return response.Body, nil
 }
 
-// Start processing a filled batch. Repeated calls return a conflict.
+// Example:
+//
+//	client.Batch.Process(
+//	    context.TODO(),
+//	    "batch_uuid",
+//	)
 func (c *Client) Process(
 	ctx context.Context,
-	// The batch ID.
-	batchID string,
-	opts ...option.RequestOption,
-) (*v3.BatchSummary, error) {
+	// Batch UUID
+	batchUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*zep.ProcessBatchResult, error) {
 	response, err := c.WithRawResponse.Process(
 		ctx,
-		batchID,
+		batchUUID,
 		opts...,
 	)
 	if err != nil {

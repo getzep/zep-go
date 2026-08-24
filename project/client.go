@@ -4,45 +4,49 @@ package project
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
-	http "net/http"
 	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Retrieve project info based on the provided api key.
+// Example:
+//
+//	client.Project.Get(
+//	    context.TODO(),
+//	)
 func (c *Client) Get(
 	ctx context.Context,
 	opts ...option.RequestOption,
-) (*v3.ProjectInfoResponse, error) {
+) (*zep.Project, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		opts...,
@@ -53,12 +57,18 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Sets or clears the project-level fallback time zone for the API key's project.
+// Example:
+//
+//	request := &zep.PatchProjectRequest{}
+//	client.Project.Update(
+//	    context.TODO(),
+//	    request,
+//	)
 func (c *Client) Update(
 	ctx context.Context,
-	request *v3.UpdateProjectInfoRequest,
-	opts ...option.RequestOption,
-) (*v3.ProjectInfoResponse, error) {
+	request *zep.PatchProjectRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Project, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		request,
@@ -70,13 +80,38 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
-// Returns project steering or the effective user/graph steering with project fallback. This API is experimental and may change in future releases.
-func (c *Client) GetObservationSteering(
+// Example:
+//
+//	client.Project.GetInstructions(
+//	    context.TODO(),
+//	)
+func (c *Client) GetInstructions(
 	ctx context.Context,
-	request *v3.GetObservationSteeringRequest,
 	opts ...option.RequestOption,
-) (*v3.ObservationSteeringConfig, error) {
-	response, err := c.WithRawResponse.GetObservationSteering(
+) (*zep.Instructions, error) {
+	response, err := c.WithRawResponse.GetInstructions(
+		ctx,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.Instructions{}
+//	client.Project.SetInstructions(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) SetInstructions(
+	ctx context.Context,
+	request *zep.Instructions,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Instructions, error) {
+	response, err := c.WithRawResponse.SetInstructions(
 		ctx,
 		request,
 		opts...,
@@ -87,13 +122,122 @@ func (c *Client) GetObservationSteering(
 	return response.Body, nil
 }
 
-// Replaces project, user, or graph steering. An empty configuration clears the project default or removes the user/graph override. Changes affect later materializer runs only. This API is experimental and may change in future releases.
+// Example:
+//
+//	client.Project.GetObservationSteering(
+//	    context.TODO(),
+//	)
+func (c *Client) GetObservationSteering(
+	ctx context.Context,
+	opts ...option.RequestOption,
+) (*zep.ObservationSteering, error) {
+	response, err := c.WithRawResponse.GetObservationSteering(
+		ctx,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.ObservationSteering{}
+//	client.Project.SetObservationSteering(
+//	    context.TODO(),
+//	    request,
+//	)
 func (c *Client) SetObservationSteering(
 	ctx context.Context,
-	request *v3.SetObservationSteeringRequest,
-	opts ...option.RequestOption,
-) (*v3.ObservationSteeringConfig, error) {
+	request *zep.ObservationSteering,
+	opts ...option.IdempotentRequestOption,
+) (*zep.ObservationSteering, error) {
 	response, err := c.WithRawResponse.SetObservationSteering(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	client.Project.GetOntology(
+//	    context.TODO(),
+//	)
+func (c *Client) GetOntology(
+	ctx context.Context,
+	opts ...option.RequestOption,
+) (*zep.Ontology, error) {
+	response, err := c.WithRawResponse.GetOntology(
+		ctx,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.Ontology{}
+//	client.Project.SetOntology(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) SetOntology(
+	ctx context.Context,
+	request *zep.Ontology,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Ontology, error) {
+	response, err := c.WithRawResponse.SetOntology(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	client.Project.GetUserSummaryInstructions(
+//	    context.TODO(),
+//	)
+func (c *Client) GetUserSummaryInstructions(
+	ctx context.Context,
+	opts ...option.RequestOption,
+) (*zep.UserSummaryInstructions, error) {
+	response, err := c.WithRawResponse.GetUserSummaryInstructions(
+		ctx,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.UserSummaryInstructions{}
+//	client.Project.SetUserSummaryInstructions(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) SetUserSummaryInstructions(
+	ctx context.Context,
+	request *zep.UserSummaryInstructions,
+	opts ...option.IdempotentRequestOption,
+) (*zep.UserSummaryInstructions, error) {
+	response, err := c.WithRawResponse.SetUserSummaryInstructions(
 		ctx,
 		request,
 		opts...,

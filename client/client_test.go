@@ -3,7 +3,7 @@
 package client
 
 import (
-	option "github.com/getzep/zep-go/v3/option"
+	option "github.com/getzep/zep-go/v4/option"
 	assert "github.com/stretchr/testify/assert"
 	http "net/http"
 	testing "testing"
@@ -40,6 +40,6 @@ func TestNewClient(t *testing.T) {
 			option.WithHTTPHeader(header),
 		)
 		assert.Empty(t, c.baseURL)
-		assert.Equal(t, "test", c.header.Get("X-API-Tenancy"))
+		assert.Equal(t, "test", c.options.HTTPHeader.Get("X-API-Tenancy"))
 	})
 }
