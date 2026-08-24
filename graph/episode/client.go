@@ -4,52 +4,144 @@ package episode
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v4"
+	http "net/http"
+	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
 	core "github.com/getzep/zep-go/v4/core"
 	graph "github.com/getzep/zep-go/v4/graph"
 	internal "github.com/getzep/zep-go/v4/internal"
 	option "github.com/getzep/zep-go/v4/option"
-	http "net/http"
-	os "os"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Returns episodes by graph id.
-func (c *Client) GetByGraphID(
+// Example:
+//
+//	request := &graph.EpisodeListForDocumentRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	}
+//	client.Graph.Episode.ListForDocument(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "document_id",
+//	    request,
+//	)
+func (c *Client) ListForDocument(
 	ctx context.Context,
-	// Graph ID
-	graphID string,
-	request *graph.EpisodeGetByGraphIDRequest,
+	// Graph UUID
+	graphUUID string,
+	// Document ID
+	documentID string,
+	request *graph.EpisodeListForDocumentRequest,
 	opts ...option.RequestOption,
-) (*v3.EpisodeResponse, error) {
-	response, err := c.WithRawResponse.GetByGraphID(
+) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/documents/%v/episodes",
+		graphUUID,
+		documentID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.EpisodePage) *core.PageResponse[*string, *zep.Episode, *zep.EpisodePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Episode, *zep.EpisodePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &graph.AddEpisodeRequest{}
+//	client.Graph.Episode.Add(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) Add(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *graph.AddEpisodeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.AddEpisodeResult, error) {
+	response, err := c.WithRawResponse.Add(
 		ctx,
-		graphID,
+		graphUUID,
 		request,
 		opts...,
 	)
@@ -59,76 +151,108 @@ func (c *Client) GetByGraphID(
 	return response.Body, nil
 }
 
-// Returns a paginated, filterable list of episodes for a graph.
-func (c *Client) ListByGraphID(
+// Example:
+//
+//	request := &graph.EpisodeListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    Body: &zep.ArtifactListRequest{},
+//	}
+//	client.Graph.Episode.List(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) List(
 	ctx context.Context,
-	// Graph ID
-	graphID string,
-	request *v3.GraphEpisodeListRequest,
-	opts ...option.RequestOption,
-) ([]*v3.Episode, error) {
-	response, err := c.WithRawResponse.ListByGraphID(
-		ctx,
-		graphID,
-		request,
-		opts...,
+	// Graph UUID
+	graphUUID string,
+	request *graph.EpisodeListRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
 	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/episodes/list",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
 	if err != nil {
 		return nil, err
 	}
-	return response.Body, nil
-}
-
-// Returns episodes by user id.
-func (c *Client) GetByUserID(
-	ctx context.Context,
-	// User ID
-	userID string,
-	request *graph.EpisodeGetByUserIDRequest,
-	opts ...option.RequestOption,
-) (*v3.EpisodeResponse, error) {
-	response, err := c.WithRawResponse.GetByUserID(
-		ctx,
-		userID,
-		request,
-		opts...,
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
 	)
-	if err != nil {
-		return nil, err
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
 	}
-	return response.Body, nil
-}
-
-// Returns a paginated, filterable list of episodes for a user's graph.
-func (c *Client) ListByUserID(
-	ctx context.Context,
-	// User ID
-	userID string,
-	request *v3.GraphEpisodeListRequest,
-	opts ...option.RequestOption,
-) ([]*v3.Episode, error) {
-	response, err := c.WithRawResponse.ListByUserID(
-		ctx,
-		userID,
-		request,
-		opts...,
+	readPageResponse := func(response *zep.EpisodePage) *core.PageResponse[*string, *zep.Episode, *zep.EpisodePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Episode, *zep.EpisodePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
 	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
+	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Returns episodes by UUID
+// Example:
+//
+//	client.Graph.Episode.Get(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "episode_uuid",
+//	)
 func (c *Client) Get(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Episode UUID
-	uuid string,
+	episodeUUID string,
 	opts ...option.RequestOption,
-) (*v3.Episode, error) {
+) (*zep.Episode, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
-		uuid,
+		graphUUID,
+		episodeUUID,
 		opts...,
 	)
 	if err != nil {
@@ -137,16 +261,25 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Deletes an episode by its UUID.
+// Example:
+//
+//	client.Graph.Episode.Delete(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "episode_uuid",
+//	)
 func (c *Client) Delete(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Episode UUID
-	uuid string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
+	episodeUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*zep.AsyncResult, error) {
 	response, err := c.WithRawResponse.Delete(
 		ctx,
-		uuid,
+		graphUUID,
+		episodeUUID,
 		opts...,
 	)
 	if err != nil {
@@ -155,36 +288,29 @@ func (c *Client) Delete(
 	return response.Body, nil
 }
 
-// Update episode metadata with merge semantics. Supplied keys overwrite or add to existing metadata; keys set to null are removed.
+// Example:
+//
+//	request := &graph.PatchEpisodeRequest{}
+//	client.Graph.Episode.Update(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "episode_uuid",
+//	    request,
+//	)
 func (c *Client) Update(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Episode UUID
-	uuid string,
-	request *graph.UpdateEpisodeRequest,
-	opts ...option.RequestOption,
-) (*v3.Episode, error) {
+	episodeUUID string,
+	request *graph.PatchEpisodeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Episode, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
-		uuid,
+		graphUUID,
+		episodeUUID,
 		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Deprecated. Use edge and node listing with `filters.episode_uuids` instead. Returns nodes and edges mentioned in an episode, subject to an internal cap; responses reduced by that cap set the Zep-Truncated header.
-func (c *Client) GetNodesAndEdges(
-	ctx context.Context,
-	// Episode uuid
-	uuid string,
-	opts ...option.RequestOption,
-) (*v3.EpisodeMentions, error) {
-	response, err := c.WithRawResponse.GetNodesAndEdges(
-		ctx,
-		uuid,
 		opts...,
 	)
 	if err != nil {
