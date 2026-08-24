@@ -6,13 +6,10 @@
 #   LICENSE            — legal text, not a generated artifact
 #   go.mod, go.sum     — the audit requires them, and the /v4 module path is
 #                        ours to set: Go encodes the major in the module path
-#   .fern/             — Fern's own replay state
 #
 # Anything ported forward from v3 is re-added deliberately, file by file.
 .github
 LICENSE
 go.mod
 go.sum
-.fern/replay.lock
-.fern/replay.yml
 .gitattributes
