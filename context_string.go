@@ -31,8 +31,18 @@ FACTS and ENTITIES%s represent relevant context to the current conversation.
 %s
 `
 
+// deref returns the pointed-to string, or "" when the pointer is nil. Every v4
+// response field is optional in the generated Go client, so the composer reads
+// them through this rather than dereferencing directly.
+func deref(v *string) string {
+	if v == nil {
+		return ""
+	}
+	return *v
+}
+
 // formatEdgeDateRange formats the date range of an entity edge.
-func formatEdgeDateRange(edge *EntityEdge) string {
+func formatEdgeDateRange(edge *Edge) string {
 	validAt := "date unknown"
 	invalidAt := "present"
 
@@ -52,17 +62,17 @@ func formatEdgeDateRange(edge *EntityEdge) string {
 }
 
 // ComposeContextString composes a search context from entity edges, nodes, and episodes.
-func ComposeContextString(edges []*EntityEdge, nodes []*EntityNode, episodes []*Episode) string {
+func ComposeContextString(edges []*Edge, nodes []*Node, episodes []*Episode) string {
 	var facts []string
 	for _, edge := range edges {
-		fact := fmt.Sprintf("  - %s (%s)", edge.Fact, formatEdgeDateRange(edge))
+		fact := fmt.Sprintf("  - %s (%s)", deref(edge.Fact), formatEdgeDateRange(edge))
 		facts = append(facts, fact)
 	}
 
 	var entities []string
 	for _, node := range nodes {
 		var entityParts []string
-		entityParts = append(entityParts, fmt.Sprintf("Name: %s", node.Name))
+		entityParts = append(entityParts, fmt.Sprintf("Name: %s", deref(node.Name)))
 
 		// Add label if present (excluding 'Entity' from labels)
 		if node.Labels != nil && len(node.Labels) > 0 {
@@ -97,8 +107,8 @@ func ComposeContextString(edges []*EntityEdge, nodes []*EntityNode, episodes []*
 		}
 
 		// Add summary if present
-		if node.Summary != "" {
-			entityParts = append(entityParts, fmt.Sprintf("Summary: %s", node.Summary))
+		if summary := deref(node.Summary); summary != "" {
+			entityParts = append(entityParts, fmt.Sprintf("Summary: %s", summary))
 		}
 
 		entity := strings.Join(entityParts, "\n")
@@ -109,25 +119,30 @@ func ComposeContextString(edges []*EntityEdge, nodes []*EntityNode, episodes []*
 	var episodesList []string
 	if episodes != nil {
 		for _, episode := range episodes {
+			// 8.4 resolves v3's overloaded pair: v4's role carries the enum
+			// v3 spelled role_type, and role_name carries the sender name v3
+			// spelled role. The rendered prefix is unchanged.
+			roleName := deref(episode.RoleName)
+			roleType := deref(episode.Role)
+
 			var rolePrefix string
-			if episode.Role != nil && *episode.Role != "" {
-				if episode.RoleType != nil && *episode.RoleType != "" {
-					rolePrefix = fmt.Sprintf("%s (%s): ", *episode.Role, *episode.RoleType)
-				} else {
-					rolePrefix = fmt.Sprintf("%s: ", *episode.Role)
-				}
-			} else if episode.RoleType != nil && *episode.RoleType != "" {
-				rolePrefix = fmt.Sprintf("(%s): ", *episode.RoleType)
+			switch {
+			case roleName != "" && roleType != "":
+				rolePrefix = fmt.Sprintf("%s (%s): ", roleName, roleType)
+			case roleName != "":
+				rolePrefix = fmt.Sprintf("%s: ", roleName)
+			case roleType != "":
+				rolePrefix = fmt.Sprintf("(%s): ", roleType)
 			}
 
 			timestamp := "date unknown"
-			if episode.CreatedAt != "" {
-				if t, err := time.Parse(time.RFC3339, episode.CreatedAt); err == nil {
+			if createdAt := deref(episode.CreatedAt); createdAt != "" {
+				if t, err := time.Parse(time.RFC3339, createdAt); err == nil {
 					timestamp = t.Format(dateFormat)
 				}
 			}
 
-			episodeStr := fmt.Sprintf("  - %s%s (%s)", rolePrefix, episode.Content, timestamp)
+			episodeStr := fmt.Sprintf("  - %s%s (%s)", rolePrefix, deref(episode.Content), timestamp)
 			episodesList = append(episodesList, episodeStr)
 		}
 	}

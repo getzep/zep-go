@@ -5,29 +5,6 @@ import (
 	"fmt"
 )
 
-// GraphOntologyOptions contains options for graph ontology operations
-type GraphOntologyOptions struct {
-	UserIDs  []string
-	GraphIDs []string
-}
-
-// GraphOntologyOption is a functional option for configuring graph ontology operations
-type GraphOntologyOption func(*GraphOntologyOptions)
-
-// ForUsers allows to specify target user identifiers when setting entity/edge types.
-func ForUsers(userIDs []string) GraphOntologyOption {
-	return func(opts *GraphOntologyOptions) {
-		opts.UserIDs = userIDs
-	}
-}
-
-// ForGraphs allows to specify target graph identifiers when setting entity/edge types.
-func ForGraphs(graphIDs []string) GraphOntologyOption {
-	return func(opts *GraphOntologyOptions) {
-		opts.GraphIDs = graphIDs
-	}
-}
-
 type BaseEntity struct{}
 
 type EntityDefinition interface {
@@ -57,8 +34,8 @@ func UnmarshalNodeAttributes(attributes map[string]interface{}, dest EntityDefin
 type BaseEdge struct{}
 
 type EdgeDefinitionWithSourceTargets struct {
-	EdgeModel     EdgeDefinition           `json:"edge_model"`
-	SourceTargets []EntityEdgeSourceTarget `json:"source_targets,omitempty"`
+	EdgeModel     EdgeDefinition     `json:"edge_model"`
+	SourceTargets []EdgeSourceTarget `json:"source_targets,omitempty"`
 }
 
 type EdgeDefinition interface {

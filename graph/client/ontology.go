@@ -5,130 +5,112 @@ import (
 	"fmt"
 
 	"github.com/getzep/zep-go/v4"
+	"github.com/getzep/zep-go/v4/option"
 )
 
-// SetOntology sets entity end edge types for the target, replacing any existing entity/edge types set for the target. If no user/graph target is set, it will default to the project target.
-// It takes a slice of EntityDefinition, which is satisfied by any struct that embeds BaseEntity, and a slice of EdgeDefinition, which is satisfied by any struct that embeds BaseEdge
-func (c *Client) SetOntology(
-	ctx context.Context,
+// SetEntityTypes sets the entity and edge types for one graph, replacing any
+// existing ontology on it. It takes a slice of EntityDefinition, satisfied by
+// any struct embedding BaseEntity, and a slice of EdgeDefinitionWithSourceTargets,
+// whose EdgeModel is satisfied by any struct embedding BaseEdge.
+//
+// The graph is now an explicit argument. v3 took ForUsers and ForGraphs and
+// fanned out server-side; v4 has one ontology endpoint per scope (spec-3 14.4),
+// so a caller targeting several graphs calls this once per graph, and a caller
+// targeting the project default uses Project.SetOntology with the same
+// zep.BuildOntology output.
+// BuildOntology turns the struct-tag ontology definitions into the Ontology the
+// v4 API accepts. It is the whole value the hand-written layer adds: the wire
+// shape is a list of entity and edge types, and this derives it from Go structs
+// so a caller declares an ontology once, in the type system.
+//
+// v3 addressed many graphs in one call through ForUsers and ForGraphs. v4 has
+// no fan-out endpoint (spec-3 14.4), so the caller passes one scope: either
+// Graph.SetEntityTypes with a graph UUID, or Project.SetOntology for the
+// project default.
+func BuildOntology(
 	entities []zep.EntityDefinition,
 	edges []zep.EdgeDefinitionWithSourceTargets,
-	options ...zep.GraphOntologyOption,
-) (*zep.SuccessResponse, error) {
-	return c.SetEntityTypes(ctx, entities, edges, options...)
-}
-
-// SetEntityTypes sets entity end edge types for the target, replacing any existing entity/edge types set for the target. If no user/graph target is set, it will default to the project target.
-// It takes a slice of EntityDefinition, which is satisfied by any struct that embeds BaseEntity, and a slice of EdgeDefinition, which is satisfied by any struct that embeds BaseEdge
-func (c *Client) SetEntityTypes(
-	ctx context.Context,
-	entities []zep.EntityDefinition,
-	edges []zep.EdgeDefinitionWithSourceTargets,
-	options ...zep.GraphOntologyOption,
-) (*zep.SuccessResponse, error) {
-	opts := &zep.GraphOntologyOptions{}
-	for _, option := range options {
-		option(opts)
-	}
-
-	var entitySchemas []*zep.EntityType
-	var edgeSchemas []*zep.EdgeType
-
+) (*zep.Ontology, error) {
+	entitySchemas := make([]*zep.EntityType, 0, len(entities))
 	for i, entityStruct := range entities {
-		// Try to extract metadata from embedded BaseEntity struct tags
 		metadata, found := ExtractBaseEntityMetadata(entityStruct)
 		if !found {
 			return nil, fmt.Errorf("entity at index %d does not have a BaseEntity with required name tag", i)
 		}
-
-		// Name is always from the struct tag
-		entityName := metadata.Name
-
-		// Extract entity schema as usual
-		entitySchema, err := ExtractEntitySchema(entityStruct, entityName)
+		entitySchema, err := ExtractEntitySchema(entityStruct, metadata.Name)
 		if err != nil {
 			return nil, err
 		}
-
-		entityProperties := make([]*zep.EntityProperty, 0, len(entitySchema.Properties))
+		properties := make([]*zep.EntityProperty, 0, len(entitySchema.Properties))
 		for name, property := range entitySchema.Properties {
-			entityProperties = append(entityProperties, &zep.EntityProperty{
+			properties = append(properties, &zep.EntityProperty{
 				Name:        name,
 				Type:        zep.EntityPropertyType(property.Type),
 				Description: property.Description,
 			})
 		}
-
-		// If description is not provided in struct tag, use a default or empty string
 		description := metadata.Description
 		if description == "" {
-			description = fmt.Sprintf("Entity type for %s", entityName)
+			description = fmt.Sprintf("Entity type for %s", metadata.Name)
 		}
-
-		entityType := &zep.EntityType{
-			Name:        entityName,
+		entitySchemas = append(entitySchemas, &zep.EntityType{
+			Name:        metadata.Name,
 			Description: description,
-			Properties:  entityProperties,
-		}
-
-		entitySchemas = append(entitySchemas, entityType)
+			Properties:  properties,
+		})
 	}
 
+	edgeSchemas := make([]*zep.EdgeType, 0, len(edges))
 	for i, edgeWithSourceTargets := range edges {
 		edgeStruct := edgeWithSourceTargets.EdgeModel
-		// Try to extract metadata from embedded BaseEntity struct tags
 		metadata, found := ExtractBaseEdgeMetadata(edgeStruct)
 		if !found {
-			return nil, fmt.Errorf("entity at index %d does not have a BaseEdge with required name tag", i)
+			return nil, fmt.Errorf("edge at index %d does not have a BaseEdge with required name tag", i)
 		}
-
-		// Name is always from the struct tag
-		edgeName := metadata.Name
-
-		// Extract entity schema as usual
-		edgeSchema, err := ExtractEdgeSchema(edgeStruct, edgeName)
+		edgeSchema, err := ExtractEdgeSchema(edgeStruct, metadata.Name)
 		if err != nil {
 			return nil, err
 		}
-
-		entityProperties := make([]*zep.EntityProperty, 0, len(edgeSchema.Properties))
+		properties := make([]*zep.EntityProperty, 0, len(edgeSchema.Properties))
 		for name, property := range edgeSchema.Properties {
-			entityProperties = append(entityProperties, &zep.EntityProperty{
+			properties = append(properties, &zep.EntityProperty{
 				Name:        name,
 				Type:        zep.EntityPropertyType(property.Type),
 				Description: property.Description,
 			})
 		}
-
-		// If description is not provided in struct tag, use a default or empty string
 		description := metadata.Description
 		if description == "" {
-			description = fmt.Sprintf("Entity type for %s", edgeName)
+			description = fmt.Sprintf("Entity type for %s", metadata.Name)
 		}
-		var sourceTargets []*zep.EntityEdgeSourceTarget
-		if edgeWithSourceTargets.SourceTargets != nil {
-			for _, sourceTarget := range edgeWithSourceTargets.SourceTargets {
-				sourceTargets = append(sourceTargets, &zep.EntityEdgeSourceTarget{
-					Source: sourceTarget.Source,
-					Target: sourceTarget.Target,
-				})
-			}
+		var sourceTargets []*zep.EdgeSourceTarget
+		for _, sourceTarget := range edgeWithSourceTargets.SourceTargets {
+			sourceTargets = append(sourceTargets, &zep.EdgeSourceTarget{
+				SourceEntityType: sourceTarget.SourceEntityType,
+				TargetEntityType: sourceTarget.TargetEntityType,
+			})
 		}
-		edgeType := &zep.EdgeType{
-			Name:          edgeName,
+		edgeSchemas = append(edgeSchemas, &zep.EdgeType{
+			Name:          metadata.Name,
 			Description:   description,
-			Properties:    entityProperties,
+			Properties:    properties,
 			SourceTargets: sourceTargets,
-		}
-
-		edgeSchemas = append(edgeSchemas, edgeType)
+		})
 	}
 
-	request := &zep.EntityTypeRequest{
-		EntityTypes: entitySchemas,
-		EdgeTypes:   edgeSchemas,
-		GraphIDs:    opts.GraphIDs,
-		UserIDs:     opts.UserIDs,
+	return &zep.Ontology{EntityTypes: entitySchemas, EdgeTypes: edgeSchemas}, nil
+}
+
+func (c *Client) SetEntityTypes(
+	ctx context.Context,
+	graphUUID string,
+	entities []zep.EntityDefinition,
+	edges []zep.EdgeDefinitionWithSourceTargets,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Ontology, error) {
+	ontology, err := BuildOntology(entities, edges)
+	if err != nil {
+		return nil, err
 	}
-	return c.SetEntityTypesInternal(ctx, request)
+	return c.SetOntology(ctx, graphUUID, ontology, opts...)
 }

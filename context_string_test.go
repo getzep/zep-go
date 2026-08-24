@@ -8,27 +8,24 @@ import (
 
 func TestFormatEdgeDateRange(t *testing.T) {
 	t.Run("both dates present", func(t *testing.T) {
-		validAt := "2023-01-01T10:00:00Z"
-		invalidAt := "2023-01-02T15:00:00Z"
-		edge := &EntityEdge{
-			ValidAt:   &validAt,
-			InvalidAt: &invalidAt,
+		edge := &Edge{
+			ValidAt:   String("2023-01-01T10:00:00Z"),
+			InvalidAt: String("2023-01-02T15:00:00Z"),
 		}
 		result := formatEdgeDateRange(edge)
 		assert.Equal(t, "2023-01-01 10:00:00 - 2023-01-02 15:00:00", result)
 	})
 
 	t.Run("only valid_at present", func(t *testing.T) {
-		validAt := "2023-01-01T10:00:00Z"
-		edge := &EntityEdge{
-			ValidAt: &validAt,
+		edge := &Edge{
+			ValidAt: String("2023-01-01T10:00:00Z"),
 		}
 		result := formatEdgeDateRange(edge)
 		assert.Equal(t, "2023-01-01 10:00:00 - present", result)
 	})
 
 	t.Run("no dates present", func(t *testing.T) {
-		edge := &EntityEdge{}
+		edge := &Edge{}
 		result := formatEdgeDateRange(edge)
 		assert.Equal(t, "date unknown - present", result)
 	})
@@ -36,36 +33,33 @@ func TestFormatEdgeDateRange(t *testing.T) {
 
 func TestComposeContextString(t *testing.T) {
 	t.Run("with facts, entities, and episodes", func(t *testing.T) {
-		validAt := "2023-01-01T10:00:00Z"
-		edges := []*EntityEdge{
+		edges := []*Edge{
 			{
-				Fact:    "John likes coffee",
-				ValidAt: &validAt,
+				Fact:    String("John likes coffee"),
+				ValidAt: String("2023-01-01T10:00:00Z"),
 			},
 		}
 
-		labels := []string{"Person", "Entity"}
-		attributes := map[string]interface{}{
-			"age":    30,
-			"labels": []string{"Person"},
-		}
-		nodes := []*EntityNode{
+		nodes := []*Node{
 			{
-				Name:       "John",
-				Labels:     labels,
-				Attributes: attributes,
-				Summary:    "A coffee enthusiast",
+				Name:   String("John"),
+				Labels: []string{"Person", "Entity"},
+				Attributes: map[string]interface{}{
+					"age":    30,
+					"labels": []string{"Person"},
+				},
+				Summary: String("A coffee enthusiast"),
 			},
 		}
 
-		role := "user"
-		roleType := RoleTypeUserRole
+		// v4 splits v3's overloaded pair (spec-3 8.4): role_name is the sender
+		// and role is the enum v3 spelled role_type. The rendering is unchanged.
 		episodes := []*Episode{
 			{
-				Role:      &role,
-				RoleType:  &roleType,
-				Content:   "I love coffee",
-				CreatedAt: "2023-01-01T12:00:00Z",
+				RoleName:  String("user"),
+				Role:      String("user"),
+				Content:   String("I love coffee"),
+				CreatedAt: String("2023-01-01T12:00:00Z"),
 			},
 		}
 
@@ -83,18 +77,17 @@ func TestComposeContextString(t *testing.T) {
 	})
 
 	t.Run("without episodes", func(t *testing.T) {
-		validAt := "2023-01-01T10:00:00Z"
-		edges := []*EntityEdge{
+		edges := []*Edge{
 			{
-				Fact:    "John likes coffee",
-				ValidAt: &validAt,
+				Fact:    String("John likes coffee"),
+				ValidAt: String("2023-01-01T10:00:00Z"),
 			},
 		}
 
-		nodes := []*EntityNode{
+		nodes := []*Node{
 			{
-				Name:    "John",
-				Summary: "A person",
+				Name:    String("John"),
+				Summary: String("A person"),
 			},
 		}
 
@@ -109,12 +102,11 @@ func TestComposeContextString(t *testing.T) {
 	})
 
 	t.Run("entity with only Entity label filtered out", func(t *testing.T) {
-		labels := []string{"Entity"}
-		nodes := []*EntityNode{
+		nodes := []*Node{
 			{
-				Name:    "Test",
-				Labels:  labels,
-				Summary: "Test entity",
+				Name:    String("Test"),
+				Labels:  []string{"Entity"},
+				Summary: String("Test entity"),
 			},
 		}
 
@@ -125,19 +117,32 @@ func TestComposeContextString(t *testing.T) {
 		assert.Contains(t, result, "Summary: Test entity")
 	})
 
-	t.Run("episode with only role_type", func(t *testing.T) {
-		roleType := RoleTypeAssistantRole
+	t.Run("episode with only a role and no sender name", func(t *testing.T) {
 		episodes := []*Episode{
 			{
-				RoleType:  &roleType,
-				Content:   "Hello there",
-				CreatedAt: "2023-01-01T12:00:00Z",
+				Role:      String("assistant"),
+				Content:   String("Hello there"),
+				CreatedAt: String("2023-01-01T12:00:00Z"),
 			},
 		}
 
 		result := ComposeContextString(nil, nil, episodes)
 
 		assert.Contains(t, result, "(assistant): Hello there")
+	})
+
+	t.Run("episode with only a sender name and no role", func(t *testing.T) {
+		episodes := []*Episode{
+			{
+				RoleName:  String("Alice"),
+				Content:   String("Hello there"),
+				CreatedAt: String("2023-01-01T12:00:00Z"),
+			},
+		}
+
+		result := ComposeContextString(nil, nil, episodes)
+
+		assert.Contains(t, result, "Alice: Hello there")
 	})
 
 	t.Run("empty inputs", func(t *testing.T) {
