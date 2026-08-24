@@ -3,7 +3,7 @@
 package graph
 
 import (
-	v3 "github.com/getzep/zep-go/v3"
+	v3 "github.com/getzep/zep-go/v4"
 )
 
 type GraphNodeNeighborsRequest struct {

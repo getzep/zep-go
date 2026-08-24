@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/getzep/zep-go/v3/core"
+	"github.com/getzep/zep-go/v4/core"
 	"github.com/stretchr/testify/assert"
 )
 

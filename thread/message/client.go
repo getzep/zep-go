@@ -4,11 +4,11 @@ package message
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v3"
-	core "github.com/getzep/zep-go/v3/core"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
-	thread "github.com/getzep/zep-go/v3/thread"
+	v3 "github.com/getzep/zep-go/v4"
+	core "github.com/getzep/zep-go/v4/core"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
+	thread "github.com/getzep/zep-go/v4/thread"
 	http "net/http"
 	os "os"
 )

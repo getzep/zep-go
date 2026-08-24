@@ -3,17 +3,17 @@
 package client
 
 import (
-	batch "github.com/getzep/zep-go/v3/batch"
-	context "github.com/getzep/zep-go/v3/context"
-	core "github.com/getzep/zep-go/v3/core"
-	client "github.com/getzep/zep-go/v3/graph/client"
-	internal "github.com/getzep/zep-go/v3/internal"
-	option "github.com/getzep/zep-go/v3/option"
-	project "github.com/getzep/zep-go/v3/project"
-	task "github.com/getzep/zep-go/v3/task"
-	threadclient "github.com/getzep/zep-go/v3/thread/client"
-	user "github.com/getzep/zep-go/v3/user"
-	usergroup "github.com/getzep/zep-go/v3/usergroup"
+	batch "github.com/getzep/zep-go/v4/batch"
+	context "github.com/getzep/zep-go/v4/context"
+	core "github.com/getzep/zep-go/v4/core"
+	client "github.com/getzep/zep-go/v4/graph/client"
+	internal "github.com/getzep/zep-go/v4/internal"
+	option "github.com/getzep/zep-go/v4/option"
+	project "github.com/getzep/zep-go/v4/project"
+	task "github.com/getzep/zep-go/v4/task"
+	threadclient "github.com/getzep/zep-go/v4/thread/client"
+	user "github.com/getzep/zep-go/v4/user"
+	usergroup "github.com/getzep/zep-go/v4/usergroup"
 	http "net/http"
 	os "os"
 )

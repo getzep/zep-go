@@ -1,4 +1,4 @@
-module github.com/getzep/zep-go/v3
+module github.com/getzep/zep-go/v4
 
 go 1.18
 
