@@ -6,6 +6,10 @@
 #   LICENSE            — legal text, not a generated artifact
 #   go.mod, go.sum     — the audit requires them, and the /v4 module path is
 #                        ours to set: Go encodes the major in the module path
+#   ontology.go        — hand-written: declares an ontology with structs, which
+#                        the generated types cannot express
+#   ontology_test.go   — its tests, which CI runs on the generated branch, so a
+#                        regeneration that breaks the DSL fails its own PR
 #
 # Anything ported forward from v3 is re-added deliberately, file by file.
 .github
@@ -13,5 +17,7 @@ LICENSE
 go.mod
 go.sum
 .gitattributes
+ontology.go
+ontology_test.go
 .fern/replay.lock
 .fern/replay.yml
