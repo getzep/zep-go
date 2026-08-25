@@ -890,7 +890,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"description\": \"description\",\n          \"name\": \"name\",\n          \"type\": \"Text\"\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"description\": \"description\",\n          \"name\": \"name\",\n          \"type\": \"Text\"\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -926,7 +926,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"description\": \"description\",\n          \"name\": \"name\",\n          \"type\": \"Text\"\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"description\": \"description\",\n          \"name\": \"name\",\n          \"type\": \"Text\"\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1469,7 +1469,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"description\": \"description\",\n          \"name\": \"name\",\n          \"type\": \"Text\"\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"description\": \"description\",\n          \"name\": \"name\",\n          \"type\": \"Text\"\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1501,7 +1501,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"description\": \"description\",\n          \"name\": \"name\",\n          \"type\": \"Text\"\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"description\": \"description\",\n          \"name\": \"name\",\n          \"type\": \"Text\"\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }

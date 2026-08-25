@@ -1859,8 +1859,8 @@ var (
 )
 
 type EdgeType struct {
-	Description   string              `json:"description" url:"description"`
-	Name          string              `json:"name" url:"name"`
+	Description   *string             `json:"description,omitempty" url:"description,omitempty"`
+	Name          *string             `json:"name,omitempty" url:"name,omitempty"`
 	Properties    []*EntityProperty   `json:"properties,omitempty" url:"properties,omitempty"`
 	SourceTargets []*EdgeSourceTarget `json:"source_targets,omitempty" url:"source_targets,omitempty"`
 
@@ -1871,16 +1871,16 @@ type EdgeType struct {
 	rawJSON         json.RawMessage
 }
 
-func (e *EdgeType) GetDescription() string {
+func (e *EdgeType) GetDescription() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Description
 }
 
-func (e *EdgeType) GetName() string {
+func (e *EdgeType) GetName() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Name
 }
@@ -1915,14 +1915,14 @@ func (e *EdgeType) require(field *big.Int) {
 
 // SetDescription sets the Description field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EdgeType) SetDescription(description string) {
+func (e *EdgeType) SetDescription(description *string) {
 	e.Description = description
 	e.require(edgeTypeFieldDescription)
 }
 
 // SetName sets the Name field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EdgeType) SetName(name string) {
+func (e *EdgeType) SetName(name *string) {
 	e.Name = name
 	e.require(edgeTypeFieldName)
 }
@@ -1990,9 +1990,9 @@ var (
 )
 
 type EntityProperty struct {
-	Description string             `json:"description" url:"description"`
-	Name        string             `json:"name" url:"name"`
-	Type        EntityPropertyType `json:"type" url:"type"`
+	Description *string             `json:"description,omitempty" url:"description,omitempty"`
+	Name        *string             `json:"name,omitempty" url:"name,omitempty"`
+	Type        *EntityPropertyType `json:"type,omitempty" url:"type,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2001,23 +2001,23 @@ type EntityProperty struct {
 	rawJSON         json.RawMessage
 }
 
-func (e *EntityProperty) GetDescription() string {
+func (e *EntityProperty) GetDescription() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Description
 }
 
-func (e *EntityProperty) GetName() string {
+func (e *EntityProperty) GetName() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Name
 }
 
-func (e *EntityProperty) GetType() EntityPropertyType {
+func (e *EntityProperty) GetType() *EntityPropertyType {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Type
 }
@@ -2038,21 +2038,21 @@ func (e *EntityProperty) require(field *big.Int) {
 
 // SetDescription sets the Description field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EntityProperty) SetDescription(description string) {
+func (e *EntityProperty) SetDescription(description *string) {
 	e.Description = description
 	e.require(entityPropertyFieldDescription)
 }
 
 // SetName sets the Name field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EntityProperty) SetName(name string) {
+func (e *EntityProperty) SetName(name *string) {
 	e.Name = name
 	e.require(entityPropertyFieldName)
 }
 
 // SetType sets the Type field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EntityProperty) SetType(type_ EntityPropertyType) {
+func (e *EntityProperty) SetType(type_ *EntityPropertyType) {
 	e.Type = type_
 	e.require(entityPropertyFieldType)
 }
@@ -2102,21 +2102,21 @@ func (e *EntityProperty) String() string {
 type EntityPropertyType string
 
 const (
-	EntityPropertyTypeText    EntityPropertyType = "Text"
-	EntityPropertyTypeInt     EntityPropertyType = "Int"
-	EntityPropertyTypeFloat   EntityPropertyType = "Float"
-	EntityPropertyTypeBoolean EntityPropertyType = "Boolean"
+	EntityPropertyTypeText    EntityPropertyType = "text"
+	EntityPropertyTypeInt     EntityPropertyType = "int"
+	EntityPropertyTypeFloat   EntityPropertyType = "float"
+	EntityPropertyTypeBoolean EntityPropertyType = "boolean"
 )
 
 func NewEntityPropertyTypeFromString(s string) (EntityPropertyType, error) {
 	switch s {
-	case "Text":
+	case "text":
 		return EntityPropertyTypeText, nil
-	case "Int":
+	case "int":
 		return EntityPropertyTypeInt, nil
-	case "Float":
+	case "float":
 		return EntityPropertyTypeFloat, nil
-	case "Boolean":
+	case "boolean":
 		return EntityPropertyTypeBoolean, nil
 	}
 	var t EntityPropertyType
@@ -2135,9 +2135,9 @@ var (
 )
 
 type EntityType struct {
-	Description        string            `json:"description" url:"description"`
+	Description        *string           `json:"description,omitempty" url:"description,omitempty"`
 	IdentityProperties []string          `json:"identity_properties,omitempty" url:"identity_properties,omitempty"`
-	Name               string            `json:"name" url:"name"`
+	Name               *string           `json:"name,omitempty" url:"name,omitempty"`
 	Properties         []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -2147,9 +2147,9 @@ type EntityType struct {
 	rawJSON         json.RawMessage
 }
 
-func (e *EntityType) GetDescription() string {
+func (e *EntityType) GetDescription() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Description
 }
@@ -2161,9 +2161,9 @@ func (e *EntityType) GetIdentityProperties() []string {
 	return e.IdentityProperties
 }
 
-func (e *EntityType) GetName() string {
+func (e *EntityType) GetName() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Name
 }
@@ -2191,7 +2191,7 @@ func (e *EntityType) require(field *big.Int) {
 
 // SetDescription sets the Description field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EntityType) SetDescription(description string) {
+func (e *EntityType) SetDescription(description *string) {
 	e.Description = description
 	e.require(entityTypeFieldDescription)
 }
@@ -2205,7 +2205,7 @@ func (e *EntityType) SetIdentityProperties(identityProperties []string) {
 
 // SetName sets the Name field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EntityType) SetName(name string) {
+func (e *EntityType) SetName(name *string) {
 	e.Name = name
 	e.require(entityTypeFieldName)
 }
