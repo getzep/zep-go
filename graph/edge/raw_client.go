@@ -4,67 +4,58 @@ package edge
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v4"
+	http "net/http"
+
+	zep "github.com/getzep/zep-go/v4"
 	core "github.com/getzep/zep-go/v4/core"
 	graph "github.com/getzep/zep-go/v4/graph"
 	internal "github.com/getzep/zep-go/v4/internal"
 	option "github.com/getzep/zep-go/v4/option"
-	http "net/http"
 )
 
 type RawClient struct {
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
+	options *core.RequestOptions
 }
 
 func NewRawClient(options *core.RequestOptions) *RawClient {
 	return &RawClient{
+		options: options,
 		baseURL: options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-func (r *RawClient) GetByGraphID(
+func (r *RawClient) Add(
 	ctx context.Context,
-	// Graph ID
-	graphID string,
-	request *v3.GraphEdgesRequest,
-	opts ...option.RequestOption,
-) (*core.Response[[]*v3.EntityEdge], error) {
-	options := core.NewRequestOptions(opts...)
+	// Graph UUID
+	graphUUID string,
+	request *graph.AddEdgeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.AddEdgeResult], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/edge/graph/%v",
-		graphID,
+		baseURL+"/graphs/%v/edges",
+		graphUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response []*v3.EntityEdge
+	headers.Add("Content-Type", "application/json")
+	var response *zep.AddEdgeResult
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -72,77 +63,19 @@ func (r *RawClient) GetByGraphID(
 			Method:          http.MethodPost,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[[]*v3.EntityEdge]{
-		StatusCode: raw.StatusCode,
-		Header:     raw.Header,
-		Body:       response,
-	}, nil
-}
-
-func (r *RawClient) GetByUserID(
-	ctx context.Context,
-	// User ID
-	userID string,
-	request *v3.GraphEdgesRequest,
-	opts ...option.RequestOption,
-) (*core.Response[[]*v3.EntityEdge], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		r.baseURL,
-		"https://api.getzep.com/api/v2",
-	)
-	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/edge/user/%v",
-		userID,
-	)
-	headers := internal.MergeHeaders(
-		r.header.Clone(),
-		options.ToHeader(),
-	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response []*v3.EntityEdge
-	raw, err := r.caller.Call(
-		ctx,
-		&internal.CallParams{
-			URL:             endpointURL,
-			Method:          http.MethodPost,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Request:         request,
-			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &core.Response[[]*v3.EntityEdge]{
+	return &core.Response[*zep.AddEdgeResult]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -151,42 +84,28 @@ func (r *RawClient) GetByUserID(
 
 func (r *RawClient) Get(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Edge UUID
-	uuid string,
+	edgeUUID string,
 	opts ...option.RequestOption,
-) (*core.Response[*v3.EntityEdge], error) {
+) (*core.Response[*zep.Edge], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/edge/%v",
-		uuid,
+		baseURL+"/graphs/%v/edges/%v",
+		graphUUID,
+		edgeUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.EntityEdge
+	var response *zep.Edge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -194,17 +113,18 @@ func (r *RawClient) Get(
 			Method:          http.MethodGet,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.EntityEdge]{
+	return &core.Response[*zep.Edge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -213,42 +133,28 @@ func (r *RawClient) Get(
 
 func (r *RawClient) Delete(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Edge UUID
-	uuid string,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.SuccessResponse], error) {
-	options := core.NewRequestOptions(opts...)
+	edgeUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.AsyncResult], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/edge/%v",
-		uuid,
+		baseURL+"/graphs/%v/edges/%v",
+		graphUUID,
+		edgeUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.SuccessResponse
+	var response *zep.AsyncResult
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -256,17 +162,18 @@ func (r *RawClient) Delete(
 			Method:          http.MethodDelete,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.SuccessResponse]{
+	return &core.Response[*zep.AsyncResult]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -275,44 +182,30 @@ func (r *RawClient) Delete(
 
 func (r *RawClient) Update(
 	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
 	// Edge UUID
-	uuid string,
-	request *graph.UpdateEdgeRequest,
-	opts ...option.RequestOption,
-) (*core.Response[*v3.EntityEdge], error) {
-	options := core.NewRequestOptions(opts...)
+	edgeUUID string,
+	request *graph.PatchEdgeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.Edge], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
-		"https://api.getzep.com/api/v2",
+		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/graph/edge/%v",
-		uuid,
+		baseURL+"/graphs/%v/edges/%v",
+		graphUUID,
+		edgeUUID,
 	)
 	headers := internal.MergeHeaders(
-		r.header.Clone(),
+		r.options.ToHeader(),
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
-	errorCodes := internal.ErrorCodes{
-		400: func(apiError *core.APIError) error {
-			return &v3.BadRequestError{
-				APIError: apiError,
-			}
-		},
-		404: func(apiError *core.APIError) error {
-			return &v3.NotFoundError{
-				APIError: apiError,
-			}
-		},
-		500: func(apiError *core.APIError) error {
-			return &v3.InternalServerError{
-				APIError: apiError,
-			}
-		},
-	}
-	var response *v3.EntityEdge
+	var response *zep.Edge
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -320,18 +213,19 @@ func (r *RawClient) Update(
 			Method:          http.MethodPatch,
 			Headers:         headers,
 			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*v3.EntityEdge]{
+	return &core.Response[*zep.Edge]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

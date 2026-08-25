@@ -2,17 +2,241 @@
 
 package graph
 
-type EpisodeGetByGraphIDRequest struct {
-	// The number of most recent episodes to retrieve.
-	Lastn *int `json:"-" url:"lastn,omitempty"`
+import (
+	json "encoding/json"
+	v4 "github.com/getzep/zep-go/v4"
+	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
+)
+
+var (
+	addEpisodeRequestFieldCreatedAt         = big.NewInt(1 << 0)
+	addEpisodeRequestFieldData              = big.NewInt(1 << 1)
+	addEpisodeRequestFieldDocumentID        = big.NewInt(1 << 2)
+	addEpisodeRequestFieldMetadata          = big.NewInt(1 << 3)
+	addEpisodeRequestFieldSourceDescription = big.NewInt(1 << 4)
+	addEpisodeRequestFieldStrictOntology    = big.NewInt(1 << 5)
+	addEpisodeRequestFieldType              = big.NewInt(1 << 6)
+)
+
+type AddEpisodeRequest struct {
+	CreatedAt         *string        `json:"created_at,omitempty" url:"-"`
+	Data              *string        `json:"data,omitempty" url:"-"`
+	DocumentID        *string        `json:"document_id,omitempty" url:"-"`
+	Metadata          map[string]any `json:"metadata,omitempty" url:"-"`
+	SourceDescription *string        `json:"source_description,omitempty" url:"-"`
+	StrictOntology    *bool          `json:"strict_ontology,omitempty" url:"-"`
+	Type              *string        `json:"type,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type EpisodeGetByUserIDRequest struct {
-	// The number of most recent episodes entries to retrieve.
-	Lastn *int `json:"-" url:"lastn,omitempty"`
+func (a *AddEpisodeRequest) require(field *big.Int) {
+	if a.explicitFields == nil {
+		a.explicitFields = big.NewInt(0)
+	}
+	a.explicitFields.Or(a.explicitFields, field)
 }
 
-type UpdateEpisodeRequest struct {
-	// Updated metadata. Merged with existing metadata: supplied keys overwrite/add, keys set to null are removed. Maximum 10 keys. Values must be scalars (string, number, boolean, null) or arrays of scalars.
-	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeRequest) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(addEpisodeRequestFieldCreatedAt)
+}
+
+// SetData sets the Data field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeRequest) SetData(data *string) {
+	a.Data = data
+	a.require(addEpisodeRequestFieldData)
+}
+
+// SetDocumentID sets the DocumentID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeRequest) SetDocumentID(documentID *string) {
+	a.DocumentID = documentID
+	a.require(addEpisodeRequestFieldDocumentID)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeRequest) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(addEpisodeRequestFieldMetadata)
+}
+
+// SetSourceDescription sets the SourceDescription field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeRequest) SetSourceDescription(sourceDescription *string) {
+	a.SourceDescription = sourceDescription
+	a.require(addEpisodeRequestFieldSourceDescription)
+}
+
+// SetStrictOntology sets the StrictOntology field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeRequest) SetStrictOntology(strictOntology *bool) {
+	a.StrictOntology = strictOntology
+	a.require(addEpisodeRequestFieldStrictOntology)
+}
+
+// SetType sets the Type field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeRequest) SetType(type_ *string) {
+	a.Type = type_
+	a.require(addEpisodeRequestFieldType)
+}
+
+func (a *AddEpisodeRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddEpisodeRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*a = AddEpisodeRequest(body)
+	return nil
+}
+
+func (a *AddEpisodeRequest) MarshalJSON() ([]byte, error) {
+	type embed AddEpisodeRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	episodeListRequestFieldLimit  = big.NewInt(1 << 0)
+	episodeListRequestFieldCursor = big.NewInt(1 << 1)
+)
+
+type EpisodeListRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string                 `json:"-" url:"cursor,omitempty"`
+	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (e *EpisodeListRequest) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListRequest) SetLimit(limit *int) {
+	e.Limit = limit
+	e.require(episodeListRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListRequest) SetCursor(cursor *string) {
+	e.Cursor = cursor
+	e.require(episodeListRequestFieldCursor)
+}
+
+func (e *EpisodeListRequest) UnmarshalJSON(data []byte) error {
+	body := new(v4.ArtifactListRequest)
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	e.Body = body
+	return nil
+}
+
+func (e *EpisodeListRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(e.Body)
+}
+
+var (
+	episodeListForDocumentRequestFieldLimit  = big.NewInt(1 << 0)
+	episodeListForDocumentRequestFieldCursor = big.NewInt(1 << 1)
+)
+
+type EpisodeListForDocumentRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (e *EpisodeListForDocumentRequest) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListForDocumentRequest) SetLimit(limit *int) {
+	e.Limit = limit
+	e.require(episodeListForDocumentRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListForDocumentRequest) SetCursor(cursor *string) {
+	e.Cursor = cursor
+	e.require(episodeListForDocumentRequestFieldCursor)
+}
+
+var (
+	patchEpisodeRequestFieldMetadata = big.NewInt(1 << 0)
+)
+
+type PatchEpisodeRequest struct {
+	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (p *PatchEpisodeRequest) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchEpisodeRequest) SetMetadata(metadata map[string]any) {
+	p.Metadata = metadata
+	p.require(patchEpisodeRequestFieldMetadata)
+}
+
+func (p *PatchEpisodeRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler PatchEpisodeRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*p = PatchEpisodeRequest(body)
+	return nil
+}
+
+func (p *PatchEpisodeRequest) MarshalJSON() ([]byte, error) {
+	type embed PatchEpisodeRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }
