@@ -2978,7 +2978,7 @@ func TestSettersContextEpisode(t *testing.T) {
 
 	t.Run("SetRole", func(t *testing.T) {
 		obj := &ContextEpisode{}
-		var fernTestValueRole *string
+		var fernTestValueRole *RoleType
 		obj.SetRole(fernTestValueRole)
 		assert.Equal(t, fernTestValueRole, obj.Role)
 		assert.NotNil(t, obj.explicitFields)
@@ -3010,7 +3010,7 @@ func TestSettersContextEpisode(t *testing.T) {
 
 	t.Run("SetSource", func(t *testing.T) {
 		obj := &ContextEpisode{}
-		var fernTestValueSource *string
+		var fernTestValueSource *GraphDataType
 		obj.SetSource(fernTestValueSource)
 		assert.Equal(t, fernTestValueSource, obj.Source)
 		assert.NotNil(t, obj.explicitFields)
@@ -3286,7 +3286,7 @@ func TestGettersContextEpisode(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &ContextEpisode{}
-		var expected *string
+		var expected *RoleType
 		obj.Role = expected
 
 		// Act & Assert
@@ -3418,7 +3418,7 @@ func TestGettersContextEpisode(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &ContextEpisode{}
-		var expected *string
+		var expected *GraphDataType
 		obj.Source = expected
 
 		// Act & Assert
@@ -3803,7 +3803,7 @@ func TestSettersMarkExplicitContextEpisode(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &ContextEpisode{}
-		var fernTestValueRole *string
+		var fernTestValueRole *RoleType
 
 		// Act
 		obj.SetRole(fernTestValueRole)
@@ -3927,7 +3927,7 @@ func TestSettersMarkExplicitContextEpisode(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &ContextEpisode{}
-		var fernTestValueSource *string
+		var fernTestValueSource *GraphDataType
 
 		// Act
 		obj.SetSource(fernTestValueSource)

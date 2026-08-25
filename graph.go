@@ -1163,11 +1163,11 @@ type ContextEpisode struct {
 	Metadata          map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	Processed         *bool          `json:"processed,omitempty" url:"processed,omitempty"`
 	Relevance         *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Role              *string        `json:"role,omitempty" url:"role,omitempty"`
+	Role              *RoleType      `json:"role,omitempty" url:"role,omitempty"`
 	RoleName          *string        `json:"role_name,omitempty" url:"role_name,omitempty"`
 	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
 	SelectionRank     *int           `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	Source            *string        `json:"source,omitempty" url:"source,omitempty"`
+	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
 	ThreadUUID        *string        `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
 	UUID              *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
@@ -1229,7 +1229,7 @@ func (c *ContextEpisode) GetRelevance() *float64 {
 	return c.Relevance
 }
 
-func (c *ContextEpisode) GetRole() *string {
+func (c *ContextEpisode) GetRole() *RoleType {
 	if c == nil {
 		return nil
 	}
@@ -1257,7 +1257,7 @@ func (c *ContextEpisode) GetSelectionRank() *int {
 	return c.SelectionRank
 }
 
-func (c *ContextEpisode) GetSource() *string {
+func (c *ContextEpisode) GetSource() *GraphDataType {
 	if c == nil {
 		return nil
 	}
@@ -1357,7 +1357,7 @@ func (c *ContextEpisode) SetRelevance(relevance *float64) {
 
 // SetRole sets the Role field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *ContextEpisode) SetRole(role *string) {
+func (c *ContextEpisode) SetRole(role *RoleType) {
 	c.Role = role
 	c.require(contextEpisodeFieldRole)
 }
@@ -1385,7 +1385,7 @@ func (c *ContextEpisode) SetSelectionRank(selectionRank *int) {
 
 // SetSource sets the Source field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *ContextEpisode) SetSource(source *string) {
+func (c *ContextEpisode) SetSource(source *GraphDataType) {
 	c.Source = source
 	c.require(contextEpisodeFieldSource)
 }

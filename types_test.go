@@ -5172,7 +5172,7 @@ func TestSettersEpisode(t *testing.T) {
 
 	t.Run("SetRole", func(t *testing.T) {
 		obj := &Episode{}
-		var fernTestValueRole *string
+		var fernTestValueRole *RoleType
 		obj.SetRole(fernTestValueRole)
 		assert.Equal(t, fernTestValueRole, obj.Role)
 		assert.NotNil(t, obj.explicitFields)
@@ -5196,7 +5196,7 @@ func TestSettersEpisode(t *testing.T) {
 
 	t.Run("SetSource", func(t *testing.T) {
 		obj := &Episode{}
-		var fernTestValueSource *string
+		var fernTestValueSource *GraphDataType
 		obj.SetSource(fernTestValueSource)
 		assert.Equal(t, fernTestValueSource, obj.Source)
 		assert.NotNil(t, obj.explicitFields)
@@ -5472,7 +5472,7 @@ func TestGettersEpisode(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &Episode{}
-		var expected *string
+		var expected *RoleType
 		obj.Role = expected
 
 		// Act & Assert
@@ -5571,7 +5571,7 @@ func TestGettersEpisode(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &Episode{}
-		var expected *string
+		var expected *GraphDataType
 		obj.Source = expected
 
 		// Act & Assert
@@ -5956,7 +5956,7 @@ func TestSettersMarkExplicitEpisode(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &Episode{}
-		var fernTestValueRole *string
+		var fernTestValueRole *RoleType
 
 		// Act
 		obj.SetRole(fernTestValueRole)
@@ -6049,7 +6049,7 @@ func TestSettersMarkExplicitEpisode(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &Episode{}
-		var fernTestValueSource *string
+		var fernTestValueSource *GraphDataType
 
 		// Act
 		obj.SetSource(fernTestValueSource)
@@ -7217,7 +7217,7 @@ func TestSettersMessage(t *testing.T) {
 
 	t.Run("SetRole", func(t *testing.T) {
 		obj := &Message{}
-		var fernTestValueRole *string
+		var fernTestValueRole *RoleType
 		obj.SetRole(fernTestValueRole)
 		assert.Equal(t, fernTestValueRole, obj.Role)
 		assert.NotNil(t, obj.explicitFields)
@@ -7411,7 +7411,7 @@ func TestGettersMessage(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &Message{}
-		var expected *string
+		var expected *RoleType
 		obj.Role = expected
 
 		// Act & Assert
@@ -7668,7 +7668,7 @@ func TestSettersMarkExplicitMessage(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &Message{}
-		var fernTestValueRole *string
+		var fernTestValueRole *RoleType
 
 		// Act
 		obj.SetRole(fernTestValueRole)
@@ -14999,6 +14999,99 @@ func TestEnumEntityPropertyType(t *testing.T) {
 
 	t.Run("Ptr", func(t *testing.T) {
 		val, err := NewEntityPropertyTypeFromString("Text")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumGraphDataType(t *testing.T) {
+	t.Run("NewFromString_text", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewGraphDataTypeFromString("text")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, GraphDataType("text"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_json", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewGraphDataTypeFromString("json")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, GraphDataType("json"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_message", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewGraphDataTypeFromString("message")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, GraphDataType("message"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_fact_triple", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewGraphDataTypeFromString("fact_triple")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, GraphDataType("fact_triple"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewGraphDataTypeFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewGraphDataTypeFromString("text")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumRoleType(t *testing.T) {
+	t.Run("NewFromString_system", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewRoleTypeFromString("system")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, RoleType("system"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_assistant", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewRoleTypeFromString("assistant")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, RoleType("assistant"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_user", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewRoleTypeFromString("user")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, RoleType("user"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_function", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewRoleTypeFromString("function")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, RoleType("function"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_tool", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewRoleTypeFromString("tool")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, RoleType("tool"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewRoleTypeFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewRoleTypeFromString("system")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)

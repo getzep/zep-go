@@ -2285,10 +2285,10 @@ type Episode struct {
 	Metadata          map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	Processed         *bool          `json:"processed,omitempty" url:"processed,omitempty"`
 	Relevance         *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Role              *string        `json:"role,omitempty" url:"role,omitempty"`
+	Role              *RoleType      `json:"role,omitempty" url:"role,omitempty"`
 	RoleName          *string        `json:"role_name,omitempty" url:"role_name,omitempty"`
 	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
-	Source            *string        `json:"source,omitempty" url:"source,omitempty"`
+	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
 	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
 	ThreadUUID        *string        `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
 	UUID              *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
@@ -2350,7 +2350,7 @@ func (e *Episode) GetRelevance() *float64 {
 	return e.Relevance
 }
 
-func (e *Episode) GetRole() *string {
+func (e *Episode) GetRole() *RoleType {
 	if e == nil {
 		return nil
 	}
@@ -2371,7 +2371,7 @@ func (e *Episode) GetScore() *float64 {
 	return e.Score
 }
 
-func (e *Episode) GetSource() *string {
+func (e *Episode) GetSource() *GraphDataType {
 	if e == nil {
 		return nil
 	}
@@ -2471,7 +2471,7 @@ func (e *Episode) SetRelevance(relevance *float64) {
 
 // SetRole sets the Role field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *Episode) SetRole(role *string) {
+func (e *Episode) SetRole(role *RoleType) {
 	e.Role = role
 	e.require(episodeFieldRole)
 }
@@ -2492,7 +2492,7 @@ func (e *Episode) SetScore(score *float64) {
 
 // SetSource sets the Source field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *Episode) SetSource(source *string) {
+func (e *Episode) SetSource(source *GraphDataType) {
 	e.Source = source
 	e.require(episodeFieldSource)
 }
@@ -2831,6 +2831,34 @@ func (e *ErrorBody) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type GraphDataType string
+
+const (
+	GraphDataTypeText       GraphDataType = "text"
+	GraphDataTypeJSON       GraphDataType = "json"
+	GraphDataTypeMessage    GraphDataType = "message"
+	GraphDataTypeFactTriple GraphDataType = "fact_triple"
+)
+
+func NewGraphDataTypeFromString(s string) (GraphDataType, error) {
+	switch s {
+	case "text":
+		return GraphDataTypeText, nil
+	case "json":
+		return GraphDataTypeJSON, nil
+	case "message":
+		return GraphDataTypeMessage, nil
+	case "fact_triple":
+		return GraphDataTypeFactTriple, nil
+	}
+	var t GraphDataType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphDataType) Ptr() *GraphDataType {
+	return &g
+}
+
 var (
 	instructionsFieldInherited    = big.NewInt(1 << 0)
 	instructionsFieldInstructions = big.NewInt(1 << 1)
@@ -3064,7 +3092,7 @@ type Message struct {
 	Metadata   map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	Name       *string        `json:"name,omitempty" url:"name,omitempty"`
 	Processed  *bool          `json:"processed,omitempty" url:"processed,omitempty"`
-	Role       *string        `json:"role,omitempty" url:"role,omitempty"`
+	Role       *RoleType      `json:"role,omitempty" url:"role,omitempty"`
 	ThreadUUID *string        `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
 	UUID       *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -3110,7 +3138,7 @@ func (m *Message) GetProcessed() *bool {
 	return m.Processed
 }
 
-func (m *Message) GetRole() *string {
+func (m *Message) GetRole() *RoleType {
 	if m == nil {
 		return nil
 	}
@@ -3182,7 +3210,7 @@ func (m *Message) SetProcessed(processed *bool) {
 
 // SetRole sets the Role field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (m *Message) SetRole(role *string) {
+func (m *Message) SetRole(role *RoleType) {
 	m.Role = role
 	m.require(messageFieldRole)
 }
@@ -4361,6 +4389,37 @@ func (o *Ontology) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", o)
+}
+
+type RoleType string
+
+const (
+	RoleTypeSystem    RoleType = "system"
+	RoleTypeAssistant RoleType = "assistant"
+	RoleTypeUser      RoleType = "user"
+	RoleTypeFunction  RoleType = "function"
+	RoleTypeTool      RoleType = "tool"
+)
+
+func NewRoleTypeFromString(s string) (RoleType, error) {
+	switch s {
+	case "system":
+		return RoleTypeSystem, nil
+	case "assistant":
+		return RoleTypeAssistant, nil
+	case "user":
+		return RoleTypeUser, nil
+	case "function":
+		return RoleTypeFunction, nil
+	case "tool":
+		return RoleTypeTool, nil
+	}
+	var t RoleType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RoleType) Ptr() *RoleType {
+	return &r
 }
 
 var (

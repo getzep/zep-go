@@ -313,7 +313,7 @@ type AddMessage struct {
 	Content  *string        `json:"content,omitempty" url:"content,omitempty"`
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	Name     *string        `json:"name,omitempty" url:"name,omitempty"`
-	Role     *string        `json:"role,omitempty" url:"role,omitempty"`
+	Role     *RoleType      `json:"role,omitempty" url:"role,omitempty"`
 	UUID     *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -344,7 +344,7 @@ func (a *AddMessage) GetName() *string {
 	return a.Name
 }
 
-func (a *AddMessage) GetRole() *string {
+func (a *AddMessage) GetRole() *RoleType {
 	if a == nil {
 		return nil
 	}
@@ -395,7 +395,7 @@ func (a *AddMessage) SetName(name *string) {
 
 // SetRole sets the Role field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddMessage) SetRole(role *string) {
+func (a *AddMessage) SetRole(role *RoleType) {
 	a.Role = role
 	a.require(addMessageFieldRole)
 }

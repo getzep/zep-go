@@ -173,7 +173,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"episode_uuid\": \"episode_uuid\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"sequence_index\": 1,\n      \"source_uuid\": \"source_uuid\",\n      \"status\": \"status\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"type\": \"type\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"episode_uuid\": \"episode_uuid\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"sequence_index\": 1,\n      \"source_uuid\": \"source_uuid\",\n      \"status\": \"pending\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"type\": \"graph_episode\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -209,7 +209,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"episode_uuid\": \"episode_uuid\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"sequence_index\": 1,\n      \"source_uuid\": \"source_uuid\",\n      \"status\": \"status\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"type\": \"type\",\n      \"uuid\": \"uuid\"\n    }\n  ]\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"episode_uuid\": \"episode_uuid\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"sequence_index\": 1,\n      \"source_uuid\": \"source_uuid\",\n      \"status\": \"pending\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"type\": \"graph_episode\",\n      \"uuid\": \"uuid\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1014,7 +1014,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"role\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"source\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1908,7 +1908,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"role\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"source\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1952,7 +1952,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"role\": \"role\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"role\": \"system\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1988,7 +1988,7 @@
       },
       "response": {
         "status": 202,
-        "body": "{\n  \"context\": \"context\",\n  \"messages\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"role\": \"role\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "body": "{\n  \"context\": \"context\",\n  \"messages\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"role\": \"system\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2438,7 +2438,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"role\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"source\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2474,7 +2474,7 @@
       },
       "response": {
         "status": 202,
-        "body": "{\n  \"episode\": {\n    \"content\": \"content\",\n    \"created_at\": \"created_at\",\n    \"document_id\": \"document_id\",\n    \"graph_uuid\": \"graph_uuid\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"processed\": true,\n    \"relevance\": 1.1,\n    \"role\": \"role\",\n    \"role_name\": \"role_name\",\n    \"score\": 1.1,\n    \"source\": \"source\",\n    \"source_description\": \"source_description\",\n    \"thread_uuid\": \"thread_uuid\",\n    \"uuid\": \"uuid\",\n    \"valid_at\": \"valid_at\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "body": "{\n  \"episode\": {\n    \"content\": \"content\",\n    \"created_at\": \"created_at\",\n    \"document_id\": \"document_id\",\n    \"graph_uuid\": \"graph_uuid\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"processed\": true,\n    \"relevance\": 1.1,\n    \"role\": \"system\",\n    \"role_name\": \"role_name\",\n    \"score\": 1.1,\n    \"source\": \"text\",\n    \"source_description\": \"source_description\",\n    \"thread_uuid\": \"thread_uuid\",\n    \"uuid\": \"uuid\",\n    \"valid_at\": \"valid_at\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2518,7 +2518,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"role\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"source\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2557,7 +2557,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"relevance\": 1.1,\n  \"role\": \"role\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"source\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2635,7 +2635,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"relevance\": 1.1,\n  \"role\": \"role\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"source\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -3242,7 +3242,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"role\": \"role\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"role\": \"system\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -3281,7 +3281,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"role\": \"role\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"role\": \"system\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }

@@ -868,7 +868,7 @@ func TestSettersBatchItem(t *testing.T) {
 
 	t.Run("SetStatus", func(t *testing.T) {
 		obj := &BatchItem{}
-		var fernTestValueStatus *string
+		var fernTestValueStatus *BatchItemStatus
 		obj.SetStatus(fernTestValueStatus)
 		assert.Equal(t, fernTestValueStatus, obj.Status)
 		assert.NotNil(t, obj.explicitFields)
@@ -884,7 +884,7 @@ func TestSettersBatchItem(t *testing.T) {
 
 	t.Run("SetType", func(t *testing.T) {
 		obj := &BatchItem{}
-		var fernTestValueType *string
+		var fernTestValueType *BatchItemKind
 		obj.SetType(fernTestValueType)
 		assert.Equal(t, fernTestValueType, obj.Type)
 		assert.NotNil(t, obj.explicitFields)
@@ -1070,7 +1070,7 @@ func TestGettersBatchItem(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItem{}
-		var expected *string
+		var expected *BatchItemStatus
 		obj.Status = expected
 
 		// Act & Assert
@@ -1136,7 +1136,7 @@ func TestGettersBatchItem(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItem{}
-		var expected *string
+		var expected *BatchItemKind
 		obj.Type = expected
 
 		// Act & Assert
@@ -1360,7 +1360,7 @@ func TestSettersMarkExplicitBatchItem(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItem{}
-		var fernTestValueStatus *string
+		var fernTestValueStatus *BatchItemStatus
 
 		// Act
 		obj.SetStatus(fernTestValueStatus)
@@ -1422,7 +1422,7 @@ func TestSettersMarkExplicitBatchItem(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItem{}
-		var fernTestValueType *string
+		var fernTestValueType *BatchItemKind
 
 		// Act
 		obj.SetType(fernTestValueType)
@@ -2457,6 +2457,99 @@ func TestStringProcessBatchResult(t *testing.T) {
 		var obj *ProcessBatchResult
 		result := obj.String()
 		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
+	})
+}
+
+func TestEnumBatchItemKind(t *testing.T) {
+	t.Run("NewFromString_graph_episode", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemKindFromString("graph_episode")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemKind("graph_episode"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_thread_message", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemKindFromString("thread_message")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemKind("thread_message"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewBatchItemKindFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewBatchItemKindFromString("graph_episode")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumBatchItemStatus(t *testing.T) {
+	t.Run("NewFromString_pending", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemStatusFromString("pending")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemStatus("pending"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_queued", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemStatusFromString("queued")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemStatus("queued"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_processing", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemStatusFromString("processing")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemStatus("processing"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_succeeded", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemStatusFromString("succeeded")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemStatus("succeeded"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_failed", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemStatusFromString("failed")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemStatus("failed"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_skipped", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemStatusFromString("skipped")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemStatus("skipped"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_canceled", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemStatusFromString("canceled")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemStatus("canceled"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewBatchItemStatusFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewBatchItemStatusFromString("pending")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
 	})
 }
 
