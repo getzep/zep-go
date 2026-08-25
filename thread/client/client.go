@@ -4,66 +4,139 @@ package client
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v4"
+	http "net/http"
+	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
 	core "github.com/getzep/zep-go/v4/core"
 	internal "github.com/getzep/zep-go/v4/internal"
 	option "github.com/getzep/zep-go/v4/option"
 	message "github.com/getzep/zep-go/v4/thread/message"
-	http "net/http"
-	os "os"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 	Message         *message.Client
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
-		Message:         message.NewClient(opts...),
+		Message:         message.NewClient(options),
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Returns all threads.
-func (c *Client) ListAll(
+// Example:
+//
+//	request := &zep.ThreadListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	    OrderBy: zep.String(
+//	        "order_by",
+//	    ),
+//	    Order: zep.String(
+//	        "order",
+//	    ),
+//	    UserUUID: zep.String(
+//	        "user_uuid",
+//	    ),
+//	}
+//	client.Thread.List(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) List(
 	ctx context.Context,
-	request *v3.ThreadListAllRequest,
+	request *zep.ThreadListRequest,
 	opts ...option.RequestOption,
-) (*v3.ThreadListResponse, error) {
-	response, err := c.WithRawResponse.ListAll(
-		ctx,
-		request,
-		opts...,
+) (*core.Page[*string, *zep.Thread, *zep.ThreadPage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
 	)
+	endpointURL := baseURL + "/threads"
+	queryParams, err := internal.QueryValues(request)
 	if err != nil {
 		return nil, err
 	}
-	return response.Body, nil
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.ThreadPage) *core.PageResponse[*string, *zep.Thread, *zep.ThreadPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Thread, *zep.ThreadPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Start a new thread.
+// Example:
+//
+//	request := &zep.CreateThreadRequest{}
+//	client.Thread.Create(
+//	    context.TODO(),
+//	    request,
+//	)
 func (c *Client) Create(
 	ctx context.Context,
-	request *v3.CreateThreadRequest,
-	opts ...option.RequestOption,
-) (*v3.Thread, error) {
+	request *zep.CreateThreadRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Thread, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		request,
@@ -75,35 +148,20 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Deletes a thread.
-func (c *Client) Delete(
+// Example:
+//
+//	request := &zep.LookupRequest{}
+//	client.Thread.Lookup(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) Lookup(
 	ctx context.Context,
-	// The ID of the thread for which memory should be deleted.
-	threadID string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.Delete(
+	request *zep.LookupRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.Thread, error) {
+	response, err := c.WithRawResponse.Lookup(
 		ctx,
-		threadID,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Returns most relevant context from the user graph (including memory from any/all past threads) based on the content of the past few messages of the given thread.
-func (c *Client) GetUserContext(
-	ctx context.Context,
-	// The ID of the current thread (for which context is being retrieved).
-	threadID string,
-	request *v3.ThreadGetUserContextRequest,
-	opts ...option.RequestOption,
-) (*v3.ThreadContextResponse, error) {
-	response, err := c.WithRawResponse.GetUserContext(
-		ctx,
-		threadID,
 		request,
 		opts...,
 	)
@@ -113,17 +171,74 @@ func (c *Client) GetUserContext(
 	return response.Body, nil
 }
 
-// Returns messages for a thread.
+// Example:
+//
+//	client.Thread.Get(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	)
 func (c *Client) Get(
 	ctx context.Context,
-	// Thread ID
-	threadID string,
-	request *v3.ThreadGetRequest,
+	// Thread UUID
+	threadUUID string,
 	opts ...option.RequestOption,
-) (*v3.MessageListResponse, error) {
+) (*zep.Thread, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
-		threadID,
+		threadUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	client.Thread.Delete(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	)
+func (c *Client) Delete(
+	ctx context.Context,
+	// Thread UUID
+	threadUUID string,
+	opts ...option.IdempotentRequestOption,
+) (*zep.ThreadDeleteResult, error) {
+	response, err := c.WithRawResponse.Delete(
+		ctx,
+		threadUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Example:
+//
+//	request := &zep.ThreadGetContextRequest{
+//	    TemplateUUID: zep.String(
+//	        "template_uuid",
+//	    ),
+//	}
+//	client.Thread.GetContext(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	    request,
+//	)
+func (c *Client) GetContext(
+	ctx context.Context,
+	// Thread UUID
+	threadUUID string,
+	request *zep.ThreadGetContextRequest,
+	opts ...option.RequestOption,
+) (*zep.ThreadContextResponse, error) {
+	response, err := c.WithRawResponse.GetContext(
+		ctx,
+		threadUUID,
 		request,
 		opts...,
 	)
@@ -133,17 +248,184 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Add messages to a thread.
+// Example:
+//
+//	request := &zep.ThreadListEpisodesRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	}
+//	client.Thread.ListEpisodes(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	    request,
+//	)
+func (c *Client) ListEpisodes(
+	ctx context.Context,
+	// Thread UUID
+	threadUUID string,
+	request *zep.ThreadListEpisodesRequest,
+	opts ...option.RequestOption,
+) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/threads/%v/episodes",
+		threadUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.EpisodePage) *core.PageResponse[*string, *zep.Episode, *zep.EpisodePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Episode, *zep.EpisodePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.ThreadListMessagesRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	}
+//	client.Thread.ListMessages(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	    request,
+//	)
+func (c *Client) ListMessages(
+	ctx context.Context,
+	// Thread UUID
+	threadUUID string,
+	request *zep.ThreadListMessagesRequest,
+	opts ...option.RequestOption,
+) (*core.Page[*string, *zep.Message, *zep.MessagePage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/threads/%v/messages",
+		threadUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.MessagePage) *core.PageResponse[*string, *zep.Message, *zep.MessagePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.Message, *zep.MessagePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	request := &zep.AddMessagesRequest{}
+//	client.Thread.AddMessages(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	    request,
+//	)
 func (c *Client) AddMessages(
 	ctx context.Context,
-	// The ID of the thread to which messages should be added.
-	threadID string,
-	request *v3.AddThreadMessagesRequest,
-	opts ...option.RequestOption,
-) (*v3.AddThreadMessagesResponse, error) {
+	// Thread UUID
+	threadUUID string,
+	request *zep.AddMessagesRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.AddMessagesResult, error) {
 	response, err := c.WithRawResponse.AddMessages(
 		ctx,
-		threadID,
+		threadUUID,
 		request,
 		opts...,
 	)
@@ -153,38 +435,21 @@ func (c *Client) AddMessages(
 	return response.Body, nil
 }
 
-// Deprecated. Use the [Batch API](/adding-batch-data) (`client.batch.*` with `type: "thread_message"`) instead.
+// Example:
 //
-// Adds messages to a thread in batch mode, processing messages concurrently.
-func (c *Client) AddMessagesBatch(
-	ctx context.Context,
-	// The ID of the thread to which messages should be added.
-	threadID string,
-	request *v3.AddThreadMessagesRequest,
-	opts ...option.RequestOption,
-) (*v3.AddThreadMessagesResponse, error) {
-	response, err := c.WithRawResponse.AddMessagesBatch(
-		ctx,
-		threadID,
-		request,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Returns the incremental summary generated from messages in the thread. Returns 404 if no summary exists for the thread.
+//	client.Thread.GetSummary(
+//	    context.TODO(),
+//	    "thread_uuid",
+//	)
 func (c *Client) GetSummary(
 	ctx context.Context,
-	// The thread ID.
-	threadID string,
+	// Thread UUID
+	threadUUID string,
 	opts ...option.RequestOption,
-) (*v3.ThreadSummary, error) {
+) (*zep.ThreadSummary, error) {
 	response, err := c.WithRawResponse.GetSummary(
 		ctx,
-		threadID,
+		threadUUID,
 		opts...,
 	)
 	if err != nil {

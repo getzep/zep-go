@@ -13,3 +13,5 @@ LICENSE
 go.mod
 go.sum
 .gitattributes
+.fern/replay.lock
+.fern/replay.yml

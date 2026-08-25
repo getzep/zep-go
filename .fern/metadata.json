@@ -1,0 +1,15 @@
+{
+  "cliVersion": "5.50.1",
+  "generatorName": "fernapi/fern-go-sdk",
+  "generatorVersion": "1.57.8",
+  "generatorConfig": {
+    "packageName": "zep",
+    "union": "v1"
+  },
+  "originGitCommit": "762fc6a35d65726598b9a2f54feec4c7840c960c",
+  "originGitCommitIsDirty": true,
+  "invokedBy": "ci",
+  "requestedVersion": "4.0.0-alpha.1",
+  "ciProvider": "github",
+  "sdkVersion": "v4.0.0-alpha.1"
+}
