@@ -378,15 +378,15 @@ var (
 )
 
 type BatchItem struct {
-	CreatedAt     *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	EpisodeUUID   *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
-	GraphUUID     *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	SequenceIndex *int    `json:"sequence_index,omitempty" url:"sequence_index,omitempty"`
-	SourceUUID    *string `json:"source_uuid,omitempty" url:"source_uuid,omitempty"`
-	Status        *string `json:"status,omitempty" url:"status,omitempty"`
-	ThreadUUID    *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
-	Type          *string `json:"type,omitempty" url:"type,omitempty"`
-	UUID          *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	CreatedAt     *string          `json:"created_at,omitempty" url:"created_at,omitempty"`
+	EpisodeUUID   *string          `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
+	GraphUUID     *string          `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	SequenceIndex *int             `json:"sequence_index,omitempty" url:"sequence_index,omitempty"`
+	SourceUUID    *string          `json:"source_uuid,omitempty" url:"source_uuid,omitempty"`
+	Status        *BatchItemStatus `json:"status,omitempty" url:"status,omitempty"`
+	ThreadUUID    *string          `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	Type          *BatchItemKind   `json:"type,omitempty" url:"type,omitempty"`
+	UUID          *string          `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -430,7 +430,7 @@ func (b *BatchItem) GetSourceUUID() *string {
 	return b.SourceUUID
 }
 
-func (b *BatchItem) GetStatus() *string {
+func (b *BatchItem) GetStatus() *BatchItemStatus {
 	if b == nil {
 		return nil
 	}
@@ -444,7 +444,7 @@ func (b *BatchItem) GetThreadUUID() *string {
 	return b.ThreadUUID
 }
 
-func (b *BatchItem) GetType() *string {
+func (b *BatchItem) GetType() *BatchItemKind {
 	if b == nil {
 		return nil
 	}
@@ -509,7 +509,7 @@ func (b *BatchItem) SetSourceUUID(sourceUUID *string) {
 
 // SetStatus sets the Status field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (b *BatchItem) SetStatus(status *string) {
+func (b *BatchItem) SetStatus(status *BatchItemStatus) {
 	b.Status = status
 	b.require(batchItemFieldStatus)
 }
@@ -523,7 +523,7 @@ func (b *BatchItem) SetThreadUUID(threadUUID *string) {
 
 // SetType sets the Type field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (b *BatchItem) SetType(type_ *string) {
+func (b *BatchItem) SetType(type_ *BatchItemKind) {
 	b.Type = type_
 	b.require(batchItemFieldType)
 }
@@ -575,6 +575,28 @@ func (b *BatchItem) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+type BatchItemKind string
+
+const (
+	BatchItemKindGraphEpisode  BatchItemKind = "graph_episode"
+	BatchItemKindThreadMessage BatchItemKind = "thread_message"
+)
+
+func NewBatchItemKindFromString(s string) (BatchItemKind, error) {
+	switch s {
+	case "graph_episode":
+		return BatchItemKindGraphEpisode, nil
+	case "thread_message":
+		return BatchItemKindThreadMessage, nil
+	}
+	var t BatchItemKind
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BatchItemKind) Ptr() *BatchItemKind {
+	return &b
 }
 
 var (
@@ -691,6 +713,43 @@ func (b *BatchItemPage) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+type BatchItemStatus string
+
+const (
+	BatchItemStatusPending    BatchItemStatus = "pending"
+	BatchItemStatusQueued     BatchItemStatus = "queued"
+	BatchItemStatusProcessing BatchItemStatus = "processing"
+	BatchItemStatusSucceeded  BatchItemStatus = "succeeded"
+	BatchItemStatusFailed     BatchItemStatus = "failed"
+	BatchItemStatusSkipped    BatchItemStatus = "skipped"
+	BatchItemStatusCanceled   BatchItemStatus = "canceled"
+)
+
+func NewBatchItemStatusFromString(s string) (BatchItemStatus, error) {
+	switch s {
+	case "pending":
+		return BatchItemStatusPending, nil
+	case "queued":
+		return BatchItemStatusQueued, nil
+	case "processing":
+		return BatchItemStatusProcessing, nil
+	case "succeeded":
+		return BatchItemStatusSucceeded, nil
+	case "failed":
+		return BatchItemStatusFailed, nil
+	case "skipped":
+		return BatchItemStatusSkipped, nil
+	case "canceled":
+		return BatchItemStatusCanceled, nil
+	}
+	var t BatchItemStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BatchItemStatus) Ptr() *BatchItemStatus {
+	return &b
 }
 
 var (

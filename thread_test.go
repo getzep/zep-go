@@ -696,7 +696,7 @@ func TestSettersAddMessage(t *testing.T) {
 
 	t.Run("SetRole", func(t *testing.T) {
 		obj := &AddMessage{}
-		var fernTestValueRole *string
+		var fernTestValueRole *RoleType
 		obj.SetRole(fernTestValueRole)
 		assert.Equal(t, fernTestValueRole, obj.Role)
 		assert.NotNil(t, obj.explicitFields)
@@ -816,7 +816,7 @@ func TestGettersAddMessage(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddMessage{}
-		var expected *string
+		var expected *RoleType
 		obj.Role = expected
 
 		// Act & Assert
@@ -978,7 +978,7 @@ func TestSettersMarkExplicitAddMessage(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddMessage{}
-		var fernTestValueRole *string
+		var fernTestValueRole *RoleType
 
 		// Act
 		obj.SetRole(fernTestValueRole)
