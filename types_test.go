@@ -4367,7 +4367,7 @@ func TestSettersMarkExplicitEdgeSourceTarget(t *testing.T) {
 func TestSettersEdgeType(t *testing.T) {
 	t.Run("SetDescription", func(t *testing.T) {
 		obj := &EdgeType{}
-		var fernTestValueDescription string
+		var fernTestValueDescription *string
 		obj.SetDescription(fernTestValueDescription)
 		assert.Equal(t, fernTestValueDescription, obj.Description)
 		assert.NotNil(t, obj.explicitFields)
@@ -4375,7 +4375,7 @@ func TestSettersEdgeType(t *testing.T) {
 
 	t.Run("SetName", func(t *testing.T) {
 		obj := &EdgeType{}
-		var fernTestValueName string
+		var fernTestValueName *string
 		obj.SetName(fernTestValueName)
 		assert.Equal(t, fernTestValueName, obj.Name)
 		assert.NotNil(t, obj.explicitFields)
@@ -4404,11 +4404,21 @@ func TestGettersEdgeType(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EdgeType{}
-		var expected string
+		var expected *string
 		obj.Description = expected
 
 		// Act & Assert
 		assert.Equal(t, expected, obj.GetDescription(), "getter should return the property value")
+	})
+
+	t.Run("GetDescription_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EdgeType{}
+		obj.Description = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetDescription(), "getter should return nil when property is nil")
 	})
 
 	t.Run("GetDescription_NilReceiver", func(t *testing.T) {
@@ -4427,11 +4437,21 @@ func TestGettersEdgeType(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EdgeType{}
-		var expected string
+		var expected *string
 		obj.Name = expected
 
 		// Act & Assert
 		assert.Equal(t, expected, obj.GetName(), "getter should return the property value")
+	})
+
+	t.Run("GetName_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EdgeType{}
+		obj.Name = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetName(), "getter should return nil when property is nil")
 	})
 
 	t.Run("GetName_NilReceiver", func(t *testing.T) {
@@ -4519,7 +4539,7 @@ func TestSettersMarkExplicitEdgeType(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EdgeType{}
-		var fernTestValueDescription string
+		var fernTestValueDescription *string
 
 		// Act
 		obj.SetDescription(fernTestValueDescription)
@@ -4550,7 +4570,7 @@ func TestSettersMarkExplicitEdgeType(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EdgeType{}
-		var fernTestValueName string
+		var fernTestValueName *string
 
 		// Act
 		obj.SetName(fernTestValueName)
@@ -4644,7 +4664,7 @@ func TestSettersMarkExplicitEdgeType(t *testing.T) {
 func TestSettersEntityProperty(t *testing.T) {
 	t.Run("SetDescription", func(t *testing.T) {
 		obj := &EntityProperty{}
-		var fernTestValueDescription string
+		var fernTestValueDescription *string
 		obj.SetDescription(fernTestValueDescription)
 		assert.Equal(t, fernTestValueDescription, obj.Description)
 		assert.NotNil(t, obj.explicitFields)
@@ -4652,7 +4672,7 @@ func TestSettersEntityProperty(t *testing.T) {
 
 	t.Run("SetName", func(t *testing.T) {
 		obj := &EntityProperty{}
-		var fernTestValueName string
+		var fernTestValueName *string
 		obj.SetName(fernTestValueName)
 		assert.Equal(t, fernTestValueName, obj.Name)
 		assert.NotNil(t, obj.explicitFields)
@@ -4660,7 +4680,7 @@ func TestSettersEntityProperty(t *testing.T) {
 
 	t.Run("SetType", func(t *testing.T) {
 		obj := &EntityProperty{}
-		var fernTestValueType EntityPropertyType
+		var fernTestValueType *EntityPropertyType
 		obj.SetType(fernTestValueType)
 		assert.Equal(t, fernTestValueType, obj.Type)
 		assert.NotNil(t, obj.explicitFields)
@@ -4673,11 +4693,21 @@ func TestGettersEntityProperty(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityProperty{}
-		var expected string
+		var expected *string
 		obj.Description = expected
 
 		// Act & Assert
 		assert.Equal(t, expected, obj.GetDescription(), "getter should return the property value")
+	})
+
+	t.Run("GetDescription_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EntityProperty{}
+		obj.Description = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetDescription(), "getter should return nil when property is nil")
 	})
 
 	t.Run("GetDescription_NilReceiver", func(t *testing.T) {
@@ -4696,11 +4726,21 @@ func TestGettersEntityProperty(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityProperty{}
-		var expected string
+		var expected *string
 		obj.Name = expected
 
 		// Act & Assert
 		assert.Equal(t, expected, obj.GetName(), "getter should return the property value")
+	})
+
+	t.Run("GetName_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EntityProperty{}
+		obj.Name = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetName(), "getter should return nil when property is nil")
 	})
 
 	t.Run("GetName_NilReceiver", func(t *testing.T) {
@@ -4719,11 +4759,21 @@ func TestGettersEntityProperty(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityProperty{}
-		var expected EntityPropertyType
+		var expected *EntityPropertyType
 		obj.Type = expected
 
 		// Act & Assert
 		assert.Equal(t, expected, obj.GetType(), "getter should return the property value")
+	})
+
+	t.Run("GetType_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EntityProperty{}
+		obj.Type = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetType(), "getter should return nil when property is nil")
 	})
 
 	t.Run("GetType_NilReceiver", func(t *testing.T) {
@@ -4745,7 +4795,7 @@ func TestSettersMarkExplicitEntityProperty(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityProperty{}
-		var fernTestValueDescription string
+		var fernTestValueDescription *string
 
 		// Act
 		obj.SetDescription(fernTestValueDescription)
@@ -4776,7 +4826,7 @@ func TestSettersMarkExplicitEntityProperty(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityProperty{}
-		var fernTestValueName string
+		var fernTestValueName *string
 
 		// Act
 		obj.SetName(fernTestValueName)
@@ -4807,7 +4857,7 @@ func TestSettersMarkExplicitEntityProperty(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityProperty{}
-		var fernTestValueType EntityPropertyType
+		var fernTestValueType *EntityPropertyType
 
 		// Act
 		obj.SetType(fernTestValueType)
@@ -4839,7 +4889,7 @@ func TestSettersMarkExplicitEntityProperty(t *testing.T) {
 func TestSettersEntityType(t *testing.T) {
 	t.Run("SetDescription", func(t *testing.T) {
 		obj := &EntityType{}
-		var fernTestValueDescription string
+		var fernTestValueDescription *string
 		obj.SetDescription(fernTestValueDescription)
 		assert.Equal(t, fernTestValueDescription, obj.Description)
 		assert.NotNil(t, obj.explicitFields)
@@ -4855,7 +4905,7 @@ func TestSettersEntityType(t *testing.T) {
 
 	t.Run("SetName", func(t *testing.T) {
 		obj := &EntityType{}
-		var fernTestValueName string
+		var fernTestValueName *string
 		obj.SetName(fernTestValueName)
 		assert.Equal(t, fernTestValueName, obj.Name)
 		assert.NotNil(t, obj.explicitFields)
@@ -4876,11 +4926,21 @@ func TestGettersEntityType(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityType{}
-		var expected string
+		var expected *string
 		obj.Description = expected
 
 		// Act & Assert
 		assert.Equal(t, expected, obj.GetDescription(), "getter should return the property value")
+	})
+
+	t.Run("GetDescription_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EntityType{}
+		obj.Description = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetDescription(), "getter should return nil when property is nil")
 	})
 
 	t.Run("GetDescription_NilReceiver", func(t *testing.T) {
@@ -4932,11 +4992,21 @@ func TestGettersEntityType(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityType{}
-		var expected string
+		var expected *string
 		obj.Name = expected
 
 		// Act & Assert
 		assert.Equal(t, expected, obj.GetName(), "getter should return the property value")
+	})
+
+	t.Run("GetName_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EntityType{}
+		obj.Name = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetName(), "getter should return nil when property is nil")
 	})
 
 	t.Run("GetName_NilReceiver", func(t *testing.T) {
@@ -4991,7 +5061,7 @@ func TestSettersMarkExplicitEntityType(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityType{}
-		var fernTestValueDescription string
+		var fernTestValueDescription *string
 
 		// Act
 		obj.SetDescription(fernTestValueDescription)
@@ -5053,7 +5123,7 @@ func TestSettersMarkExplicitEntityType(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EntityType{}
-		var fernTestValueName string
+		var fernTestValueName *string
 
 		// Act
 		obj.SetName(fernTestValueName)
@@ -14964,32 +15034,32 @@ func TestStringUserSummaryInstructions(t *testing.T) {
 }
 
 func TestEnumEntityPropertyType(t *testing.T) {
-	t.Run("NewFromString_Text", func(t *testing.T) {
+	t.Run("NewFromString_text", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewEntityPropertyTypeFromString("Text")
+		val, err := NewEntityPropertyTypeFromString("text")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, EntityPropertyType("Text"), val, "enum value should match expected wire value")
+		assert.Equal(t, EntityPropertyType("text"), val, "enum value should match expected wire value")
 	})
 
-	t.Run("NewFromString_Int", func(t *testing.T) {
+	t.Run("NewFromString_int", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewEntityPropertyTypeFromString("Int")
+		val, err := NewEntityPropertyTypeFromString("int")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, EntityPropertyType("Int"), val, "enum value should match expected wire value")
+		assert.Equal(t, EntityPropertyType("int"), val, "enum value should match expected wire value")
 	})
 
-	t.Run("NewFromString_Float", func(t *testing.T) {
+	t.Run("NewFromString_float", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewEntityPropertyTypeFromString("Float")
+		val, err := NewEntityPropertyTypeFromString("float")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, EntityPropertyType("Float"), val, "enum value should match expected wire value")
+		assert.Equal(t, EntityPropertyType("float"), val, "enum value should match expected wire value")
 	})
 
-	t.Run("NewFromString_Boolean", func(t *testing.T) {
+	t.Run("NewFromString_boolean", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewEntityPropertyTypeFromString("Boolean")
+		val, err := NewEntityPropertyTypeFromString("boolean")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, EntityPropertyType("Boolean"), val, "enum value should match expected wire value")
+		assert.Equal(t, EntityPropertyType("boolean"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_Invalid", func(t *testing.T) {
@@ -14998,7 +15068,7 @@ func TestEnumEntityPropertyType(t *testing.T) {
 	})
 
 	t.Run("Ptr", func(t *testing.T) {
-		val, err := NewEntityPropertyTypeFromString("Text")
+		val, err := NewEntityPropertyTypeFromString("text")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)
