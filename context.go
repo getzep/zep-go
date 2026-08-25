@@ -6,59 +6,172 @@ import (
 	json "encoding/json"
 	fmt "fmt"
 	internal "github.com/getzep/zep-go/v4/internal"
+	big "math/big"
 )
 
-type CreateContextTemplateRequest struct {
-	// The template content (max 1200 characters).
-	Template string `json:"template" url:"-"`
-	// Unique identifier for the template (max 100 characters).
-	TemplateID string `json:"template_id" url:"-"`
+var (
+	contextTemplateListRequestFieldLimit  = big.NewInt(1 << 0)
+	contextTemplateListRequestFieldCursor = big.NewInt(1 << 1)
+	contextTemplateListRequestFieldName   = big.NewInt(1 << 2)
+)
+
+type ContextTemplateListRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	Name   *string `json:"name,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-type ContextTemplateResponse struct {
-	// The template content.
-	Template *string `json:"template,omitempty" url:"template,omitempty"`
-	// Unique identifier for the template (max 100 characters).
-	TemplateID *string `json:"template_id,omitempty" url:"template_id,omitempty"`
-	// Unique identifier for the template.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+func (c *ContextTemplateListRequest) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplateListRequest) SetLimit(limit *int) {
+	c.Limit = limit
+	c.require(contextTemplateListRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplateListRequest) SetCursor(cursor *string) {
+	c.Cursor = cursor
+	c.require(contextTemplateListRequestFieldCursor)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplateListRequest) SetName(name *string) {
+	c.Name = name
+	c.require(contextTemplateListRequestFieldName)
+}
+
+func (c *ContextTemplateListRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContextTemplateListRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*c = ContextTemplateListRequest(body)
+	return nil
+}
+
+func (c *ContextTemplateListRequest) MarshalJSON() ([]byte, error) {
+	type embed ContextTemplateListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	contextTemplateFieldCreatedAt = big.NewInt(1 << 0)
+	contextTemplateFieldName      = big.NewInt(1 << 1)
+	contextTemplateFieldTemplate  = big.NewInt(1 << 2)
+	contextTemplateFieldUUID      = big.NewInt(1 << 3)
+)
+
+type ContextTemplate struct {
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Name      *string `json:"name,omitempty" url:"name,omitempty"`
+	Template  *string `json:"template,omitempty" url:"template,omitempty"`
+	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (c *ContextTemplateResponse) GetTemplate() *string {
+func (c *ContextTemplate) GetCreatedAt() *string {
+	if c == nil {
+		return nil
+	}
+	return c.CreatedAt
+}
+
+func (c *ContextTemplate) GetName() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Name
+}
+
+func (c *ContextTemplate) GetTemplate() *string {
 	if c == nil {
 		return nil
 	}
 	return c.Template
 }
 
-func (c *ContextTemplateResponse) GetTemplateID() *string {
-	if c == nil {
-		return nil
-	}
-	return c.TemplateID
-}
-
-func (c *ContextTemplateResponse) GetUUID() *string {
+func (c *ContextTemplate) GetUUID() *string {
 	if c == nil {
 		return nil
 	}
 	return c.UUID
 }
 
-func (c *ContextTemplateResponse) GetExtraProperties() map[string]interface{} {
+func (c *ContextTemplate) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
-func (c *ContextTemplateResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ContextTemplateResponse
+func (c *ContextTemplate) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplate) SetCreatedAt(createdAt *string) {
+	c.CreatedAt = createdAt
+	c.require(contextTemplateFieldCreatedAt)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplate) SetName(name *string) {
+	c.Name = name
+	c.require(contextTemplateFieldName)
+}
+
+// SetTemplate sets the Template field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplate) SetTemplate(template *string) {
+	c.Template = template
+	c.require(contextTemplateFieldTemplate)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplate) SetUUID(uuid *string) {
+	c.UUID = uuid
+	c.require(contextTemplateFieldUUID)
+}
+
+func (c *ContextTemplate) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContextTemplate
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*c = ContextTemplateResponse(value)
+	*c = ContextTemplate(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *c)
 	if err != nil {
 		return err
@@ -68,7 +181,21 @@ func (c *ContextTemplateResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (c *ContextTemplateResponse) String() string {
+func (c *ContextTemplate) MarshalJSON() ([]byte, error) {
+	type embed ContextTemplate
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContextTemplate) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -80,53 +207,218 @@ func (c *ContextTemplateResponse) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
-type ListContextTemplatesResponse struct {
-	Templates []*ContextTemplateResponse `json:"templates,omitempty" url:"templates,omitempty"`
+var (
+	contextTemplatePageFieldItems      = big.NewInt(1 << 0)
+	contextTemplatePageFieldNextCursor = big.NewInt(1 << 1)
+	contextTemplatePageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type ContextTemplatePage struct {
+	Items      []*ContextTemplate `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string            `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int               `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
 }
 
-func (l *ListContextTemplatesResponse) GetTemplates() []*ContextTemplateResponse {
-	if l == nil {
+func (c *ContextTemplatePage) GetItems() []*ContextTemplate {
+	if c == nil {
 		return nil
 	}
-	return l.Templates
+	return c.Items
 }
 
-func (l *ListContextTemplatesResponse) GetExtraProperties() map[string]interface{} {
-	return l.extraProperties
+func (c *ContextTemplatePage) GetNextCursor() *string {
+	if c == nil {
+		return nil
+	}
+	return c.NextCursor
 }
 
-func (l *ListContextTemplatesResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ListContextTemplatesResponse
+func (c *ContextTemplatePage) GetTotalSize() *int {
+	if c == nil {
+		return nil
+	}
+	return c.TotalSize
+}
+
+func (c *ContextTemplatePage) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContextTemplatePage) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplatePage) SetItems(items []*ContextTemplate) {
+	c.Items = items
+	c.require(contextTemplatePageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplatePage) SetNextCursor(nextCursor *string) {
+	c.NextCursor = nextCursor
+	c.require(contextTemplatePageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextTemplatePage) SetTotalSize(totalSize *int) {
+	c.TotalSize = totalSize
+	c.require(contextTemplatePageFieldTotalSize)
+}
+
+func (c *ContextTemplatePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContextTemplatePage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*l = ListContextTemplatesResponse(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *l)
+	*c = ContextTemplatePage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
 	if err != nil {
 		return err
 	}
-	l.extraProperties = extraProperties
-	l.rawJSON = json.RawMessage(data)
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (l *ListContextTemplatesResponse) String() string {
-	if len(l.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
+func (c *ContextTemplatePage) MarshalJSON() ([]byte, error) {
+	type embed ContextTemplatePage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContextTemplatePage) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
 		}
 	}
-	if value, err := internal.StringifyJSON(l); err == nil {
+	if value, err := internal.StringifyJSON(c); err == nil {
 		return value
 	}
-	return fmt.Sprintf("%#v", l)
+	return fmt.Sprintf("%#v", c)
 }
 
-type UpdateContextTemplateRequest struct {
-	// The template content (max 1200 characters).
-	Template string `json:"template" url:"-"`
+var (
+	createContextTemplateRequestFieldName     = big.NewInt(1 << 0)
+	createContextTemplateRequestFieldTemplate = big.NewInt(1 << 1)
+)
+
+type CreateContextTemplateRequest struct {
+	Name     *string `json:"name,omitempty" url:"name,omitempty"`
+	Template *string `json:"template,omitempty" url:"template,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *CreateContextTemplateRequest) GetName() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Name
+}
+
+func (c *CreateContextTemplateRequest) GetTemplate() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Template
+}
+
+func (c *CreateContextTemplateRequest) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *CreateContextTemplateRequest) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateContextTemplateRequest) SetName(name *string) {
+	c.Name = name
+	c.require(createContextTemplateRequestFieldName)
+}
+
+// SetTemplate sets the Template field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateContextTemplateRequest) SetTemplate(template *string) {
+	c.Template = template
+	c.require(createContextTemplateRequestFieldTemplate)
+}
+
+func (c *CreateContextTemplateRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreateContextTemplateRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CreateContextTemplateRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CreateContextTemplateRequest) MarshalJSON() ([]byte, error) {
+	type embed CreateContextTemplateRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *CreateContextTemplateRequest) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
 }

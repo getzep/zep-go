@@ -4,62 +4,54 @@ package context
 
 import (
 	context "context"
-	v3 "github.com/getzep/zep-go/v4"
+	http "net/http"
+	os "os"
+
+	zep "github.com/getzep/zep-go/v4"
 	core "github.com/getzep/zep-go/v4/core"
 	internal "github.com/getzep/zep-go/v4/internal"
 	option "github.com/getzep/zep-go/v4/option"
-	http "net/http"
-	os "os"
 )
 
 type Client struct {
 	WithRawResponse *RawClient
 
+	options *core.RequestOptions
 	baseURL string
 	caller  *internal.Caller
-	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(options *core.RequestOptions) *Client {
 	if options.APIKey == "" {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
 		WithRawResponse: NewRawClient(options),
+		options:         options,
 		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
-				Client:      options.HTTPClient,
-				MaxAttempts: options.MaxAttempts,
+				Client:         options.HTTPClient,
+				MaxAttempts:    options.MaxAttempts,
+				DisableRetries: options.DisableRetries,
 			},
 		),
-		header: options.ToHeader(),
 	}
 }
 
-// Lists all context templates.
-func (c *Client) ListContextTemplates(
+// Example:
+//
+//	request := &zep.CreateContextTemplateRequest{}
+//	client.Context.CreateTemplate(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) CreateTemplate(
 	ctx context.Context,
-	opts ...option.RequestOption,
-) (*v3.ListContextTemplatesResponse, error) {
-	response, err := c.WithRawResponse.ListContextTemplates(
-		ctx,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return response.Body, nil
-}
-
-// Creates a new context template.
-func (c *Client) CreateContextTemplate(
-	ctx context.Context,
-	request *v3.CreateContextTemplateRequest,
-	opts ...option.RequestOption,
-) (*v3.ContextTemplateResponse, error) {
-	response, err := c.WithRawResponse.CreateContextTemplate(
+	request *zep.CreateContextTemplateRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.ContextTemplate, error) {
+	response, err := c.WithRawResponse.CreateTemplate(
 		ctx,
 		request,
 		opts...,
@@ -70,16 +62,97 @@ func (c *Client) CreateContextTemplate(
 	return response.Body, nil
 }
 
-// Retrieves a context template by template_id.
-func (c *Client) GetContextTemplate(
+// Example:
+//
+//	request := &zep.ContextTemplateListRequest{
+//	    Limit: zep.Int(
+//	        1,
+//	    ),
+//	    Cursor: zep.String(
+//	        "cursor",
+//	    ),
+//	}
+//	client.Context.ListTemplates(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) ListTemplates(
 	ctx context.Context,
-	// Template ID
-	templateID string,
+	request *zep.ContextTemplateListRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Page[*string, *zep.ContextTemplate, *zep.ContextTemplatePage], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := baseURL + "/context-templates/list"
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.ContextTemplatePage) *core.PageResponse[*string, *zep.ContextTemplate, *zep.ContextTemplatePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.ContextTemplate, *zep.ContextTemplatePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	client.Context.GetTemplate(
+//	    context.TODO(),
+//	    "template_uuid",
+//	)
+func (c *Client) GetTemplate(
+	ctx context.Context,
+	// Template UUID
+	templateUUID string,
 	opts ...option.RequestOption,
-) (*v3.ContextTemplateResponse, error) {
-	response, err := c.WithRawResponse.GetContextTemplate(
+) (*zep.ContextTemplate, error) {
+	response, err := c.WithRawResponse.GetTemplate(
 		ctx,
-		templateID,
+		templateUUID,
 		opts...,
 	)
 	if err != nil {
@@ -88,17 +161,24 @@ func (c *Client) GetContextTemplate(
 	return response.Body, nil
 }
 
-// Updates an existing context template by template_id.
-func (c *Client) UpdateContextTemplate(
+// Example:
+//
+//	request := &zep.CreateContextTemplateRequest{}
+//	client.Context.UpdateTemplate(
+//	    context.TODO(),
+//	    "template_uuid",
+//	    request,
+//	)
+func (c *Client) UpdateTemplate(
 	ctx context.Context,
-	// Template ID
-	templateID string,
-	request *v3.UpdateContextTemplateRequest,
-	opts ...option.RequestOption,
-) (*v3.ContextTemplateResponse, error) {
-	response, err := c.WithRawResponse.UpdateContextTemplate(
+	// Template UUID
+	templateUUID string,
+	request *zep.CreateContextTemplateRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.ContextTemplate, error) {
+	response, err := c.WithRawResponse.UpdateTemplate(
 		ctx,
-		templateID,
+		templateUUID,
 		request,
 		opts...,
 	)
@@ -108,20 +188,25 @@ func (c *Client) UpdateContextTemplate(
 	return response.Body, nil
 }
 
-// Deletes a context template by template_id.
-func (c *Client) DeleteContextTemplate(
+// Example:
+//
+//	client.Context.DeleteTemplate(
+//	    context.TODO(),
+//	    "template_uuid",
+//	)
+func (c *Client) DeleteTemplate(
 	ctx context.Context,
-	// Template ID
-	templateID string,
-	opts ...option.RequestOption,
-) (*v3.SuccessResponse, error) {
-	response, err := c.WithRawResponse.DeleteContextTemplate(
+	// Template UUID
+	templateUUID string,
+	opts ...option.IdempotentRequestOption,
+) error {
+	_, err := c.WithRawResponse.DeleteTemplate(
 		ctx,
-		templateID,
+		templateUUID,
 		opts...,
 	)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return response.Body, nil
+	return nil
 }
