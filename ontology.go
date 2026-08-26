@@ -80,7 +80,10 @@ type Edges map[string]EdgeDeclaration
 // Every exported field of a declaration becomes a property, and needs a
 // description tag. A field tagged `zep:"-"` is left out. A field tagged
 // `identity:"true"` is also listed in the type's identity properties, which is
-// how the extraction model tells two nodes of the same type apart.
+// how the extraction model tells two nodes of the same type apart. A tag key
+// that is a likely misspelling of zep, description, or identity, such as
+// `zap:"-"` or `idenity:"true"`, is an error rather than an ordinary tag the
+// DSL silently leaves alone.
 //
 // Types are emitted in name order, so the same declarations always produce the
 // same payload.
@@ -164,6 +167,9 @@ func readDeclaration(model interface{}, marker reflect.Type, name string) (decla
 	for i := 0; i < structType.NumField(); i++ {
 		field := structType.Field(i)
 		if field.Anonymous && field.Type == marker {
+			if err := checkTagKeys(field.Tag, name); err != nil {
+				return read, err
+			}
 			read.description = strings.TrimSpace(field.Tag.Get("description"))
 			break
 		}
@@ -231,7 +237,13 @@ func readFields(structType reflect.Type, name string) ([]*EntityProperty, []stri
 				continue
 			}
 		}
-		if !field.IsExported() || field.Tag.Get("zep") == "-" {
+		if !field.IsExported() {
+			continue
+		}
+		if err := checkTagKeys(field.Tag, fmt.Sprintf("%s.%s", name, field.Name)); err != nil {
+			return nil, nil, err
+		}
+		if field.Tag.Get("zep") == "-" {
 			continue
 		}
 
@@ -301,6 +313,131 @@ func identityTag(field reflect.StructField, name string) (bool, error) {
 		)
 	}
 	return identity, nil
+}
+
+// dslTagKeys are the struct tag keys the ontology DSL itself reads. A key
+// that is not exactly one of these is an ordinary tag the DSL leaves alone
+// (json, yaml, and the like commonly sit on the same field), which is why
+// checkTagKeys only rejects a key that is a near-miss of one of these,
+// rather than any key it does not recognize.
+var dslTagKeys = []string{"zep", "description", "identity"}
+
+// checkTagKeys rejects a struct tag whose key is a likely misspelling of a
+// DSL key, such as `zap:"-"` for `zep:"-"` or `idenity:"true"` for
+// `identity:"true"`. Both of those would otherwise be silently ignored: the
+// field would stay in the ontology despite the intent to exclude it, and the
+// identity flag would simply be dropped. A key that is not close to any DSL
+// key, such as json or yaml, is left alone.
+func checkTagKeys(tag reflect.StructTag, context string) error {
+keys:
+	for _, key := range tagKeys(tag) {
+		for _, dslKey := range dslTagKeys {
+			if key == dslKey {
+				continue keys
+			}
+		}
+		for _, dslKey := range dslTagKeys {
+			if levenshtein(key, dslKey) <= maxTagKeyTypoDistance {
+				return fmt.Errorf(
+					"%s: tag key %q looks like a misspelling of %q, one of the ontology DSL's own tags (zep, description, identity); rename it, or use a clearly different key if it is unrelated",
+					context,
+					key,
+					dslKey,
+				)
+			}
+		}
+	}
+	return nil
+}
+
+// maxTagKeyTypoDistance is the edit distance within which a tag key counts as
+// a typo of a DSL key rather than an unrelated tag. One edit catches the
+// realistic slips (zap, idenity, descripton) while leaving neighbouring words
+// a caller could legitimately mean alone: entity and descriptor are two edits
+// from identity and description, and rejecting those would trade a silent bug
+// for a confusing one.
+const maxTagKeyTypoDistance = 1
+
+// tagKeys returns every key present in a struct tag, following the same
+// `key:"value"` convention reflect.StructTag itself parses.
+func tagKeys(tag reflect.StructTag) []string {
+	var keys []string
+	for tag != "" {
+		// Skip leading space.
+		i := 0
+		for i < len(tag) && tag[i] == ' ' {
+			i++
+		}
+		tag = tag[i:]
+		if tag == "" {
+			break
+		}
+
+		// Scan to colon. A space, a quote, or a control character means the
+		// tag is malformed, so stop rather than misparse it.
+		i = 0
+		for i < len(tag) && tag[i] > ' ' && tag[i] != ':' && tag[i] != '"' && tag[i] != 0x7f {
+			i++
+		}
+		if i == 0 || i+1 >= len(tag) || tag[i] != ':' || tag[i+1] != '"' {
+			break
+		}
+		name := string(tag[:i])
+		tag = tag[i+1:]
+
+		// Scan the quoted value so tag is left positioned after it.
+		i = 1
+		for i < len(tag) && tag[i] != '"' {
+			if tag[i] == '\\' {
+				i++
+			}
+			i++
+		}
+		if i >= len(tag) {
+			break
+		}
+		qvalue := string(tag[:i+1])
+		tag = tag[i+1:]
+
+		if _, err := strconv.Unquote(qvalue); err != nil {
+			break
+		}
+
+		keys = append(keys, name)
+	}
+	return keys
+}
+
+// levenshtein computes the classic edit distance: the minimum number of
+// single-character insertions, deletions, or substitutions that turn a into
+// b. Used to tell a typo of a DSL tag key apart from an unrelated one.
+func levenshtein(a, b string) int {
+	ra, rb := []rune(a), []rune(b)
+	prev := make([]int, len(rb)+1)
+	curr := make([]int, len(rb)+1)
+	for j := range prev {
+		prev[j] = j
+	}
+	for i := 1; i <= len(ra); i++ {
+		curr[0] = i
+		for j := 1; j <= len(rb); j++ {
+			cost := 1
+			if ra[i-1] == rb[j-1] {
+				cost = 0
+			}
+			curr[j] = minInt(curr[j-1]+1, minInt(prev[j]+1, prev[j-1]+cost))
+		}
+		prev, curr = curr, prev
+	}
+	return prev[len(rb)]
+}
+
+// minInt returns the smaller of two ints.
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // propertyTypeForKind maps a Go kind onto the property type the API accepts.
