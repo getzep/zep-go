@@ -59,7 +59,7 @@ func TestBuildOntologyProducesTheDocumentedPayload(t *testing.T) {
 				{"name": "Purpose", "description": "Why they went", "type": "text"}
 			],
 			"source_targets": [
-				{"source_entity_type": "Traveler", "target_entity_type": "Destination"}
+				{"source": "Traveler", "target": "Destination"}
 			]
 		}]
 	}`, string(body))
