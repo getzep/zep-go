@@ -30,7 +30,7 @@ func TestBuildOntologyProducesTheDocumentedPayload(t *testing.T) {
 			"TRAVELED_TO": {
 				Model: traveledTo{},
 				SourceTargets: []*EdgeSourceTarget{
-					{SourceEntityType: String("Traveler"), TargetEntityType: String("Destination")},
+					{Source: String("Traveler"), Target: String("Destination")},
 				},
 			},
 		},
@@ -59,7 +59,7 @@ func TestBuildOntologyProducesTheDocumentedPayload(t *testing.T) {
 				{"name": "Purpose", "description": "Why they went", "type": "text"}
 			],
 			"source_targets": [
-				{"source_entity_type": "Traveler", "target_entity_type": "Destination"}
+				{"source": "Traveler", "target": "Destination"}
 			]
 		}]
 	}`, string(body))

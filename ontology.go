@@ -34,7 +34,7 @@ import (
 //	        "TRAVELED_TO": {
 //	            Model: TraveledTo{},
 //	            SourceTargets: []*zep.EdgeSourceTarget{
-//	                {SourceEntityType: zep.String("Traveler"), TargetEntityType: zep.String("Destination")},
+//	                {Source: zep.String("Traveler"), Target: zep.String("Destination")},
 //	            },
 //	        },
 //	    },
