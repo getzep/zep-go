@@ -129,6 +129,56 @@ func TestBuildOntologySkipsFieldsTaggedOut(t *testing.T) {
 	assert.Equal(t, "Country", *ontology.EntityTypes[0].GetProperties()[0].GetName())
 }
 
+func TestBuildOntologyRejectsAMisspelledZepTag(t *testing.T) {
+	type place struct {
+		EntityBase `description:"A place."`
+
+		Country  string `description:"The country it is in"`
+		Internal string `zap:"-"`
+	}
+
+	// A misspelled zep tag has to be an error rather than a silent no-op: left
+	// alone, Internal would stay in the ontology despite the intent to
+	// exclude it, with nothing to say so.
+	_, err := BuildOntology(Entities{"Place": place{}}, nil)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "Place.Internal")
+	assert.Contains(t, err.Error(), `"zap"`)
+	assert.Contains(t, err.Error(), `"zep"`)
+}
+
+func TestBuildOntologyRejectsAMisspelledIdentityTag(t *testing.T) {
+	type place struct {
+		EntityBase `description:"A place."`
+
+		Country string `description:"The country it is in" idenity:"true"`
+	}
+
+	// A misspelled identity tag has to be an error rather than a silent
+	// no-op: left alone, the identity flag would simply be dropped.
+	_, err := BuildOntology(Entities{"Place": place{}}, nil)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "Place.Country")
+	assert.Contains(t, err.Error(), `"idenity"`)
+	assert.Contains(t, err.Error(), `"identity"`)
+}
+
+func TestBuildOntologyRejectsAMisspelledDescriptionTag(t *testing.T) {
+	type place struct {
+		EntityBase `description:"A place."`
+
+		Country string `descripton:"The country it is in"`
+	}
+
+	// A misspelled description tag has to be reported as the likely typo it
+	// is, not as a plain missing description.
+	_, err := BuildOntology(Entities{"Place": place{}}, nil)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "Place.Country")
+	assert.Contains(t, err.Error(), `"descripton"`)
+	assert.Contains(t, err.Error(), `"description"`)
+}
+
 func TestBuildOntologyReadsThroughAPointerField(t *testing.T) {
 	type place struct {
 		EntityBase `description:"A place."`
