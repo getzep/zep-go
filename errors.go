@@ -31,6 +31,54 @@ func (b *BadRequestError) Unwrap() error {
 	return b.APIError
 }
 
+// Conflict
+type ConflictError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (c *ConflictError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	c.StatusCode = 409
+	c.Body = body
+	return nil
+}
+
+func (c *ConflictError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.Body)
+}
+
+func (c *ConflictError) Unwrap() error {
+	return c.APIError
+}
+
+// Forbidden
+type ForbiddenError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (f *ForbiddenError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	f.StatusCode = 403
+	f.Body = body
+	return nil
+}
+
+func (f *ForbiddenError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(f.Body)
+}
+
+func (f *ForbiddenError) Unwrap() error {
+	return f.APIError
+}
+
 // Not Found
 type NotFoundError struct {
 	*core.APIError

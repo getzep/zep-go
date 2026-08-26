@@ -4,6 +4,7 @@ package graph
 
 import (
 	json "encoding/json"
+	v4 "github.com/getzep/zep-go/v4"
 	assert "github.com/stretchr/testify/assert"
 	require "github.com/stretchr/testify/require"
 	testing "testing"
@@ -28,7 +29,7 @@ func TestSettersAddEdgeRequest(t *testing.T) {
 
 	t.Run("SetFact", func(t *testing.T) {
 		obj := &AddEdgeRequest{}
-		var fernTestValueFact *string
+		var fernTestValueFact string
 		obj.SetFact(fernTestValueFact)
 		assert.Equal(t, fernTestValueFact, obj.Fact)
 		assert.NotNil(t, obj.explicitFields)
@@ -36,7 +37,7 @@ func TestSettersAddEdgeRequest(t *testing.T) {
 
 	t.Run("SetFactName", func(t *testing.T) {
 		obj := &AddEdgeRequest{}
-		var fernTestValueFactName *string
+		var fernTestValueFactName string
 		obj.SetFactName(fernTestValueFactName)
 		assert.Equal(t, fernTestValueFactName, obj.FactName)
 		assert.NotNil(t, obj.explicitFields)
@@ -60,7 +61,7 @@ func TestSettersAddEdgeRequest(t *testing.T) {
 
 	t.Run("SetSourceNode", func(t *testing.T) {
 		obj := &AddEdgeRequest{}
-		var fernTestValueSourceNode map[string]any
+		var fernTestValueSourceNode *v4.EdgeNodeRef
 		obj.SetSourceNode(fernTestValueSourceNode)
 		assert.Equal(t, fernTestValueSourceNode, obj.SourceNode)
 		assert.NotNil(t, obj.explicitFields)
@@ -68,7 +69,7 @@ func TestSettersAddEdgeRequest(t *testing.T) {
 
 	t.Run("SetTargetNode", func(t *testing.T) {
 		obj := &AddEdgeRequest{}
-		var fernTestValueTargetNode map[string]any
+		var fernTestValueTargetNode *v4.EdgeNodeRef
 		obj.SetTargetNode(fernTestValueTargetNode)
 		assert.Equal(t, fernTestValueTargetNode, obj.TargetNode)
 		assert.NotNil(t, obj.explicitFields)
@@ -151,7 +152,7 @@ func TestSettersMarkExplicitAddEdgeRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddEdgeRequest{}
-		var fernTestValueFact *string
+		var fernTestValueFact string
 
 		// Act
 		obj.SetFact(fernTestValueFact)
@@ -182,7 +183,7 @@ func TestSettersMarkExplicitAddEdgeRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddEdgeRequest{}
-		var fernTestValueFactName *string
+		var fernTestValueFactName string
 
 		// Act
 		obj.SetFactName(fernTestValueFactName)
@@ -275,7 +276,7 @@ func TestSettersMarkExplicitAddEdgeRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddEdgeRequest{}
-		var fernTestValueSourceNode map[string]any
+		var fernTestValueSourceNode *v4.EdgeNodeRef
 
 		// Act
 		obj.SetSourceNode(fernTestValueSourceNode)
@@ -306,7 +307,7 @@ func TestSettersMarkExplicitAddEdgeRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddEdgeRequest{}
-		var fernTestValueTargetNode map[string]any
+		var fernTestValueTargetNode *v4.EdgeNodeRef
 
 		// Act
 		obj.SetTargetNode(fernTestValueTargetNode)

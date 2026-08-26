@@ -103,6 +103,9 @@ client.Batch.Create(
 <dd>
 
 **ignoreRoles:** `[]string` 
+
+Message roles to skip during graph extraction for thread message items in
+this batch.
     
 </dd>
 </dl>
@@ -110,7 +113,7 @@ client.Batch.Create(
 <dl>
 <dd>
 
-**metadata:** `map[string]any` 
+**metadata:** `map[string]any` — Metadata to store on the batch.
     
 </dd>
 </dl>
@@ -119,6 +122,9 @@ client.Batch.Create(
 <dd>
 
 **strictOntology:** `*bool` 
+
+When true, prevents extraction of generic entity nodes that do not match
+the configured ontology for episodes in this batch.
     
 </dd>
 </dl>
@@ -297,7 +303,13 @@ client.Batch.ListItems(
 <dd>
 
 ```go
-request := &zep.AddBatchItemsRequest{}
+request := &zep.AddBatchItemsRequest{
+    Items: []*zep.BatchItemInput{
+        &zep.BatchItemInput{
+            Type: zep.V4BatchItemInputTypeGraphEpisode,
+        },
+    },
+}
 client.Batch.AddItems(
     context.TODO(),
     "batch_uuid",
@@ -325,7 +337,7 @@ client.Batch.AddItems(
 <dl>
 <dd>
 
-**items:** `[]map[string]any` 
+**items:** `[]*zep.BatchItemInput` — The batch items to append, each identified by its type field.
     
 </dd>
 </dl>
@@ -480,7 +492,7 @@ client.Context.ListTemplates(
 <dl>
 <dd>
 
-**name:** `*string` 
+**name:** `*string` — Filters results to the context template with this exact name.
     
 </dd>
 </dl>
@@ -664,7 +676,7 @@ client.Graph.Create(
 <dl>
 <dd>
 
-**description:** `*string` 
+**description:** `*string` — A description of the graph.
     
 </dd>
 </dl>
@@ -672,7 +684,7 @@ client.Graph.Create(
 <dl>
 <dd>
 
-**graphID:** `*string` 
+**graphID:** `*string` — An optional developer-assigned identifier for the graph.
     
 </dd>
 </dl>
@@ -680,7 +692,7 @@ client.Graph.Create(
 <dl>
 <dd>
 
-**name:** `*string` 
+**name:** `*string` — A display name for the graph.
     
 </dd>
 </dl>
@@ -688,7 +700,7 @@ client.Graph.Create(
 <dl>
 <dd>
 
-**timeZone:** `*string` 
+**timeZone:** `*string` — The graph's IANA time zone.
     
 </dd>
 </dl>
@@ -778,6 +790,9 @@ client.Graph.List(
 <dd>
 
 **search:** `*string` 
+
+Filters results to graphs whose name, description, or graph ID contains
+this text.
     
 </dd>
 </dl>
@@ -960,7 +975,7 @@ client.Graph.Update(
 <dl>
 <dd>
 
-**description:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**description:** `*string` — A description of the graph.
     
 </dd>
 </dl>
@@ -968,7 +983,7 @@ client.Graph.Update(
 <dl>
 <dd>
 
-**name:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**name:** `*string` — The graph's display name.
     
 </dd>
 </dl>
@@ -976,7 +991,7 @@ client.Graph.Update(
 <dl>
 <dd>
 
-**timeZone:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**timeZone:** `*string` — The graph's IANA time zone.
     
 </dd>
 </dl>
@@ -1029,7 +1044,7 @@ client.Graph.Clone(
 <dl>
 <dd>
 
-**targetGraphID:** `*string` 
+**targetGraphID:** `*string` — An optional name for the cloned graph.
     
 </dd>
 </dl>
@@ -1054,7 +1069,9 @@ client.Graph.Clone(
 <dd>
 
 ```go
-request := &zep.GraphContextRequest{}
+request := &zep.GraphContextRequest{
+    Query: "query",
+}
 client.Graph.GetContext(
     context.TODO(),
     "graph_uuid",
@@ -1082,7 +1099,10 @@ client.Graph.GetContext(
 <dl>
 <dd>
 
-**filters:** `map[string]any` 
+**filters:** `*zep.SearchFilters` 
+
+Filters constraining which graph data can be selected for the context
+block.
     
 </dd>
 </dl>
@@ -1090,7 +1110,7 @@ client.Graph.GetContext(
 <dl>
 <dd>
 
-**includeResults:** `*bool` 
+**includeResults:** `*bool` — When true, includes the raw graph results selected for the context block.
     
 </dd>
 </dl>
@@ -1098,7 +1118,7 @@ client.Graph.GetContext(
 <dl>
 <dd>
 
-**maxCharacters:** `*int` 
+**maxCharacters:** `*int` — The maximum number of characters in the assembled context block.
     
 </dd>
 </dl>
@@ -1106,7 +1126,7 @@ client.Graph.GetContext(
 <dl>
 <dd>
 
-**query:** `*string` 
+**query:** `string` — The search query used to assemble the context block.
     
 </dd>
 </dl>
@@ -1114,7 +1134,7 @@ client.Graph.GetContext(
 <dl>
 <dd>
 
-**recencyBias:** `*string` 
+**recencyBias:** `*zep.V4GraphContextRequestRecencyBias` — Adjusts result selection to favor more recent graph data.
     
 </dd>
 </dl>
@@ -1122,7 +1142,7 @@ client.Graph.GetContext(
 <dl>
 <dd>
 
-**templateUUID:** `*string` 
+**templateUUID:** `*string` — The UUID of a context template used to render the context block.
     
 </dd>
 </dl>
@@ -1442,7 +1462,9 @@ request := &zep.GraphSearchEdgesRequest{
     Cursor: zep.String(
         "cursor",
     ),
-    Body: &zep.SearchRequest{},
+    Body: &zep.SearchRequest{
+        Query: "query",
+    },
 }
 client.Graph.SearchEdges(
     context.TODO(),
@@ -1519,7 +1541,9 @@ request := &zep.GraphSearchEpisodesRequest{
     Cursor: zep.String(
         "cursor",
     ),
-    Body: &zep.SearchRequest{},
+    Body: &zep.SearchRequest{
+        Query: "query",
+    },
 }
 client.Graph.SearchEpisodes(
     context.TODO(),
@@ -1596,7 +1620,9 @@ request := &zep.GraphSearchNodesRequest{
     Cursor: zep.String(
         "cursor",
     ),
-    Body: &zep.SearchRequest{},
+    Body: &zep.SearchRequest{
+        Query: "query",
+    },
 }
 client.Graph.SearchNodes(
     context.TODO(),
@@ -1673,7 +1699,9 @@ request := &zep.GraphSearchObservationsRequest{
     Cursor: zep.String(
         "cursor",
     ),
-    Body: &zep.SearchRequest{},
+    Body: &zep.SearchRequest{
+        Query: "query",
+    },
 }
 client.Graph.SearchObservations(
     context.TODO(),
@@ -1750,7 +1778,9 @@ request := &zep.GraphSearchThreadSummariesRequest{
     Cursor: zep.String(
         "cursor",
     ),
-    Body: &zep.SearchRequest{},
+    Body: &zep.SearchRequest{
+        Query: "query",
+    },
 }
 client.Graph.SearchThreadSummaries(
     context.TODO(),
@@ -1820,7 +1850,11 @@ client.Graph.SearchThreadSummaries(
 <dd>
 
 ```go
-request := &zep.SubgraphRequest{}
+request := &zep.SubgraphRequest{
+    SeedNodeUUIDs: []string{
+        "seed_node_uuids",
+    },
+}
 client.Graph.GetSubgraph(
     context.TODO(),
     "graph_uuid",
@@ -1848,7 +1882,7 @@ client.Graph.GetSubgraph(
 <dl>
 <dd>
 
-**depth:** `*int` 
+**depth:** `*int` — The maximum traversal depth from the seed nodes. Defaults to 1.
     
 </dd>
 </dl>
@@ -1856,7 +1890,10 @@ client.Graph.GetSubgraph(
 <dl>
 <dd>
 
-**direction:** `*string` 
+**direction:** `*zep.V4SubgraphRequestDirection` 
+
+The edge orientation to follow during expansion: in, out, or both.
+Defaults to both.
     
 </dd>
 </dl>
@@ -1864,7 +1901,7 @@ client.Graph.GetSubgraph(
 <dl>
 <dd>
 
-**filters:** `map[string]any` 
+**filters:** `*zep.SearchFilters` — Filters constraining the traversed edges and included nodes.
     
 </dd>
 </dl>
@@ -1872,7 +1909,7 @@ client.Graph.GetSubgraph(
 <dl>
 <dd>
 
-**maxEdges:** `*int` 
+**maxEdges:** `*int` — The maximum number of edges in the response. Defaults to 200.
     
 </dd>
 </dl>
@@ -1880,7 +1917,7 @@ client.Graph.GetSubgraph(
 <dl>
 <dd>
 
-**maxNodes:** `*int` 
+**maxNodes:** `*int` — The maximum number of nodes in the response. Defaults to 100.
     
 </dd>
 </dl>
@@ -1888,7 +1925,7 @@ client.Graph.GetSubgraph(
 <dl>
 <dd>
 
-**seedNodeUUIDs:** `[]string` 
+**seedNodeUUIDs:** `[]string` — The node UUIDs to expand from, in traversal-priority order.
     
 </dd>
 </dl>
@@ -1976,7 +2013,7 @@ client.Lookup.Batch(
 <dl>
 <dd>
 
-**graphs:** `[]string` 
+**graphs:** `[]string` — Developer-assigned graph IDs to resolve to UUIDs.
     
 </dd>
 </dl>
@@ -1984,7 +2021,7 @@ client.Lookup.Batch(
 <dl>
 <dd>
 
-**threads:** `[]string` 
+**threads:** `[]string` — Developer-assigned thread IDs to resolve to UUIDs.
     
 </dd>
 </dl>
@@ -1992,7 +2029,7 @@ client.Lookup.Batch(
 <dl>
 <dd>
 
-**users:** `[]string` 
+**users:** `[]string` — Developer-assigned user IDs to resolve to UUIDs.
     
 </dd>
 </dl>
@@ -2064,7 +2101,10 @@ client.Project.Update(
 <dl>
 <dd>
 
-**defaultTimeZone:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**defaultTimeZone:** `*string` 
+
+The project's IANA fallback time zone. Set to null to clear the existing
+value.
     
 </dd>
 </dl>
@@ -2569,7 +2609,9 @@ client.Thread.List(
 <dd>
 
 ```go
-request := &zep.CreateThreadRequest{}
+request := &zep.CreateThreadRequest{
+    UserUUID: "user_uuid",
+}
 client.Thread.Create(
     context.TODO(),
     request,
@@ -2588,7 +2630,7 @@ client.Thread.Create(
 <dl>
 <dd>
 
-**threadID:** `*string` 
+**threadID:** `*string` — An optional developer-assigned identifier for the thread.
     
 </dd>
 </dl>
@@ -2596,7 +2638,7 @@ client.Thread.Create(
 <dl>
 <dd>
 
-**userUUID:** `*string` 
+**userUUID:** `string` — The UUID of the user this thread belongs to.
     
 </dd>
 </dl>
@@ -2944,7 +2986,11 @@ client.Thread.ListMessages(
 <dd>
 
 ```go
-request := &zep.AddMessagesRequest{}
+request := &zep.AddMessagesRequest{
+    Messages: []*zep.AddMessage{
+        &zep.AddMessage{},
+    },
+}
 client.Thread.AddMessages(
     context.TODO(),
     "thread_uuid",
@@ -2973,6 +3019,9 @@ client.Thread.AddMessages(
 <dd>
 
 **ignoreRoles:** `[]string` 
+
+Message roles to skip during graph extraction; the messages are still
+stored.
     
 </dd>
 </dl>
@@ -2980,7 +3029,7 @@ client.Thread.AddMessages(
 <dl>
 <dd>
 
-**messages:** `[]*zep.AddMessage` 
+**messages:** `[]*zep.AddMessage` — The messages to add to the thread.
     
 </dd>
 </dl>
@@ -2989,6 +3038,9 @@ client.Thread.AddMessages(
 <dd>
 
 **returnContext:** `*bool` 
+
+When true, returns the context block for the thread's most recent
+messages.
     
 </dd>
 </dl>
@@ -2997,6 +3049,9 @@ client.Thread.AddMessages(
 <dd>
 
 **strictOntology:** `*bool` 
+
+When true, prevents extraction of generic entity nodes that do not match
+the configured ontology.
     
 </dd>
 </dl>
@@ -3051,6 +3106,826 @@ client.Thread.GetSummary(
 </dl>
 </details>
 
+## UserGroup
+<details><summary><code>client.UserGroup.Create(request) -> *zep.UserGroup</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.CreateUserGroupRequest{
+    Name: "name",
+}
+client.UserGroup.Create(
+    context.TODO(),
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**description:** `*string` — A description of the user group.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `string` — The name of the user group.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.List(request) -> *zep.UserGroupPage</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.UserGroupListRequest{
+    Limit: zep.Int(
+        1,
+    ),
+    Cursor: zep.String(
+        "cursor",
+    ),
+    Body: &zep.SearchListRequest{},
+}
+client.UserGroup.List(
+    context.TODO(),
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**limit:** `*int` — Page size
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `*string` — Opaque page cursor
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.SearchListRequest` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.Get(GroupUUID) -> *zep.UserGroup</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.UserGroup.Get(
+    context.TODO(),
+    "group_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**groupUUID:** `string` — User group UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.Delete(GroupUUID) -> error</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.UserGroup.Delete(
+    context.TODO(),
+    "group_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**groupUUID:** `string` — User group UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.Update(GroupUUID, request) -> *zep.UserGroup</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.PatchUserGroupRequest{}
+client.UserGroup.Update(
+    context.TODO(),
+    "group_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**groupUUID:** `string` — User group UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `*string` — A description of the user group.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expectedVersion:** `*int` — The user group's current version, used to detect concurrent updates.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `*string` — The name of the user group.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.ListMemberCandidates(GroupUUID, request) -> *zep.UserPage</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.UserGroupListMemberCandidatesRequest{
+    Limit: zep.Int(
+        1,
+    ),
+    Cursor: zep.String(
+        "cursor",
+    ),
+    Body: &zep.SearchListRequest{},
+}
+client.UserGroup.ListMemberCandidates(
+    context.TODO(),
+    "group_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**groupUUID:** `string` — User group UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `*int` — Page size
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `*string` — Opaque page cursor
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.SearchListRequest` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.AddMembers(GroupUUID, request) -> *zep.MembershipMutationResult</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.MutateMembersRequest{
+    UserUUIDs: []string{
+        "user_uuids",
+    },
+}
+client.UserGroup.AddMembers(
+    context.TODO(),
+    "group_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**groupUUID:** `string` — User group UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.MutateMembersRequest` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.ListMembers(GroupUUID, request) -> *zep.UserPage</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.UserGroupListMembersRequest{
+    Limit: zep.Int(
+        1,
+    ),
+    Cursor: zep.String(
+        "cursor",
+    ),
+    Body: &zep.SearchListRequest{},
+}
+client.UserGroup.ListMembers(
+    context.TODO(),
+    "group_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**groupUUID:** `string` — User group UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `*int` — Page size
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `*string` — Opaque page cursor
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.SearchListRequest` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.RemoveMembers(GroupUUID, request) -> *zep.MembershipMutationResult</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.MutateMembersRequest{
+    UserUUIDs: []string{
+        "user_uuids",
+    },
+}
+client.UserGroup.RemoveMembers(
+    context.TODO(),
+    "group_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**groupUUID:** `string` — User group UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.MutateMembersRequest` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.RemoveMember(GroupUUID, UserUUID) -> error</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.UserGroup.RemoveMember(
+    context.TODO(),
+    "group_uuid",
+    "user_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**groupUUID:** `string` — User group UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**userUUID:** `string` — User UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.UserGroup.ListForUser(UserUUID) -> *zep.UserGroupPage</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.UserGroupListForUserRequest{
+    Limit: zep.Int(
+        1,
+    ),
+    Cursor: zep.String(
+        "cursor",
+    ),
+}
+client.UserGroup.ListForUser(
+    context.TODO(),
+    "user_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**userUUID:** `string` — User UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `*int` — Page size
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `*string` — Opaque page cursor
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## User
 <details><summary><code>client.User.Create(request) -> *zep.User</code></summary>
 <dl>
@@ -3084,7 +3959,7 @@ client.User.Create(
 <dl>
 <dd>
 
-**disableDefaultOntology:** `*bool` 
+**disableDefaultOntology:** `*bool` — When true, disables the default ontology for the user's graph.
     
 </dd>
 </dl>
@@ -3092,7 +3967,7 @@ client.User.Create(
 <dl>
 <dd>
 
-**email:** `*string` 
+**email:** `*string` — The email address of the user.
     
 </dd>
 </dl>
@@ -3100,7 +3975,7 @@ client.User.Create(
 <dl>
 <dd>
 
-**firstName:** `*string` 
+**firstName:** `*string` — The user's first name.
     
 </dd>
 </dl>
@@ -3108,7 +3983,7 @@ client.User.Create(
 <dl>
 <dd>
 
-**lastName:** `*string` 
+**lastName:** `*string` — The user's last name.
     
 </dd>
 </dl>
@@ -3116,7 +3991,7 @@ client.User.Create(
 <dl>
 <dd>
 
-**metadata:** `map[string]any` 
+**metadata:** `map[string]any` — Metadata to store on the user.
     
 </dd>
 </dl>
@@ -3124,7 +3999,7 @@ client.User.Create(
 <dl>
 <dd>
 
-**timeZone:** `*string` 
+**timeZone:** `*string` — The user's IANA time zone.
     
 </dd>
 </dl>
@@ -3132,7 +4007,7 @@ client.User.Create(
 <dl>
 <dd>
 
-**userID:** `*string` 
+**userID:** `*string` — An optional developer-assigned identifier for the user.
     
 </dd>
 </dl>
@@ -3221,7 +4096,7 @@ client.User.List(
 <dl>
 <dd>
 
-**search:** `*string` 
+**search:** `*string` — Filters results to users whose user ID, email, or name contains this text.
     
 </dd>
 </dl>
@@ -3404,7 +4279,7 @@ client.User.Update(
 <dl>
 <dd>
 
-**disableDefaultOntology:** `*bool` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**disableDefaultOntology:** `*bool` — When true, disables the default ontology for the user's graph.
     
 </dd>
 </dl>
@@ -3412,7 +4287,7 @@ client.User.Update(
 <dl>
 <dd>
 
-**email:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**email:** `*string` — The email address of the user.
     
 </dd>
 </dl>
@@ -3420,7 +4295,7 @@ client.User.Update(
 <dl>
 <dd>
 
-**firstName:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**firstName:** `*string` — The user's first name.
     
 </dd>
 </dl>
@@ -3428,7 +4303,7 @@ client.User.Update(
 <dl>
 <dd>
 
-**lastName:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**lastName:** `*string` — The user's last name.
     
 </dd>
 </dl>
@@ -3436,7 +4311,7 @@ client.User.Update(
 <dl>
 <dd>
 
-**metadata:** `map[string]any` 
+**metadata:** `map[string]any` — Metadata to merge onto the user; a key set to null is removed.
     
 </dd>
 </dl>
@@ -3444,7 +4319,7 @@ client.User.Update(
 <dl>
 <dd>
 
-**timeZone:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**timeZone:** `*string` — The user's IANA time zone.
     
 </dd>
 </dl>
@@ -3764,7 +4639,9 @@ client.Graph.Episode.ListForDocument(
 <dd>
 
 ```go
-request := &graph.AddEpisodeRequest{}
+request := &graph.AddEpisodeRequest{
+    Data: "data",
+}
 client.Graph.Episode.Add(
     context.TODO(),
     "graph_uuid",
@@ -3793,6 +4670,9 @@ client.Graph.Episode.Add(
 <dd>
 
 **createdAt:** `*string` 
+
+The episode's reference time, used for temporal reasoning rather than
+ingestion time.
     
 </dd>
 </dl>
@@ -3800,7 +4680,7 @@ client.Graph.Episode.Add(
 <dl>
 <dd>
 
-**data:** `*string` 
+**data:** `string` — The episode content to add to the graph.
     
 </dd>
 </dl>
@@ -3808,7 +4688,7 @@ client.Graph.Episode.Add(
 <dl>
 <dd>
 
-**documentID:** `*string` 
+**documentID:** `*string` — Groups this episode as a chunk of a document on the graph.
     
 </dd>
 </dl>
@@ -3816,7 +4696,7 @@ client.Graph.Episode.Add(
 <dl>
 <dd>
 
-**metadata:** `map[string]any` 
+**metadata:** `map[string]any` — Metadata to store on the episode.
     
 </dd>
 </dl>
@@ -3824,7 +4704,7 @@ client.Graph.Episode.Add(
 <dl>
 <dd>
 
-**sourceDescription:** `*string` 
+**sourceDescription:** `*string` — A description of the source of this episode.
     
 </dd>
 </dl>
@@ -3833,6 +4713,9 @@ client.Graph.Episode.Add(
 <dd>
 
 **strictOntology:** `*bool` 
+
+When true, prevents extraction of generic entity nodes that do not match
+the configured ontology.
     
 </dd>
 </dl>
@@ -3840,7 +4723,7 @@ client.Graph.Episode.Add(
 <dl>
 <dd>
 
-**type_:** `*string` 
+**type_:** `*graph.V4AddEpisodeRequestType` — The data format of the episode: text, json, or message. Defaults to text.
     
 </dd>
 </dl>
@@ -4083,7 +4966,7 @@ client.Graph.Episode.Update(
 <dl>
 <dd>
 
-**metadata:** `map[string]any` 
+**metadata:** `map[string]any` — Metadata to merge onto the episode; a key set to null is removed.
     
 </dd>
 </dl>
@@ -4109,7 +4992,12 @@ client.Graph.Episode.Update(
 <dd>
 
 ```go
-request := &graph.AddEdgeRequest{}
+request := &graph.AddEdgeRequest{
+    Fact: "fact",
+    FactName: "fact_name",
+    SourceNode: &zep.EdgeNodeRef{},
+    TargetNode: &zep.EdgeNodeRef{},
+}
 client.Graph.Edge.Add(
     context.TODO(),
     "graph_uuid",
@@ -4137,7 +5025,7 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**attributes:** `map[string]any` 
+**attributes:** `map[string]any` — Additional attributes to store on the edge.
     
 </dd>
 </dl>
@@ -4145,7 +5033,7 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**expiredAt:** `*string` 
+**expiredAt:** `*string` — The time at which the fact was superseded or invalidated.
     
 </dd>
 </dl>
@@ -4153,7 +5041,10 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**fact:** `*string` 
+**fact:** `string` 
+
+The fact text describing the relationship between the source and target
+nodes.
     
 </dd>
 </dl>
@@ -4161,7 +5052,7 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**factName:** `*string` 
+**factName:** `string` — The name of the edge, in upper snake case, for example RELATES_TO.
     
 </dd>
 </dl>
@@ -4169,7 +5060,7 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**invalidAt:** `*string` 
+**invalidAt:** `*string` — The time at which the fact stopped being true.
     
 </dd>
 </dl>
@@ -4177,7 +5068,7 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**metadata:** `map[string]any` 
+**metadata:** `map[string]any` — Metadata attached to the episode created for this edge.
     
 </dd>
 </dl>
@@ -4185,7 +5076,10 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**sourceNode:** `map[string]any` 
+**sourceNode:** `*zep.EdgeNodeRef` 
+
+The source node of the edge, referenced by uuid or created or matched by
+name.
     
 </dd>
 </dl>
@@ -4193,7 +5087,10 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**targetNode:** `map[string]any` 
+**targetNode:** `*zep.EdgeNodeRef` 
+
+The target node of the edge, referenced by uuid or created or matched by
+name.
     
 </dd>
 </dl>
@@ -4201,7 +5098,7 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**validAt:** `*string` 
+**validAt:** `*string` — The time at which the fact became true.
     
 </dd>
 </dl>
@@ -4445,6 +5342,9 @@ client.Graph.Edge.Update(
 <dd>
 
 **attributes:** `map[string]any` 
+
+Additional attributes to merge onto the edge; a key set to null is
+removed.
     
 </dd>
 </dl>
@@ -4452,7 +5352,10 @@ client.Graph.Edge.Update(
 <dl>
 <dd>
 
-**fact:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**fact:** `*string` 
+
+The fact text describing the relationship between the source and target
+nodes.
     
 </dd>
 </dl>
@@ -4478,7 +5381,13 @@ client.Graph.Edge.Update(
 <dd>
 
 ```go
-request := &graph.AddNodesRequest{}
+request := &graph.AddNodesRequest{
+    Nodes: []*zep.NodeInput{
+        &zep.NodeInput{
+            Name: "name",
+        },
+    },
+}
 client.Graph.Node.Add(
     context.TODO(),
     "graph_uuid",
@@ -4506,7 +5415,7 @@ client.Graph.Node.Add(
 <dl>
 <dd>
 
-**nodes:** `[]map[string]any` 
+**nodes:** `[]*zep.NodeInput` — The nodes to add to the graph.
     
 </dd>
 </dl>
@@ -4750,6 +5659,9 @@ client.Graph.Node.Update(
 <dd>
 
 **attributes:** `map[string]any` 
+
+Additional attributes to merge onto the node; a key set to null is
+removed.
     
 </dd>
 </dl>
@@ -4757,7 +5669,7 @@ client.Graph.Node.Update(
 <dl>
 <dd>
 
-**name:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**name:** `*string` — The node's name.
     
 </dd>
 </dl>
@@ -4765,7 +5677,7 @@ client.Graph.Node.Update(
 <dl>
 <dd>
 
-**summary:** `*string` — Omit to leave unchanged, send JSON null to clear, or send a value to set.
+**summary:** `*string` — A summary of the node.
     
 </dd>
 </dl>
@@ -4850,7 +5762,7 @@ client.Graph.Node.ListNeighbors(
 <dl>
 <dd>
 
-**direction:** `*string` 
+**direction:** `*graph.V4NeighborsRequestDirection` — The edge orientation to follow from the node: in, out, or both.
     
 </dd>
 </dl>
@@ -4858,7 +5770,7 @@ client.Graph.Node.ListNeighbors(
 <dl>
 <dd>
 
-**filters:** `map[string]any` 
+**filters:** `*zep.SearchFilters` — Filters constraining the connecting edges and the neighbor nodes.
     
 </dd>
 </dl>
@@ -5181,7 +6093,7 @@ client.Thread.Message.Update(
 <dl>
 <dd>
 
-**metadata:** `map[string]any` 
+**metadata:** `map[string]any` — Metadata to merge onto the message; a key set to null is removed.
     
 </dd>
 </dl>

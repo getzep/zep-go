@@ -22,15 +22,27 @@ var (
 )
 
 type AddEdgeRequest struct {
+	// Additional attributes to store on the edge.
 	Attributes map[string]any `json:"attributes,omitempty" url:"-"`
-	ExpiredAt  *string        `json:"expired_at,omitempty" url:"-"`
-	Fact       *string        `json:"fact,omitempty" url:"-"`
-	FactName   *string        `json:"fact_name,omitempty" url:"-"`
-	InvalidAt  *string        `json:"invalid_at,omitempty" url:"-"`
-	Metadata   map[string]any `json:"metadata,omitempty" url:"-"`
-	SourceNode map[string]any `json:"source_node,omitempty" url:"-"`
-	TargetNode map[string]any `json:"target_node,omitempty" url:"-"`
-	ValidAt    *string        `json:"valid_at,omitempty" url:"-"`
+	// The time at which the fact was superseded or invalidated.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"-"`
+	// The fact text describing the relationship between the source and target
+	// nodes.
+	Fact string `json:"fact" url:"-"`
+	// The name of the edge, in upper snake case, for example RELATES_TO.
+	FactName string `json:"fact_name" url:"-"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
+	// Metadata attached to the episode created for this edge.
+	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+	// The source node of the edge, referenced by uuid or created or matched by
+	// name.
+	SourceNode *v4.EdgeNodeRef `json:"source_node" url:"-"`
+	// The target node of the edge, referenced by uuid or created or matched by
+	// name.
+	TargetNode *v4.EdgeNodeRef `json:"target_node" url:"-"`
+	// The time at which the fact became true.
+	ValidAt *string `json:"valid_at,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -59,14 +71,14 @@ func (a *AddEdgeRequest) SetExpiredAt(expiredAt *string) {
 
 // SetFact sets the Fact field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetFact(fact *string) {
+func (a *AddEdgeRequest) SetFact(fact string) {
 	a.Fact = fact
 	a.require(addEdgeRequestFieldFact)
 }
 
 // SetFactName sets the FactName field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetFactName(factName *string) {
+func (a *AddEdgeRequest) SetFactName(factName string) {
 	a.FactName = factName
 	a.require(addEdgeRequestFieldFactName)
 }
@@ -87,14 +99,14 @@ func (a *AddEdgeRequest) SetMetadata(metadata map[string]any) {
 
 // SetSourceNode sets the SourceNode field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetSourceNode(sourceNode map[string]any) {
+func (a *AddEdgeRequest) SetSourceNode(sourceNode *v4.EdgeNodeRef) {
 	a.SourceNode = sourceNode
 	a.require(addEdgeRequestFieldSourceNode)
 }
 
 // SetTargetNode sets the TargetNode field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetTargetNode(targetNode map[string]any) {
+func (a *AddEdgeRequest) SetTargetNode(targetNode *v4.EdgeNodeRef) {
 	a.TargetNode = targetNode
 	a.require(addEdgeRequestFieldTargetNode)
 }
@@ -183,8 +195,11 @@ var (
 )
 
 type PatchEdgeRequest struct {
+	// Additional attributes to merge onto the edge; a key set to null is
+	// removed.
 	Attributes map[string]any `json:"attributes,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// The fact text describing the relationship between the source and target
+	// nodes.
 	Fact *string `json:"fact,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

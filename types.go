@@ -99,9 +99,12 @@ var (
 )
 
 type AddEdgeResult struct {
-	// 8.6: edge is an accept-time acknowledgement, not a full Edge.
+	// An accept-time acknowledgement of the fact you submitted, carrying the
+	// identifier and fields you supplied rather than the full edge resource
+	// returned by later reads.
 	Edge *AddedEdge `json:"edge,omitempty" url:"edge,omitempty"`
-	Task *Task      `json:"task,omitempty" url:"task,omitempty"`
+	// The asynchronous task that tracks the edge's extraction and indexing.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -200,10 +203,12 @@ var (
 )
 
 type AddEpisodeResult struct {
-	// 8.6: only the episode response is a stored resource, so it is a full
-	// Episode readable immediately with processed false.
+	// The newly created episode, a full resource that is readable immediately.
+	// Its processed field is false until graph extraction finishes.
 	Episode *Episode `json:"episode,omitempty" url:"episode,omitempty"`
-	Task    *Task    `json:"task,omitempty" url:"task,omitempty"`
+	// The asynchronous task that tracks the episode's graph extraction and
+	// indexing.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -302,10 +307,12 @@ var (
 )
 
 type AddNodesResult struct {
-	// 8.6: nodes is an accept-time acknowledgement carrying the assigned
-	// identifier plus the fields the caller supplied, not a full Node.
+	// An accept-time acknowledgement of the nodes you submitted, each carrying
+	// its assigned identifier and the fields you supplied, not the full stored
+	// node.
 	Nodes []*AddedNode `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Task  *Task        `json:"task,omitempty" url:"task,omitempty"`
+	// The asynchronous task that tracks the nodes' extraction and indexing.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -412,16 +419,26 @@ var (
 )
 
 type AddedEdge struct {
+	// Additional attributes of the edge.
 	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
-	ExpiredAt  *string        `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	Fact       *string        `json:"fact,omitempty" url:"fact,omitempty"`
-	FactName   *string        `json:"fact_name,omitempty" url:"fact_name,omitempty"`
-	InvalidAt  *string        `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	Metadata   map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	SourceNode map[string]any `json:"source_node,omitempty" url:"source_node,omitempty"`
-	TargetNode map[string]any `json:"target_node,omitempty" url:"target_node,omitempty"`
-	UUID       *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
-	ValidAt    *string        `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+	// The time the fact was superseded or removed.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// The natural-language fact you submitted for this edge.
+	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	// The name of the edge, in upper snake case, for example RELATES_TO.
+	FactName *string `json:"fact_name,omitempty" url:"fact_name,omitempty"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// Custom metadata associated with the edge.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The source node fields you supplied when creating this edge.
+	SourceNode *EdgeNodeRef `json:"source_node,omitempty" url:"source_node,omitempty"`
+	// The target node fields you supplied when creating this edge.
+	TargetNode *EdgeNodeRef `json:"target_node,omitempty" url:"target_node,omitempty"`
+	// The unique identifier assigned to the edge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time from which the fact is considered true.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -472,14 +489,14 @@ func (a *AddedEdge) GetMetadata() map[string]any {
 	return a.Metadata
 }
 
-func (a *AddedEdge) GetSourceNode() map[string]any {
+func (a *AddedEdge) GetSourceNode() *EdgeNodeRef {
 	if a == nil {
 		return nil
 	}
 	return a.SourceNode
 }
 
-func (a *AddedEdge) GetTargetNode() map[string]any {
+func (a *AddedEdge) GetTargetNode() *EdgeNodeRef {
 	if a == nil {
 		return nil
 	}
@@ -558,14 +575,14 @@ func (a *AddedEdge) SetMetadata(metadata map[string]any) {
 
 // SetSourceNode sets the SourceNode field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddedEdge) SetSourceNode(sourceNode map[string]any) {
+func (a *AddedEdge) SetSourceNode(sourceNode *EdgeNodeRef) {
 	a.SourceNode = sourceNode
 	a.require(addedEdgeFieldSourceNode)
 }
 
 // SetTargetNode sets the TargetNode field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddedEdge) SetTargetNode(targetNode map[string]any) {
+func (a *AddedEdge) SetTargetNode(targetNode *EdgeNodeRef) {
 	a.TargetNode = targetNode
 	a.require(addedEdgeFieldTargetNode)
 }
@@ -818,6 +835,7 @@ var (
 )
 
 type ArtifactListRequest struct {
+	// Filters constraining which items are returned.
 	Filters map[string]any `json:"filters,omitempty" url:"filters,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -902,6 +920,7 @@ var (
 )
 
 type AsyncResult struct {
+	// The asynchronous task that tracks this operation's progress.
 	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -981,6 +1000,257 @@ func (a *AsyncResult) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type ComparisonOperator string
+
+const (
+	ComparisonOperatorEquals           ComparisonOperator = "="
+	ComparisonOperatorNotEquals        ComparisonOperator = "<>"
+	ComparisonOperatorGreaterThan      ComparisonOperator = ">"
+	ComparisonOperatorLessThan         ComparisonOperator = "<"
+	ComparisonOperatorGreaterThanEqual ComparisonOperator = ">="
+	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
+	ComparisonOperatorIsNull           ComparisonOperator = "IS NULL"
+	ComparisonOperatorIsNullAlias      ComparisonOperator = "is_null"
+	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
+	ComparisonOperatorContains         ComparisonOperator = "CONTAINS"
+)
+
+func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
+	switch s {
+	case "=":
+		return ComparisonOperatorEquals, nil
+	case "<>":
+		return ComparisonOperatorNotEquals, nil
+	case ">":
+		return ComparisonOperatorGreaterThan, nil
+	case "<":
+		return ComparisonOperatorLessThan, nil
+	case ">=":
+		return ComparisonOperatorGreaterThanEqual, nil
+	case "<=":
+		return ComparisonOperatorLessThanEqual, nil
+	case "IS NULL":
+		return ComparisonOperatorIsNull, nil
+	case "is_null":
+		return ComparisonOperatorIsNullAlias, nil
+	case "IS NOT NULL":
+		return ComparisonOperatorIsNotNull, nil
+	case "CONTAINS":
+		return ComparisonOperatorContains, nil
+	}
+	var t ComparisonOperator
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ComparisonOperator) Ptr() *ComparisonOperator {
+	return &c
+}
+
+var (
+	customInstructionFieldName = big.NewInt(1 << 0)
+	customInstructionFieldText = big.NewInt(1 << 1)
+)
+
+type CustomInstruction struct {
+	// logical key for identifying the instruction
+	Name string `json:"name" url:"name"`
+	// the actual instruction text
+	Text string `json:"text" url:"text"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *CustomInstruction) GetName() string {
+	if c == nil {
+		return ""
+	}
+	return c.Name
+}
+
+func (c *CustomInstruction) GetText() string {
+	if c == nil {
+		return ""
+	}
+	return c.Text
+}
+
+func (c *CustomInstruction) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *CustomInstruction) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CustomInstruction) SetName(name string) {
+	c.Name = name
+	c.require(customInstructionFieldName)
+}
+
+// SetText sets the Text field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CustomInstruction) SetText(text string) {
+	c.Text = text
+	c.require(customInstructionFieldText)
+}
+
+func (c *CustomInstruction) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomInstruction
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomInstruction(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomInstruction) MarshalJSON() ([]byte, error) {
+	type embed CustomInstruction
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *CustomInstruction) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
+	dateFilterFieldComparisonOperator = big.NewInt(1 << 0)
+	dateFilterFieldDate               = big.NewInt(1 << 1)
+)
+
+type DateFilter struct {
+	// Comparison operator for date filter
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Date to filter on. Required for non-null operators (`=`, `<>`, `>`, `<`, `>=`, `<=`).
+	// Should be omitted for IS NULL (or is_null) and IS NOT NULL operators.
+	Date *string `json:"date,omitempty" url:"date,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DateFilter) GetComparisonOperator() ComparisonOperator {
+	if d == nil {
+		return ""
+	}
+	return d.ComparisonOperator
+}
+
+func (d *DateFilter) GetDate() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Date
+}
+
+func (d *DateFilter) GetExtraProperties() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
+	return d.extraProperties
+}
+
+func (d *DateFilter) require(field *big.Int) {
+	if d.explicitFields == nil {
+		d.explicitFields = big.NewInt(0)
+	}
+	d.explicitFields.Or(d.explicitFields, field)
+}
+
+// SetComparisonOperator sets the ComparisonOperator field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DateFilter) SetComparisonOperator(comparisonOperator ComparisonOperator) {
+	d.ComparisonOperator = comparisonOperator
+	d.require(dateFilterFieldComparisonOperator)
+}
+
+// SetDate sets the Date field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DateFilter) SetDate(date *string) {
+	d.Date = date
+	d.require(dateFilterFieldDate)
+}
+
+func (d *DateFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler DateFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DateFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DateFilter) MarshalJSON() ([]byte, error) {
+	type embed DateFilter
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (d *DateFilter) String() string {
+	if d == nil {
+		return "<nil>"
+	}
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
 var (
 	documentSummaryFieldCreatedAt                    = big.NewInt(1 << 0)
 	documentSummaryFieldDocumentID                   = big.NewInt(1 << 1)
@@ -991,12 +1261,18 @@ var (
 )
 
 type DocumentSummary struct {
-	CreatedAt                    *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DocumentID                   *string `json:"document_id,omitempty" url:"document_id,omitempty"`
-	LastSummarizedAt             *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// The time the summary was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The developer-assigned identifier of the document this summary covers.
+	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
+	// The time the summary was most recently generated.
+	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// The latest episode reference time covered by the summary.
 	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
-	Summary                      *string `json:"summary,omitempty" url:"summary,omitempty"`
-	UUID                         *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// A generated summary of the document's episodes.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the document summary.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1152,9 +1428,14 @@ var (
 )
 
 type DocumentSummaryPage struct {
-	Items      []*DocumentSummary `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string            `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int               `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The document summaries on this page.
+	Items []*DocumentSummary `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results
+	// are available.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// Omitted for this collection; use next_cursor to detect the end of
+	// pagination.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1284,27 +1565,55 @@ var (
 )
 
 type Edge struct {
-	Attributes       map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
-	CreatedAt        *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	EpisodeUUIDs     []string       `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	ExpiredAt        *string        `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	Fact             *string        `json:"fact,omitempty" url:"fact,omitempty"`
-	GraphUUID        *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	InvalidAt        *string        `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	Name             *string        `json:"name,omitempty" url:"name,omitempty"`
-	Relevance        *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Scope            *string        `json:"scope,omitempty" url:"scope,omitempty"`
-	Score            *float64       `json:"score,omitempty" url:"score,omitempty"`
-	SourceNodeLabels []string       `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
-	// Endpoint-name and label projections are read-time and subject to the
-	// ABAC omission rule of spec-2 section 4, so each is omitted when denied.
-	SourceNodeName   *string  `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
-	SourceNodeUUID   *string  `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// Additional attributes of the edge.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the edge was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The episodes this edge was derived from.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// The time the fact was superseded or removed.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// The natural-language fact this edge represents.
+	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	// The unique identifier of the graph this edge belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// The name of the edge, in upper snake case, for example RELATES_TO.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// The kind of edge this is, for example entity or episodic.
+	Scope *string `json:"scope,omitempty" url:"scope,omitempty"`
+	// The ranking score returned with every search result; omitted when the edge
+	// appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// The current labels of the source node. This is read at request time rather
+	// than stored on the edge, and is omitted when the source node cannot be
+	// resolved.
+	SourceNodeLabels []string `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
+	// The current name of the source node. This is read at request time rather
+	// than stored on the edge, and is omitted when the source node cannot be
+	// resolved.
+	SourceNodeName *string `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
+	// The unique identifier of the edge's source node.
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// The current labels of the target node. This is read at request time rather
+	// than stored on the edge, and is omitted when the target node cannot be
+	// resolved.
 	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"target_node_labels,omitempty"`
-	TargetNodeName   *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
-	TargetNodeUUID   *string  `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
-	UUID             *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
-	ValidAt          *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+	// The current name of the target node. This is read at request time rather
+	// than stored on the edge, and is omitted when the target node cannot be
+	// resolved.
+	TargetNodeName *string `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
+	// The unique identifier of the edge's target node.
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	// The unique identifier of the edge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time from which the fact is considered true.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1636,15 +1945,173 @@ func (e *Edge) String() string {
 }
 
 var (
+	edgeNodeRefFieldAttributes = big.NewInt(1 << 0)
+	edgeNodeRefFieldLabels     = big.NewInt(1 << 1)
+	edgeNodeRefFieldName       = big.NewInt(1 << 2)
+	edgeNodeRefFieldSummary    = big.NewInt(1 << 3)
+	edgeNodeRefFieldUUID       = big.NewInt(1 << 4)
+)
+
+type EdgeNodeRef struct {
+	// Additional attributes of the node, as defined by its entity type.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The entity type labels to assign to the node.
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// The name of the node to create or match.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A summary of the node.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of an existing node to attach the edge to.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EdgeNodeRef) GetAttributes() map[string]any {
+	if e == nil {
+		return nil
+	}
+	return e.Attributes
+}
+
+func (e *EdgeNodeRef) GetLabels() []string {
+	if e == nil {
+		return nil
+	}
+	return e.Labels
+}
+
+func (e *EdgeNodeRef) GetName() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Name
+}
+
+func (e *EdgeNodeRef) GetSummary() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Summary
+}
+
+func (e *EdgeNodeRef) GetUUID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.UUID
+}
+
+func (e *EdgeNodeRef) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EdgeNodeRef) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeNodeRef) SetAttributes(attributes map[string]any) {
+	e.Attributes = attributes
+	e.require(edgeNodeRefFieldAttributes)
+}
+
+// SetLabels sets the Labels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeNodeRef) SetLabels(labels []string) {
+	e.Labels = labels
+	e.require(edgeNodeRefFieldLabels)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeNodeRef) SetName(name *string) {
+	e.Name = name
+	e.require(edgeNodeRefFieldName)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeNodeRef) SetSummary(summary *string) {
+	e.Summary = summary
+	e.require(edgeNodeRefFieldSummary)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeNodeRef) SetUUID(uuid *string) {
+	e.UUID = uuid
+	e.require(edgeNodeRefFieldUUID)
+}
+
+func (e *EdgeNodeRef) UnmarshalJSON(data []byte) error {
+	type unmarshaler EdgeNodeRef
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EdgeNodeRef(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EdgeNodeRef) MarshalJSON() ([]byte, error) {
+	type embed EdgeNodeRef
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EdgeNodeRef) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
 	edgePageFieldItems      = big.NewInt(1 << 0)
 	edgePageFieldNextCursor = big.NewInt(1 << 1)
 	edgePageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
 type EdgePage struct {
-	Items      []*Edge `json:"items,omitempty" url:"items,omitempty"`
+	// The edges on this page.
+	Items []*Edge `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results
+	// are available.
 	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int    `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// Omitted for this collection; use next_cursor to detect the end of
+	// pagination.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1752,13 +2219,15 @@ func (e *EdgePage) String() string {
 }
 
 var (
-	edgeSourceTargetFieldSourceEntityType = big.NewInt(1 << 0)
-	edgeSourceTargetFieldTargetEntityType = big.NewInt(1 << 1)
+	edgeSourceTargetFieldSource = big.NewInt(1 << 0)
+	edgeSourceTargetFieldTarget = big.NewInt(1 << 1)
 )
 
 type EdgeSourceTarget struct {
-	SourceEntityType *string `json:"source_entity_type,omitempty" url:"source_entity_type,omitempty"`
-	TargetEntityType *string `json:"target_entity_type,omitempty" url:"target_entity_type,omitempty"`
+	// The entity type an edge of this type originates from.
+	Source *string `json:"source,omitempty" url:"source,omitempty"`
+	// The entity type an edge of this type points to.
+	Target *string `json:"target,omitempty" url:"target,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1767,18 +2236,18 @@ type EdgeSourceTarget struct {
 	rawJSON         json.RawMessage
 }
 
-func (e *EdgeSourceTarget) GetSourceEntityType() *string {
+func (e *EdgeSourceTarget) GetSource() *string {
 	if e == nil {
 		return nil
 	}
-	return e.SourceEntityType
+	return e.Source
 }
 
-func (e *EdgeSourceTarget) GetTargetEntityType() *string {
+func (e *EdgeSourceTarget) GetTarget() *string {
 	if e == nil {
 		return nil
 	}
-	return e.TargetEntityType
+	return e.Target
 }
 
 func (e *EdgeSourceTarget) GetExtraProperties() map[string]interface{} {
@@ -1795,18 +2264,18 @@ func (e *EdgeSourceTarget) require(field *big.Int) {
 	e.explicitFields.Or(e.explicitFields, field)
 }
 
-// SetSourceEntityType sets the SourceEntityType field and marks it as non-optional;
+// SetSource sets the Source field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EdgeSourceTarget) SetSourceEntityType(sourceEntityType *string) {
-	e.SourceEntityType = sourceEntityType
-	e.require(edgeSourceTargetFieldSourceEntityType)
+func (e *EdgeSourceTarget) SetSource(source *string) {
+	e.Source = source
+	e.require(edgeSourceTargetFieldSource)
 }
 
-// SetTargetEntityType sets the TargetEntityType field and marks it as non-optional;
+// SetTarget sets the Target field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EdgeSourceTarget) SetTargetEntityType(targetEntityType *string) {
-	e.TargetEntityType = targetEntityType
-	e.require(edgeSourceTargetFieldTargetEntityType)
+func (e *EdgeSourceTarget) SetTarget(target *string) {
+	e.Target = target
+	e.require(edgeSourceTargetFieldTarget)
 }
 
 func (e *EdgeSourceTarget) UnmarshalJSON(data []byte) error {
@@ -1859,9 +2328,14 @@ var (
 )
 
 type EdgeType struct {
-	Description   *string             `json:"description,omitempty" url:"description,omitempty"`
-	Name          *string             `json:"name,omitempty" url:"name,omitempty"`
-	Properties    []*EntityProperty   `json:"properties,omitempty" url:"properties,omitempty"`
+	// A description of the relationship this edge type represents, used to guide
+	// extraction.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The name of the edge type, in upper snake case.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The custom properties defined on edges of this type.
+	Properties []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
+	// The allowed source and target entity type pairs for edges of this type.
 	SourceTargets []*EdgeSourceTarget `json:"source_targets,omitempty" url:"source_targets,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -1990,9 +2464,12 @@ var (
 )
 
 type EntityProperty struct {
-	Description *string             `json:"description,omitempty" url:"description,omitempty"`
-	Name        *string             `json:"name,omitempty" url:"name,omitempty"`
-	Type        *EntityPropertyType `json:"type,omitempty" url:"type,omitempty"`
+	// A description of the property, used to guide extraction.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The name of the property.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The value type of the property: text, int, float, or boolean.
+	Type *EntityPropertyType `json:"type,omitempty" url:"type,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2135,10 +2612,15 @@ var (
 )
 
 type EntityType struct {
-	Description        *string           `json:"description,omitempty" url:"description,omitempty"`
-	IdentityProperties []string          `json:"identity_properties,omitempty" url:"identity_properties,omitempty"`
-	Name               *string           `json:"name,omitempty" url:"name,omitempty"`
-	Properties         []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
+	// A description of the entity type, used to guide extraction.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The property names that determine whether two nodes of this type are the
+	// same entity.
+	IdentityProperties []string `json:"identity_properties,omitempty" url:"identity_properties,omitempty"`
+	// The name of the entity type.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The custom properties defined on nodes of this type.
+	Properties []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2278,21 +2760,44 @@ var (
 )
 
 type Episode struct {
-	Content           *string        `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt         *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DocumentID        *string        `json:"document_id,omitempty" url:"document_id,omitempty"`
-	GraphUUID         *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	Metadata          map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Processed         *bool          `json:"processed,omitempty" url:"processed,omitempty"`
-	Relevance         *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Role              *RoleType      `json:"role,omitempty" url:"role,omitempty"`
-	RoleName          *string        `json:"role_name,omitempty" url:"role_name,omitempty"`
-	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
-	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
-	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
-	ThreadUUID        *string        `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
-	UUID              *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
-	ValidAt           *string        `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+	// The raw content of the episode.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The time the episode was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The developer-assigned identifier of the document this episode belongs to,
+	// present only for episodes added to a document.
+	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
+	// The unique identifier of the graph this episode belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// Custom metadata associated with the episode.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Whether the episode has finished graph extraction and indexing.
+	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// The role of the episode's sender, present only when the episode was added
+	// as a message.
+	Role *RoleType `json:"role,omitempty" url:"role,omitempty"`
+	// The free-form display name of the episode's sender, present only when the
+	// episode was added as a message.
+	RoleName *string `json:"role_name,omitempty" url:"role_name,omitempty"`
+	// The ranking score returned with every search result; omitted when the
+	// episode appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// The format of the episode's content: text, json, or message.
+	Source *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
+	// A free-form description of where the episode's content came from.
+	SourceDescription *string `json:"source_description,omitempty" url:"source_description,omitempty"`
+	// The thread this episode belongs to, present only for episodes added to a
+	// thread.
+	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The unique identifier of the episode.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the episode's content became true or was observed, used for
+	// temporal reasoning.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2568,15 +3073,139 @@ func (e *Episode) String() string {
 }
 
 var (
+	episodeMetadataFilterFieldComparisonOperator = big.NewInt(1 << 0)
+	episodeMetadataFilterFieldPropertyName       = big.NewInt(1 << 1)
+	episodeMetadataFilterFieldPropertyValue      = big.NewInt(1 << 2)
+)
+
+type EpisodeMetadataFilter struct {
+	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Metadata key to filter on
+	PropertyName string `json:"property_name" url:"property_name"`
+	// Value to compare against. Not required for IS NULL / IS NOT NULL operators.
+	PropertyValue any `json:"property_value,omitempty" url:"property_value,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeMetadataFilter) GetComparisonOperator() ComparisonOperator {
+	if e == nil {
+		return ""
+	}
+	return e.ComparisonOperator
+}
+
+func (e *EpisodeMetadataFilter) GetPropertyName() string {
+	if e == nil {
+		return ""
+	}
+	return e.PropertyName
+}
+
+func (e *EpisodeMetadataFilter) GetPropertyValue() any {
+	if e == nil {
+		return nil
+	}
+	return e.PropertyValue
+}
+
+func (e *EpisodeMetadataFilter) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EpisodeMetadataFilter) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetComparisonOperator sets the ComparisonOperator field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeMetadataFilter) SetComparisonOperator(comparisonOperator ComparisonOperator) {
+	e.ComparisonOperator = comparisonOperator
+	e.require(episodeMetadataFilterFieldComparisonOperator)
+}
+
+// SetPropertyName sets the PropertyName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeMetadataFilter) SetPropertyName(propertyName string) {
+	e.PropertyName = propertyName
+	e.require(episodeMetadataFilterFieldPropertyName)
+}
+
+// SetPropertyValue sets the PropertyValue field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeMetadataFilter) SetPropertyValue(propertyValue any) {
+	e.PropertyValue = propertyValue
+	e.require(episodeMetadataFilterFieldPropertyValue)
+}
+
+func (e *EpisodeMetadataFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeMetadataFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeMetadataFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeMetadataFilter) MarshalJSON() ([]byte, error) {
+	type embed EpisodeMetadataFilter
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EpisodeMetadataFilter) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
 	episodePageFieldItems      = big.NewInt(1 << 0)
 	episodePageFieldNextCursor = big.NewInt(1 << 1)
 	episodePageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
 type EpisodePage struct {
-	Items      []*Episode `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string    `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int       `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The episodes on this page.
+	Items []*Episode `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results
+	// are available.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// Omitted for this collection; use next_cursor to detect the end of
+	// pagination.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2859,14 +3488,41 @@ func (g GraphDataType) Ptr() *GraphDataType {
 	return &g
 }
 
+// Logical operator: "and" or "or"
+type GraphitiMetadataFilterGroupType string
+
+const (
+	GraphitiMetadataFilterGroupTypeAnd GraphitiMetadataFilterGroupType = "and"
+	GraphitiMetadataFilterGroupTypeOr  GraphitiMetadataFilterGroupType = "or"
+)
+
+func NewGraphitiMetadataFilterGroupTypeFromString(s string) (GraphitiMetadataFilterGroupType, error) {
+	switch s {
+	case "and":
+		return GraphitiMetadataFilterGroupTypeAnd, nil
+	case "or":
+		return GraphitiMetadataFilterGroupTypeOr, nil
+	}
+	var t GraphitiMetadataFilterGroupType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphitiMetadataFilterGroupType) Ptr() *GraphitiMetadataFilterGroupType {
+	return &g
+}
+
 var (
 	instructionsFieldInherited    = big.NewInt(1 << 0)
 	instructionsFieldInstructions = big.NewInt(1 << 1)
 )
 
 type Instructions struct {
-	Inherited    *bool            `json:"inherited,omitempty" url:"inherited,omitempty"`
-	Instructions []map[string]any `json:"instructions,omitempty" url:"instructions,omitempty"`
+	// Whether this is the project's default value rather than an override set on
+	// this graph.
+	Inherited *bool `json:"inherited,omitempty" url:"inherited,omitempty"`
+	// The custom extraction instructions in effect at this scope, each with a
+	// name and text.
+	Instructions []*CustomInstruction `json:"instructions,omitempty" url:"instructions,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2882,7 +3538,7 @@ func (i *Instructions) GetInherited() *bool {
 	return i.Inherited
 }
 
-func (i *Instructions) GetInstructions() []map[string]any {
+func (i *Instructions) GetInstructions() []*CustomInstruction {
 	if i == nil {
 		return nil
 	}
@@ -2912,7 +3568,7 @@ func (i *Instructions) SetInherited(inherited *bool) {
 
 // SetInstructions sets the Instructions field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (i *Instructions) SetInstructions(instructions []map[string]any) {
+func (i *Instructions) SetInstructions(instructions []*CustomInstruction) {
 	i.Instructions = instructions
 	i.require(instructionsFieldInstructions)
 }
@@ -2966,9 +3622,15 @@ var (
 )
 
 type LookupRequest struct {
-	GraphID  *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
+	// The developer-assigned graph ID to resolve to a UUID. Mutually exclusive
+	// with user_id and thread_id.
+	GraphID *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
+	// The developer-assigned thread ID to resolve to a UUID. Mutually exclusive
+	// with user_id and graph_id.
 	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
-	UserID   *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	// The developer-assigned user ID to resolve to a UUID. Mutually exclusive
+	// with thread_id and graph_id.
+	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3087,14 +3749,24 @@ var (
 )
 
 type Message struct {
-	Content    *string        `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt  *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Metadata   map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Name       *string        `json:"name,omitempty" url:"name,omitempty"`
-	Processed  *bool          `json:"processed,omitempty" url:"processed,omitempty"`
-	Role       *RoleType      `json:"role,omitempty" url:"role,omitempty"`
-	ThreadUUID *string        `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
-	UUID       *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The content of the message.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The time the message was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// Arbitrary key-value metadata attached to the message.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// A custom name for the message's sender, for example a specific user or
+	// agent name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Whether the message has finished being ingested into the user's graph.
+	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
+	// The role of the message's sender: system, assistant, user, function, or
+	// tool.
+	Role *RoleType `json:"role,omitempty" url:"role,omitempty"`
+	// The unique identifier of the thread this message belongs to.
+	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The unique identifier of the message.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3272,13 +3944,134 @@ func (m *Message) String() string {
 }
 
 var (
+	metadataFilterGroupFieldFilters = big.NewInt(1 << 0)
+	metadataFilterGroupFieldGroups  = big.NewInt(1 << 1)
+	metadataFilterGroupFieldType    = big.NewInt(1 << 2)
+)
+
+type MetadataFilterGroup struct {
+	// Leaf filters (predicates on metadata key-value pairs)
+	Filters []*EpisodeMetadataFilter `json:"filters,omitempty" url:"filters,omitempty"`
+	// Nested sub-groups for composing complex boolean expressions
+	Groups []*MetadataFilterGroup `json:"groups,omitempty" url:"groups,omitempty"`
+	// Logical operator: "and" or "or"
+	Type GraphitiMetadataFilterGroupType `json:"type" url:"type"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *MetadataFilterGroup) GetFilters() []*EpisodeMetadataFilter {
+	if m == nil {
+		return nil
+	}
+	return m.Filters
+}
+
+func (m *MetadataFilterGroup) GetGroups() []*MetadataFilterGroup {
+	if m == nil {
+		return nil
+	}
+	return m.Groups
+}
+
+func (m *MetadataFilterGroup) GetType() GraphitiMetadataFilterGroupType {
+	if m == nil {
+		return ""
+	}
+	return m.Type
+}
+
+func (m *MetadataFilterGroup) GetExtraProperties() map[string]interface{} {
+	if m == nil {
+		return nil
+	}
+	return m.extraProperties
+}
+
+func (m *MetadataFilterGroup) require(field *big.Int) {
+	if m.explicitFields == nil {
+		m.explicitFields = big.NewInt(0)
+	}
+	m.explicitFields.Or(m.explicitFields, field)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MetadataFilterGroup) SetFilters(filters []*EpisodeMetadataFilter) {
+	m.Filters = filters
+	m.require(metadataFilterGroupFieldFilters)
+}
+
+// SetGroups sets the Groups field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MetadataFilterGroup) SetGroups(groups []*MetadataFilterGroup) {
+	m.Groups = groups
+	m.require(metadataFilterGroupFieldGroups)
+}
+
+// SetType sets the Type field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MetadataFilterGroup) SetType(type_ GraphitiMetadataFilterGroupType) {
+	m.Type = type_
+	m.require(metadataFilterGroupFieldType)
+}
+
+func (m *MetadataFilterGroup) UnmarshalJSON(data []byte) error {
+	type unmarshaler MetadataFilterGroup
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MetadataFilterGroup(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MetadataFilterGroup) MarshalJSON() ([]byte, error) {
+	type embed MetadataFilterGroup
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*m),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, m.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (m *MetadataFilterGroup) String() string {
+	if m == nil {
+		return "<nil>"
+	}
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+var (
 	neighborEntryFieldEdges = big.NewInt(1 << 0)
 	neighborEntryFieldNode  = big.NewInt(1 << 1)
 )
 
 type NeighborEntry struct {
+	// The edges connecting the neighboring node to the queried node.
 	Edges []*Edge `json:"edges,omitempty" url:"edges,omitempty"`
-	Node  *Node   `json:"node,omitempty" url:"node,omitempty"`
+	// The neighboring node reached from the queried node.
+	Node *Node `json:"node,omitempty" url:"node,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3378,9 +4171,14 @@ var (
 )
 
 type NeighborPage struct {
-	Items      []*NeighborEntry `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string          `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int             `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The neighboring nodes and their connecting edges on this page.
+	Items []*NeighborEntry `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// Omitted for this collection; use next_cursor to detect the end of
+	// pagination.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3500,15 +4298,27 @@ var (
 )
 
 type Node struct {
+	// Additional attributes of the node, as defined by its entity type.
 	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
-	CreatedAt  *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	GraphUUID  *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	Labels     []string       `json:"labels,omitempty" url:"labels,omitempty"`
-	Name       *string        `json:"name,omitempty" url:"name,omitempty"`
-	Relevance  *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Score      *float64       `json:"score,omitempty" url:"score,omitempty"`
-	Summary    *string        `json:"summary,omitempty" url:"summary,omitempty"`
-	UUID       *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the node was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The unique identifier of the graph this node belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The entity type labels assigned to the node.
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// The name of the entity that the node represents.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// The ranking score returned with every search result; omitted when the node
+	// appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// A generated summary of the entity that the node represents.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The node UUID, assigned by Zep.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3700,15 +4510,173 @@ func (n *Node) String() string {
 }
 
 var (
+	nodeInputFieldAttributes = big.NewInt(1 << 0)
+	nodeInputFieldLabel      = big.NewInt(1 << 1)
+	nodeInputFieldMetadata   = big.NewInt(1 << 2)
+	nodeInputFieldName       = big.NewInt(1 << 3)
+	nodeInputFieldSummary    = big.NewInt(1 << 4)
+)
+
+type NodeInput struct {
+	// Additional attributes of the node, as defined by its entity type.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The node's entity type.
+	Label *string `json:"label,omitempty" url:"label,omitempty"`
+	// Metadata to store on the node.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The name of the entity the node represents.
+	Name string `json:"name" url:"name"`
+	// A summary of the entity the node represents.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (n *NodeInput) GetAttributes() map[string]any {
+	if n == nil {
+		return nil
+	}
+	return n.Attributes
+}
+
+func (n *NodeInput) GetLabel() *string {
+	if n == nil {
+		return nil
+	}
+	return n.Label
+}
+
+func (n *NodeInput) GetMetadata() map[string]any {
+	if n == nil {
+		return nil
+	}
+	return n.Metadata
+}
+
+func (n *NodeInput) GetName() string {
+	if n == nil {
+		return ""
+	}
+	return n.Name
+}
+
+func (n *NodeInput) GetSummary() *string {
+	if n == nil {
+		return nil
+	}
+	return n.Summary
+}
+
+func (n *NodeInput) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
+	return n.extraProperties
+}
+
+func (n *NodeInput) require(field *big.Int) {
+	if n.explicitFields == nil {
+		n.explicitFields = big.NewInt(0)
+	}
+	n.explicitFields.Or(n.explicitFields, field)
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeInput) SetAttributes(attributes map[string]any) {
+	n.Attributes = attributes
+	n.require(nodeInputFieldAttributes)
+}
+
+// SetLabel sets the Label field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeInput) SetLabel(label *string) {
+	n.Label = label
+	n.require(nodeInputFieldLabel)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeInput) SetMetadata(metadata map[string]any) {
+	n.Metadata = metadata
+	n.require(nodeInputFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeInput) SetName(name string) {
+	n.Name = name
+	n.require(nodeInputFieldName)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeInput) SetSummary(summary *string) {
+	n.Summary = summary
+	n.require(nodeInputFieldSummary)
+}
+
+func (n *NodeInput) UnmarshalJSON(data []byte) error {
+	type unmarshaler NodeInput
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NodeInput(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *n)
+	if err != nil {
+		return err
+	}
+	n.extraProperties = extraProperties
+	n.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NodeInput) MarshalJSON() ([]byte, error) {
+	type embed NodeInput
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, n.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (n *NodeInput) String() string {
+	if n == nil {
+		return "<nil>"
+	}
+	if len(n.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+var (
 	nodePageFieldItems      = big.NewInt(1 << 0)
 	nodePageFieldNextCursor = big.NewInt(1 << 1)
 	nodePageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
 type NodePage struct {
-	Items      []*Node `json:"items,omitempty" url:"items,omitempty"`
+	// The nodes on this page.
+	Items []*Node `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
 	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int    `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// Omitted for this collection; use next_cursor to detect the end of
+	// pagination.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3829,16 +4797,29 @@ var (
 )
 
 type Observation struct {
-	Attributes   map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
-	CreatedAt    *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	EpisodeUUIDs []string       `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	GraphUUID    *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	Labels       []string       `json:"labels,omitempty" url:"labels,omitempty"`
-	Name         *string        `json:"name,omitempty" url:"name,omitempty"`
-	Relevance    *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Score        *float64       `json:"score,omitempty" url:"score,omitempty"`
-	Summary      *string        `json:"summary,omitempty" url:"summary,omitempty"`
-	UUID         *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// Additional attributes of the derived node, as defined by its entity type.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the observation was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The unique identifiers of the episodes that support this observation.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// The unique identifier of the graph this observation belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The labels identifying the type of this observation.
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// The name of the observation.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// The ranking score returned with every search result; omitted when the
+	// observation appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// A generated summary of the observation.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the observation, assigned by Zep.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4050,9 +5031,14 @@ var (
 )
 
 type ObservationPage struct {
-	Items      []*Observation `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string        `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int           `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The observations on this page.
+	Items []*Observation `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// Omitted for this collection; use next_cursor to detect the end of
+	// pagination.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4166,9 +5152,15 @@ var (
 )
 
 type ObservationSteering struct {
-	Inherited   *bool            `json:"inherited,omitempty" url:"inherited,omitempty"`
-	Instruction *string          `json:"instruction,omitempty" url:"instruction,omitempty"`
-	Types       []map[string]any `json:"types,omitempty" url:"types,omitempty"`
+	// Whether this is the project's default value rather than an override set on
+	// this graph.
+	Inherited *bool `json:"inherited,omitempty" url:"inherited,omitempty"`
+	// The natural-language instruction steering how observations are generated
+	// at this scope.
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
+	// The named observation types, each with a description, that generation
+	// should steer toward at this scope.
+	Types []*ObservationType `json:"types,omitempty" url:"types,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4191,7 +5183,7 @@ func (o *ObservationSteering) GetInstruction() *string {
 	return o.Instruction
 }
 
-func (o *ObservationSteering) GetTypes() []map[string]any {
+func (o *ObservationSteering) GetTypes() []*ObservationType {
 	if o == nil {
 		return nil
 	}
@@ -4228,7 +5220,7 @@ func (o *ObservationSteering) SetInstruction(instruction *string) {
 
 // SetTypes sets the Types field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationSteering) SetTypes(types []map[string]any) {
+func (o *ObservationSteering) SetTypes(types []*ObservationType) {
 	o.Types = types
 	o.require(observationSteeringFieldTypes)
 }
@@ -4276,15 +5268,119 @@ func (o *ObservationSteering) String() string {
 }
 
 var (
+	observationTypeFieldDescription = big.NewInt(1 << 0)
+	observationTypeFieldName        = big.NewInt(1 << 1)
+)
+
+type ObservationType struct {
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	Name        *string `json:"name,omitempty" url:"name,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *ObservationType) GetDescription() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Description
+}
+
+func (o *ObservationType) GetName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Name
+}
+
+func (o *ObservationType) GetExtraProperties() map[string]interface{} {
+	if o == nil {
+		return nil
+	}
+	return o.extraProperties
+}
+
+func (o *ObservationType) require(field *big.Int) {
+	if o.explicitFields == nil {
+		o.explicitFields = big.NewInt(0)
+	}
+	o.explicitFields.Or(o.explicitFields, field)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationType) SetDescription(description *string) {
+	o.Description = description
+	o.require(observationTypeFieldDescription)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationType) SetName(name *string) {
+	o.Name = name
+	o.require(observationTypeFieldName)
+}
+
+func (o *ObservationType) UnmarshalJSON(data []byte) error {
+	type unmarshaler ObservationType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = ObservationType(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *ObservationType) MarshalJSON() ([]byte, error) {
+	type embed ObservationType
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (o *ObservationType) String() string {
+	if o == nil {
+		return "<nil>"
+	}
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+var (
 	ontologyFieldEdgeTypes   = big.NewInt(1 << 0)
 	ontologyFieldEntityTypes = big.NewInt(1 << 1)
 	ontologyFieldInherited   = big.NewInt(1 << 2)
 )
 
 type Ontology struct {
-	EdgeTypes   []*EdgeType   `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// The edge types defined in the ontology in effect at this scope.
+	EdgeTypes []*EdgeType `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// The entity types defined in the ontology in effect at this scope.
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
-	Inherited   *bool         `json:"inherited,omitempty" url:"inherited,omitempty"`
+	// Whether this is the project's default value rather than an override set on
+	// this graph.
+	Inherited *bool `json:"inherited,omitempty" url:"inherited,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4391,6 +5487,127 @@ func (o *Ontology) String() string {
 	return fmt.Sprintf("%#v", o)
 }
 
+var (
+	propertyFilterFieldComparisonOperator = big.NewInt(1 << 0)
+	propertyFilterFieldPropertyName       = big.NewInt(1 << 1)
+	propertyFilterFieldPropertyValue      = big.NewInt(1 << 2)
+)
+
+type PropertyFilter struct {
+	// Comparison operator for property filter
+	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
+	// Property name to filter on
+	PropertyName string `json:"property_name" url:"property_name"`
+	// Property value to match on. Accepted types: string, int, float64, bool, or nil.
+	// Invalid types (e.g., arrays, objects) will be rejected by validation.
+	// Must be non-nil for non-null operators (`=`, `<>`, `>`, `<`, `>=`, `<=`).
+	PropertyValue any `json:"property_value,omitempty" url:"property_value,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PropertyFilter) GetComparisonOperator() ComparisonOperator {
+	if p == nil {
+		return ""
+	}
+	return p.ComparisonOperator
+}
+
+func (p *PropertyFilter) GetPropertyName() string {
+	if p == nil {
+		return ""
+	}
+	return p.PropertyName
+}
+
+func (p *PropertyFilter) GetPropertyValue() any {
+	if p == nil {
+		return nil
+	}
+	return p.PropertyValue
+}
+
+func (p *PropertyFilter) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *PropertyFilter) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetComparisonOperator sets the ComparisonOperator field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PropertyFilter) SetComparisonOperator(comparisonOperator ComparisonOperator) {
+	p.ComparisonOperator = comparisonOperator
+	p.require(propertyFilterFieldComparisonOperator)
+}
+
+// SetPropertyName sets the PropertyName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PropertyFilter) SetPropertyName(propertyName string) {
+	p.PropertyName = propertyName
+	p.require(propertyFilterFieldPropertyName)
+}
+
+// SetPropertyValue sets the PropertyValue field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PropertyFilter) SetPropertyValue(propertyValue any) {
+	p.PropertyValue = propertyValue
+	p.require(propertyFilterFieldPropertyValue)
+}
+
+func (p *PropertyFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler PropertyFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PropertyFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PropertyFilter) MarshalJSON() ([]byte, error) {
+	type embed PropertyFilter
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *PropertyFilter) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type RoleType string
 
 const (
@@ -4423,6 +5640,355 @@ func (r RoleType) Ptr() *RoleType {
 }
 
 var (
+	searchFiltersFieldConnectedNodeUUIDs     = big.NewInt(1 << 0)
+	searchFiltersFieldCreatedAt              = big.NewInt(1 << 1)
+	searchFiltersFieldEdgeTypes              = big.NewInt(1 << 2)
+	searchFiltersFieldEdgeUUIDs              = big.NewInt(1 << 3)
+	searchFiltersFieldEpisodeMetadataFilters = big.NewInt(1 << 4)
+	searchFiltersFieldEpisodeUUIDs           = big.NewInt(1 << 5)
+	searchFiltersFieldExcludeEdgeTypes       = big.NewInt(1 << 6)
+	searchFiltersFieldExcludeNodeLabels      = big.NewInt(1 << 7)
+	searchFiltersFieldExpiredAt              = big.NewInt(1 << 8)
+	searchFiltersFieldInvalidAt              = big.NewInt(1 << 9)
+	searchFiltersFieldNodeLabels             = big.NewInt(1 << 10)
+	searchFiltersFieldPropertyFilters        = big.NewInt(1 << 11)
+	searchFiltersFieldSourceNodeUUIDs        = big.NewInt(1 << 12)
+	searchFiltersFieldTargetNodeUUIDs        = big.NewInt(1 << 13)
+	searchFiltersFieldValidAt                = big.NewInt(1 << 14)
+)
+
+type SearchFilters struct {
+	// List of node UUIDs to filter edges on: an edge matches if its source OR
+	// target node UUID is in this list. Applies to edges only; rejected on
+	// requests whose result type contains no edges. Max 256 entries.
+	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
+	// 2D array of date filters for the created_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
+	// This translates to: `(created_at > date1 AND created_at < date2) OR (created_at = date3)`
+	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// List of edge types to filter on
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// List of edge UUIDs to filter on. Max 256 to align with graph-service filter limits.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// [Experimental] Episode metadata filter. Restricts results to edges/nodes derived from episodes
+	// matching the metadata predicates. Uses explicit AND/OR groups. This feature is experimental and may change in future releases.
+	EpisodeMetadataFilters *MetadataFilterGroup `json:"episode_metadata_filters,omitempty" url:"episode_metadata_filters,omitempty"`
+	// List of episode UUIDs to filter on. An edge matches if it was derived
+	// from any listed episode; a node matches if it is mentioned by any
+	// listed episode. Valid for both edge and node result types. Max 256
+	// entries.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// List of edge types to exclude from results
+	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
+	// List of node labels to exclude from results
+	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
+	// 2D array of date filters for the expired_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
+	// This translates to: `(expired_at > date1 AND expired_at < date2) OR (expired_at = date3)`
+	ExpiredAt [][]*DateFilter `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// 2D array of date filters for the invalid_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
+	// This translates to: `(invalid_at > date1 AND invalid_at < date2) OR (invalid_at = date3)`
+	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// List of node labels to filter on
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// List of property filters to apply to nodes and edges
+	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
+	// List of node UUIDs to filter edges on: an edge matches if its source
+	// node UUID is in this list. Applies to edges only; rejected on requests
+	// whose result type contains no edges. Max 256 entries.
+	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
+	// List of node UUIDs to filter edges on: an edge matches if its target
+	// node UUID is in this list. Applies to edges only; rejected on requests
+	// whose result type contains no edges. Max 256 entries.
+	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
+	// 2D array of date filters for the valid_at field.
+	// The outer array elements are combined with OR logic.
+	// The inner array elements are combined with AND logic.
+	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
+	// This translates to: `(valid_at > date1 AND valid_at < date2) OR (valid_at = date3)`
+	ValidAt [][]*DateFilter `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SearchFilters) GetConnectedNodeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.ConnectedNodeUUIDs
+}
+
+func (s *SearchFilters) GetCreatedAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.CreatedAt
+}
+
+func (s *SearchFilters) GetEdgeTypes() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EdgeTypes
+}
+
+func (s *SearchFilters) GetEdgeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EdgeUUIDs
+}
+
+func (s *SearchFilters) GetEpisodeMetadataFilters() *MetadataFilterGroup {
+	if s == nil {
+		return nil
+	}
+	return s.EpisodeMetadataFilters
+}
+
+func (s *SearchFilters) GetEpisodeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.EpisodeUUIDs
+}
+
+func (s *SearchFilters) GetExcludeEdgeTypes() []string {
+	if s == nil {
+		return nil
+	}
+	return s.ExcludeEdgeTypes
+}
+
+func (s *SearchFilters) GetExcludeNodeLabels() []string {
+	if s == nil {
+		return nil
+	}
+	return s.ExcludeNodeLabels
+}
+
+func (s *SearchFilters) GetExpiredAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.ExpiredAt
+}
+
+func (s *SearchFilters) GetInvalidAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.InvalidAt
+}
+
+func (s *SearchFilters) GetNodeLabels() []string {
+	if s == nil {
+		return nil
+	}
+	return s.NodeLabels
+}
+
+func (s *SearchFilters) GetPropertyFilters() []*PropertyFilter {
+	if s == nil {
+		return nil
+	}
+	return s.PropertyFilters
+}
+
+func (s *SearchFilters) GetSourceNodeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.SourceNodeUUIDs
+}
+
+func (s *SearchFilters) GetTargetNodeUUIDs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.TargetNodeUUIDs
+}
+
+func (s *SearchFilters) GetValidAt() [][]*DateFilter {
+	if s == nil {
+		return nil
+	}
+	return s.ValidAt
+}
+
+func (s *SearchFilters) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SearchFilters) require(field *big.Int) {
+	if s.explicitFields == nil {
+		s.explicitFields = big.NewInt(0)
+	}
+	s.explicitFields.Or(s.explicitFields, field)
+}
+
+// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
+	s.ConnectedNodeUUIDs = connectedNodeUUIDs
+	s.require(searchFiltersFieldConnectedNodeUUIDs)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetCreatedAt(createdAt [][]*DateFilter) {
+	s.CreatedAt = createdAt
+	s.require(searchFiltersFieldCreatedAt)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetEdgeTypes(edgeTypes []string) {
+	s.EdgeTypes = edgeTypes
+	s.require(searchFiltersFieldEdgeTypes)
+}
+
+// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetEdgeUUIDs(edgeUUIDs []string) {
+	s.EdgeUUIDs = edgeUUIDs
+	s.require(searchFiltersFieldEdgeUUIDs)
+}
+
+// SetEpisodeMetadataFilters sets the EpisodeMetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetEpisodeMetadataFilters(episodeMetadataFilters *MetadataFilterGroup) {
+	s.EpisodeMetadataFilters = episodeMetadataFilters
+	s.require(searchFiltersFieldEpisodeMetadataFilters)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
+	s.EpisodeUUIDs = episodeUUIDs
+	s.require(searchFiltersFieldEpisodeUUIDs)
+}
+
+// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
+	s.ExcludeEdgeTypes = excludeEdgeTypes
+	s.require(searchFiltersFieldExcludeEdgeTypes)
+}
+
+// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
+	s.ExcludeNodeLabels = excludeNodeLabels
+	s.require(searchFiltersFieldExcludeNodeLabels)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetExpiredAt(expiredAt [][]*DateFilter) {
+	s.ExpiredAt = expiredAt
+	s.require(searchFiltersFieldExpiredAt)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetInvalidAt(invalidAt [][]*DateFilter) {
+	s.InvalidAt = invalidAt
+	s.require(searchFiltersFieldInvalidAt)
+}
+
+// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetNodeLabels(nodeLabels []string) {
+	s.NodeLabels = nodeLabels
+	s.require(searchFiltersFieldNodeLabels)
+}
+
+// SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
+	s.PropertyFilters = propertyFilters
+	s.require(searchFiltersFieldPropertyFilters)
+}
+
+// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
+	s.SourceNodeUUIDs = sourceNodeUUIDs
+	s.require(searchFiltersFieldSourceNodeUUIDs)
+}
+
+// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
+	s.TargetNodeUUIDs = targetNodeUUIDs
+	s.require(searchFiltersFieldTargetNodeUUIDs)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetValidAt(validAt [][]*DateFilter) {
+	s.ValidAt = validAt
+	s.require(searchFiltersFieldValidAt)
+}
+
+func (s *SearchFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler SearchFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SearchFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SearchFilters) MarshalJSON() ([]byte, error) {
+	type embed SearchFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SearchFilters) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
 	taskFieldCompletedAt = big.NewInt(1 << 0)
 	taskFieldCreatedAt   = big.NewInt(1 << 1)
 	taskFieldError       = big.NewInt(1 << 2)
@@ -4436,16 +6002,32 @@ var (
 )
 
 type Task struct {
-	CompletedAt *string        `json:"completed_at,omitempty" url:"completed_at,omitempty"`
-	CreatedAt   *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Error       *ErrorBody     `json:"error,omitempty" url:"error,omitempty"`
-	Progress    *TaskProgress  `json:"progress,omitempty" url:"progress,omitempty"`
-	Result      map[string]any `json:"result,omitempty" url:"result,omitempty"`
-	StartedAt   *string        `json:"started_at,omitempty" url:"started_at,omitempty"`
-	Status      *string        `json:"status,omitempty" url:"status,omitempty"`
-	Type        *string        `json:"type,omitempty" url:"type,omitempty"`
-	UpdatedAt   *string        `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID        *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the task reached a terminal status; absent while it is still in
+	// progress.
+	CompletedAt *string `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	// The time the task was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The error that caused the task to fail; also present on a partial task
+	// when the worker can name a single cause.
+	Error *ErrorBody `json:"error,omitempty" url:"error,omitempty"`
+	// The last processing stage a worker reported for this task. It is not
+	// cleared when the task finishes, so a completed task may still show its
+	// final stage.
+	Progress *TaskProgress `json:"progress,omitempty" url:"progress,omitempty"`
+	// Operation-specific output populated once the task reaches succeeded or
+	// partial, such as identifiers the operation could not return synchronously.
+	Result map[string]any `json:"result,omitempty" url:"result,omitempty"`
+	// The time a worker began processing the task; absent until then.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// The task's current state: pending, processing, succeeded, partial, or
+	// failed.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// The kind of asynchronous operation the task represents.
+	Type *string `json:"type,omitempty" url:"type,omitempty"`
+	// The time the task was last updated.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The unique identifier of the task, used to poll its status.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4655,6 +6237,7 @@ var (
 )
 
 type TaskProgress struct {
+	// The most recent processing stage reported by the worker handling the task.
 	Stage *string `json:"stage,omitempty" url:"stage,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -4746,16 +6329,26 @@ var (
 )
 
 type ThreadSummary struct {
-	CreatedAt                    *string  `json:"created_at,omitempty" url:"created_at,omitempty"`
-	LastSummarizedAt             *string  `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
-	LastSummarizedEpisodeValidAt *string  `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
-	Relevance                    *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
-	// 8.7 puts score on every search result and relevance on the ones the
-	// cross-encoder scored. Pointers keep both off the listing (8.4).
-	Score      *float64 `json:"score,omitempty" url:"score,omitempty"`
-	Summary    *string  `json:"summary,omitempty" url:"summary,omitempty"`
-	ThreadUUID *string  `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
-	UUID       *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the summary was first created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The wall-clock time of the most recent summary update.
+	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// The latest episode reference time covered by the most recent summary
+	// update.
+	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// A score accompanies every search result; it is omitted when the summary
+	// appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// The generated summary text for the thread.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the thread this summary belongs to.
+	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The unique identifier of the thread summary.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4939,9 +6532,14 @@ var (
 )
 
 type ThreadSummaryPage struct {
-	Items      []*ThreadSummary `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string          `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int             `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The thread summaries on this page.
+	Items []*ThreadSummary `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// Omitted for this collection; use next_cursor to detect the end of
+	// pagination.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5062,16 +6660,28 @@ var (
 )
 
 type User struct {
-	CreatedAt              *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DisableDefaultOntology *bool          `json:"disable_default_ontology,omitempty" url:"disable_default_ontology,omitempty"`
-	Email                  *string        `json:"email,omitempty" url:"email,omitempty"`
-	FirstName              *string        `json:"first_name,omitempty" url:"first_name,omitempty"`
-	GraphUUID              *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	LastName               *string        `json:"last_name,omitempty" url:"last_name,omitempty"`
-	Metadata               map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	TimeZone               *string        `json:"time_zone,omitempty" url:"time_zone,omitempty"`
-	UserID                 *string        `json:"user_id,omitempty" url:"user_id,omitempty"`
-	UUID                   *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the user was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// When true, disables the use of the default fallback ontology for the
+	// user's graph.
+	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"disable_default_ontology,omitempty"`
+	// The email address of the user.
+	Email *string `json:"email,omitempty" url:"email,omitempty"`
+	// The first name of the user.
+	FirstName *string `json:"first_name,omitempty" url:"first_name,omitempty"`
+	// The unique identifier of the user's graph, populated when the user is
+	// created.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The last name of the user.
+	LastName *string `json:"last_name,omitempty" url:"last_name,omitempty"`
+	// Arbitrary key-value metadata attached to the user.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The user's IANA time zone, used to localize dates in generated context.
+	TimeZone *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
+	// The developer-assigned identifier of the user.
+	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	// The unique identifier of the user.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5277,15 +6887,122 @@ func (u *User) String() string {
 }
 
 var (
+	userInstructionFieldName = big.NewInt(1 << 0)
+	userInstructionFieldText = big.NewInt(1 << 1)
+)
+
+type UserInstruction struct {
+	// logical key for identifying the instruction
+	Name string `json:"name" url:"name"`
+	// the actual instruction text
+	Text string `json:"text" url:"text"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (u *UserInstruction) GetName() string {
+	if u == nil {
+		return ""
+	}
+	return u.Name
+}
+
+func (u *UserInstruction) GetText() string {
+	if u == nil {
+		return ""
+	}
+	return u.Text
+}
+
+func (u *UserInstruction) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
+	return u.extraProperties
+}
+
+func (u *UserInstruction) require(field *big.Int) {
+	if u.explicitFields == nil {
+		u.explicitFields = big.NewInt(0)
+	}
+	u.explicitFields.Or(u.explicitFields, field)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserInstruction) SetName(name string) {
+	u.Name = name
+	u.require(userInstructionFieldName)
+}
+
+// SetText sets the Text field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UserInstruction) SetText(text string) {
+	u.Text = text
+	u.require(userInstructionFieldText)
+}
+
+func (u *UserInstruction) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserInstruction
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserInstruction(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+	u.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserInstruction) MarshalJSON() ([]byte, error) {
+	type embed UserInstruction
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*u),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, u.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (u *UserInstruction) String() string {
+	if u == nil {
+		return "<nil>"
+	}
+	if len(u.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
+var (
 	userPageFieldItems      = big.NewInt(1 << 0)
 	userPageFieldNextCursor = big.NewInt(1 << 1)
 	userPageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
 type UserPage struct {
-	Items      []*User `json:"items,omitempty" url:"items,omitempty"`
+	// The users on this page.
+	Items []*User `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
 	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int    `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The total number of matching users, counted at the time of this response.
+	// It does not indicate whether more pages remain.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5398,8 +7115,12 @@ var (
 )
 
 type UserSummaryInstructions struct {
-	Inherited    *bool            `json:"inherited,omitempty" url:"inherited,omitempty"`
-	Instructions []map[string]any `json:"instructions,omitempty" url:"instructions,omitempty"`
+	// Whether this is the project's default value rather than an override set on
+	// this graph.
+	Inherited *bool `json:"inherited,omitempty" url:"inherited,omitempty"`
+	// The custom instructions used when generating a user's summary at this
+	// scope, each with a name and text.
+	Instructions []*UserInstruction `json:"instructions,omitempty" url:"instructions,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5415,7 +7136,7 @@ func (u *UserSummaryInstructions) GetInherited() *bool {
 	return u.Inherited
 }
 
-func (u *UserSummaryInstructions) GetInstructions() []map[string]any {
+func (u *UserSummaryInstructions) GetInstructions() []*UserInstruction {
 	if u == nil {
 		return nil
 	}
@@ -5445,7 +7166,7 @@ func (u *UserSummaryInstructions) SetInherited(inherited *bool) {
 
 // SetInstructions sets the Instructions field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UserSummaryInstructions) SetInstructions(instructions []map[string]any) {
+func (u *UserSummaryInstructions) SetInstructions(instructions []*UserInstruction) {
 	u.Instructions = instructions
 	u.require(userSummaryInstructionsFieldInstructions)
 }

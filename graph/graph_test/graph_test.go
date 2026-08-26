@@ -269,7 +269,9 @@ func TestGraphGetContextWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.GraphContextRequest{}
+	request := &zep.GraphContextRequest{
+		Query: "query",
+	}
 	_, invocationErr := client.Graph.GetContext(
 		context.TODO(),
 		"graph_uuid",
@@ -445,7 +447,9 @@ func TestGraphSearchEdgesWithWireMock(
 		Cursor: zep.String(
 			"cursor",
 		),
-		Body: &zep.SearchRequest{},
+		Body: &zep.SearchRequest{
+			Query: "query",
+		},
 	}
 	_, invocationErr := client.Graph.SearchEdges(
 		context.TODO(),
@@ -478,7 +482,9 @@ func TestGraphSearchEpisodesWithWireMock(
 		Cursor: zep.String(
 			"cursor",
 		),
-		Body: &zep.SearchRequest{},
+		Body: &zep.SearchRequest{
+			Query: "query",
+		},
 	}
 	_, invocationErr := client.Graph.SearchEpisodes(
 		context.TODO(),
@@ -511,7 +517,9 @@ func TestGraphSearchNodesWithWireMock(
 		Cursor: zep.String(
 			"cursor",
 		),
-		Body: &zep.SearchRequest{},
+		Body: &zep.SearchRequest{
+			Query: "query",
+		},
 	}
 	_, invocationErr := client.Graph.SearchNodes(
 		context.TODO(),
@@ -544,7 +552,9 @@ func TestGraphSearchObservationsWithWireMock(
 		Cursor: zep.String(
 			"cursor",
 		),
-		Body: &zep.SearchRequest{},
+		Body: &zep.SearchRequest{
+			Query: "query",
+		},
 	}
 	_, invocationErr := client.Graph.SearchObservations(
 		context.TODO(),
@@ -577,7 +587,9 @@ func TestGraphSearchThreadSummariesWithWireMock(
 		Cursor: zep.String(
 			"cursor",
 		),
-		Body: &zep.SearchRequest{},
+		Body: &zep.SearchRequest{
+			Query: "query",
+		},
 	}
 	_, invocationErr := client.Graph.SearchThreadSummaries(
 		context.TODO(),
@@ -603,7 +615,11 @@ func TestGraphGetSubgraphWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.SubgraphRequest{}
+	request := &zep.SubgraphRequest{
+		SeedNodeUUIDs: []string{
+			"seed_node_uuids",
+		},
+	}
 	_, invocationErr := client.Graph.GetSubgraph(
 		context.TODO(),
 		"graph_uuid",

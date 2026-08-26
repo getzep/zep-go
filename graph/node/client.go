@@ -42,7 +42,13 @@ func NewClient(options *core.RequestOptions) *Client {
 
 // Example:
 //
-//	request := &graph.AddNodesRequest{}
+//	request := &graph.AddNodesRequest{
+//	    Nodes: []*zep.NodeInput{
+//	        &zep.NodeInput{
+//	            Name: "name",
+//	        },
+//	    },
+//	}
 //	client.Graph.Node.Add(
 //	    context.TODO(),
 //	    "graph_uuid",

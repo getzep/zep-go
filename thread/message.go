@@ -13,6 +13,7 @@ var (
 )
 
 type PatchMessageRequest struct {
+	// Metadata to merge onto the message; a key set to null is removed.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

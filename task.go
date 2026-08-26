@@ -52,9 +52,14 @@ var (
 )
 
 type TaskPage struct {
-	Items      []*Task `json:"items,omitempty" url:"items,omitempty"`
+	// The tasks on this page.
+	Items []*Task `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
 	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int    `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The total number of matching tasks, counted at the time of this response.
+	// It does not indicate whether more pages remain.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
