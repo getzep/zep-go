@@ -14,7 +14,8 @@ var (
 )
 
 type AddBatchItemsRequest struct {
-	Items []map[string]any `json:"items,omitempty" url:"-"`
+	// The batch items to append, each identified by its type field.
+	Items []*BatchItemInput `json:"items" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -29,7 +30,7 @@ func (a *AddBatchItemsRequest) require(field *big.Int) {
 
 // SetItems sets the Items field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddBatchItemsRequest) SetItems(items []map[string]any) {
+func (a *AddBatchItemsRequest) SetItems(items []*BatchItemInput) {
 	a.Items = items
 	a.require(addBatchItemsRequestFieldItems)
 }
@@ -62,9 +63,14 @@ var (
 )
 
 type CreateBatchRequest struct {
-	IgnoreRoles    []string       `json:"ignore_roles,omitempty" url:"-"`
-	Metadata       map[string]any `json:"metadata,omitempty" url:"-"`
-	StrictOntology *bool          `json:"strict_ontology,omitempty" url:"-"`
+	// Message roles to skip during graph extraction for thread message items in
+	// this batch.
+	IgnoreRoles []string `json:"ignore_roles,omitempty" url:"-"`
+	// Metadata to store on the batch.
+	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+	// When true, prevents extraction of generic entity nodes that do not match
+	// the configured ontology for episodes in this batch.
+	StrictOntology *bool `json:"strict_ontology,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -211,12 +217,21 @@ var (
 )
 
 type Batch struct {
-	CreatedAt      *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Metadata       map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Progress       map[string]any `json:"progress,omitempty" url:"progress,omitempty"`
-	Status         *string        `json:"status,omitempty" url:"status,omitempty"`
-	StrictOntology *bool          `json:"strict_ontology,omitempty" url:"strict_ontology,omitempty"`
-	UUID           *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the batch was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// Custom metadata associated with the batch, supplied when it was created.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The batch's processing progress, including its current stage and item
+	// counts. Present only once processing has started.
+	Progress map[string]any `json:"progress,omitempty" url:"progress,omitempty"`
+	// The processing status of the batch: draft, invalid, queued, processing,
+	// succeeded, partial, failed, or canceled.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// Whether ontology enforcement is applied when this batch is processed,
+	// rejecting entities that do not match the configured ontology.
+	StrictOntology *bool `json:"strict_ontology,omitempty" url:"strict_ontology,omitempty"`
+	// The unique identifier of the batch.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -378,15 +393,26 @@ var (
 )
 
 type BatchItem struct {
-	CreatedAt     *string          `json:"created_at,omitempty" url:"created_at,omitempty"`
-	EpisodeUUID   *string          `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
-	GraphUUID     *string          `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	SequenceIndex *int             `json:"sequence_index,omitempty" url:"sequence_index,omitempty"`
-	SourceUUID    *string          `json:"source_uuid,omitempty" url:"source_uuid,omitempty"`
-	Status        *BatchItemStatus `json:"status,omitempty" url:"status,omitempty"`
-	ThreadUUID    *string          `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
-	Type          *BatchItemKind   `json:"type,omitempty" url:"type,omitempty"`
-	UUID          *string          `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the item was appended to the batch.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The identifier of the episode created for this item, equal to source_uuid.
+	EpisodeUUID *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
+	// The graph the item's episode is or will be ingested into.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The item's position within the batch, in the order it was appended.
+	SequenceIndex *int `json:"sequence_index,omitempty" url:"sequence_index,omitempty"`
+	// The unique identifier of the item's stored source row.
+	SourceUUID *string `json:"source_uuid,omitempty" url:"source_uuid,omitempty"`
+	// The processing status of the item: pending, queued, processing, succeeded,
+	// failed, skipped, or canceled.
+	Status *BatchItemStatus `json:"status,omitempty" url:"status,omitempty"`
+	// The thread the item's message is or will be added to. Present only for
+	// thread_message items.
+	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The kind of item: graph_episode or thread_message.
+	Type *BatchItemKind `json:"type,omitempty" url:"type,omitempty"`
+	// The unique identifier of the batch item.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -577,6 +603,278 @@ func (b *BatchItem) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+var (
+	batchItemInputFieldContent           = big.NewInt(1 << 0)
+	batchItemInputFieldData              = big.NewInt(1 << 1)
+	batchItemInputFieldDataType          = big.NewInt(1 << 2)
+	batchItemInputFieldDocumentID        = big.NewInt(1 << 3)
+	batchItemInputFieldGraphUUID         = big.NewInt(1 << 4)
+	batchItemInputFieldMetadata          = big.NewInt(1 << 5)
+	batchItemInputFieldName              = big.NewInt(1 << 6)
+	batchItemInputFieldRole              = big.NewInt(1 << 7)
+	batchItemInputFieldSourceDescription = big.NewInt(1 << 8)
+	batchItemInputFieldThreadUUID        = big.NewInt(1 << 9)
+	batchItemInputFieldType              = big.NewInt(1 << 10)
+	batchItemInputFieldUserUUID          = big.NewInt(1 << 11)
+)
+
+type BatchItemInput struct {
+	// The message content, for a thread_message item.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The episode content, for a graph_episode item.
+	Data *string `json:"data,omitempty" url:"data,omitempty"`
+	// The data format of the episode: text, json, or message.
+	DataType *V4BatchItemInputDataType `json:"data_type,omitempty" url:"data_type,omitempty"`
+	// Groups this item as a chunk of a document on the graph.
+	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
+	// The graph to ingest this item into. Mutually exclusive with user_uuid.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// Metadata to store on the item.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// A customizable name for the sender of the message.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The role of the message's sender, for a thread_message item.
+	Role *V4BatchItemInputRole `json:"role,omitempty" url:"role,omitempty"`
+	// A description of the source of this episode.
+	SourceDescription *string `json:"source_description,omitempty" url:"source_description,omitempty"`
+	// The thread this message is added to, for a thread_message item.
+	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The kind of item: graph_episode or thread_message.
+	Type V4BatchItemInputType `json:"type" url:"type"`
+	// The user whose graph this item is ingested into. Mutually exclusive with graph_uuid.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (b *BatchItemInput) GetContent() *string {
+	if b == nil {
+		return nil
+	}
+	return b.Content
+}
+
+func (b *BatchItemInput) GetData() *string {
+	if b == nil {
+		return nil
+	}
+	return b.Data
+}
+
+func (b *BatchItemInput) GetDataType() *V4BatchItemInputDataType {
+	if b == nil {
+		return nil
+	}
+	return b.DataType
+}
+
+func (b *BatchItemInput) GetDocumentID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.DocumentID
+}
+
+func (b *BatchItemInput) GetGraphUUID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.GraphUUID
+}
+
+func (b *BatchItemInput) GetMetadata() map[string]any {
+	if b == nil {
+		return nil
+	}
+	return b.Metadata
+}
+
+func (b *BatchItemInput) GetName() *string {
+	if b == nil {
+		return nil
+	}
+	return b.Name
+}
+
+func (b *BatchItemInput) GetRole() *V4BatchItemInputRole {
+	if b == nil {
+		return nil
+	}
+	return b.Role
+}
+
+func (b *BatchItemInput) GetSourceDescription() *string {
+	if b == nil {
+		return nil
+	}
+	return b.SourceDescription
+}
+
+func (b *BatchItemInput) GetThreadUUID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.ThreadUUID
+}
+
+func (b *BatchItemInput) GetType() V4BatchItemInputType {
+	if b == nil {
+		return ""
+	}
+	return b.Type
+}
+
+func (b *BatchItemInput) GetUserUUID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.UserUUID
+}
+
+func (b *BatchItemInput) GetExtraProperties() map[string]interface{} {
+	if b == nil {
+		return nil
+	}
+	return b.extraProperties
+}
+
+func (b *BatchItemInput) require(field *big.Int) {
+	if b.explicitFields == nil {
+		b.explicitFields = big.NewInt(0)
+	}
+	b.explicitFields.Or(b.explicitFields, field)
+}
+
+// SetContent sets the Content field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetContent(content *string) {
+	b.Content = content
+	b.require(batchItemInputFieldContent)
+}
+
+// SetData sets the Data field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetData(data *string) {
+	b.Data = data
+	b.require(batchItemInputFieldData)
+}
+
+// SetDataType sets the DataType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetDataType(dataType *V4BatchItemInputDataType) {
+	b.DataType = dataType
+	b.require(batchItemInputFieldDataType)
+}
+
+// SetDocumentID sets the DocumentID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetDocumentID(documentID *string) {
+	b.DocumentID = documentID
+	b.require(batchItemInputFieldDocumentID)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetGraphUUID(graphUUID *string) {
+	b.GraphUUID = graphUUID
+	b.require(batchItemInputFieldGraphUUID)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetMetadata(metadata map[string]any) {
+	b.Metadata = metadata
+	b.require(batchItemInputFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetName(name *string) {
+	b.Name = name
+	b.require(batchItemInputFieldName)
+}
+
+// SetRole sets the Role field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetRole(role *V4BatchItemInputRole) {
+	b.Role = role
+	b.require(batchItemInputFieldRole)
+}
+
+// SetSourceDescription sets the SourceDescription field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetSourceDescription(sourceDescription *string) {
+	b.SourceDescription = sourceDescription
+	b.require(batchItemInputFieldSourceDescription)
+}
+
+// SetThreadUUID sets the ThreadUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetThreadUUID(threadUUID *string) {
+	b.ThreadUUID = threadUUID
+	b.require(batchItemInputFieldThreadUUID)
+}
+
+// SetType sets the Type field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetType(type_ V4BatchItemInputType) {
+	b.Type = type_
+	b.require(batchItemInputFieldType)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetUserUUID(userUUID *string) {
+	b.UserUUID = userUUID
+	b.require(batchItemInputFieldUserUUID)
+}
+
+func (b *BatchItemInput) UnmarshalJSON(data []byte) error {
+	type unmarshaler BatchItemInput
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BatchItemInput(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+	b.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BatchItemInput) MarshalJSON() ([]byte, error) {
+	type embed BatchItemInput
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, b.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (b *BatchItemInput) String() string {
+	if b == nil {
+		return "<nil>"
+	}
+	if len(b.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
 type BatchItemKind string
 
 const (
@@ -606,9 +904,13 @@ var (
 )
 
 type BatchItemPage struct {
-	Items      []*BatchItem `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string      `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int         `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The batch items on this page.
+	Items []*BatchItem `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results
+	// are available.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of items in the batch that match the request.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -757,6 +1059,7 @@ var (
 )
 
 type BatchItemsResponse struct {
+	// The batch items that were added, in the order they were appended.
 	Items []*BatchItem `json:"items,omitempty" url:"items,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -843,9 +1146,13 @@ var (
 )
 
 type BatchPage struct {
-	Items      []*Batch `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string  `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int     `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The batches on this page.
+	Items []*Batch `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results
+	// are available.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of batches that match the request.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -958,8 +1265,10 @@ var (
 )
 
 type ProcessBatchResult struct {
+	// The batch that was submitted for processing.
 	Batch *Batch `json:"batch,omitempty" url:"batch,omitempty"`
-	Task  *Task  `json:"task,omitempty" url:"task,omitempty"`
+	// The task tracking the batch's asynchronous processing.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1050,4 +1359,85 @@ func (p *ProcessBatchResult) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", p)
+}
+
+// The data format of the episode: text, json, or message.
+type V4BatchItemInputDataType string
+
+const (
+	V4BatchItemInputDataTypeText    V4BatchItemInputDataType = "text"
+	V4BatchItemInputDataTypeJSON    V4BatchItemInputDataType = "json"
+	V4BatchItemInputDataTypeMessage V4BatchItemInputDataType = "message"
+)
+
+func NewV4BatchItemInputDataTypeFromString(s string) (V4BatchItemInputDataType, error) {
+	switch s {
+	case "text":
+		return V4BatchItemInputDataTypeText, nil
+	case "json":
+		return V4BatchItemInputDataTypeJSON, nil
+	case "message":
+		return V4BatchItemInputDataTypeMessage, nil
+	}
+	var t V4BatchItemInputDataType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (v V4BatchItemInputDataType) Ptr() *V4BatchItemInputDataType {
+	return &v
+}
+
+// The role of the message's sender, for a thread_message item.
+type V4BatchItemInputRole string
+
+const (
+	V4BatchItemInputRoleSystem    V4BatchItemInputRole = "system"
+	V4BatchItemInputRoleAssistant V4BatchItemInputRole = "assistant"
+	V4BatchItemInputRoleUser      V4BatchItemInputRole = "user"
+	V4BatchItemInputRoleFunction  V4BatchItemInputRole = "function"
+	V4BatchItemInputRoleTool      V4BatchItemInputRole = "tool"
+)
+
+func NewV4BatchItemInputRoleFromString(s string) (V4BatchItemInputRole, error) {
+	switch s {
+	case "system":
+		return V4BatchItemInputRoleSystem, nil
+	case "assistant":
+		return V4BatchItemInputRoleAssistant, nil
+	case "user":
+		return V4BatchItemInputRoleUser, nil
+	case "function":
+		return V4BatchItemInputRoleFunction, nil
+	case "tool":
+		return V4BatchItemInputRoleTool, nil
+	}
+	var t V4BatchItemInputRole
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (v V4BatchItemInputRole) Ptr() *V4BatchItemInputRole {
+	return &v
+}
+
+// The kind of item: graph_episode or thread_message.
+type V4BatchItemInputType string
+
+const (
+	V4BatchItemInputTypeGraphEpisode  V4BatchItemInputType = "graph_episode"
+	V4BatchItemInputTypeThreadMessage V4BatchItemInputType = "thread_message"
+)
+
+func NewV4BatchItemInputTypeFromString(s string) (V4BatchItemInputType, error) {
+	switch s {
+	case "graph_episode":
+		return V4BatchItemInputTypeGraphEpisode, nil
+	case "thread_message":
+		return V4BatchItemInputTypeThreadMessage, nil
+	}
+	var t V4BatchItemInputType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (v V4BatchItemInputType) Ptr() *V4BatchItemInputType {
+	return &v
 }

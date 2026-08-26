@@ -182,7 +182,7 @@ func TestSettersCreateThreadRequest(t *testing.T) {
 
 	t.Run("SetUserUUID", func(t *testing.T) {
 		obj := &CreateThreadRequest{}
-		var fernTestValueUserUUID *string
+		var fernTestValueUserUUID string
 		obj.SetUserUUID(fernTestValueUserUUID)
 		assert.Equal(t, fernTestValueUserUUID, obj.UserUUID)
 		assert.NotNil(t, obj.explicitFields)
@@ -226,7 +226,7 @@ func TestSettersMarkExplicitCreateThreadRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &CreateThreadRequest{}
-		var fernTestValueUserUUID *string
+		var fernTestValueUserUUID string
 
 		// Act
 		obj.SetUserUUID(fernTestValueUserUUID)

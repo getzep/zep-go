@@ -20,7 +20,7 @@ func TestSettersAddEpisodeRequest(t *testing.T) {
 
 	t.Run("SetData", func(t *testing.T) {
 		obj := &AddEpisodeRequest{}
-		var fernTestValueData *string
+		var fernTestValueData string
 		obj.SetData(fernTestValueData)
 		assert.Equal(t, fernTestValueData, obj.Data)
 		assert.NotNil(t, obj.explicitFields)
@@ -60,7 +60,7 @@ func TestSettersAddEpisodeRequest(t *testing.T) {
 
 	t.Run("SetType", func(t *testing.T) {
 		obj := &AddEpisodeRequest{}
-		var fernTestValueType *string
+		var fernTestValueType *V4AddEpisodeRequestType
 		obj.SetType(fernTestValueType)
 		assert.Equal(t, fernTestValueType, obj.Type)
 		assert.NotNil(t, obj.explicitFields)
@@ -104,7 +104,7 @@ func TestSettersMarkExplicitAddEpisodeRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddEpisodeRequest{}
-		var fernTestValueData *string
+		var fernTestValueData string
 
 		// Act
 		obj.SetData(fernTestValueData)
@@ -259,7 +259,7 @@ func TestSettersMarkExplicitAddEpisodeRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddEpisodeRequest{}
-		var fernTestValueType *string
+		var fernTestValueType *V4AddEpisodeRequestType
 
 		// Act
 		obj.SetType(fernTestValueType)
@@ -499,4 +499,40 @@ func TestSettersMarkExplicitPatchEpisodeRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
+}
+
+func TestEnumV4AddEpisodeRequestType(t *testing.T) {
+	t.Run("NewFromString_text", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4AddEpisodeRequestTypeFromString("text")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4AddEpisodeRequestType("text"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_json", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4AddEpisodeRequestTypeFromString("json")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4AddEpisodeRequestType("json"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_message", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4AddEpisodeRequestTypeFromString("message")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4AddEpisodeRequestType("message"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewV4AddEpisodeRequestTypeFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewV4AddEpisodeRequestTypeFromString("text")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
 }

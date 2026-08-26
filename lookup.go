@@ -16,9 +16,12 @@ var (
 )
 
 type BatchLookupRequest struct {
-	Graphs  []string `json:"graphs,omitempty" url:"-"`
+	// Developer-assigned graph IDs to resolve to UUIDs.
+	Graphs []string `json:"graphs,omitempty" url:"-"`
+	// Developer-assigned thread IDs to resolve to UUIDs.
 	Threads []string `json:"threads,omitempty" url:"-"`
-	Users   []string `json:"users,omitempty" url:"-"`
+	// Developer-assigned user IDs to resolve to UUIDs.
+	Users []string `json:"users,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -78,6 +81,8 @@ var (
 )
 
 type LookupBatchResponse struct {
+	// The lookup result for each identifier submitted, in request order within
+	// each resource type.
 	Items []*LookupItem `json:"items,omitempty" url:"items,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -165,10 +170,14 @@ var (
 )
 
 type LookupItem struct {
-	Found        *bool   `json:"found,omitempty" url:"found,omitempty"`
-	LegacyID     *string `json:"legacy_id,omitempty" url:"legacy_id,omitempty"`
+	// Whether the identifier resolved to a resource visible to the caller.
+	Found *bool `json:"found,omitempty" url:"found,omitempty"`
+	// The developer-assigned identifier that was looked up.
+	LegacyID *string `json:"legacy_id,omitempty" url:"legacy_id,omitempty"`
+	// The type of resource this entry resolves: user, thread, or graph.
 	ResourceType *string `json:"resource_type,omitempty" url:"resource_type,omitempty"`
-	UUID         *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The resource's unique identifier; present only when found is true.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`

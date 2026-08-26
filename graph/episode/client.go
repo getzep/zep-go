@@ -126,7 +126,9 @@ func (c *Client) ListForDocument(
 
 // Example:
 //
-//	request := &graph.AddEpisodeRequest{}
+//	request := &graph.AddEpisodeRequest{
+//	    Data: "data",
+//	}
 //	client.Graph.Episode.Add(
 //	    context.TODO(),
 //	    "graph_uuid",

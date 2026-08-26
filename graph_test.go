@@ -219,7 +219,7 @@ func TestSettersMarkExplicitCreateGraphRequest(t *testing.T) {
 func TestSettersGraphContextRequest(t *testing.T) {
 	t.Run("SetFilters", func(t *testing.T) {
 		obj := &GraphContextRequest{}
-		var fernTestValueFilters map[string]any
+		var fernTestValueFilters *SearchFilters
 		obj.SetFilters(fernTestValueFilters)
 		assert.Equal(t, fernTestValueFilters, obj.Filters)
 		assert.NotNil(t, obj.explicitFields)
@@ -243,7 +243,7 @@ func TestSettersGraphContextRequest(t *testing.T) {
 
 	t.Run("SetQuery", func(t *testing.T) {
 		obj := &GraphContextRequest{}
-		var fernTestValueQuery *string
+		var fernTestValueQuery string
 		obj.SetQuery(fernTestValueQuery)
 		assert.Equal(t, fernTestValueQuery, obj.Query)
 		assert.NotNil(t, obj.explicitFields)
@@ -251,7 +251,7 @@ func TestSettersGraphContextRequest(t *testing.T) {
 
 	t.Run("SetRecencyBias", func(t *testing.T) {
 		obj := &GraphContextRequest{}
-		var fernTestValueRecencyBias *string
+		var fernTestValueRecencyBias *V4GraphContextRequestRecencyBias
 		obj.SetRecencyBias(fernTestValueRecencyBias)
 		assert.Equal(t, fernTestValueRecencyBias, obj.RecencyBias)
 		assert.NotNil(t, obj.explicitFields)
@@ -272,7 +272,7 @@ func TestSettersMarkExplicitGraphContextRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &GraphContextRequest{}
-		var fernTestValueFilters map[string]any
+		var fernTestValueFilters *SearchFilters
 
 		// Act
 		obj.SetFilters(fernTestValueFilters)
@@ -365,7 +365,7 @@ func TestSettersMarkExplicitGraphContextRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &GraphContextRequest{}
-		var fernTestValueQuery *string
+		var fernTestValueQuery string
 
 		// Act
 		obj.SetQuery(fernTestValueQuery)
@@ -396,7 +396,7 @@ func TestSettersMarkExplicitGraphContextRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &GraphContextRequest{}
-		var fernTestValueRecencyBias *string
+		var fernTestValueRecencyBias *V4GraphContextRequestRecencyBias
 
 		// Act
 		obj.SetRecencyBias(fernTestValueRecencyBias)
@@ -467,7 +467,7 @@ func TestSettersSubgraphRequest(t *testing.T) {
 
 	t.Run("SetDirection", func(t *testing.T) {
 		obj := &SubgraphRequest{}
-		var fernTestValueDirection *string
+		var fernTestValueDirection *V4SubgraphRequestDirection
 		obj.SetDirection(fernTestValueDirection)
 		assert.Equal(t, fernTestValueDirection, obj.Direction)
 		assert.NotNil(t, obj.explicitFields)
@@ -475,7 +475,7 @@ func TestSettersSubgraphRequest(t *testing.T) {
 
 	t.Run("SetFilters", func(t *testing.T) {
 		obj := &SubgraphRequest{}
-		var fernTestValueFilters map[string]any
+		var fernTestValueFilters *SearchFilters
 		obj.SetFilters(fernTestValueFilters)
 		assert.Equal(t, fernTestValueFilters, obj.Filters)
 		assert.NotNil(t, obj.explicitFields)
@@ -543,7 +543,7 @@ func TestSettersMarkExplicitSubgraphRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SubgraphRequest{}
-		var fernTestValueDirection *string
+		var fernTestValueDirection *V4SubgraphRequestDirection
 
 		// Act
 		obj.SetDirection(fernTestValueDirection)
@@ -574,7 +574,7 @@ func TestSettersMarkExplicitSubgraphRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SubgraphRequest{}
-		var fernTestValueFilters map[string]any
+		var fernTestValueFilters *SearchFilters
 
 		// Act
 		obj.SetFilters(fernTestValueFilters)
@@ -7843,7 +7843,7 @@ func TestSettersSearchRequest(t *testing.T) {
 
 	t.Run("SetFilters", func(t *testing.T) {
 		obj := &SearchRequest{}
-		var fernTestValueFilters map[string]any
+		var fernTestValueFilters *SearchFilters
 		obj.SetFilters(fernTestValueFilters)
 		assert.Equal(t, fernTestValueFilters, obj.Filters)
 		assert.NotNil(t, obj.explicitFields)
@@ -7859,7 +7859,7 @@ func TestSettersSearchRequest(t *testing.T) {
 
 	t.Run("SetQuery", func(t *testing.T) {
 		obj := &SearchRequest{}
-		var fernTestValueQuery *string
+		var fernTestValueQuery string
 		obj.SetQuery(fernTestValueQuery)
 		assert.Equal(t, fernTestValueQuery, obj.Query)
 		assert.NotNil(t, obj.explicitFields)
@@ -7867,7 +7867,7 @@ func TestSettersSearchRequest(t *testing.T) {
 
 	t.Run("SetReranker", func(t *testing.T) {
 		obj := &SearchRequest{}
-		var fernTestValueReranker *string
+		var fernTestValueReranker *V4SearchRequestReranker
 		obj.SetReranker(fernTestValueReranker)
 		assert.Equal(t, fernTestValueReranker, obj.Reranker)
 		assert.NotNil(t, obj.explicitFields)
@@ -7946,7 +7946,7 @@ func TestGettersSearchRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchRequest{}
-		var expected map[string]any
+		var expected *SearchFilters
 		obj.Filters = expected
 
 		// Act & Assert
@@ -8012,21 +8012,11 @@ func TestGettersSearchRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchRequest{}
-		var expected *string
+		var expected string
 		obj.Query = expected
 
 		// Act & Assert
 		assert.Equal(t, expected, obj.GetQuery(), "getter should return the property value")
-	})
-
-	t.Run("GetQuery_NilValue", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &SearchRequest{}
-		obj.Query = nil
-
-		// Act & Assert
-		assert.Nil(t, obj.GetQuery(), "getter should return nil when property is nil")
 	})
 
 	t.Run("GetQuery_NilReceiver", func(t *testing.T) {
@@ -8045,7 +8035,7 @@ func TestGettersSearchRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchRequest{}
-		var expected *string
+		var expected *V4SearchRequestReranker
 		obj.Reranker = expected
 
 		// Act & Assert
@@ -8143,7 +8133,7 @@ func TestSettersMarkExplicitSearchRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchRequest{}
-		var fernTestValueFilters map[string]any
+		var fernTestValueFilters *SearchFilters
 
 		// Act
 		obj.SetFilters(fernTestValueFilters)
@@ -8205,7 +8195,7 @@ func TestSettersMarkExplicitSearchRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchRequest{}
-		var fernTestValueQuery *string
+		var fernTestValueQuery string
 
 		// Act
 		obj.SetQuery(fernTestValueQuery)
@@ -8236,7 +8226,7 @@ func TestSettersMarkExplicitSearchRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchRequest{}
-		var fernTestValueReranker *string
+		var fernTestValueReranker *V4SearchRequestReranker
 
 		// Act
 		obj.SetReranker(fernTestValueReranker)
@@ -9319,6 +9309,128 @@ func TestStringSubgraphResponse(t *testing.T) {
 		var obj *SubgraphResponse
 		result := obj.String()
 		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
+	})
+}
+
+func TestEnumV4GraphContextRequestRecencyBias(t *testing.T) {
+	t.Run("NewFromString_off", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4GraphContextRequestRecencyBiasFromString("off")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4GraphContextRequestRecencyBias("off"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_mild", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4GraphContextRequestRecencyBiasFromString("mild")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4GraphContextRequestRecencyBias("mild"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_strong", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4GraphContextRequestRecencyBiasFromString("strong")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4GraphContextRequestRecencyBias("strong"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewV4GraphContextRequestRecencyBiasFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewV4GraphContextRequestRecencyBiasFromString("off")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumV4SearchRequestReranker(t *testing.T) {
+	t.Run("NewFromString_rrf", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4SearchRequestRerankerFromString("rrf")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4SearchRequestReranker("rrf"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_mmr", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4SearchRequestRerankerFromString("mmr")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4SearchRequestReranker("mmr"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_node_distance", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4SearchRequestRerankerFromString("node_distance")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4SearchRequestReranker("node_distance"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_episode_mentions", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4SearchRequestRerankerFromString("episode_mentions")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4SearchRequestReranker("episode_mentions"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_cross_encoder", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4SearchRequestRerankerFromString("cross_encoder")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4SearchRequestReranker("cross_encoder"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewV4SearchRequestRerankerFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewV4SearchRequestRerankerFromString("rrf")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumV4SubgraphRequestDirection(t *testing.T) {
+	t.Run("NewFromString_in", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4SubgraphRequestDirectionFromString("in")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4SubgraphRequestDirection("in"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_out", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4SubgraphRequestDirectionFromString("out")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4SubgraphRequestDirection("out"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_both", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4SubgraphRequestDirectionFromString("both")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4SubgraphRequestDirection("both"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewV4SubgraphRequestDirectionFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewV4SubgraphRequestDirectionFromString("in")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
 	})
 }
 

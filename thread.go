@@ -17,10 +17,17 @@ var (
 )
 
 type AddMessagesRequest struct {
-	IgnoreRoles    []string      `json:"ignore_roles,omitempty" url:"-"`
-	Messages       []*AddMessage `json:"messages,omitempty" url:"-"`
-	ReturnContext  *bool         `json:"return_context,omitempty" url:"-"`
-	StrictOntology *bool         `json:"strict_ontology,omitempty" url:"-"`
+	// Message roles to skip during graph extraction; the messages are still
+	// stored.
+	IgnoreRoles []string `json:"ignore_roles,omitempty" url:"-"`
+	// The messages to add to the thread.
+	Messages []*AddMessage `json:"messages" url:"-"`
+	// When true, returns the context block for the thread's most recent
+	// messages.
+	ReturnContext *bool `json:"return_context,omitempty" url:"-"`
+	// When true, prevents extraction of generic entity nodes that do not match
+	// the configured ontology.
+	StrictOntology *bool `json:"strict_ontology,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -88,8 +95,10 @@ var (
 )
 
 type CreateThreadRequest struct {
+	// An optional developer-assigned identifier for the thread.
 	ThreadID *string `json:"thread_id,omitempty" url:"-"`
-	UserUUID *string `json:"user_uuid,omitempty" url:"-"`
+	// The UUID of the user this thread belongs to.
+	UserUUID string `json:"user_uuid" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -111,7 +120,7 @@ func (c *CreateThreadRequest) SetThreadID(threadID *string) {
 
 // SetUserUUID sets the UserUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateThreadRequest) SetUserUUID(userUUID *string) {
+func (c *CreateThreadRequest) SetUserUUID(userUUID string) {
 	c.UserUUID = userUUID
 	c.require(createThreadRequestFieldUserUUID)
 }
@@ -310,11 +319,18 @@ var (
 )
 
 type AddMessage struct {
-	Content  *string        `json:"content,omitempty" url:"content,omitempty"`
+	// The content of the message.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// Custom metadata to store with the message.
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Name     *string        `json:"name,omitempty" url:"name,omitempty"`
-	Role     *RoleType      `json:"role,omitempty" url:"role,omitempty"`
-	UUID     *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// A customizable name for the sender of the message, for example "john" or
+	// "sales_agent".
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The role of the message's sender.
+	Role *RoleType `json:"role,omitempty" url:"role,omitempty"`
+	// Reserved for future use. Message identifiers are always server-assigned,
+	// so this field must be left unset.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -456,9 +472,14 @@ var (
 )
 
 type AddMessagesResult struct {
-	Context  *string    `json:"context,omitempty" url:"context,omitempty"`
+	// The context block assembled from the graph after adding the messages,
+	// present only when return_context is true in the request.
+	Context *string `json:"context,omitempty" url:"context,omitempty"`
+	// The messages that were added, each including its assigned identifier.
 	Messages []*Message `json:"messages,omitempty" url:"messages,omitempty"`
-	Task     *Task      `json:"task,omitempty" url:"task,omitempty"`
+	// The asynchronous task that tracks the messages' graph extraction and
+	// indexing.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -572,9 +593,14 @@ var (
 )
 
 type MessagePage struct {
-	Items      []*Message `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string    `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int       `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The messages on this page.
+	Items []*Message `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of matching messages, counted at the time of this
+	// response. It does not indicate whether more pages remain.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -691,12 +717,18 @@ var (
 )
 
 type Thread struct {
+	// The time the thread was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The unique identifier of the owning user's graph.
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	ThreadID  *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
+	// The developer-assigned identifier of the thread.
+	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
+	// The time the thread was last updated.
 	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UserUUID  *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
-	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The unique identifier of the user the thread belongs to.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
+	// The unique identifier of the thread.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -850,6 +882,9 @@ var (
 )
 
 type ThreadContextResponse struct {
+	// The context block containing relevant facts, entities, and messages or
+	// episodes from the user's graph, meant to be placed in the system prompt on
+	// every turn.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -934,6 +969,7 @@ var (
 )
 
 type ThreadDeleteResult struct {
+	// The task tracking the thread's asynchronous deletion.
 	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -1020,9 +1056,14 @@ var (
 )
 
 type ThreadPage struct {
-	Items      []*Thread `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string   `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int      `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The threads on this page.
+	Items []*Thread `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of matching threads, counted at the time of this
+	// response. It does not indicate whether more pages remain.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`

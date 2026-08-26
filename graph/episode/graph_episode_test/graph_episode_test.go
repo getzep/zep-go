@@ -122,7 +122,9 @@ func TestGraphEpisodeAddWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.AddEpisodeRequest{}
+	request := &graph.AddEpisodeRequest{
+		Data: "data",
+	}
 	_, invocationErr := client.Graph.Episode.Add(
 		context.TODO(),
 		"graph_uuid",

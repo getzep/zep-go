@@ -8,8 +8,8 @@ The Zep Go library provides convenient access to the Zep APIs from Go.
 
 - [Requirements](#requirements)
 - [Initialize Client](#initialize-client)
-- [Add Messages to a Thread](#add-messages-to-a-thread)
-- [Get Thread Context](#get-thread-context)
+- [Add Messages to Thread](#add-messages-to-thread)
+- [Get User Context](#get-user-context)
 - [Optionals](#optionals)
 - [Request Options](#request-options)
 - [Automatic Retries](#automatic-retries)
@@ -34,16 +34,16 @@ This module requires Go version >= 1.13.
 Run the following command to use the Zep Go library in your module:
 
 ```sh
-go get github.com/getzep/zep-go/v4
+go get github.com/getzep/zep-go/v3
 ```
 
 ## Initialize Client
 
 ```go
 import (
-  zep "github.com/getzep/zep-go/v4"
-  zepclient "github.com/getzep/zep-go/v4/client"
-  "github.com/getzep/zep-go/v4/option"
+  "github.com/getzep/zep-go/v3"
+  zepclient "github.com/getzep/zep-go/v3/client"
+  "github.com/getzep/zep-go/v3/option"
 )
 
 client := zepclient.NewClient(
@@ -52,26 +52,26 @@ client := zepclient.NewClient(
 )
 ```
 
-## Add Messages to a Thread
+## Add Messages to thread
 
 ```go
-_, err = client.Thread.AddMessages(ctx, threadUUID, &zep.AddMessagesRequest{
-    Messages: []*zep.AddMessage{
+_, err = client.Thread.AddMessages(ctx, threadID, &zep.AddThreadMessagesRequest{
+    Messages: []*zep.Message{
         {
-            Name:    zep.String("customer"),
-            Content: zep.String("Hello, can I buy some shoes?"),
-            Role:    zep.RoleTypeUser.Ptr(),
+            Name:     zep.String("customer"),
+            Content:  "Hello, can I buy some shoes?",
+            Role:     "user",
         },
     },
 })
 ```
 
-## Get Thread Context
+## Get User context
 
 ```go
-threadContext, err := client.Thread.GetContext(
+threadUserContext, err := client.Thread.GetUserContext(
     ctx,
-    threadUUID,
+    threadID,
     nil,
 )
 ```
@@ -143,7 +143,7 @@ client := zepclient.NewClient(
 This can be done for an individual request, too:
 
 ```go
-_, _ = client.Thread.GetContext(ctx, "thread_uuid", nil, option.WithMaxAttempts(1))
+_, _ = client.Thread.GetUserContext(ctx, "thread_id", nil, option.WithMaxAttempts(1))
 ```
 
 ## Reference

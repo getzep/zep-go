@@ -267,7 +267,13 @@ func (c *Client) ListItems(
 
 // Example:
 //
-//	request := &zep.AddBatchItemsRequest{}
+//	request := &zep.AddBatchItemsRequest{
+//	    Items: []*zep.BatchItemInput{
+//	        &zep.BatchItemInput{
+//	            Type: zep.V4BatchItemInputTypeGraphEpisode,
+//	        },
+//	    },
+//	}
 //	client.Batch.AddItems(
 //	    context.TODO(),
 //	    "batch_uuid",

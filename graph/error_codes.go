@@ -19,8 +19,18 @@ var ErrorCodes internal.ErrorCodes = internal.ErrorCodes{
 			APIError: apiError,
 		}
 	},
+	403: func(apiError *core.APIError) error {
+		return &zep.ForbiddenError{
+			APIError: apiError,
+		}
+	},
 	404: func(apiError *core.APIError) error {
 		return &zep.NotFoundError{
+			APIError: apiError,
+		}
+	},
+	409: func(apiError *core.APIError) error {
+		return &zep.ConflictError{
 			APIError: apiError,
 		}
 	},

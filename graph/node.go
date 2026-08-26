@@ -4,6 +4,7 @@ package graph
 
 import (
 	json "encoding/json"
+	fmt "fmt"
 	v4 "github.com/getzep/zep-go/v4"
 	internal "github.com/getzep/zep-go/v4/internal"
 	big "math/big"
@@ -14,7 +15,8 @@ var (
 )
 
 type AddNodesRequest struct {
-	Nodes []map[string]any `json:"nodes,omitempty" url:"-"`
+	// The nodes to add to the graph.
+	Nodes []*v4.NodeInput `json:"nodes" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -29,7 +31,7 @@ func (a *AddNodesRequest) require(field *big.Int) {
 
 // SetNodes sets the Nodes field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddNodesRequest) SetNodes(nodes []map[string]any) {
+func (a *AddNodesRequest) SetNodes(nodes []*v4.NodeInput) {
 	a.Nodes = nodes
 	a.require(addNodesRequestFieldNodes)
 }
@@ -116,9 +118,11 @@ type NeighborsRequest struct {
 	// Page size
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Opaque page cursor
-	Cursor    *string        `json:"-" url:"cursor,omitempty"`
-	Direction *string        `json:"direction,omitempty" url:"-"`
-	Filters   map[string]any `json:"filters,omitempty" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// The edge orientation to follow from the node: in, out, or both.
+	Direction *V4NeighborsRequestDirection `json:"direction,omitempty" url:"-"`
+	// Filters constraining the connecting edges and the neighbor nodes.
+	Filters *v4.SearchFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -147,14 +151,14 @@ func (n *NeighborsRequest) SetCursor(cursor *string) {
 
 // SetDirection sets the Direction field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (n *NeighborsRequest) SetDirection(direction *string) {
+func (n *NeighborsRequest) SetDirection(direction *V4NeighborsRequestDirection) {
 	n.Direction = direction
 	n.require(neighborsRequestFieldDirection)
 }
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (n *NeighborsRequest) SetFilters(filters map[string]any) {
+func (n *NeighborsRequest) SetFilters(filters *v4.SearchFilters) {
 	n.Filters = filters
 	n.require(neighborsRequestFieldFilters)
 }
@@ -180,6 +184,32 @@ func (n *NeighborsRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
+// The edge orientation to follow from the node: in, out, or both.
+type V4NeighborsRequestDirection string
+
+const (
+	V4NeighborsRequestDirectionIn   V4NeighborsRequestDirection = "in"
+	V4NeighborsRequestDirectionOut  V4NeighborsRequestDirection = "out"
+	V4NeighborsRequestDirectionBoth V4NeighborsRequestDirection = "both"
+)
+
+func NewV4NeighborsRequestDirectionFromString(s string) (V4NeighborsRequestDirection, error) {
+	switch s {
+	case "in":
+		return V4NeighborsRequestDirectionIn, nil
+	case "out":
+		return V4NeighborsRequestDirectionOut, nil
+	case "both":
+		return V4NeighborsRequestDirectionBoth, nil
+	}
+	var t V4NeighborsRequestDirection
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (v V4NeighborsRequestDirection) Ptr() *V4NeighborsRequestDirection {
+	return &v
+}
+
 var (
 	patchNodeRequestFieldAttributes = big.NewInt(1 << 0)
 	patchNodeRequestFieldName       = big.NewInt(1 << 1)
@@ -187,10 +217,12 @@ var (
 )
 
 type PatchNodeRequest struct {
+	// Additional attributes to merge onto the node; a key set to null is
+	// removed.
 	Attributes map[string]any `json:"attributes,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// The node's name.
 	Name *string `json:"name,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// A summary of the node.
 	Summary *string `json:"summary,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

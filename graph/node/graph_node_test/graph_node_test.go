@@ -89,7 +89,13 @@ func TestGraphNodeAddWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.AddNodesRequest{}
+	request := &graph.AddNodesRequest{
+		Nodes: []*zep.NodeInput{
+			&zep.NodeInput{
+				Name: "name",
+			},
+		},
+	}
 	_, invocationErr := client.Graph.Node.Add(
 		context.TODO(),
 		"graph_uuid",

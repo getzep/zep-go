@@ -127,7 +127,9 @@ func (c *Client) List(
 
 // Example:
 //
-//	request := &zep.CreateThreadRequest{}
+//	request := &zep.CreateThreadRequest{
+//	    UserUUID: "user_uuid",
+//	}
 //	client.Thread.Create(
 //	    context.TODO(),
 //	    request,
@@ -410,7 +412,11 @@ func (c *Client) ListMessages(
 
 // Example:
 //
-//	request := &zep.AddMessagesRequest{}
+//	request := &zep.AddMessagesRequest{
+//	    Messages: []*zep.AddMessage{
+//	        &zep.AddMessage{},
+//	    },
+//	}
 //	client.Thread.AddMessages(
 //	    context.TODO(),
 //	    "thread_uuid",
