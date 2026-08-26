@@ -89,7 +89,12 @@ func TestGraphEdgeAddWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.AddEdgeRequest{}
+	request := &graph.AddEdgeRequest{
+		Fact:       "fact",
+		FactName:   "fact_name",
+		SourceNode: &zep.EdgeNodeRef{},
+		TargetNode: &zep.EdgeNodeRef{},
+	}
 	_, invocationErr := client.Graph.Edge.Add(
 		context.TODO(),
 		"graph_uuid",

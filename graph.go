@@ -14,6 +14,7 @@ var (
 )
 
 type CloneGraphRequest struct {
+	// An optional name for the cloned graph.
 	TargetGraphID *string `json:"target_graph_id,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -63,10 +64,14 @@ var (
 )
 
 type CreateGraphRequest struct {
+	// A description of the graph.
 	Description *string `json:"description,omitempty" url:"-"`
-	GraphID     *string `json:"graph_id,omitempty" url:"-"`
-	Name        *string `json:"name,omitempty" url:"-"`
-	TimeZone    *string `json:"time_zone,omitempty" url:"-"`
+	// An optional developer-assigned identifier for the graph.
+	GraphID *string `json:"graph_id,omitempty" url:"-"`
+	// A display name for the graph.
+	Name *string `json:"name,omitempty" url:"-"`
+	// The graph's IANA time zone.
+	TimeZone *string `json:"time_zone,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -138,12 +143,19 @@ var (
 )
 
 type GraphContextRequest struct {
-	Filters        map[string]any `json:"filters,omitempty" url:"-"`
-	IncludeResults *bool          `json:"include_results,omitempty" url:"-"`
-	MaxCharacters  *int           `json:"max_characters,omitempty" url:"-"`
-	Query          *string        `json:"query,omitempty" url:"-"`
-	RecencyBias    *string        `json:"recency_bias,omitempty" url:"-"`
-	TemplateUUID   *string        `json:"template_uuid,omitempty" url:"-"`
+	// Filters constraining which graph data can be selected for the context
+	// block.
+	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
+	// When true, includes the raw graph results selected for the context block.
+	IncludeResults *bool `json:"include_results,omitempty" url:"-"`
+	// The maximum number of characters in the assembled context block.
+	MaxCharacters *int `json:"max_characters,omitempty" url:"-"`
+	// The search query used to assemble the context block.
+	Query string `json:"query" url:"-"`
+	// Adjusts result selection to favor more recent graph data.
+	RecencyBias *V4GraphContextRequestRecencyBias `json:"recency_bias,omitempty" url:"-"`
+	// The UUID of a context template used to render the context block.
+	TemplateUUID *string `json:"template_uuid,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -158,7 +170,7 @@ func (g *GraphContextRequest) require(field *big.Int) {
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphContextRequest) SetFilters(filters map[string]any) {
+func (g *GraphContextRequest) SetFilters(filters *SearchFilters) {
 	g.Filters = filters
 	g.require(graphContextRequestFieldFilters)
 }
@@ -179,14 +191,14 @@ func (g *GraphContextRequest) SetMaxCharacters(maxCharacters *int) {
 
 // SetQuery sets the Query field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphContextRequest) SetQuery(query *string) {
+func (g *GraphContextRequest) SetQuery(query string) {
 	g.Query = query
 	g.require(graphContextRequestFieldQuery)
 }
 
 // SetRecencyBias sets the RecencyBias field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphContextRequest) SetRecencyBias(recencyBias *string) {
+func (g *GraphContextRequest) SetRecencyBias(recencyBias *V4GraphContextRequestRecencyBias) {
 	g.RecencyBias = recencyBias
 	g.require(graphContextRequestFieldRecencyBias)
 }
@@ -229,12 +241,19 @@ var (
 )
 
 type SubgraphRequest struct {
-	Depth         *int           `json:"depth,omitempty" url:"-"`
-	Direction     *string        `json:"direction,omitempty" url:"-"`
-	Filters       map[string]any `json:"filters,omitempty" url:"-"`
-	MaxEdges      *int           `json:"max_edges,omitempty" url:"-"`
-	MaxNodes      *int           `json:"max_nodes,omitempty" url:"-"`
-	SeedNodeUUIDs []string       `json:"seed_node_uuids,omitempty" url:"-"`
+	// The maximum traversal depth from the seed nodes. Defaults to 1.
+	Depth *int `json:"depth,omitempty" url:"-"`
+	// The edge orientation to follow during expansion: in, out, or both.
+	// Defaults to both.
+	Direction *V4SubgraphRequestDirection `json:"direction,omitempty" url:"-"`
+	// Filters constraining the traversed edges and included nodes.
+	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
+	// The maximum number of edges in the response. Defaults to 200.
+	MaxEdges *int `json:"max_edges,omitempty" url:"-"`
+	// The maximum number of nodes in the response. Defaults to 100.
+	MaxNodes *int `json:"max_nodes,omitempty" url:"-"`
+	// The node UUIDs to expand from, in traversal-priority order.
+	SeedNodeUUIDs []string `json:"seed_node_uuids" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -256,14 +275,14 @@ func (s *SubgraphRequest) SetDepth(depth *int) {
 
 // SetDirection sets the Direction field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SubgraphRequest) SetDirection(direction *string) {
+func (s *SubgraphRequest) SetDirection(direction *V4SubgraphRequestDirection) {
 	s.Direction = direction
 	s.require(subgraphRequestFieldDirection)
 }
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SubgraphRequest) SetFilters(filters map[string]any) {
+func (s *SubgraphRequest) SetFilters(filters *SearchFilters) {
 	s.Filters = filters
 	s.require(subgraphRequestFieldFilters)
 }
@@ -326,7 +345,9 @@ type GraphListRequest struct {
 	// Sort field
 	OrderBy *string `json:"-" url:"order_by,omitempty"`
 	// asc or desc
-	Order  *string `json:"-" url:"order,omitempty"`
+	Order *string `json:"-" url:"order,omitempty"`
+	// Filters results to graphs whose name, description, or graph ID contains
+	// this text.
 	Search *string `json:"search,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -652,8 +673,10 @@ var (
 )
 
 type CloneGraphResult struct {
+	// The newly created graph the source graph is being cloned into.
 	Graph *Graph `json:"graph,omitempty" url:"graph,omitempty"`
-	Task  *Task  `json:"task,omitempty" url:"task,omitempty"`
+	// The asynchronous task that tracks the clone operation.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -770,28 +793,58 @@ var (
 )
 
 type ContextEdge struct {
-	Attributes       map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
-	CreatedAt        *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	EpisodeUUIDs     []string       `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	ExpiredAt        *string        `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	Fact             *string        `json:"fact,omitempty" url:"fact,omitempty"`
-	GraphUUID        *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	InvalidAt        *string        `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	Name             *string        `json:"name,omitempty" url:"name,omitempty"`
-	Relevance        *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Scope            *string        `json:"scope,omitempty" url:"scope,omitempty"`
-	Score            *float64       `json:"score,omitempty" url:"score,omitempty"`
-	SelectionRank    *int           `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	SourceNodeLabels []string       `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
-	// Endpoint-name and label projections are read-time and subject to the
-	// ABAC omission rule of spec-2 section 4, so each is omitted when denied.
-	SourceNodeName   *string  `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
-	SourceNodeUUID   *string  `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// Additional attributes of the edge.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the edge was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The episodes this edge was derived from.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// The time the fact was superseded or removed.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// The natural-language fact this edge represents.
+	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	// The unique identifier of the graph this edge belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// The name of the edge, in upper snake case, for example RELATES_TO.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// The kind of edge this is, for example entity or episodic.
+	Scope *string `json:"scope,omitempty" url:"scope,omitempty"`
+	// The ranking score returned with every search result; omitted when the edge
+	// appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// The 1-based position this edge was selected in across all context-assembly
+	// scopes.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// The current labels of the source node. This is read at request time rather
+	// than stored on the edge, and is omitted when the source node cannot be
+	// resolved.
+	SourceNodeLabels []string `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
+	// The current name of the source node. This is read at request time rather
+	// than stored on the edge, and is omitted when the source node cannot be
+	// resolved.
+	SourceNodeName *string `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
+	// The unique identifier of the edge's source node.
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// The current labels of the target node. This is read at request time rather
+	// than stored on the edge, and is omitted when the target node cannot be
+	// resolved.
 	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"target_node_labels,omitempty"`
-	TargetNodeName   *string  `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
-	TargetNodeUUID   *string  `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
-	UUID             *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
-	ValidAt          *string  `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+	// The current name of the target node. This is read at request time rather
+	// than stored on the edge, and is omitted when the target node cannot be
+	// resolved.
+	TargetNodeName *string `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
+	// The unique identifier of the edge's target node.
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	// The unique identifier of the edge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time from which the fact is considered true.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1156,22 +1209,47 @@ var (
 )
 
 type ContextEpisode struct {
-	Content           *string        `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt         *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	DocumentID        *string        `json:"document_id,omitempty" url:"document_id,omitempty"`
-	GraphUUID         *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	Metadata          map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Processed         *bool          `json:"processed,omitempty" url:"processed,omitempty"`
-	Relevance         *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Role              *RoleType      `json:"role,omitempty" url:"role,omitempty"`
-	RoleName          *string        `json:"role_name,omitempty" url:"role_name,omitempty"`
-	Score             *float64       `json:"score,omitempty" url:"score,omitempty"`
-	SelectionRank     *int           `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	Source            *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
-	SourceDescription *string        `json:"source_description,omitempty" url:"source_description,omitempty"`
-	ThreadUUID        *string        `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
-	UUID              *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
-	ValidAt           *string        `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+	// The raw content of the episode.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The time the episode was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The developer-assigned identifier of the document this episode belongs to,
+	// present only for episodes added to a document.
+	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
+	// The unique identifier of the graph this episode belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// Custom metadata associated with the episode.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Whether the episode has finished graph extraction and indexing.
+	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// The role of the episode's sender, present only when the episode was added
+	// as a message.
+	Role *RoleType `json:"role,omitempty" url:"role,omitempty"`
+	// The free-form display name of the episode's sender, present only when the
+	// episode was added as a message.
+	RoleName *string `json:"role_name,omitempty" url:"role_name,omitempty"`
+	// The ranking score returned with every search result; omitted when the
+	// episode appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// The 1-based position this episode was selected in across all
+	// context-assembly scopes.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// The format of the episode's content: text, json, or message.
+	Source *GraphDataType `json:"source,omitempty" url:"source,omitempty"`
+	// A free-form description of where the episode's content came from.
+	SourceDescription *string `json:"source_description,omitempty" url:"source_description,omitempty"`
+	// The thread this episode belongs to, present only for episodes added to a
+	// thread.
+	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The unique identifier of the episode.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the episode's content became true or was observed, used for
+	// temporal reasoning.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1474,16 +1552,30 @@ var (
 )
 
 type ContextNode struct {
-	Attributes    map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
-	CreatedAt     *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	GraphUUID     *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	Labels        []string       `json:"labels,omitempty" url:"labels,omitempty"`
-	Name          *string        `json:"name,omitempty" url:"name,omitempty"`
-	Relevance     *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Score         *float64       `json:"score,omitempty" url:"score,omitempty"`
-	SelectionRank *int           `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	Summary       *string        `json:"summary,omitempty" url:"summary,omitempty"`
-	UUID          *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// Additional attributes of the node, as defined by its entity type.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the node was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The unique identifier of the graph this node belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The entity type labels assigned to the node.
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// The name of the entity that the node represents.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// The ranking score returned with every search result; omitted when the node
+	// appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// The 1-based position this node was selected in across all context-assembly
+	// scopes.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// A generated summary of the entity that the node represents.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The node UUID, assigned by Zep.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1703,17 +1795,32 @@ var (
 )
 
 type ContextObservation struct {
-	Attributes    map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
-	CreatedAt     *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
-	EpisodeUUIDs  []string       `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	GraphUUID     *string        `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
-	Labels        []string       `json:"labels,omitempty" url:"labels,omitempty"`
-	Name          *string        `json:"name,omitempty" url:"name,omitempty"`
-	Relevance     *float64       `json:"relevance,omitempty" url:"relevance,omitempty"`
-	Score         *float64       `json:"score,omitempty" url:"score,omitempty"`
-	SelectionRank *int           `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	Summary       *string        `json:"summary,omitempty" url:"summary,omitempty"`
-	UUID          *string        `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// Additional attributes of the derived node, as defined by its entity type.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the observation was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The unique identifiers of the episodes that support this observation.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// The unique identifier of the graph this observation belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The labels identifying the type of this observation.
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// The name of the observation.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// The ranking score returned with every search result; omitted when the
+	// observation appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// The 1-based position this observation was selected in across all
+	// context-assembly scopes.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// A generated summary of the observation.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the observation, assigned by Zep.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1941,10 +2048,15 @@ var (
 )
 
 type ContextResults struct {
-	Edges           []*ContextEdge          `json:"edges,omitempty" url:"edges,omitempty"`
-	Episodes        []*ContextEpisode       `json:"episodes,omitempty" url:"episodes,omitempty"`
-	Nodes           []*ContextNode          `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Observations    []*ContextObservation   `json:"observations,omitempty" url:"observations,omitempty"`
+	// The edges selected for inclusion in the assembled context.
+	Edges []*ContextEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	// The episodes selected for inclusion in the assembled context.
+	Episodes []*ContextEpisode `json:"episodes,omitempty" url:"episodes,omitempty"`
+	// The nodes selected for inclusion in the assembled context.
+	Nodes []*ContextNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+	// The observations selected for inclusion in the assembled context.
+	Observations []*ContextObservation `json:"observations,omitempty" url:"observations,omitempty"`
+	// The thread summaries selected for inclusion in the assembled context.
 	ThreadSummaries []*ContextThreadSummary `json:"thread_summaries,omitempty" url:"thread_summaries,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -2093,17 +2205,29 @@ var (
 )
 
 type ContextThreadSummary struct {
-	CreatedAt                    *string  `json:"created_at,omitempty" url:"created_at,omitempty"`
-	LastSummarizedAt             *string  `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
-	LastSummarizedEpisodeValidAt *string  `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
-	Relevance                    *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
-	// 8.7 puts score on every search result and relevance on the ones the
-	// cross-encoder scored. Pointers keep both off the listing (8.4).
-	Score         *float64 `json:"score,omitempty" url:"score,omitempty"`
-	SelectionRank *int     `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
-	Summary       *string  `json:"summary,omitempty" url:"summary,omitempty"`
-	ThreadUUID    *string  `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
-	UUID          *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time the summary was first created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The wall-clock time of the most recent summary update.
+	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// The latest episode reference time covered by the most recent summary
+	// update.
+	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
+	// A cross-encoder-derived relevance score, present only when the
+	// cross-encoder reranker scored this result; like score, it is omitted from
+	// plain list results.
+	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
+	// A score accompanies every search result; it is omitted when the summary
+	// appears in a plain list rather than a search result.
+	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
+	// The 1-based position this thread summary was selected in across all
+	// context-assembly scopes.
+	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
+	// The generated summary text for the thread.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the thread this summary belongs to.
+	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The unique identifier of the thread summary.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2307,15 +2431,27 @@ var (
 )
 
 type Graph struct {
-	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The time the graph was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// A description of the graph.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	GraphID     *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
-	Name        *string `json:"name,omitempty" url:"name,omitempty"`
-	TimeZone    *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
-	Type        *string `json:"type,omitempty" url:"type,omitempty"`
-	UpdatedAt   *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UserUUID    *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
-	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The developer-assigned identifier of the graph, present only for standard
+	// graphs.
+	GraphID *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
+	// The display name of the graph.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The graph's IANA time zone.
+	TimeZone *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
+	// The kind of graph: user for a user's personal graph, or standard for a
+	// named graph created directly.
+	Type *string `json:"type,omitempty" url:"type,omitempty"`
+	// The time the graph was last updated.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The unique identifier of the user this graph belongs to, present only for
+	// a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
+	// The unique identifier of the graph.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2513,9 +2649,14 @@ var (
 )
 
 type GraphContextResponse struct {
-	Context   *string         `json:"context,omitempty" url:"context,omitempty"`
-	Results   *ContextResults `json:"results,omitempty" url:"results,omitempty"`
-	Truncated *bool           `json:"truncated,omitempty" url:"truncated,omitempty"`
+	// The assembled context block of facts, entities, and episodes, ready to
+	// insert into a system prompt.
+	Context *string `json:"context,omitempty" url:"context,omitempty"`
+	// The individual edges, nodes, episodes, observations, and thread summaries
+	// selected to build the context. Present only when requested.
+	Results *ContextResults `json:"results,omitempty" url:"results,omitempty"`
+	// Whether the character budget limited the size of the context block.
+	Truncated *bool `json:"truncated,omitempty" url:"truncated,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2627,6 +2768,7 @@ var (
 )
 
 type GraphDeleteResult struct {
+	// The asynchronous task that tracks the graph's deletion.
 	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -2713,9 +2855,13 @@ var (
 )
 
 type GraphPage struct {
-	Items      []*Graph `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string  `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int     `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The graphs on this page.
+	Items []*Graph `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results
+	// are available.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of graphs that match the request.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2832,12 +2978,20 @@ var (
 )
 
 type SearchRequest struct {
-	BfsOriginNodeUUIDs []string       `json:"bfs_origin_node_uuids,omitempty" url:"bfs_origin_node_uuids,omitempty"`
-	CenterNodeUUID     *string        `json:"center_node_uuid,omitempty" url:"center_node_uuid,omitempty"`
-	Filters            map[string]any `json:"filters,omitempty" url:"filters,omitempty"`
-	MmrLambda          *float64       `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
-	Query              *string        `json:"query,omitempty" url:"query,omitempty"`
-	Reranker           *string        `json:"reranker,omitempty" url:"reranker,omitempty"`
+	// Nodes used as BFS origins for graph-distance-aware retrieval.
+	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"bfs_origin_node_uuids,omitempty"`
+	// The node to rank results by distance from. Required when reranker is
+	// node_distance.
+	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"center_node_uuid,omitempty"`
+	// Filters constraining which items are returned.
+	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
+	// The diversity weighting used for maximal marginal relevance reranking.
+	// Required when reranker is mmr.
+	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
+	// The search query.
+	Query string `json:"query" url:"query"`
+	// The reranking strategy applied to retrieved results. Defaults to rrf.
+	Reranker *V4SearchRequestReranker `json:"reranker,omitempty" url:"reranker,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2860,7 +3014,7 @@ func (s *SearchRequest) GetCenterNodeUUID() *string {
 	return s.CenterNodeUUID
 }
 
-func (s *SearchRequest) GetFilters() map[string]any {
+func (s *SearchRequest) GetFilters() *SearchFilters {
 	if s == nil {
 		return nil
 	}
@@ -2874,14 +3028,14 @@ func (s *SearchRequest) GetMmrLambda() *float64 {
 	return s.MmrLambda
 }
 
-func (s *SearchRequest) GetQuery() *string {
+func (s *SearchRequest) GetQuery() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.Query
 }
 
-func (s *SearchRequest) GetReranker() *string {
+func (s *SearchRequest) GetReranker() *V4SearchRequestReranker {
 	if s == nil {
 		return nil
 	}
@@ -2918,7 +3072,7 @@ func (s *SearchRequest) SetCenterNodeUUID(centerNodeUUID *string) {
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetFilters(filters map[string]any) {
+func (s *SearchRequest) SetFilters(filters *SearchFilters) {
 	s.Filters = filters
 	s.require(searchRequestFieldFilters)
 }
@@ -2932,14 +3086,14 @@ func (s *SearchRequest) SetMmrLambda(mmrLambda *float64) {
 
 // SetQuery sets the Query field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetQuery(query *string) {
+func (s *SearchRequest) SetQuery(query string) {
 	s.Query = query
 	s.require(searchRequestFieldQuery)
 }
 
 // SetReranker sets the Reranker field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetReranker(reranker *string) {
+func (s *SearchRequest) SetReranker(reranker *V4SearchRequestReranker) {
 	s.Reranker = reranker
 	s.require(searchRequestFieldReranker)
 }
@@ -2994,9 +3148,16 @@ var (
 )
 
 type SubgraphResponse struct {
-	Edges            []*Edge `json:"edges,omitempty" url:"edges,omitempty"`
-	Nodes            []*Node `json:"nodes,omitempty" url:"nodes,omitempty"`
-	Truncated        *bool   `json:"truncated,omitempty" url:"truncated,omitempty"`
+	// Every traversed edge that passed the request filters; both endpoints of
+	// every edge are present in nodes.
+	Edges []*Edge `json:"edges,omitempty" url:"edges,omitempty"`
+	// Every admitted seed node and every node reached within the traversal
+	// budget.
+	Nodes []*Node `json:"nodes,omitempty" url:"nodes,omitempty"`
+	// Whether any budget or limit reduced the result.
+	Truncated *bool `json:"truncated,omitempty" url:"truncated,omitempty"`
+	// The binding limit that caused truncation, such as max_nodes or max_edges;
+	// present only when truncated is true.
 	TruncationReason *string `json:"truncation_reason,omitempty" url:"truncation_reason,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -3118,6 +3279,91 @@ func (s *SubgraphResponse) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
+// The reranking strategy applied to retrieved results. Defaults to rrf.
+type V4SearchRequestReranker string
+
+const (
+	V4SearchRequestRerankerRrf             V4SearchRequestReranker = "rrf"
+	V4SearchRequestRerankerMmr             V4SearchRequestReranker = "mmr"
+	V4SearchRequestRerankerNodeDistance    V4SearchRequestReranker = "node_distance"
+	V4SearchRequestRerankerEpisodeMentions V4SearchRequestReranker = "episode_mentions"
+	V4SearchRequestRerankerCrossEncoder    V4SearchRequestReranker = "cross_encoder"
+)
+
+func NewV4SearchRequestRerankerFromString(s string) (V4SearchRequestReranker, error) {
+	switch s {
+	case "rrf":
+		return V4SearchRequestRerankerRrf, nil
+	case "mmr":
+		return V4SearchRequestRerankerMmr, nil
+	case "node_distance":
+		return V4SearchRequestRerankerNodeDistance, nil
+	case "episode_mentions":
+		return V4SearchRequestRerankerEpisodeMentions, nil
+	case "cross_encoder":
+		return V4SearchRequestRerankerCrossEncoder, nil
+	}
+	var t V4SearchRequestReranker
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (v V4SearchRequestReranker) Ptr() *V4SearchRequestReranker {
+	return &v
+}
+
+// Adjusts result selection to favor more recent graph data.
+type V4GraphContextRequestRecencyBias string
+
+const (
+	V4GraphContextRequestRecencyBiasOff    V4GraphContextRequestRecencyBias = "off"
+	V4GraphContextRequestRecencyBiasMild   V4GraphContextRequestRecencyBias = "mild"
+	V4GraphContextRequestRecencyBiasStrong V4GraphContextRequestRecencyBias = "strong"
+)
+
+func NewV4GraphContextRequestRecencyBiasFromString(s string) (V4GraphContextRequestRecencyBias, error) {
+	switch s {
+	case "off":
+		return V4GraphContextRequestRecencyBiasOff, nil
+	case "mild":
+		return V4GraphContextRequestRecencyBiasMild, nil
+	case "strong":
+		return V4GraphContextRequestRecencyBiasStrong, nil
+	}
+	var t V4GraphContextRequestRecencyBias
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (v V4GraphContextRequestRecencyBias) Ptr() *V4GraphContextRequestRecencyBias {
+	return &v
+}
+
+// The edge orientation to follow during expansion: in, out, or both.
+// Defaults to both.
+type V4SubgraphRequestDirection string
+
+const (
+	V4SubgraphRequestDirectionIn   V4SubgraphRequestDirection = "in"
+	V4SubgraphRequestDirectionOut  V4SubgraphRequestDirection = "out"
+	V4SubgraphRequestDirectionBoth V4SubgraphRequestDirection = "both"
+)
+
+func NewV4SubgraphRequestDirectionFromString(s string) (V4SubgraphRequestDirection, error) {
+	switch s {
+	case "in":
+		return V4SubgraphRequestDirectionIn, nil
+	case "out":
+		return V4SubgraphRequestDirectionOut, nil
+	case "both":
+		return V4SubgraphRequestDirectionBoth, nil
+	}
+	var t V4SubgraphRequestDirection
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (v V4SubgraphRequestDirection) Ptr() *V4SubgraphRequestDirection {
+	return &v
+}
+
 var (
 	patchGraphRequestFieldDescription = big.NewInt(1 << 0)
 	patchGraphRequestFieldName        = big.NewInt(1 << 1)
@@ -3125,11 +3371,11 @@ var (
 )
 
 type PatchGraphRequest struct {
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// A description of the graph.
 	Description *string `json:"description,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// The graph's display name.
 	Name *string `json:"name,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// The graph's IANA time zone.
 	TimeZone *string `json:"time_zone,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

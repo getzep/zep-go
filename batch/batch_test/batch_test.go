@@ -224,7 +224,13 @@ func TestBatchAddItemsWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.AddBatchItemsRequest{}
+	request := &zep.AddBatchItemsRequest{
+		Items: []*zep.BatchItemInput{
+			&zep.BatchItemInput{
+				Type: zep.V4BatchItemInputTypeGraphEpisode,
+			},
+		},
+	}
 	_, invocationErr := client.Batch.AddItems(
 		context.TODO(),
 		"batch_uuid",

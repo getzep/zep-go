@@ -20,7 +20,8 @@ type ContextTemplateListRequest struct {
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
-	Name   *string `json:"name,omitempty" url:"-"`
+	// Filters results to the context template with this exact name.
+	Name *string `json:"name,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -83,10 +84,14 @@ var (
 )
 
 type ContextTemplate struct {
+	// The time the template was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Name      *string `json:"name,omitempty" url:"name,omitempty"`
-	Template  *string `json:"template,omitempty" url:"template,omitempty"`
-	UUID      *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The name of the context template.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The template content.
+	Template *string `json:"template,omitempty" url:"template,omitempty"`
+	// The unique identifier of the context template.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -214,9 +219,13 @@ var (
 )
 
 type ContextTemplatePage struct {
-	Items      []*ContextTemplate `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string            `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int               `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The context templates on this page.
+	Items []*ContextTemplate `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results
+	// are available.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of context templates that match the request.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -329,7 +338,9 @@ var (
 )
 
 type CreateContextTemplateRequest struct {
-	Name     *string `json:"name,omitempty" url:"name,omitempty"`
+	// A unique, human-readable name for the template.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The template content used to render context blocks.
 	Template *string `json:"template,omitempty" url:"template,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

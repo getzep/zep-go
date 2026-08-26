@@ -42,7 +42,12 @@ func NewClient(options *core.RequestOptions) *Client {
 
 // Example:
 //
-//	request := &graph.AddEdgeRequest{}
+//	request := &graph.AddEdgeRequest{
+//	    Fact: "fact",
+//	    FactName: "fact_name",
+//	    SourceNode: &zep.EdgeNodeRef{},
+//	    TargetNode: &zep.EdgeNodeRef{},
+//	}
 //	client.Graph.Edge.Add(
 //	    context.TODO(),
 //	    "graph_uuid",

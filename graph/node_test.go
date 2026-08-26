@@ -4,6 +4,7 @@ package graph
 
 import (
 	json "encoding/json"
+	v4 "github.com/getzep/zep-go/v4"
 	assert "github.com/stretchr/testify/assert"
 	require "github.com/stretchr/testify/require"
 	testing "testing"
@@ -12,7 +13,7 @@ import (
 func TestSettersAddNodesRequest(t *testing.T) {
 	t.Run("SetNodes", func(t *testing.T) {
 		obj := &AddNodesRequest{}
-		var fernTestValueNodes []map[string]any
+		var fernTestValueNodes []*v4.NodeInput
 		obj.SetNodes(fernTestValueNodes)
 		assert.Equal(t, fernTestValueNodes, obj.Nodes)
 		assert.NotNil(t, obj.explicitFields)
@@ -25,7 +26,7 @@ func TestSettersMarkExplicitAddNodesRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AddNodesRequest{}
-		var fernTestValueNodes []map[string]any
+		var fernTestValueNodes []*v4.NodeInput
 
 		// Act
 		obj.SetNodes(fernTestValueNodes)
@@ -157,7 +158,7 @@ func TestSettersNeighborsRequest(t *testing.T) {
 
 	t.Run("SetDirection", func(t *testing.T) {
 		obj := &NeighborsRequest{}
-		var fernTestValueDirection *string
+		var fernTestValueDirection *V4NeighborsRequestDirection
 		obj.SetDirection(fernTestValueDirection)
 		assert.Equal(t, fernTestValueDirection, obj.Direction)
 		assert.NotNil(t, obj.explicitFields)
@@ -165,7 +166,7 @@ func TestSettersNeighborsRequest(t *testing.T) {
 
 	t.Run("SetFilters", func(t *testing.T) {
 		obj := &NeighborsRequest{}
-		var fernTestValueFilters map[string]any
+		var fernTestValueFilters *v4.SearchFilters
 		obj.SetFilters(fernTestValueFilters)
 		assert.Equal(t, fernTestValueFilters, obj.Filters)
 		assert.NotNil(t, obj.explicitFields)
@@ -240,7 +241,7 @@ func TestSettersMarkExplicitNeighborsRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &NeighborsRequest{}
-		var fernTestValueDirection *string
+		var fernTestValueDirection *V4NeighborsRequestDirection
 
 		// Act
 		obj.SetDirection(fernTestValueDirection)
@@ -271,7 +272,7 @@ func TestSettersMarkExplicitNeighborsRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &NeighborsRequest{}
-		var fernTestValueFilters map[string]any
+		var fernTestValueFilters *v4.SearchFilters
 
 		// Act
 		obj.SetFilters(fernTestValueFilters)
@@ -421,4 +422,40 @@ func TestSettersMarkExplicitPatchNodeRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
+}
+
+func TestEnumV4NeighborsRequestDirection(t *testing.T) {
+	t.Run("NewFromString_in", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4NeighborsRequestDirectionFromString("in")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4NeighborsRequestDirection("in"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_out", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4NeighborsRequestDirectionFromString("out")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4NeighborsRequestDirection("out"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_both", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewV4NeighborsRequestDirectionFromString("both")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, V4NeighborsRequestDirection("both"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewV4NeighborsRequestDirectionFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewV4NeighborsRequestDirectionFromString("in")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
 }

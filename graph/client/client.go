@@ -287,7 +287,9 @@ func (c *Client) Clone(
 
 // Example:
 //
-//	request := &zep.GraphContextRequest{}
+//	request := &zep.GraphContextRequest{
+//	    Query: "query",
+//	}
 //	client.Graph.GetContext(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -471,7 +473,9 @@ func (c *Client) SetOntology(
 //	    Cursor: zep.String(
 //	        "cursor",
 //	    ),
-//	    Body: &zep.SearchRequest{},
+//	    Body: &zep.SearchRequest{
+//	        Query: "query",
+//	    },
 //	}
 //	client.Graph.SearchEdges(
 //	    context.TODO(),
@@ -554,7 +558,9 @@ func (c *Client) SearchEdges(
 //	    Cursor: zep.String(
 //	        "cursor",
 //	    ),
-//	    Body: &zep.SearchRequest{},
+//	    Body: &zep.SearchRequest{
+//	        Query: "query",
+//	    },
 //	}
 //	client.Graph.SearchEpisodes(
 //	    context.TODO(),
@@ -637,7 +643,9 @@ func (c *Client) SearchEpisodes(
 //	    Cursor: zep.String(
 //	        "cursor",
 //	    ),
-//	    Body: &zep.SearchRequest{},
+//	    Body: &zep.SearchRequest{
+//	        Query: "query",
+//	    },
 //	}
 //	client.Graph.SearchNodes(
 //	    context.TODO(),
@@ -720,7 +728,9 @@ func (c *Client) SearchNodes(
 //	    Cursor: zep.String(
 //	        "cursor",
 //	    ),
-//	    Body: &zep.SearchRequest{},
+//	    Body: &zep.SearchRequest{
+//	        Query: "query",
+//	    },
 //	}
 //	client.Graph.SearchObservations(
 //	    context.TODO(),
@@ -803,7 +813,9 @@ func (c *Client) SearchObservations(
 //	    Cursor: zep.String(
 //	        "cursor",
 //	    ),
-//	    Body: &zep.SearchRequest{},
+//	    Body: &zep.SearchRequest{
+//	        Query: "query",
+//	    },
 //	}
 //	client.Graph.SearchThreadSummaries(
 //	    context.TODO(),
@@ -879,7 +891,11 @@ func (c *Client) SearchThreadSummaries(
 
 // Example:
 //
-//	request := &zep.SubgraphRequest{}
+//	request := &zep.SubgraphRequest{
+//	    SeedNodeUUIDs: []string{
+//	        "seed_node_uuids",
+//	    },
+//	}
 //	client.Graph.GetSubgraph(
 //	    context.TODO(),
 //	    "graph_uuid",

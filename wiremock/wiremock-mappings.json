@@ -746,7 +746,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"name\": \"name\",\n      \"text\": \"text\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -782,7 +782,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"name\": \"name\",\n      \"text\": \"text\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -818,7 +818,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -854,7 +854,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1343,7 +1343,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"name\": \"name\",\n      \"text\": \"text\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1375,7 +1375,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"name\": \"name\",\n      \"text\": \"text\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1406,7 +1406,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1438,7 +1438,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instruction\": \"instruction\",\n  \"types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1532,7 +1532,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"name\": \"name\",\n      \"text\": \"text\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1564,7 +1564,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"name\": \"name\",\n      \"text\": \"text\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2042,6 +2042,427 @@
       }
     },
     {
+      "id": "214496dd-3b93-4ce4-8249-84fcb9a365bb",
+      "name": "Create user group - default",
+      "request": {
+        "urlPathTemplate": "/user-groups",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"description\": \"description\",\n  \"name\": \"name\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"version\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "214496dd-3b93-4ce4-8249-84fcb9a365bb",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8f5b7c77-c1f4-4233-b134-68d5ff95d3c1",
+      "name": "List user groups - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"updated_at\": \"updated_at\",\n      \"uuid\": \"uuid\",\n      \"version\": 1\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8f5b7c77-c1f4-4233-b134-68d5ff95d3c1",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "99bc97e2-ba54-41cc-b5ba-44824cb52b92",
+      "name": "Get user group - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/{group_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "group_uuid": {
+            "equalTo": "group_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"description\": \"description\",\n  \"name\": \"name\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"version\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "99bc97e2-ba54-41cc-b5ba-44824cb52b92",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "5465990e-453e-4d9a-be92-3f9ca005a6a6",
+      "name": "Delete user group - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/{group_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "group_uuid": {
+            "equalTo": "group_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "\"\"",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5465990e-453e-4d9a-be92-3f9ca005a6a6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0ad7fe97-dccd-4fcc-b1f5-0b1d743e2ac3",
+      "name": "Update user group - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/{group_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "group_uuid": {
+            "equalTo": "group_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"description\": \"description\",\n  \"name\": \"name\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"version\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0ad7fe97-dccd-4fcc-b1f5-0b1d743e2ac3",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "82b704fe-74fd-44b1-b19a-ca37ac0b9ef8",
+      "name": "List member candidates - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/{group_uuid}/member-candidates/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "group_uuid": {
+            "equalTo": "group_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"disable_default_ontology\": true,\n      \"email\": \"email\",\n      \"first_name\": \"first_name\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"last_name\": \"last_name\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"time_zone\": \"time_zone\",\n      \"user_id\": \"user_id\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "82b704fe-74fd-44b1-b19a-ca37ac0b9ef8",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "9042b0a1-ce05-4806-b827-3066157bd5fa",
+      "name": "Add user group members - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/{group_uuid}/members",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "group_uuid": {
+            "equalTo": "group_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"added_count\": 1,\n  \"no_op_count\": 1,\n  \"removed_count\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9042b0a1-ce05-4806-b827-3066157bd5fa",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "24001385-8f44-491c-8626-ed6c3a5e7826",
+      "name": "List user group members - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/{group_uuid}/members/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "group_uuid": {
+            "equalTo": "group_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"disable_default_ontology\": true,\n      \"email\": \"email\",\n      \"first_name\": \"first_name\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"last_name\": \"last_name\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"time_zone\": \"time_zone\",\n      \"user_id\": \"user_id\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "24001385-8f44-491c-8626-ed6c3a5e7826",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "bec930d0-094d-4823-8f4d-f708945fbbca",
+      "name": "Remove user group members - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/{group_uuid}/members/remove",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "group_uuid": {
+            "equalTo": "group_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"added_count\": 1,\n  \"no_op_count\": 1,\n  \"removed_count\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "bec930d0-094d-4823-8f4d-f708945fbbca",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3e1b6504-0ab4-4cfb-ae0b-0cfe20b583c2",
+      "name": "Remove one user group member - default",
+      "request": {
+        "urlPathTemplate": "/user-groups/{group_uuid}/members/{user_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "group_uuid": {
+            "equalTo": "group_uuid"
+          },
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "\"\"",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3e1b6504-0ab4-4cfb-ae0b-0cfe20b583c2",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "6ac94c42-759a-4fd5-a3c8-bee16fad8073",
+      "name": "List user groups for a user - default",
+      "request": {
+        "urlPathTemplate": "/users/{user_uuid}/user-groups",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "user_uuid": {
+            "equalTo": "user_uuid"
+          }
+        },
+        "queryParameters": {
+          "limit": {
+            "equalTo": "1"
+          },
+          "cursor": {
+            "equalTo": "cursor"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"updated_at\": \"updated_at\",\n      \"uuid\": \"uuid\",\n      \"version\": 1\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "6ac94c42-759a-4fd5-a3c8-bee16fad8073",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
       "id": "5da22e46-2b55-4fe7-bf67-930ea5d8eeb8",
       "name": "Create user - default",
       "request": {
@@ -2311,7 +2732,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"name\": \"name\",\n      \"text\": \"text\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2347,7 +2768,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "body": "{\n  \"inherited\": true,\n  \"instructions\": [\n    {\n      \"name\": \"name\",\n      \"text\": \"text\"\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2671,7 +3092,7 @@
       },
       "response": {
         "status": 202,
-        "body": "{\n  \"edge\": {\n    \"attributes\": {\n      \"key\": \"value\"\n    },\n    \"expired_at\": \"expired_at\",\n    \"fact\": \"fact\",\n    \"fact_name\": \"fact_name\",\n    \"invalid_at\": \"invalid_at\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"source_node\": {\n      \"key\": \"value\"\n    },\n    \"target_node\": {\n      \"key\": \"value\"\n    },\n    \"uuid\": \"uuid\",\n    \"valid_at\": \"valid_at\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "body": "{\n  \"edge\": {\n    \"attributes\": {\n      \"key\": \"value\"\n    },\n    \"expired_at\": \"expired_at\",\n    \"fact\": \"fact\",\n    \"fact_name\": \"fact_name\",\n    \"invalid_at\": \"invalid_at\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"source_node\": {\n      \"attributes\": {\n        \"key\": \"value\"\n      },\n      \"labels\": [\n        \"labels\"\n      ],\n      \"name\": \"name\",\n      \"summary\": \"summary\",\n      \"uuid\": \"uuid\"\n    },\n    \"target_node\": {\n      \"attributes\": {\n        \"key\": \"value\"\n      },\n      \"labels\": [\n        \"labels\"\n      ],\n      \"name\": \"name\",\n      \"summary\": \"summary\",\n      \"uuid\": \"uuid\"\n    },\n    \"uuid\": \"uuid\",\n    \"valid_at\": \"valid_at\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -3300,6 +3721,6 @@
     }
   ],
   "meta": {
-    "total": 88
+    "total": 99
   }
 }

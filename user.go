@@ -20,13 +20,20 @@ var (
 )
 
 type CreateUserRequest struct {
-	DisableDefaultOntology *bool          `json:"disable_default_ontology,omitempty" url:"-"`
-	Email                  *string        `json:"email,omitempty" url:"-"`
-	FirstName              *string        `json:"first_name,omitempty" url:"-"`
-	LastName               *string        `json:"last_name,omitempty" url:"-"`
-	Metadata               map[string]any `json:"metadata,omitempty" url:"-"`
-	TimeZone               *string        `json:"time_zone,omitempty" url:"-"`
-	UserID                 *string        `json:"user_id,omitempty" url:"-"`
+	// When true, disables the default ontology for the user's graph.
+	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
+	// The email address of the user.
+	Email *string `json:"email,omitempty" url:"-"`
+	// The user's first name.
+	FirstName *string `json:"first_name,omitempty" url:"-"`
+	// The user's last name.
+	LastName *string `json:"last_name,omitempty" url:"-"`
+	// Metadata to store on the user.
+	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+	// The user's IANA time zone.
+	TimeZone *string `json:"time_zone,omitempty" url:"-"`
+	// An optional developer-assigned identifier for the user.
+	UserID *string `json:"user_id,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -125,7 +132,8 @@ type UserListRequest struct {
 	// Sort field
 	OrderBy *string `json:"-" url:"order_by,omitempty"`
 	// asc or desc
-	Order  *string `json:"-" url:"order,omitempty"`
+	Order *string `json:"-" url:"order,omitempty"`
+	// Filters results to users whose user ID, email, or name contains this text.
 	Search *string `json:"search,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -200,6 +208,8 @@ var (
 )
 
 type UserDeleteResult struct {
+	// The task tracking the user's asynchronous deletion. Once it completes, the
+	// user's threads, messages, and graph are removed as well.
 	Task *Task `json:"task,omitempty" url:"task,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -289,16 +299,17 @@ var (
 )
 
 type PatchUserRequest struct {
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// When true, disables the default ontology for the user's graph.
 	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// The email address of the user.
 	Email *string `json:"email,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// The user's first name.
 	FirstName *string `json:"first_name,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
-	LastName *string        `json:"last_name,omitempty" url:"-"`
+	// The user's last name.
+	LastName *string `json:"last_name,omitempty" url:"-"`
+	// Metadata to merge onto the user; a key set to null is removed.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// The user's IANA time zone.
 	TimeZone *string `json:"time_zone,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

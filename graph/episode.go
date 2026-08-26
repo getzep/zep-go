@@ -4,6 +4,7 @@ package graph
 
 import (
 	json "encoding/json"
+	fmt "fmt"
 	v4 "github.com/getzep/zep-go/v4"
 	internal "github.com/getzep/zep-go/v4/internal"
 	big "math/big"
@@ -20,13 +21,22 @@ var (
 )
 
 type AddEpisodeRequest struct {
-	CreatedAt         *string        `json:"created_at,omitempty" url:"-"`
-	Data              *string        `json:"data,omitempty" url:"-"`
-	DocumentID        *string        `json:"document_id,omitempty" url:"-"`
-	Metadata          map[string]any `json:"metadata,omitempty" url:"-"`
-	SourceDescription *string        `json:"source_description,omitempty" url:"-"`
-	StrictOntology    *bool          `json:"strict_ontology,omitempty" url:"-"`
-	Type              *string        `json:"type,omitempty" url:"-"`
+	// The episode's reference time, used for temporal reasoning rather than
+	// ingestion time.
+	CreatedAt *string `json:"created_at,omitempty" url:"-"`
+	// The episode content to add to the graph.
+	Data string `json:"data" url:"-"`
+	// Groups this episode as a chunk of a document on the graph.
+	DocumentID *string `json:"document_id,omitempty" url:"-"`
+	// Metadata to store on the episode.
+	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+	// A description of the source of this episode.
+	SourceDescription *string `json:"source_description,omitempty" url:"-"`
+	// When true, prevents extraction of generic entity nodes that do not match
+	// the configured ontology.
+	StrictOntology *bool `json:"strict_ontology,omitempty" url:"-"`
+	// The data format of the episode: text, json, or message. Defaults to text.
+	Type *V4AddEpisodeRequestType `json:"type,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -48,7 +58,7 @@ func (a *AddEpisodeRequest) SetCreatedAt(createdAt *string) {
 
 // SetData sets the Data field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEpisodeRequest) SetData(data *string) {
+func (a *AddEpisodeRequest) SetData(data string) {
 	a.Data = data
 	a.require(addEpisodeRequestFieldData)
 }
@@ -83,7 +93,7 @@ func (a *AddEpisodeRequest) SetStrictOntology(strictOntology *bool) {
 
 // SetType sets the Type field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEpisodeRequest) SetType(type_ *string) {
+func (a *AddEpisodeRequest) SetType(type_ *V4AddEpisodeRequestType) {
 	a.Type = type_
 	a.require(addEpisodeRequestFieldType)
 }
@@ -195,11 +205,38 @@ func (e *EpisodeListForDocumentRequest) SetCursor(cursor *string) {
 	e.require(episodeListForDocumentRequestFieldCursor)
 }
 
+// The data format of the episode: text, json, or message. Defaults to text.
+type V4AddEpisodeRequestType string
+
+const (
+	V4AddEpisodeRequestTypeText    V4AddEpisodeRequestType = "text"
+	V4AddEpisodeRequestTypeJSON    V4AddEpisodeRequestType = "json"
+	V4AddEpisodeRequestTypeMessage V4AddEpisodeRequestType = "message"
+)
+
+func NewV4AddEpisodeRequestTypeFromString(s string) (V4AddEpisodeRequestType, error) {
+	switch s {
+	case "text":
+		return V4AddEpisodeRequestTypeText, nil
+	case "json":
+		return V4AddEpisodeRequestTypeJSON, nil
+	case "message":
+		return V4AddEpisodeRequestTypeMessage, nil
+	}
+	var t V4AddEpisodeRequestType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (v V4AddEpisodeRequestType) Ptr() *V4AddEpisodeRequestType {
+	return &v
+}
+
 var (
 	patchEpisodeRequestFieldMetadata = big.NewInt(1 << 0)
 )
 
 type PatchEpisodeRequest struct {
+	// Metadata to merge onto the episode; a key set to null is removed.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

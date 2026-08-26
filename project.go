@@ -18,11 +18,17 @@ var (
 )
 
 type Project struct {
-	CreatedAt       *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The time the project was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The project's default IANA time zone, used as the fallback when a resource
+	// does not set its own.
 	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"default_time_zone,omitempty"`
-	Description     *string `json:"description,omitempty" url:"description,omitempty"`
-	Name            *string `json:"name,omitempty" url:"name,omitempty"`
-	UUID            *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// A human-readable description of the project.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The name of the project.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The unique identifier of the project.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -162,7 +168,8 @@ var (
 )
 
 type PatchProjectRequest struct {
-	// Omit to leave unchanged, send JSON null to clear, or send a value to set.
+	// The project's IANA fallback time zone. Set to null to clear the existing
+	// value.
 	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
