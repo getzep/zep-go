@@ -3,8 +3,9 @@
 package core
 
 import (
-	fmt "fmt"
 	http "net/http"
+
+	uuid "github.com/google/uuid"
 )
 
 // IdempotentRequestOption adapts the behavior of an individual request.
@@ -36,6 +37,10 @@ func NewIdempotentRequestOptions(opts ...IdempotentRequestOption) *IdempotentReq
 		}
 		opt.applyIdempotentRequestOptions(options)
 	}
+	if options.IdempotencyKey == nil {
+		idempotencyKey := uuid.NewString()
+		options.IdempotencyKey = &idempotencyKey
+	}
 	return options
 }
 
@@ -53,7 +58,7 @@ func (i *IdempotencyKeyOption) applyIdempotentRequestOptions(opts *IdempotentReq
 func (i *IdempotentRequestOptions) ToHeader() http.Header {
 	header := i.RequestOptions.ToHeader()
 	if i.IdempotencyKey != nil {
-		header.Set("Idempotency-Key", fmt.Sprintf("*%v", *i.IdempotencyKey))
+		header.Set("Idempotency-Key", *i.IdempotencyKey)
 	}
 	return header
 }
