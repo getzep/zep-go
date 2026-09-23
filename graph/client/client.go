@@ -6,6 +6,7 @@ import (
 	context "context"
 	v3 "github.com/getzep/zep-go/v3"
 	core "github.com/getzep/zep-go/v3/core"
+	documentsummary "github.com/getzep/zep-go/v3/graph/documentsummary"
 	edge "github.com/getzep/zep-go/v3/graph/edge"
 	episode "github.com/getzep/zep-go/v3/graph/episode"
 	node "github.com/getzep/zep-go/v3/graph/node"
@@ -19,6 +20,7 @@ import (
 
 type Client struct {
 	WithRawResponse *RawClient
+	DocumentSummary *documentsummary.Client
 	Edge            *edge.Client
 	Episode         *episode.Client
 	Node            *node.Client
@@ -36,6 +38,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
+		DocumentSummary: documentsummary.NewClient(opts...),
 		Edge:            edge.NewClient(opts...),
 		Episode:         episode.NewClient(opts...),
 		Node:            node.NewClient(opts...),
@@ -225,7 +228,34 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Returns all graphs. In order to list users, use user.list_ordered instead
+// Returns episodes associated with a document on a graph. Documents group episodes as chunks, parallel to how threads group messages.
+func (c *Client) GetEpisodesForDocument(
+	ctx context.Context,
+	// Document ID
+	documentID string,
+	request *v3.GraphGetEpisodesForDocumentRequest,
+	opts ...option.RequestOption,
+) (*v3.EpisodeResponse, error) {
+	response, err := c.WithRawResponse.GetEpisodesForDocument(
+		ctx,
+		documentID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Returns a paginated directory of live standalone graphs in the
+// authenticated project. Optional `search` matches `graph_id`, `name`, and
+// `description` (metadata only; not graph contents).
+//
+// Default `pageSize` is 50 (range 1–100). To list users, use
+// `user.list_ordered` instead. See the
+// [graph directory guide](/graph-directory) for pagination, relevance
+// ordering, and Memory MCP exposure.
 func (c *Client) ListAll(
 	ctx context.Context,
 	request *v3.GraphListAllRequest,
@@ -259,6 +289,7 @@ func (c *Client) AddNodes(
 	return response.Body, nil
 }
 
+// Deprecated. Pattern detection is not part of Public API v4.
 // Detects structural patterns in a knowledge graph including relationship frequencies,
 // multi-hop paths, co-occurrences, hubs, and clusters.
 // When a query is provided, uses hybrid search to discover seed nodes,

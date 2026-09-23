@@ -271,7 +271,7 @@ func (m *MessageListResponse) String() string {
 }
 
 type ThreadContextResponse struct {
-	// Context block containing relevant facts, entities, and messages/episodes from the user graph. Meant to be replaced in the system prompt on every chat turn.
+	// Context block containing relevant facts, entities, and messages/episodes from the user graph. Pass it through the model provider's untrusted-data channel.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 
 	extraProperties map[string]interface{}

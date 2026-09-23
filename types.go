@@ -317,6 +317,100 @@ func (d *DerivedNode) String() string {
 	return fmt.Sprintf("%#v", d)
 }
 
+type DocumentSummary struct {
+	// CreatedAt is when the summary node was first created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// DocumentID is the customer-facing document identifier.
+	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
+	// LastSummarizedAt is the wall-clock timestamp of the most recent
+	// summary update.
+	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
+	// LastSummarizedEpisodeValidAt is the maximum episode reference time
+	// (valid_at) covered by the most recent summary.
+	LastSummarizedEpisodeValidAt *string `json:"last_summarized_episode_valid_at,omitempty" url:"last_summarized_episode_valid_at,omitempty"`
+	// Summary is the incremental summary content.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// UUID of the document summary (derived) node.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DocumentSummary) GetCreatedAt() *string {
+	if d == nil {
+		return nil
+	}
+	return d.CreatedAt
+}
+
+func (d *DocumentSummary) GetDocumentID() *string {
+	if d == nil {
+		return nil
+	}
+	return d.DocumentID
+}
+
+func (d *DocumentSummary) GetLastSummarizedAt() *string {
+	if d == nil {
+		return nil
+	}
+	return d.LastSummarizedAt
+}
+
+func (d *DocumentSummary) GetLastSummarizedEpisodeValidAt() *string {
+	if d == nil {
+		return nil
+	}
+	return d.LastSummarizedEpisodeValidAt
+}
+
+func (d *DocumentSummary) GetSummary() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Summary
+}
+
+func (d *DocumentSummary) GetUUID() *string {
+	if d == nil {
+		return nil
+	}
+	return d.UUID
+}
+
+func (d *DocumentSummary) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DocumentSummary) UnmarshalJSON(data []byte) error {
+	type unmarshaler DocumentSummary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DocumentSummary(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DocumentSummary) String() string {
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
 type EntityEdge struct {
 	// Additional attributes of the edge. Dependent on edge types
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
@@ -328,6 +422,9 @@ type EntityEdge struct {
 	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
 	// Fact representing the edge and nodes that it connects
 	Fact string `json:"fact" url:"fact"`
+	// HyperedgeUUID groups the pairwise edges projected from the same atomic
+	// multi-entity fact. Omitted when the edge is not part of a hyperedge.
+	HyperedgeUUID *string `json:"hyperedge_uuid,omitempty" url:"hyperedge_uuid,omitempty"`
 	// Datetime of when the fact stopped being true
 	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// Name of the edge, relation name
@@ -342,21 +439,21 @@ type EntityEdge struct {
 	// SelectionRank is the global cross-scope rank assigned by auto scope selection.
 	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
 	// SourceNodeLabels are the labels of the source node at read time. Same
-	// read-time-projection semantics as SourceNodeName (spec-2 §4).
+	// read-time-projection semantics as SourceNodeName.
 	SourceNodeLabels []string `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
 	// SourceNodeName is the name of the source node at read time. It is a
 	// read-time projection of current node state, not a stored edge
 	// attribute: a subsequent node rename is reflected on the next read.
 	// Omitted (the edge is still returned) if the source node cannot be
-	// resolved, for example if it was deleted concurrently (spec-2 §4).
+	// resolved, for example if it was deleted concurrently.
 	SourceNodeName *string `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
 	// UUID of the source node
 	SourceNodeUUID string `json:"source_node_uuid" url:"source_node_uuid"`
 	// TargetNodeLabels are the labels of the target node at read time. Same
-	// read-time-projection semantics as SourceNodeName (spec-2 §4).
+	// read-time-projection semantics as SourceNodeName.
 	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"target_node_labels,omitempty"`
 	// TargetNodeName is the name of the target node at read time. Same
-	// read-time-projection semantics as SourceNodeName (spec-2 §4).
+	// read-time-projection semantics as SourceNodeName.
 	TargetNodeName *string `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
 	// UUID of the target node
 	TargetNodeUUID string `json:"target_node_uuid" url:"target_node_uuid"`
@@ -402,6 +499,13 @@ func (e *EntityEdge) GetFact() string {
 		return ""
 	}
 	return e.Fact
+}
+
+func (e *EntityEdge) GetHyperedgeUUID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.HyperedgeUUID
 }
 
 func (e *EntityEdge) GetInvalidAt() *string {
@@ -539,6 +643,15 @@ type EntityNode struct {
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the node
 	CreatedAt string `json:"created_at" url:"created_at"`
+	// The UUIDs of the live episodes that mention this node, newest first. The
+	// list is complete when `episodes_truncated` is false. The list is empty
+	// when the node has more than 100 source episodes; list episodes with the
+	// `mentioned_node_uuids` filter to read them.
+	Episodes []string `json:"episodes,omitempty" url:"episodes,omitempty"`
+	// True when the node has more than 100 source episodes, so `episodes` is
+	// empty, or when provenance is unavailable. False means `episodes` is the
+	// complete set.
+	EpisodesTruncated *bool `json:"episodes_truncated,omitempty" url:"episodes_truncated,omitempty"`
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
 	// Name of the node
@@ -571,6 +684,20 @@ func (e *EntityNode) GetCreatedAt() string {
 		return ""
 	}
 	return e.CreatedAt
+}
+
+func (e *EntityNode) GetEpisodes() []string {
+	if e == nil {
+		return nil
+	}
+	return e.Episodes
+}
+
+func (e *EntityNode) GetEpisodesTruncated() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.EpisodesTruncated
 }
 
 func (e *EntityNode) GetLabels() []string {
@@ -655,10 +782,12 @@ func (e *EntityNode) String() string {
 }
 
 type Episode struct {
-	Content   string                 `json:"content" url:"content"`
-	CreatedAt string                 `json:"created_at" url:"created_at"`
-	Metadata  map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	Processed *bool                  `json:"processed,omitempty" url:"processed,omitempty"`
+	Content   string `json:"content" url:"content"`
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// Optional document ID, will be present if the episode is part of a document
+	DocumentID *string                `json:"document_id,omitempty" url:"document_id,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Processed  *bool                  `json:"processed,omitempty" url:"processed,omitempty"`
 	// Relevance is an experimental rank-aligned score in [0,1] derived from Score via logit transformation.
 	// Only populated when using cross_encoder reranker; omitted for other reranker types (e.g., RRF).
 	Relevance *float64 `json:"relevance,omitempty" url:"relevance,omitempty"`
@@ -694,6 +823,13 @@ func (e *Episode) GetCreatedAt() string {
 		return ""
 	}
 	return e.CreatedAt
+}
+
+func (e *Episode) GetDocumentID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.DocumentID
 }
 
 func (e *Episode) GetMetadata() map[string]interface{} {
@@ -1106,11 +1242,16 @@ type GraphEpisodeListRequest struct {
 	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
 	// Sort direction. One of "asc" or "desc". Defaults to "desc".
 	Direction *string `json:"direction,omitempty" url:"direction,omitempty"`
+	// Restricts results to episodes whose stored metadata matches this
+	// predicate. Same type and limits as graph.search episode_metadata_filters.
+	EpisodeMetadataFilters *MetadataFilterGroup `json:"episode_metadata_filters,omitempty" url:"episode_metadata_filters,omitempty"`
 	// Maximum number of episodes to return. An explicit value is clamped to
 	// 50; when omitted, the default page size (100) applies.
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
 	// Restricts results to episodes that mention any of the listed node
-	// UUIDs. At most 256 entries; each must be a syntactically valid UUID.
+	// UUIDs. The list can also contain episode UUIDs: an episode UUID
+	// matches that episode, so one request can return a known set of
+	// episodes. At most 256 entries; each must be a syntactically valid UUID.
 	MentionedNodeUUIDs []string `json:"mentioned_node_uuids,omitempty" url:"mentioned_node_uuids,omitempty"`
 	// Field to sort by. One of "uuid" or "created_at". Defaults to "uuid".
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
@@ -1131,6 +1272,13 @@ func (g *GraphEpisodeListRequest) GetDirection() *string {
 		return nil
 	}
 	return g.Direction
+}
+
+func (g *GraphEpisodeListRequest) GetEpisodeMetadataFilters() *MetadataFilterGroup {
+	if g == nil {
+		return nil
+	}
+	return g.EpisodeMetadataFilters
 }
 
 func (g *GraphEpisodeListRequest) GetLimit() *int {
@@ -1553,7 +1701,7 @@ type Message struct {
 	Content string `json:"content" url:"content"`
 	// The timestamp of when the message was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// The metadata associated with the message.
+	// The metadata associated with the message. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// Customizable name of the sender of the message (e.g., "john", "sales_agent").
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
@@ -2061,7 +2209,9 @@ func (s *SuccessResponse) String() string {
 }
 
 type Thread struct {
-	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// GraphUUID is the graphs.uuid of the owning user's graph (spec-3 section 13.5).
+	GraphUUID   *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
 	ThreadID    *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
 	UserID      *string `json:"user_id,omitempty" url:"user_id,omitempty"`
@@ -2077,6 +2227,13 @@ func (t *Thread) GetCreatedAt() *string {
 		return nil
 	}
 	return t.CreatedAt
+}
+
+func (t *Thread) GetGraphUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.GraphUUID
 }
 
 func (t *Thread) GetProjectUUID() *string {
@@ -2165,7 +2322,7 @@ type ThreadSummary struct {
 	// field falls back to the thread's UUID. Clients should treat it
 	// as an opaque identifier.
 	ThreadID *string `json:"thread_id,omitempty" url:"thread_id,omitempty"`
-	// UUID of the thread summary node.
+	// UUID of the derived thread summary node.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -2252,8 +2409,11 @@ type User struct {
 	DisableDefaultOntology *bool   `json:"disable_default_ontology,omitempty" url:"disable_default_ontology,omitempty"`
 	Email                  *string `json:"email,omitempty" url:"email,omitempty"`
 	FirstName              *string `json:"first_name,omitempty" url:"first_name,omitempty"`
-	ID                     *int    `json:"id,omitempty" url:"id,omitempty"`
-	LastName               *string `json:"last_name,omitempty" url:"last_name,omitempty"`
+	// GraphUUID is the graphs.uuid of the user's graph (spec-3 section 13.5).
+	// Omitted when the graph row does not exist. Read-only; never accepted as input.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	ID        *int    `json:"id,omitempty" url:"id,omitempty"`
+	LastName  *string `json:"last_name,omitempty" url:"last_name,omitempty"`
 	// Deprecated
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
 	ProjectUUID *string                `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
@@ -2302,6 +2462,13 @@ func (u *User) GetFirstName() *string {
 		return nil
 	}
 	return u.FirstName
+}
+
+func (u *User) GetGraphUUID() *string {
+	if u == nil {
+		return nil
+	}
+	return u.GraphUUID
 }
 
 func (u *User) GetID() *int {

@@ -113,6 +113,24 @@ func (c *Client) GetUserContext(
 	return response.Body, nil
 }
 
+// Returns graph episodes associated with a thread. Parallel to get_episodes_for_document for documents.
+func (c *Client) GetEpisodes(
+	ctx context.Context,
+	// The ID of the thread
+	threadID string,
+	opts ...option.RequestOption,
+) (*v3.EpisodeResponse, error) {
+	response, err := c.WithRawResponse.GetEpisodes(
+		ctx,
+		threadID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Returns messages for a thread.
 func (c *Client) Get(
 	ctx context.Context,
