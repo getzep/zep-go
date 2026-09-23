@@ -267,6 +267,68 @@ func (r *RawClient) GetUserContext(
 	}, nil
 }
 
+func (r *RawClient) GetEpisodes(
+	ctx context.Context,
+	// The ID of the thread
+	threadID string,
+	opts ...option.RequestOption,
+) (*core.Response[*v3.EpisodeResponse], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v2",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/threads/%v/episodes",
+		threadID,
+	)
+	headers := internal.MergeHeaders(
+		r.header.Clone(),
+		options.ToHeader(),
+	)
+	errorCodes := internal.ErrorCodes{
+		403: func(apiError *core.APIError) error {
+			return &v3.ForbiddenError{
+				APIError: apiError,
+			}
+		},
+		404: func(apiError *core.APIError) error {
+			return &v3.NotFoundError{
+				APIError: apiError,
+			}
+		},
+		500: func(apiError *core.APIError) error {
+			return &v3.InternalServerError{
+				APIError: apiError,
+			}
+		},
+	}
+	var response *v3.EpisodeResponse
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(errorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*v3.EpisodeResponse]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
 func (r *RawClient) Get(
 	ctx context.Context,
 	// Thread ID

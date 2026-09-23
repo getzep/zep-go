@@ -11,6 +11,9 @@ import (
 type AddDataRequest struct {
 	CreatedAt *string `json:"created_at,omitempty" url:"-"`
 	Data      string  `json:"data" url:"-"`
+	// Optional document ID that groups episodes as chunks of the same document
+	// on a graph. Parallel to thread_id for message threads.
+	DocumentID *string `json:"document_id,omitempty" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
 	// Optional metadata key-value pairs. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
@@ -24,7 +27,9 @@ type AddDataRequest struct {
 }
 
 type AddDataBatchRequest struct {
-	Episodes []*EpisodeData `json:"episodes,omitempty" url:"-"`
+	// Optional document ID applied to every episode in this batch request.
+	DocumentID *string        `json:"document_id,omitempty" url:"-"`
+	Episodes   []*EpisodeData `json:"episodes,omitempty" url:"-"`
 	// graph_id is the ID of the graph to which the data will be added. If adding to the user graph, please use user_id field instead.
 	GraphID *string `json:"graph_id,omitempty" url:"-"`
 	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
@@ -160,6 +165,11 @@ type DetectPatternsRequest struct {
 	UserID *string `json:"user_id,omitempty" url:"-"`
 }
 
+type GraphGetEpisodesForDocumentRequest struct {
+	// Graph ID
+	GraphID string `json:"-" url:"graph_id"`
+}
+
 type GraphSubgraphRequest struct {
 	// Maximum traversal depth from the seeds. 1-3. Defaults to 1.
 	Depth *int `json:"depth,omitempty" url:"-"`
@@ -176,7 +186,7 @@ type GraphSubgraphRequest struct {
 	MaxNodes *int `json:"max_nodes,omitempty" url:"-"`
 	// Filters constraining traversed edges and included nodes. Reuses the
 	// graph.search filter type. search_filters.episode_metadata_filters is
-	// rejected: it cannot be enforced during graph traversal (spec-2 §9.4).
+	// rejected: it cannot be enforced during graph traversal.
 	SearchFilters *SearchFilters `json:"search_filters,omitempty" url:"-"`
 	// Seed node UUIDs to expand from, in traversal-priority order: seeds are
 	// admitted before any expansion, in this order, and count toward
@@ -1314,18 +1324,29 @@ func (e *EpisodeData) String() string {
 }
 
 type Graph struct {
-	CreatedAt   *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	GraphID     *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
-	ID          *int    `json:"id,omitempty" url:"id,omitempty"`
-	Name        *string `json:"name,omitempty" url:"name,omitempty"`
-	ProjectUUID *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
-	TimeZone    *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
-	UpdatedAt   *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID        *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// CanonicalGraphUUID is graphs.uuid, the v4 graph address (spec-3 §13.5).
+	// Omitted when the graphs row does not yet exist. Distinct from UUID,
+	// which is the group-row identifier.
+	CanonicalGraphUUID *string `json:"canonical_graph_uuid,omitempty" url:"canonical_graph_uuid,omitempty"`
+	CreatedAt          *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Description        *string `json:"description,omitempty" url:"description,omitempty"`
+	GraphID            *string `json:"graph_id,omitempty" url:"graph_id,omitempty"`
+	ID                 *int    `json:"id,omitempty" url:"id,omitempty"`
+	Name               *string `json:"name,omitempty" url:"name,omitempty"`
+	ProjectUUID        *string `json:"project_uuid,omitempty" url:"project_uuid,omitempty"`
+	TimeZone           *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
+	UpdatedAt          *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID               *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (g *Graph) GetCanonicalGraphUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CanonicalGraphUUID
 }
 
 func (g *Graph) GetCreatedAt() *string {

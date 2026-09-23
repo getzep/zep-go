@@ -3,5 +3,6 @@
 package thread
 
 type ThreadMessageUpdate struct {
+	// Metadata to store on the message. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata map[string]interface{} `json:"metadata,omitempty" url:"-"`
 }

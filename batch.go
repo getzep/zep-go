@@ -19,6 +19,8 @@ type ApidataCreateBatchRequest struct {
 	// Has no effect on graph_episode items.
 	IgnoreRoles []RoleType             `json:"ignore_roles,omitempty" url:"-"`
 	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"-"`
+	// When true, prevents extraction of generic Entity nodes that do not match the configured ontology.
+	StrictOntology *bool `json:"strict_ontology,omitempty" url:"-"`
 }
 
 type BatchListRequest struct {
@@ -96,10 +98,13 @@ func (a ApidataBatchAddItemType) Ptr() *ApidataBatchAddItemType {
 }
 
 type BatchAddItem struct {
-	Content           *string                  `json:"content,omitempty" url:"content,omitempty"`
-	CreatedAt         *string                  `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Data              *string                  `json:"data,omitempty" url:"data,omitempty"`
-	DataType          *GraphDataType           `json:"data_type,omitempty" url:"data_type,omitempty"`
+	Content   *string        `json:"content,omitempty" url:"content,omitempty"`
+	CreatedAt *string        `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Data      *string        `json:"data,omitempty" url:"data,omitempty"`
+	DataType  *GraphDataType `json:"data_type,omitempty" url:"data_type,omitempty"`
+	// Optional document ID for graph_episode items. Groups episodes as document
+	// chunks. Ignored for thread_message items.
+	DocumentID        *string                  `json:"document_id,omitempty" url:"document_id,omitempty"`
 	GraphID           *string                  `json:"graph_id,omitempty" url:"graph_id,omitempty"`
 	Metadata          map[string]interface{}   `json:"metadata,omitempty" url:"metadata,omitempty"`
 	Name              *string                  `json:"name,omitempty" url:"name,omitempty"`
@@ -139,6 +144,13 @@ func (b *BatchAddItem) GetDataType() *GraphDataType {
 		return nil
 	}
 	return b.DataType
+}
+
+func (b *BatchAddItem) GetDocumentID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.DocumentID
 }
 
 func (b *BatchAddItem) GetGraphID() *string {
@@ -230,7 +242,8 @@ func (b *BatchAddItem) String() string {
 }
 
 type BatchItemDetail struct {
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreatedAt  *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
 	// EpisodeUUID is the UUID of the episode that will be (or has been) created
 	// for this batch item. Populated for every item kind and always equal to
 	// SourceUUID — the underlying source row's UUID is reused as the episode
@@ -258,6 +271,13 @@ func (b *BatchItemDetail) GetCreatedAt() *string {
 		return nil
 	}
 	return b.CreatedAt
+}
+
+func (b *BatchItemDetail) GetDocumentID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.DocumentID
 }
 
 func (b *BatchItemDetail) GetEpisodeUUID() *string {
@@ -693,16 +713,17 @@ func (b BatchStatus) Ptr() *BatchStatus {
 }
 
 type BatchSummary struct {
-	BatchID     *string                `json:"batch_id,omitempty" url:"batch_id,omitempty"`
-	CompletedAt *string                `json:"completed_at,omitempty" url:"completed_at,omitempty"`
-	CreatedAt   *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
-	IgnoreRoles []RoleType             `json:"ignore_roles,omitempty" url:"ignore_roles,omitempty"`
-	ItemCount   *int                   `json:"item_count,omitempty" url:"item_count,omitempty"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
-	ProcessedAt *string                `json:"processed_at,omitempty" url:"processed_at,omitempty"`
-	Progress    *BatchProgress         `json:"progress,omitempty" url:"progress,omitempty"`
-	Status      *BatchStatus           `json:"status,omitempty" url:"status,omitempty"`
-	UpdatedAt   *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	BatchID        *string                `json:"batch_id,omitempty" url:"batch_id,omitempty"`
+	CompletedAt    *string                `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	CreatedAt      *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	IgnoreRoles    []RoleType             `json:"ignore_roles,omitempty" url:"ignore_roles,omitempty"`
+	ItemCount      *int                   `json:"item_count,omitempty" url:"item_count,omitempty"`
+	Metadata       map[string]interface{} `json:"metadata,omitempty" url:"metadata,omitempty"`
+	ProcessedAt    *string                `json:"processed_at,omitempty" url:"processed_at,omitempty"`
+	Progress       *BatchProgress         `json:"progress,omitempty" url:"progress,omitempty"`
+	Status         *BatchStatus           `json:"status,omitempty" url:"status,omitempty"`
+	StrictOntology *bool                  `json:"strict_ontology,omitempty" url:"strict_ontology,omitempty"`
+	UpdatedAt      *string                `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
@@ -769,6 +790,13 @@ func (b *BatchSummary) GetStatus() *BatchStatus {
 		return nil
 	}
 	return b.Status
+}
+
+func (b *BatchSummary) GetStrictOntology() *bool {
+	if b == nil {
+		return nil
+	}
+	return b.StrictOntology
 }
 
 func (b *BatchSummary) GetUpdatedAt() *string {
