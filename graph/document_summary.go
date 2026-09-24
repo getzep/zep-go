@@ -16,7 +16,10 @@ type GraphDocumentSummariesRequest struct {
 	Filters *v3.SearchFilters `json:"filters,omitempty" url:"-"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"-"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", "degree", or "uuid"
+	// (default "uuid"). "degree" sorts by the count of live entity edges that
+	// touch each node (the edge scopes the entity edge list returns) and is
+	// supported on the node list endpoints only.
 	OrderBy *string `json:"order_by,omitempty" url:"-"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
