@@ -643,6 +643,10 @@ type EntityNode struct {
 	Attributes map[string]interface{} `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// Creation time of the node
 	CreatedAt string `json:"created_at" url:"created_at"`
+	// The count of live entity edges that touch this node (the edge scopes
+	// the entity edge list returns). Present only when the list request
+	// orders by degree.
+	Degree *int `json:"degree,omitempty" url:"degree,omitempty"`
 	// The UUIDs of the live episodes that mention this node, newest first. The
 	// list is complete when `episodes_truncated` is false. The list is empty
 	// when the node has more than 100 source episodes; list episodes with the
@@ -684,6 +688,13 @@ func (e *EntityNode) GetCreatedAt() string {
 		return ""
 	}
 	return e.CreatedAt
+}
+
+func (e *EntityNode) GetDegree() *int {
+	if e == nil {
+		return nil
+	}
+	return e.Degree
 }
 
 func (e *EntityNode) GetEpisodes() []string {
@@ -1151,7 +1162,10 @@ type GraphEdgesRequest struct {
 	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", "degree", or "uuid"
+	// (default "uuid"). "degree" sorts by the count of live entity edges that
+	// touch each node (the edge scopes the entity edge list returns) and is
+	// supported on the node list endpoints only.
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
@@ -1398,7 +1412,10 @@ type GraphNodesRequest struct {
 	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", "degree", or "uuid"
+	// (default "uuid"). "degree" sorts by the count of live entity edges that
+	// touch each node (the edge scopes the entity edge list returns) and is
+	// supported on the node list endpoints only.
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
@@ -1493,7 +1510,10 @@ type GraphObservationsRequest struct {
 	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", "degree", or "uuid"
+	// (default "uuid"). "degree" sorts by the count of live entity edges that
+	// touch each node (the edge scopes the entity edge list returns) and is
+	// supported on the node list endpoints only.
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
@@ -1588,7 +1608,10 @@ type GraphThreadSummariesRequest struct {
 	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
 	// Maximum number of items to return
 	Limit *int `json:"limit,omitempty" url:"limit,omitempty"`
-	// Field to sort by. One of "created_at", "valid_at", or "uuid" (default "uuid").
+	// Field to sort by. One of "created_at", "valid_at", "degree", or "uuid"
+	// (default "uuid"). "degree" sorts by the count of live entity edges that
+	// touch each node (the edge scopes the entity edge list returns) and is
+	// supported on the node list endpoints only.
 	OrderBy *string `json:"order_by,omitempty" url:"order_by,omitempty"`
 	// UUID based cursor, used for pagination. Should be the UUID of the last item in the previous page.
 	//
