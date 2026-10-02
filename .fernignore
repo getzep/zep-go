@@ -10,6 +10,7 @@
 #                        the generated types cannot express
 #   ontology_test.go   — its tests, which CI runs on the generated branch, so a
 #                        regeneration that breaks the DSL fails its own PR
+#   contract_test.go   — hand-written generated SDK contract tests
 #
 # Anything ported forward from v3 is re-added deliberately, file by file.
 .github
@@ -19,5 +20,6 @@ go.sum
 .gitattributes
 ontology.go
 ontology_test.go
+contract_test.go
 .fern/replay.lock
 .fern/replay.yml
