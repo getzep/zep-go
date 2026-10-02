@@ -72,7 +72,7 @@ var section42Operations = []section42Operation{
 	{"agent.skill.candidate.list", "GET", "/agents/{agent_uuid}/skill-candidates", true, false},
 	{"agent.skill.candidate.get", "GET", "/agents/{agent_uuid}/skill-candidates/{review_uuid}", false, false},
 	{"agent.skill.evaluation.create_for_candidate", "POST", "/agents/{agent_uuid}/skill-candidates/{review_uuid}/candidates/{candidate_uuid}/evaluations", false, false},
-	{"agent.learning.get", "GET", "/agents/{agent_uuid}/learning", true, false},
+	{"agent.learning.get", "GET", "/agents/{agent_uuid}/learning", false, false},
 	{"agent.learning.list_runs", "GET", "/agents/{agent_uuid}/learning-runs", true, false},
 	{"agent.skill.create", "POST", "/agents/{agent_uuid}/skills", false, false},
 	{"agent.skill.import_package", "POST", "/agents/{agent_uuid}/skills/import", false, false},
@@ -333,7 +333,6 @@ var excludedFromSDK = map[string]bool{
 const (
 	d1Reason        = "The generator configuration does not enable automatic Idempotency-Key generation (spec 3 section 14.6), so a state-changing call without a caller key sends no Idempotency-Key."
 	d2Reason        = "The generated IdempotentRequestOptions.ToHeader sends the key with a '*' prefix, so a caller key is not sent unchanged."
-	d5Reason        = "Spec 3 section 4.2 marks agent.learning.get as paginated, but the v4 contract returns one AgentLearningState with no cursor, so the generated method returns no pager."
 	callerKey       = "contract-caller-key"
 	projectUUID     = "00000000-0000-4000-8000-000000000001"
 	recencyBiasType = "V4GraphContextRequestRecencyBias"
@@ -540,9 +539,6 @@ func TestPaginatedOperationsReturnPages(t *testing.T) {
 		t.Run(operation.name, func(t *testing.T) {
 			method, _, found := findClientMethod(methods, operation.name)
 			reason := missingOperationReason(operation.name)
-			if reason == "" && operation.name == "agent.learning.get" {
-				reason = d5Reason
-			}
 			if !found {
 				err := fmt.Errorf("client method %s is absent", goOperationName(operation.name))
 				if reason != "" {
