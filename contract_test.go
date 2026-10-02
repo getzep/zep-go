@@ -66,7 +66,7 @@ var section42Operations = []section42Operation{
 	{"agent.update", "PATCH", "/agents/{agent_uuid}", false, false},
 	{"agent.declare_breaking_change", "POST", "/agents/{agent_uuid}/breaking-changes", false, false},
 	{"agent.get_context", "POST", "/agents/{agent_uuid}/context", false, true},
-	{"agent.split.plan", "POST", "/agents/{agent_uuid}/split-plan", false, false},
+	{"agent.split.plan", "POST", "/agents/{agent_uuid}/split-plan", false, true},
 	{"agent.literal_policy.get", "GET", "/agents/{agent_uuid}/literal-policy", false, false},
 	{"agent.literal_policy.update", "PUT", "/agents/{agent_uuid}/literal-policy", false, false},
 	{"agent.skill.candidate.list", "GET", "/agents/{agent_uuid}/skill-candidates", true, false},
@@ -281,6 +281,7 @@ var missingFromAlpha5 = map[string]bool{
 }
 
 var alpha5PostReadExposesIdempotency = map[string]bool{
+	"agent.split.plan":                  true,
 	"context.list_templates":            true,
 	"user.list":                         true,
 	"user.lookup":                       true,
