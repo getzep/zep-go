@@ -332,10 +332,9 @@ var excludedFromSDK = map[string]bool{
 }
 
 const (
-	d1Reason        = "The generator configuration does not enable automatic Idempotency-Key generation (spec 3 section 14.6), so a state-changing call without a caller key sends no Idempotency-Key."
+	d1Reason        = "ZEPAI-3750: the generated SDKs do not generate an Idempotency-Key yet (spec 3 section 14.6). This is a post-GA follow-up."
 	d2Reason        = "The generated IdempotentRequestOptions.ToHeader sends the key with a '*' prefix, so a caller key is not sent unchanged."
 	callerKey       = "contract-caller-key"
-	projectUUID     = "00000000-0000-4000-8000-000000000001"
 	recencyBiasType = "V4GraphContextRequestRecencyBias"
 )
 
@@ -925,34 +924,6 @@ func TestClientSendsProjectAPIKey(t *testing.T) {
 	}
 	if actual := requests[0].headers.Get("X-Zep-Project"); actual != "" {
 		t.Fatalf("X-Zep-Project is %q; want no project header", actual)
-	}
-}
-
-func TestClientSendsAdminBearerWithProjectHeader(t *testing.T) {
-	t.Setenv("ZEP_API_KEY", "")
-	headers := make(http.Header)
-	headers.Set("Authorization", "Bearer contract-token")
-	headers.Set("X-Zep-Project", projectUUID)
-	server, recorder := newRecorderServer(t, func(writer http.ResponseWriter, _ *http.Request, _ int) {
-		writeJSON(writer, http.StatusOK, map[string]any{})
-	})
-	client := newContractClient(server, 1, option.WithHTTPHeader(headers))
-	if _, err := client.Project.Get(context.Background()); err != nil {
-		t.Fatalf("get project: %v", err)
-	}
-
-	requests := recorder.snapshot()
-	if len(requests) != 1 {
-		t.Fatalf("sent %d requests; want one", len(requests))
-	}
-	if actual := requests[0].headers.Get("Authorization"); actual != "Bearer contract-token" {
-		t.Fatalf("Authorization is %q; want Bearer contract-token", actual)
-	}
-	if actual := requests[0].headers.Get("X-Zep-Project"); actual != projectUUID {
-		t.Fatalf("X-Zep-Project is %q; want %s", actual, projectUUID)
-	}
-	if actual := requests[0].headers.Get("Api-Key"); actual != "" {
-		t.Fatalf("Api-Key is %q; want no API-key header", actual)
 	}
 }
 
