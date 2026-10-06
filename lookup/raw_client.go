@@ -35,9 +35,9 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 func (r *RawClient) Batch(
 	ctx context.Context,
 	request *zep.BatchLookupRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Response[*zep.LookupBatchResponse], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
@@ -49,6 +49,8 @@ func (r *RawClient) Batch(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.LookupBatchResponse
 	raw, err := r.caller.Call(
 		ctx,

@@ -28,10 +28,12 @@ type BatchLookupRequest struct {
 }
 
 func (b *BatchLookupRequest) require(field *big.Int) {
-	if b.explicitFields == nil {
-		b.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if b.explicitFields != nil {
+		next.Set(b.explicitFields)
 	}
-	b.explicitFields.Or(b.explicitFields, field)
+	next.Or(next, field)
+	b.explicitFields = next
 }
 
 // SetGraphs sets the Graphs field and marks it as non-optional;
@@ -107,10 +109,12 @@ func (l *LookupBatchResponse) GetExtraProperties() map[string]interface{} {
 }
 
 func (l *LookupBatchResponse) require(field *big.Int) {
-	if l.explicitFields == nil {
-		l.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if l.explicitFields != nil {
+		next.Set(l.explicitFields)
 	}
-	l.explicitFields.Or(l.explicitFields, field)
+	next.Or(next, field)
+	l.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -222,10 +226,12 @@ func (l *LookupItem) GetExtraProperties() map[string]interface{} {
 }
 
 func (l *LookupItem) require(field *big.Int) {
-	if l.explicitFields == nil {
-		l.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if l.explicitFields != nil {
+		next.Set(l.explicitFields)
 	}
-	l.explicitFields.Or(l.explicitFields, field)
+	next.Or(next, field)
+	l.explicitFields = next
 }
 
 // SetFound sets the Found field and marks it as non-optional;

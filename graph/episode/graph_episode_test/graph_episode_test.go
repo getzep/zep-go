@@ -89,14 +89,7 @@ func TestGraphEpisodeListForDocumentWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.EpisodeListForDocumentRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-	}
+	request := &graph.EpisodeListForDocumentRequest{}
 	_, invocationErr := client.Graph.Episode.ListForDocument(
 		context.TODO(),
 		"graph_uuid",
@@ -108,7 +101,7 @@ func TestGraphEpisodeListForDocumentWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphEpisodeListForDocumentWithWireMock", "GET", "/graphs/graph_uuid/documents/document_id/episodes", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphEpisodeListForDocumentWithWireMock", "GET", "/graphs/graph_uuid/documents/document_id/episodes", nil, 1)
 }
 
 func TestGraphEpisodeAddWithWireMock(
@@ -150,12 +143,6 @@ func TestGraphEpisodeListWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &graph.EpisodeListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.ArtifactListRequest{},
 	}
 	_, invocationErr := client.Graph.Episode.List(
@@ -168,7 +155,7 @@ func TestGraphEpisodeListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphEpisodeListWithWireMock", "POST", "/graphs/graph_uuid/episodes/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphEpisodeListWithWireMock", "POST", "/graphs/graph_uuid/episodes/list", nil, 1)
 }
 
 func TestGraphEpisodeGetWithWireMock(

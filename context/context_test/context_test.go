@@ -112,14 +112,7 @@ func TestContextListTemplatesWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.ContextTemplateListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-	}
+	request := &zep.ContextTemplateListRequest{}
 	_, invocationErr := client.Context.ListTemplates(
 		context.TODO(),
 		request,
@@ -129,7 +122,7 @@ func TestContextListTemplatesWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestContextListTemplatesWithWireMock", "POST", "/context-templates/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestContextListTemplatesWithWireMock", "POST", "/context-templates/list", nil, 1)
 }
 
 func TestContextGetTemplateWithWireMock(

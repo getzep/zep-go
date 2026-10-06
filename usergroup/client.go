@@ -71,12 +71,6 @@ func (c *Client) Create(
 // Example:
 //
 //	request := &zep.UserGroupListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.SearchListRequest{},
 //	}
 //	client.UserGroup.List(
@@ -86,9 +80,9 @@ func (c *Client) Create(
 func (c *Client) List(
 	ctx context.Context,
 	request *zep.UserGroupListRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.UserGroup, *zep.UserGroupPage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -104,6 +98,8 @@ func (c *Client) List(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -229,12 +225,6 @@ func (c *Client) Update(
 // Example:
 //
 //	request := &zep.UserGroupListMemberCandidatesRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.SearchListRequest{},
 //	}
 //	client.UserGroup.ListMemberCandidates(
@@ -247,9 +237,9 @@ func (c *Client) ListMemberCandidates(
 	// User group UUID
 	groupUUID string,
 	request *zep.UserGroupListMemberCandidatesRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.User, *zep.UserPage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -268,6 +258,8 @@ func (c *Client) ListMemberCandidates(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -347,12 +339,6 @@ func (c *Client) AddMembers(
 // Example:
 //
 //	request := &zep.UserGroupListMembersRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.SearchListRequest{},
 //	}
 //	client.UserGroup.ListMembers(
@@ -365,9 +351,9 @@ func (c *Client) ListMembers(
 	// User group UUID
 	groupUUID string,
 	request *zep.UserGroupListMembersRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.User, *zep.UserPage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -386,6 +372,8 @@ func (c *Client) ListMembers(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -493,14 +481,7 @@ func (c *Client) RemoveMember(
 //
 // Example:
 //
-//	request := &zep.UserGroupListForUserRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &zep.UserGroupListForUserRequest{}
 //	client.UserGroup.ListForUser(
 //	    context.TODO(),
 //	    "user_uuid",

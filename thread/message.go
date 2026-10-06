@@ -13,7 +13,7 @@ var (
 )
 
 type PatchMessageRequest struct {
-	// Metadata to merge onto the message; a key set to null is removed.
+	// Metadata to merge onto the message; a key set to null is removed. Max 10 keys after the merge. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -21,10 +21,12 @@ type PatchMessageRequest struct {
 }
 
 func (p *PatchMessageRequest) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetMetadata sets the Metadata field and marks it as non-optional;

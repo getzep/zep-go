@@ -7,6 +7,37 @@ import (
 	core "github.com/getzep/zep-go/v4/core"
 )
 
+// Bad Gateway
+type BadGatewayError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (b *BadGatewayError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	b.StatusCode = 502
+	b.Body = body
+	return nil
+}
+
+func (b *BadGatewayError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(b.Body)
+}
+
+func (b *BadGatewayError) Unwrap() error {
+	return b.APIError
+}
+
+func (b *BadGatewayError) GetBody() *APIError {
+	if b == nil {
+		return nil
+	}
+	return b.Body
+}
+
 // Bad Request
 type BadRequestError struct {
 	*core.APIError
@@ -29,6 +60,13 @@ func (b *BadRequestError) MarshalJSON() ([]byte, error) {
 
 func (b *BadRequestError) Unwrap() error {
 	return b.APIError
+}
+
+func (b *BadRequestError) GetBody() *APIError {
+	if b == nil {
+		return nil
+	}
+	return b.Body
 }
 
 // Conflict
@@ -55,6 +93,44 @@ func (c *ConflictError) Unwrap() error {
 	return c.APIError
 }
 
+func (c *ConflictError) GetBody() *APIError {
+	if c == nil {
+		return nil
+	}
+	return c.Body
+}
+
+// Request Entity Too Large
+type ContentTooLargeError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (c *ContentTooLargeError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	c.StatusCode = 413
+	c.Body = body
+	return nil
+}
+
+func (c *ContentTooLargeError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.Body)
+}
+
+func (c *ContentTooLargeError) Unwrap() error {
+	return c.APIError
+}
+
+func (c *ContentTooLargeError) GetBody() *APIError {
+	if c == nil {
+		return nil
+	}
+	return c.Body
+}
+
 // Forbidden
 type ForbiddenError struct {
 	*core.APIError
@@ -77,6 +153,13 @@ func (f *ForbiddenError) MarshalJSON() ([]byte, error) {
 
 func (f *ForbiddenError) Unwrap() error {
 	return f.APIError
+}
+
+func (f *ForbiddenError) GetBody() *APIError {
+	if f == nil {
+		return nil
+	}
+	return f.Body
 }
 
 // Not Found
@@ -103,6 +186,44 @@ func (n *NotFoundError) Unwrap() error {
 	return n.APIError
 }
 
+func (n *NotFoundError) GetBody() *APIError {
+	if n == nil {
+		return nil
+	}
+	return n.Body
+}
+
+// Service Unavailable
+type ServiceUnavailableError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (s *ServiceUnavailableError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	s.StatusCode = 503
+	s.Body = body
+	return nil
+}
+
+func (s *ServiceUnavailableError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.Body)
+}
+
+func (s *ServiceUnavailableError) Unwrap() error {
+	return s.APIError
+}
+
+func (s *ServiceUnavailableError) GetBody() *APIError {
+	if s == nil {
+		return nil
+	}
+	return s.Body
+}
+
 // Unauthorized
 type UnauthorizedError struct {
 	*core.APIError
@@ -125,4 +246,42 @@ func (u *UnauthorizedError) MarshalJSON() ([]byte, error) {
 
 func (u *UnauthorizedError) Unwrap() error {
 	return u.APIError
+}
+
+func (u *UnauthorizedError) GetBody() *APIError {
+	if u == nil {
+		return nil
+	}
+	return u.Body
+}
+
+// Unprocessable Entity
+type UnprocessableEntityError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (u *UnprocessableEntityError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	u.StatusCode = 422
+	u.Body = body
+	return nil
+}
+
+func (u *UnprocessableEntityError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.Body)
+}
+
+func (u *UnprocessableEntityError) Unwrap() error {
+	return u.APIError
+}
+
+func (u *UnprocessableEntityError) GetBody() *APIError {
+	if u == nil {
+		return nil
+	}
+	return u.Body
 }

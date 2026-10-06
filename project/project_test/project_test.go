@@ -123,6 +123,99 @@ func TestProjectUpdateWithWireMock(
 	VerifyRequestCount(t, "TestProjectUpdateWithWireMock", "PATCH", "/project", nil, 1)
 }
 
+func TestProjectGetContentPolicyWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	_, invocationErr := client.Project.GetContentPolicy(
+		context.TODO(),
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestProjectGetContentPolicyWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestProjectGetContentPolicyWithWireMock", "GET", "/project/content-policy", nil, 1)
+}
+
+func TestProjectSetContentPolicyWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.ContentPolicyRequest{}
+	_, invocationErr := client.Project.SetContentPolicy(
+		context.TODO(),
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestProjectSetContentPolicyWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestProjectSetContentPolicyWithWireMock", "PUT", "/project/content-policy", nil, 1)
+}
+
+func TestProjectListContentPolicyRevisionsWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.ProjectListContentPolicyRevisionsRequest{}
+	_, invocationErr := client.Project.ListContentPolicyRevisions(
+		context.TODO(),
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestProjectListContentPolicyRevisionsWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestProjectListContentPolicyRevisionsWithWireMock", "GET", "/project/content-policy/revisions", nil, 1)
+}
+
+func TestProjectGetContentPolicyRevisionWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	_, invocationErr := client.Project.GetContentPolicyRevision(
+		context.TODO(),
+		"revision_uuid",
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestProjectGetContentPolicyRevisionWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestProjectGetContentPolicyRevisionWithWireMock", "GET", "/project/content-policy/revisions/revision_uuid", nil, 1)
+}
+
 func TestProjectGetInstructionsWithWireMock(
 	t *testing.T,
 ) {

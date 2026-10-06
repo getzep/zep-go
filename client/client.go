@@ -5,30 +5,34 @@ package client
 import (
 	os "os"
 
+	client "github.com/getzep/zep-go/v4/agent/client"
 	batch "github.com/getzep/zep-go/v4/batch"
 	context "github.com/getzep/zep-go/v4/context"
 	core "github.com/getzep/zep-go/v4/core"
-	client "github.com/getzep/zep-go/v4/graph/client"
+	graphclient "github.com/getzep/zep-go/v4/graph/client"
 	internal "github.com/getzep/zep-go/v4/internal"
 	lookup "github.com/getzep/zep-go/v4/lookup"
 	option "github.com/getzep/zep-go/v4/option"
 	project "github.com/getzep/zep-go/v4/project"
 	task "github.com/getzep/zep-go/v4/task"
 	threadclient "github.com/getzep/zep-go/v4/thread/client"
+	traceconnectionclient "github.com/getzep/zep-go/v4/traceconnection/client"
 	user "github.com/getzep/zep-go/v4/user"
 	usergroup "github.com/getzep/zep-go/v4/usergroup"
 )
 
 type Client struct {
-	Batch     *batch.Client
-	Context   *context.Client
-	Graph     *client.Client
-	Lookup    *lookup.Client
-	Project   *project.Client
-	Task      *task.Client
-	Thread    *threadclient.Client
-	UserGroup *usergroup.Client
-	User      *user.Client
+	Agent           *client.Client
+	Batch           *batch.Client
+	Context         *context.Client
+	Graph           *graphclient.Client
+	Lookup          *lookup.Client
+	Project         *project.Client
+	Task            *task.Client
+	Thread          *threadclient.Client
+	TraceConnection *traceconnectionclient.Client
+	UserGroup       *usergroup.Client
+	User            *user.Client
 
 	options *core.RequestOptions
 	baseURL string
@@ -41,17 +45,19 @@ func NewClient(opts ...option.RequestOption) *Client {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
-		Batch:     batch.NewClient(options),
-		Context:   context.NewClient(options),
-		Graph:     client.NewClient(options),
-		Lookup:    lookup.NewClient(options),
-		Project:   project.NewClient(options),
-		Task:      task.NewClient(options),
-		Thread:    threadclient.NewClient(options),
-		UserGroup: usergroup.NewClient(options),
-		User:      user.NewClient(options),
-		options:   options,
-		baseURL:   options.BaseURL,
+		Agent:           client.NewClient(options),
+		Batch:           batch.NewClient(options),
+		Context:         context.NewClient(options),
+		Graph:           graphclient.NewClient(options),
+		Lookup:          lookup.NewClient(options),
+		Project:         project.NewClient(options),
+		Task:            task.NewClient(options),
+		Thread:          threadclient.NewClient(options),
+		TraceConnection: traceconnectionclient.NewClient(options),
+		UserGroup:       usergroup.NewClient(options),
+		User:            user.NewClient(options),
+		options:         options,
+		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
 				Client:         options.HTTPClient,

@@ -55,6 +55,8 @@ func (r *RawClient) Add(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.AddEpisodeResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -154,6 +156,8 @@ func (r *RawClient) Delete(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.AsyncResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -205,6 +209,8 @@ func (r *RawClient) Update(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Episode
 	raw, err := r.caller.Call(
 		ctx,

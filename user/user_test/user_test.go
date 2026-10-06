@@ -112,20 +112,7 @@ func TestUserListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.UserListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-		OrderBy: zep.String(
-			"order_by",
-		),
-		Order: zep.String(
-			"order",
-		),
-	}
+	request := &zep.UserListRequest{}
 	_, invocationErr := client.User.List(
 		context.TODO(),
 		request,
@@ -135,7 +122,7 @@ func TestUserListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestUserListWithWireMock", "POST", "/users/list", map[string]interface{}{"limit": "1", "cursor": "cursor", "order_by": "order_by", "order": "order"}, 1)
+	VerifyRequestCount(t, "TestUserListWithWireMock", "POST", "/users/list", nil, 1)
 }
 
 func TestUserLookupWithWireMock(

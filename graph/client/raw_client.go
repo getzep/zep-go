@@ -49,6 +49,8 @@ func (r *RawClient) Create(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Graph
 	raw, err := r.caller.Call(
 		ctx,
@@ -79,9 +81,9 @@ func (r *RawClient) Create(
 func (r *RawClient) Lookup(
 	ctx context.Context,
 	request *zep.LookupRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Response[*zep.Graph], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
@@ -92,6 +94,8 @@ func (r *RawClient) Lookup(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Graph
 	raw, err := r.caller.Call(
 		ctx,
@@ -185,6 +189,8 @@ func (r *RawClient) Delete(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.GraphDeleteResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -233,6 +239,8 @@ func (r *RawClient) Update(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Graph
 	raw, err := r.caller.Call(
 		ctx,
@@ -264,7 +272,7 @@ func (r *RawClient) Clone(
 	ctx context.Context,
 	// Graph UUID
 	graphUUID string,
-	request *zep.CloneGraphRequest,
+	request zep.CloneGraphRequest,
 	opts ...option.IdempotentRequestOption,
 ) (*core.Response[*zep.CloneGraphResult], error) {
 	options := core.NewIdempotentRequestOptions(opts...)
@@ -281,7 +289,8 @@ func (r *RawClient) Clone(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.CloneGraphResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -309,14 +318,60 @@ func (r *RawClient) Clone(
 	}, nil
 }
 
+func (r *RawClient) GetContentPolicy(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	opts ...option.RequestOption,
+) (*core.Response[*zep.GraphContentPolicy], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/content-policy",
+		graphUUID,
+	)
+	headers := internal.MergeHeaders(
+		r.options.ToHeader(),
+		options.ToHeader(),
+	)
+	var response *zep.GraphContentPolicy
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*zep.GraphContentPolicy]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
 func (r *RawClient) GetContext(
 	ctx context.Context,
 	// Graph UUID
 	graphUUID string,
 	request *zep.GraphContextRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Response[*zep.GraphContextResponse], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
@@ -331,6 +386,8 @@ func (r *RawClient) GetContext(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.GraphContextResponse
 	raw, err := r.caller.Call(
 		ctx,
@@ -425,6 +482,8 @@ func (r *RawClient) SetInstructions(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Instructions
 	raw, err := r.caller.Call(
 		ctx,
@@ -519,6 +578,8 @@ func (r *RawClient) SetObservationSteering(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.ObservationSteering
 	raw, err := r.caller.Call(
 		ctx,
@@ -613,6 +674,8 @@ func (r *RawClient) SetOntology(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Ontology
 	raw, err := r.caller.Call(
 		ctx,
@@ -645,9 +708,9 @@ func (r *RawClient) GetSubgraph(
 	// Graph UUID
 	graphUUID string,
 	request *zep.SubgraphRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Response[*zep.SubgraphResponse], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
@@ -662,6 +725,8 @@ func (r *RawClient) GetSubgraph(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.SubgraphResponse
 	raw, err := r.caller.Call(
 		ctx,
@@ -709,6 +774,8 @@ func (r *RawClient) Warm(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.AsyncResult
 	raw, err := r.caller.Call(
 		ctx,

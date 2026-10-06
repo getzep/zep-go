@@ -42,14 +42,7 @@ func NewClient(options *core.RequestOptions) *Client {
 
 // Example:
 //
-//	request := &graph.EpisodeListForDocumentRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &graph.EpisodeListForDocumentRequest{}
 //	client.Graph.Episode.ListForDocument(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -153,15 +146,16 @@ func (c *Client) Add(
 	return response.Body, nil
 }
 
+// Lists the episodes of a graph. `filters.mentioned_node_uuids` restricts
+// the results to episodes that mention any of the listed node UUIDs. The
+// list can also contain episode UUIDs: an episode UUID matches that episode,
+// so one request can return a known set of episodes. At most 256 entries.
+// `filters.metadata_filters` restricts the results to episodes whose stored
+// metadata matches the predicate.
+//
 // Example:
 //
 //	request := &graph.EpisodeListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.ArtifactListRequest{},
 //	}
 //	client.Graph.Episode.List(
@@ -174,9 +168,9 @@ func (c *Client) List(
 	// Graph UUID
 	graphUUID string,
 	request *graph.EpisodeListRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -195,6 +189,8 @@ func (c *Client) List(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)

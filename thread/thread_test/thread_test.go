@@ -88,23 +88,7 @@ func TestThreadListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.ThreadListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-		OrderBy: zep.String(
-			"order_by",
-		),
-		Order: zep.String(
-			"order",
-		),
-		UserUUID: zep.String(
-			"user_uuid",
-		),
-	}
+	request := &zep.ThreadListRequest{}
 	_, invocationErr := client.Thread.List(
 		context.TODO(),
 		request,
@@ -114,7 +98,7 @@ func TestThreadListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestThreadListWithWireMock", "GET", "/threads", map[string]interface{}{"limit": "1", "cursor": "cursor", "order_by": "order_by", "order": "order", "user_uuid": "user_uuid"}, 1)
+	VerifyRequestCount(t, "TestThreadListWithWireMock", "GET", "/threads", nil, 1)
 }
 
 func TestThreadCreateWithWireMock(
@@ -224,11 +208,7 @@ func TestThreadGetContextWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.ThreadGetContextRequest{
-		TemplateUUID: zep.String(
-			"template_uuid",
-		),
-	}
+	request := &zep.ThreadGetContextRequest{}
 	_, invocationErr := client.Thread.GetContext(
 		context.TODO(),
 		"thread_uuid",
@@ -239,7 +219,7 @@ func TestThreadGetContextWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestThreadGetContextWithWireMock", "GET", "/threads/thread_uuid/context", map[string]interface{}{"template_uuid": "template_uuid"}, 1)
+	VerifyRequestCount(t, "TestThreadGetContextWithWireMock", "GET", "/threads/thread_uuid/context", nil, 1)
 }
 
 func TestThreadListEpisodesWithWireMock(
@@ -253,14 +233,7 @@ func TestThreadListEpisodesWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.ThreadListEpisodesRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-	}
+	request := &zep.ThreadListEpisodesRequest{}
 	_, invocationErr := client.Thread.ListEpisodes(
 		context.TODO(),
 		"thread_uuid",
@@ -271,7 +244,7 @@ func TestThreadListEpisodesWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestThreadListEpisodesWithWireMock", "GET", "/threads/thread_uuid/episodes", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestThreadListEpisodesWithWireMock", "GET", "/threads/thread_uuid/episodes", nil, 1)
 }
 
 func TestThreadListMessagesWithWireMock(
@@ -285,14 +258,7 @@ func TestThreadListMessagesWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.ThreadListMessagesRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-	}
+	request := &zep.ThreadListMessagesRequest{}
 	_, invocationErr := client.Thread.ListMessages(
 		context.TODO(),
 		"thread_uuid",
@@ -303,7 +269,7 @@ func TestThreadListMessagesWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestThreadListMessagesWithWireMock", "GET", "/threads/thread_uuid/messages", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestThreadListMessagesWithWireMock", "GET", "/threads/thread_uuid/messages", nil, 1)
 }
 
 func TestThreadAddMessagesWithWireMock(

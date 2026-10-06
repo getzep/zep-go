@@ -112,20 +112,7 @@ func TestGraphListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.GraphListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-		OrderBy: zep.String(
-			"order_by",
-		),
-		Order: zep.String(
-			"order",
-		),
-	}
+	request := &zep.GraphListRequest{}
 	_, invocationErr := client.Graph.List(
 		context.TODO(),
 		request,
@@ -135,7 +122,7 @@ func TestGraphListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphListWithWireMock", "POST", "/graphs/list", map[string]interface{}{"limit": "1", "cursor": "cursor", "order_by": "order_by", "order": "order"}, 1)
+	VerifyRequestCount(t, "TestGraphListWithWireMock", "POST", "/graphs/list", nil, 1)
 }
 
 func TestGraphLookupWithWireMock(
@@ -244,7 +231,9 @@ func TestGraphCloneWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.CloneGraphRequest{}
+	request := map[string]any{
+		"key": "value",
+	}
 	_, invocationErr := client.Graph.Clone(
 		context.TODO(),
 		"graph_uuid",
@@ -256,6 +245,54 @@ func TestGraphCloneWithWireMock(
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
 	VerifyRequestCount(t, "TestGraphCloneWithWireMock", "POST", "/graphs/graph_uuid/clone", nil, 1)
+}
+
+func TestGraphGetContentPolicyWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	_, invocationErr := client.Graph.GetContentPolicy(
+		context.TODO(),
+		"graph_uuid",
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphGetContentPolicyWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphGetContentPolicyWithWireMock", "GET", "/graphs/graph_uuid/content-policy", nil, 1)
+}
+
+func TestGraphListContentPolicyEventsWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.ContentPolicyEventListRequest{}
+	_, invocationErr := client.Graph.ListContentPolicyEvents(
+		context.TODO(),
+		"graph_uuid",
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphListContentPolicyEventsWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphListContentPolicyEventsWithWireMock", "POST", "/graphs/graph_uuid/content-policy/events/list", nil, 1)
 }
 
 func TestGraphGetContextWithWireMock(
@@ -441,12 +478,6 @@ func TestGraphSearchEdgesWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.GraphSearchEdgesRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.SearchRequest{
 			Query: "query",
 		},
@@ -461,7 +492,7 @@ func TestGraphSearchEdgesWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphSearchEdgesWithWireMock", "POST", "/graphs/graph_uuid/search/edges", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphSearchEdgesWithWireMock", "POST", "/graphs/graph_uuid/search/edges", nil, 1)
 }
 
 func TestGraphSearchEpisodesWithWireMock(
@@ -476,12 +507,6 @@ func TestGraphSearchEpisodesWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.GraphSearchEpisodesRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.SearchRequest{
 			Query: "query",
 		},
@@ -496,7 +521,7 @@ func TestGraphSearchEpisodesWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphSearchEpisodesWithWireMock", "POST", "/graphs/graph_uuid/search/episodes", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphSearchEpisodesWithWireMock", "POST", "/graphs/graph_uuid/search/episodes", nil, 1)
 }
 
 func TestGraphSearchNodesWithWireMock(
@@ -511,12 +536,6 @@ func TestGraphSearchNodesWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.GraphSearchNodesRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.SearchRequest{
 			Query: "query",
 		},
@@ -531,7 +550,7 @@ func TestGraphSearchNodesWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphSearchNodesWithWireMock", "POST", "/graphs/graph_uuid/search/nodes", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphSearchNodesWithWireMock", "POST", "/graphs/graph_uuid/search/nodes", nil, 1)
 }
 
 func TestGraphSearchObservationsWithWireMock(
@@ -546,12 +565,6 @@ func TestGraphSearchObservationsWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.GraphSearchObservationsRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.SearchRequest{
 			Query: "query",
 		},
@@ -566,7 +579,7 @@ func TestGraphSearchObservationsWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphSearchObservationsWithWireMock", "POST", "/graphs/graph_uuid/search/observations", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphSearchObservationsWithWireMock", "POST", "/graphs/graph_uuid/search/observations", nil, 1)
 }
 
 func TestGraphSearchThreadSummariesWithWireMock(
@@ -581,12 +594,6 @@ func TestGraphSearchThreadSummariesWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.GraphSearchThreadSummariesRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.SearchRequest{
 			Query: "query",
 		},
@@ -601,7 +608,7 @@ func TestGraphSearchThreadSummariesWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphSearchThreadSummariesWithWireMock", "POST", "/graphs/graph_uuid/search/thread-summaries", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphSearchThreadSummariesWithWireMock", "POST", "/graphs/graph_uuid/search/thread-summaries", nil, 1)
 }
 
 func TestGraphGetSubgraphWithWireMock(

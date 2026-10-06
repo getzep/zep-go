@@ -10,126 +10,57 @@ import (
 )
 
 var (
-	addEdgeRequestFieldAttributes = big.NewInt(1 << 0)
-	addEdgeRequestFieldExpiredAt  = big.NewInt(1 << 1)
-	addEdgeRequestFieldFact       = big.NewInt(1 << 2)
-	addEdgeRequestFieldFactName   = big.NewInt(1 << 3)
-	addEdgeRequestFieldInvalidAt  = big.NewInt(1 << 4)
-	addEdgeRequestFieldMetadata   = big.NewInt(1 << 5)
-	addEdgeRequestFieldSourceNode = big.NewInt(1 << 6)
-	addEdgeRequestFieldTargetNode = big.NewInt(1 << 7)
-	addEdgeRequestFieldValidAt    = big.NewInt(1 << 8)
+	addEdgesRequestFieldDeduplicate = big.NewInt(1 << 0)
+	addEdgesRequestFieldEdges       = big.NewInt(1 << 1)
 )
 
-type AddEdgeRequest struct {
-	// Additional attributes to store on the edge.
-	Attributes map[string]any `json:"attributes,omitempty" url:"-"`
-	// The time at which the fact was superseded or invalidated.
-	ExpiredAt *string `json:"expired_at,omitempty" url:"-"`
-	// The fact text describing the relationship between the source and target
-	// nodes.
-	Fact string `json:"fact" url:"-"`
-	// The name of the edge, in upper snake case, for example RELATES_TO.
-	FactName string `json:"fact_name" url:"-"`
-	// The time at which the fact stopped being true.
-	InvalidAt *string `json:"invalid_at,omitempty" url:"-"`
-	// Metadata attached to the episode created for this edge.
-	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
-	// The source node of the edge, referenced by uuid or created or matched by
-	// name.
-	SourceNode *v4.EdgeNodeRef `json:"source_node" url:"-"`
-	// The target node of the edge, referenced by uuid or created or matched by
-	// name.
-	TargetNode *v4.EdgeNodeRef `json:"target_node" url:"-"`
-	// The time at which the fact became true.
-	ValidAt *string `json:"valid_at,omitempty" url:"-"`
+type AddEdgesRequest struct {
+	// When true, Zep compares each edge with graph edges and can merge a
+	// duplicate or invalidate a contradicted edge. This adds an LLM call per
+	// edge. The default is false.
+	Deduplicate *bool `json:"deduplicate,omitempty" url:"-"`
+	// The edges to add to the graph. The request accepts 1 to 100 edges.
+	Edges []*v4.EdgeInput `json:"edges" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-func (a *AddEdgeRequest) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+func (a *AddEdgesRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
-// SetAttributes sets the Attributes field and marks it as non-optional;
+// SetDeduplicate sets the Deduplicate field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetAttributes(attributes map[string]any) {
-	a.Attributes = attributes
-	a.require(addEdgeRequestFieldAttributes)
+func (a *AddEdgesRequest) SetDeduplicate(deduplicate *bool) {
+	a.Deduplicate = deduplicate
+	a.require(addEdgesRequestFieldDeduplicate)
 }
 
-// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// SetEdges sets the Edges field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetExpiredAt(expiredAt *string) {
-	a.ExpiredAt = expiredAt
-	a.require(addEdgeRequestFieldExpiredAt)
+func (a *AddEdgesRequest) SetEdges(edges []*v4.EdgeInput) {
+	a.Edges = edges
+	a.require(addEdgesRequestFieldEdges)
 }
 
-// SetFact sets the Fact field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetFact(fact string) {
-	a.Fact = fact
-	a.require(addEdgeRequestFieldFact)
-}
-
-// SetFactName sets the FactName field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetFactName(factName string) {
-	a.FactName = factName
-	a.require(addEdgeRequestFieldFactName)
-}
-
-// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetInvalidAt(invalidAt *string) {
-	a.InvalidAt = invalidAt
-	a.require(addEdgeRequestFieldInvalidAt)
-}
-
-// SetMetadata sets the Metadata field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetMetadata(metadata map[string]any) {
-	a.Metadata = metadata
-	a.require(addEdgeRequestFieldMetadata)
-}
-
-// SetSourceNode sets the SourceNode field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetSourceNode(sourceNode *v4.EdgeNodeRef) {
-	a.SourceNode = sourceNode
-	a.require(addEdgeRequestFieldSourceNode)
-}
-
-// SetTargetNode sets the TargetNode field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetTargetNode(targetNode *v4.EdgeNodeRef) {
-	a.TargetNode = targetNode
-	a.require(addEdgeRequestFieldTargetNode)
-}
-
-// SetValidAt sets the ValidAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeRequest) SetValidAt(validAt *string) {
-	a.ValidAt = validAt
-	a.require(addEdgeRequestFieldValidAt)
-}
-
-func (a *AddEdgeRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler AddEdgeRequest
+func (a *AddEdgesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddEdgesRequest
 	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	*a = AddEdgeRequest(body)
+	*a = AddEdgesRequest(body)
 	return nil
 }
 
-func (a *AddEdgeRequest) MarshalJSON() ([]byte, error) {
-	type embed AddEdgeRequest
+func (a *AddEdgesRequest) MarshalJSON() ([]byte, error) {
+	type embed AddEdgesRequest
 	var marshaler = struct {
 		embed
 	}{
@@ -156,10 +87,12 @@ type EdgeListRequest struct {
 }
 
 func (e *EdgeListRequest) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -207,10 +140,12 @@ type PatchEdgeRequest struct {
 }
 
 func (p *PatchEdgeRequest) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;

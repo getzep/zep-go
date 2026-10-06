@@ -41,17 +41,7 @@ func NewClient(options *core.RequestOptions) *Client {
 
 // Example:
 //
-//	request := &zep.BatchListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	    Status: zep.String(
-//	        "status",
-//	    ),
-//	}
+//	request := &zep.BatchListRequest{}
 //	client.Batch.List(
 //	    context.TODO(),
 //	    request,
@@ -187,14 +177,7 @@ func (c *Client) Delete(
 
 // Example:
 //
-//	request := &zep.BatchListItemsRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &zep.BatchListItemsRequest{}
 //	client.Batch.ListItems(
 //	    context.TODO(),
 //	    "batch_uuid",
@@ -270,7 +253,7 @@ func (c *Client) ListItems(
 //	request := &zep.AddBatchItemsRequest{
 //	    Items: []*zep.BatchItemInput{
 //	        &zep.BatchItemInput{
-//	            Type: zep.V4BatchItemInputTypeGraphEpisode,
+//	            Type: zep.BatchItemInputTypeGraphEpisode,
 //	        },
 //	    },
 //	}

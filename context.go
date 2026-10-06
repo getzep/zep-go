@@ -28,10 +28,12 @@ type ContextTemplateListRequest struct {
 }
 
 func (c *ContextTemplateListRequest) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -136,10 +138,12 @@ func (c *ContextTemplate) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *ContextTemplate) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -263,10 +267,12 @@ func (c *ContextTemplatePage) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *ContextTemplatePage) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -372,10 +378,12 @@ func (c *CreateContextTemplateRequest) GetExtraProperties() map[string]interface
 }
 
 func (c *CreateContextTemplateRequest) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetName sets the Name field and marks it as non-optional;

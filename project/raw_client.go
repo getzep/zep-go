@@ -90,6 +90,8 @@ func (r *RawClient) Update(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Project
 	raw, err := r.caller.Call(
 		ctx,
@@ -111,6 +113,139 @@ func (r *RawClient) Update(
 		return nil, err
 	}
 	return &core.Response[*zep.Project]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) GetContentPolicy(
+	ctx context.Context,
+	opts ...option.RequestOption,
+) (*core.Response[*zep.ContentPolicy], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := baseURL + "/project/content-policy"
+	headers := internal.MergeHeaders(
+		r.options.ToHeader(),
+		options.ToHeader(),
+	)
+	var response *zep.ContentPolicy
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*zep.ContentPolicy]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) SetContentPolicy(
+	ctx context.Context,
+	request *zep.ContentPolicyRequest,
+	opts ...option.IdempotentRequestOption,
+) (*core.Response[*zep.ContentPolicy], error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := baseURL + "/project/content-policy"
+	headers := internal.MergeHeaders(
+		r.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
+	var response *zep.ContentPolicy
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPut,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*zep.ContentPolicy]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) GetContentPolicyRevision(
+	ctx context.Context,
+	// Revision UUID
+	revisionUUID string,
+	opts ...option.RequestOption,
+) (*core.Response[*zep.ContentPolicy], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/project/content-policy/revisions/%v",
+		revisionUUID,
+	)
+	headers := internal.MergeHeaders(
+		r.options.ToHeader(),
+		options.ToHeader(),
+	)
+	var response *zep.ContentPolicy
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*zep.ContentPolicy]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -174,6 +309,8 @@ func (r *RawClient) SetInstructions(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Instructions
 	raw, err := r.caller.Call(
 		ctx,
@@ -258,6 +395,8 @@ func (r *RawClient) SetObservationSteering(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.ObservationSteering
 	raw, err := r.caller.Call(
 		ctx,
@@ -342,6 +481,8 @@ func (r *RawClient) SetOntology(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Ontology
 	raw, err := r.caller.Call(
 		ctx,
@@ -426,6 +567,8 @@ func (r *RawClient) SetUserSummaryInstructions(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.UserSummaryInstructions
 	raw, err := r.caller.Call(
 		ctx,

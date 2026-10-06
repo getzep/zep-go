@@ -72,6 +72,22 @@ func TestSettersNodeListRequest(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetOrderBy", func(t *testing.T) {
+		obj := &NodeListRequest{}
+		var fernTestValueOrderBy *NodeListRequestOrderBy
+		obj.SetOrderBy(fernTestValueOrderBy)
+		assert.Equal(t, fernTestValueOrderBy, obj.OrderBy)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+	t.Run("SetOrder", func(t *testing.T) {
+		obj := &NodeListRequest{}
+		var fernTestValueOrder *NodeListRequestOrder
+		obj.SetOrder(fernTestValueOrder)
+		assert.Equal(t, fernTestValueOrder, obj.Order)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 }
 
 func TestSettersMarkExplicitNodeListRequest(t *testing.T) {
@@ -137,6 +153,68 @@ func TestSettersMarkExplicitNodeListRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
+	t.Run("SetOrderBy_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &NodeListRequest{}
+		var fernTestValueOrderBy *NodeListRequestOrderBy
+
+		// Act
+		obj.SetOrderBy(fernTestValueOrderBy)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetOrder_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &NodeListRequest{}
+		var fernTestValueOrder *NodeListRequestOrder
+
+		// Act
+		obj.SetOrder(fernTestValueOrder)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
 }
 
 func TestSettersNeighborsRequest(t *testing.T) {
@@ -156,9 +234,25 @@ func TestSettersNeighborsRequest(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetOrderBy", func(t *testing.T) {
+		obj := &NeighborsRequest{}
+		var fernTestValueOrderBy *NodeListNeighborsRequestOrderBy
+		obj.SetOrderBy(fernTestValueOrderBy)
+		assert.Equal(t, fernTestValueOrderBy, obj.OrderBy)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+	t.Run("SetOrder", func(t *testing.T) {
+		obj := &NeighborsRequest{}
+		var fernTestValueOrder *NodeListNeighborsRequestOrder
+		obj.SetOrder(fernTestValueOrder)
+		assert.Equal(t, fernTestValueOrder, obj.Order)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetDirection", func(t *testing.T) {
 		obj := &NeighborsRequest{}
-		var fernTestValueDirection *V4NeighborsRequestDirection
+		var fernTestValueDirection *NeighborsRequestDirection
 		obj.SetDirection(fernTestValueDirection)
 		assert.Equal(t, fernTestValueDirection, obj.Direction)
 		assert.NotNil(t, obj.explicitFields)
@@ -237,11 +331,73 @@ func TestSettersMarkExplicitNeighborsRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
+	t.Run("SetOrderBy_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &NeighborsRequest{}
+		var fernTestValueOrderBy *NodeListNeighborsRequestOrderBy
+
+		// Act
+		obj.SetOrderBy(fernTestValueOrderBy)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetOrder_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &NeighborsRequest{}
+		var fernTestValueOrder *NodeListNeighborsRequestOrder
+
+		// Act
+		obj.SetOrder(fernTestValueOrder)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
 	t.Run("SetDirection_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &NeighborsRequest{}
-		var fernTestValueDirection *V4NeighborsRequestDirection
+		var fernTestValueDirection *NeighborsRequestDirection
 
 		// Act
 		obj.SetDirection(fernTestValueDirection)
@@ -424,35 +580,151 @@ func TestSettersMarkExplicitPatchNodeRequest(t *testing.T) {
 
 }
 
-func TestEnumV4NeighborsRequestDirection(t *testing.T) {
+func TestEnumNeighborsRequestDirection(t *testing.T) {
 	t.Run("NewFromString_in", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewV4NeighborsRequestDirectionFromString("in")
+		val, err := NewNeighborsRequestDirectionFromString("in")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4NeighborsRequestDirection("in"), val, "enum value should match expected wire value")
+		assert.Equal(t, NeighborsRequestDirection("in"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_out", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewV4NeighborsRequestDirectionFromString("out")
+		val, err := NewNeighborsRequestDirectionFromString("out")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4NeighborsRequestDirection("out"), val, "enum value should match expected wire value")
+		assert.Equal(t, NeighborsRequestDirection("out"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_both", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewV4NeighborsRequestDirectionFromString("both")
+		val, err := NewNeighborsRequestDirectionFromString("both")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4NeighborsRequestDirection("both"), val, "enum value should match expected wire value")
+		assert.Equal(t, NeighborsRequestDirection("both"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_Invalid", func(t *testing.T) {
-		_, err := NewV4NeighborsRequestDirectionFromString("invalid_value_that_does_not_exist")
+		_, err := NewNeighborsRequestDirectionFromString("invalid_value_that_does_not_exist")
 		assert.Error(t, err)
 	})
 
 	t.Run("Ptr", func(t *testing.T) {
-		val, err := NewV4NeighborsRequestDirectionFromString("in")
+		val, err := NewNeighborsRequestDirectionFromString("in")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumNodeListNeighborsRequestOrder(t *testing.T) {
+	t.Run("NewFromString_asc", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewNodeListNeighborsRequestOrderFromString("asc")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, NodeListNeighborsRequestOrder("asc"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_desc", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewNodeListNeighborsRequestOrderFromString("desc")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, NodeListNeighborsRequestOrder("desc"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewNodeListNeighborsRequestOrderFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewNodeListNeighborsRequestOrderFromString("asc")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumNodeListNeighborsRequestOrderBy(t *testing.T) {
+	t.Run("NewFromString_uuid", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewNodeListNeighborsRequestOrderByFromString("uuid")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, NodeListNeighborsRequestOrderBy("uuid"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_created_at", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewNodeListNeighborsRequestOrderByFromString("created_at")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, NodeListNeighborsRequestOrderBy("created_at"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewNodeListNeighborsRequestOrderByFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewNodeListNeighborsRequestOrderByFromString("uuid")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumNodeListRequestOrder(t *testing.T) {
+	t.Run("NewFromString_asc", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewNodeListRequestOrderFromString("asc")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, NodeListRequestOrder("asc"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_desc", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewNodeListRequestOrderFromString("desc")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, NodeListRequestOrder("desc"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewNodeListRequestOrderFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewNodeListRequestOrderFromString("asc")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumNodeListRequestOrderBy(t *testing.T) {
+	t.Run("NewFromString_uuid", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewNodeListRequestOrderByFromString("uuid")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, NodeListRequestOrderBy("uuid"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_degree", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewNodeListRequestOrderByFromString("degree")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, NodeListRequestOrderBy("degree"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewNodeListRequestOrderByFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewNodeListRequestOrderByFromString("uuid")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)

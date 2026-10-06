@@ -49,6 +49,8 @@ func (r *RawClient) Create(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Batch
 	raw, err := r.caller.Call(
 		ctx,
@@ -142,6 +144,8 @@ func (r *RawClient) Delete(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -188,6 +192,8 @@ func (r *RawClient) AddItems(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.BatchItemsResponse
 	raw, err := r.caller.Call(
 		ctx,
@@ -235,6 +241,8 @@ func (r *RawClient) Process(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.ProcessBatchResult
 	raw, err := r.caller.Call(
 		ctx,
