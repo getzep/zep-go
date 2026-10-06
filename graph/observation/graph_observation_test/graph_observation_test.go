@@ -90,12 +90,6 @@ func TestGraphObservationListWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &graph.ObservationListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.ArtifactListRequest{},
 	}
 	_, invocationErr := client.Graph.Observation.List(
@@ -108,7 +102,7 @@ func TestGraphObservationListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphObservationListWithWireMock", "POST", "/graphs/graph_uuid/observations/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphObservationListWithWireMock", "POST", "/graphs/graph_uuid/observations/list", nil, 1)
 }
 
 func TestGraphObservationGetWithWireMock(

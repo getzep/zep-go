@@ -49,6 +49,8 @@ func (r *RawClient) Create(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.UserGroup
 	raw, err := r.caller.Call(
 		ctx,
@@ -142,6 +144,8 @@ func (r *RawClient) Delete(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -188,6 +192,8 @@ func (r *RawClient) Update(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.UserGroup
 	raw, err := r.caller.Call(
 		ctx,
@@ -236,6 +242,8 @@ func (r *RawClient) AddMembers(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.MembershipMutationResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -284,6 +292,8 @@ func (r *RawClient) RemoveMembers(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.MembershipMutationResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -334,6 +344,8 @@ func (r *RawClient) RemoveMember(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{

@@ -42,14 +42,7 @@ func NewClient(options *core.RequestOptions) *Client {
 
 // Example:
 //
-//	request := &graph.EpisodeListForDocumentRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &graph.EpisodeListForDocumentRequest{}
 //	client.Graph.Episode.ListForDocument(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -153,15 +146,16 @@ func (c *Client) Add(
 	return response.Body, nil
 }
 
+// Lists the episodes of a graph. `filters.mentioned_node_uuids` restricts
+// the results to episodes that mention any of the listed node UUIDs. The
+// list can also contain episode UUIDs: an episode UUID matches that episode,
+// so one request can return a known set of episodes. At most 256 entries.
+// `filters.metadata_filters` restricts the results to episodes whose stored
+// metadata matches the predicate.
+//
 // Example:
 //
 //	request := &graph.EpisodeListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.ArtifactListRequest{},
 //	}
 //	client.Graph.Episode.List(
@@ -174,9 +168,9 @@ func (c *Client) List(
 	// Graph UUID
 	graphUUID string,
 	request *graph.EpisodeListRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -195,6 +189,8 @@ func (c *Client) List(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -319,4 +315,112 @@ func (c *Client) Update(
 		return nil, err
 	}
 	return response.Body, nil
+}
+
+// Returns the ingestion workflow log of an episode. The log exists only when debug logging was enabled for the project when the episode was ingested (see `debug_log.enable`). The log holds episode content, so an API key with an ABAC policy needs an explicit grant of this action; the `readonly` macro does not grant it.
+//
+// Example:
+//
+//	client.Graph.Episode.GetDebugLogs(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "episode_uuid",
+//	)
+func (c *Client) GetDebugLogs(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	// Episode UUID
+	episodeUUID string,
+	opts ...option.RequestOption,
+) (*zep.EpisodeDebugLog, error) {
+	response, err := c.WithRawResponse.GetDebugLogs(
+		ctx,
+		graphUUID,
+		episodeUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Returns the ingestion traces of an episode, oldest first. Each trace records the input and the output of one ingestion step, with an explanation on each output entry that has one. Traces exist only when ingestion tracing was enabled for the project when the episode was ingested (see `debug_log.enable`). An episode with no traces returns a page with an empty `items` array. Traces hold episode content, prompt input, and model output, so an API key with an ABAC policy needs an explicit grant of this action; the `readonly` macro does not grant it.
+//
+// Example:
+//
+//	request := &graph.EpisodeListIngestionTracesRequest{}
+//	client.Graph.Episode.ListIngestionTraces(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    "episode_uuid",
+//	    request,
+//	)
+func (c *Client) ListIngestionTraces(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	// Episode UUID
+	episodeUUID string,
+	request *graph.EpisodeListIngestionTracesRequest,
+	opts ...option.RequestOption,
+) (*core.Page[*string, *zep.IngestionTrace, *zep.IngestionTracePage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/episodes/%v/ingestion-traces",
+		graphUUID,
+		episodeUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.IngestionTracePage) *core.PageResponse[*string, *zep.IngestionTrace, *zep.IngestionTracePage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.IngestionTrace, *zep.IngestionTracePage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
 }

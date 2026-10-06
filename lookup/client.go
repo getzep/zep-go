@@ -48,7 +48,7 @@ func NewClient(options *core.RequestOptions) *Client {
 func (c *Client) Batch(
 	ctx context.Context,
 	request *zep.BatchLookupRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*zep.LookupBatchResponse, error) {
 	response, err := c.WithRawResponse.Batch(
 		ctx,

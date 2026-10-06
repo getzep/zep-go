@@ -90,12 +90,6 @@ func TestGraphDocumentSummaryListWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &graph.DocumentSummaryListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.ArtifactListRequest{},
 	}
 	_, invocationErr := client.Graph.DocumentSummary.List(
@@ -108,5 +102,5 @@ func TestGraphDocumentSummaryListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphDocumentSummaryListWithWireMock", "POST", "/graphs/graph_uuid/document-summaries/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphDocumentSummaryListWithWireMock", "POST", "/graphs/graph_uuid/document-summaries/list", nil, 1)
 }

@@ -64,14 +64,7 @@ func (c *Client) CreateTemplate(
 
 // Example:
 //
-//	request := &zep.ContextTemplateListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &zep.ContextTemplateListRequest{}
 //	client.Context.ListTemplates(
 //	    context.TODO(),
 //	    request,
@@ -79,9 +72,9 @@ func (c *Client) CreateTemplate(
 func (c *Client) ListTemplates(
 	ctx context.Context,
 	request *zep.ContextTemplateListRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.ContextTemplate, *zep.ContextTemplatePage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -97,6 +90,8 @@ func (c *Client) ListTemplates(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)

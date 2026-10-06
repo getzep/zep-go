@@ -10,16 +10,20 @@ import (
 )
 
 var (
-	createUserRequestFieldDisableDefaultOntology = big.NewInt(1 << 0)
-	createUserRequestFieldEmail                  = big.NewInt(1 << 1)
-	createUserRequestFieldFirstName              = big.NewInt(1 << 2)
-	createUserRequestFieldLastName               = big.NewInt(1 << 3)
-	createUserRequestFieldMetadata               = big.NewInt(1 << 4)
-	createUserRequestFieldTimeZone               = big.NewInt(1 << 5)
-	createUserRequestFieldUserID                 = big.NewInt(1 << 6)
+	createUserRequestFieldContentPolicy          = big.NewInt(1 << 0)
+	createUserRequestFieldDisableDefaultOntology = big.NewInt(1 << 1)
+	createUserRequestFieldEmail                  = big.NewInt(1 << 2)
+	createUserRequestFieldFirstName              = big.NewInt(1 << 3)
+	createUserRequestFieldLastName               = big.NewInt(1 << 4)
+	createUserRequestFieldMetadata               = big.NewInt(1 << 5)
+	createUserRequestFieldTimeZone               = big.NewInt(1 << 6)
 )
 
 type CreateUserRequest struct {
+	// Content policy additions for the user's graph. The graph binds the
+	// current project content policy plus these additions, and the binding
+	// does not change after creation.
+	ContentPolicy *GraphContentPolicyRequest `json:"content_policy,omitempty" url:"-"`
 	// When true, disables the default ontology for the user's graph.
 	DisableDefaultOntology *bool `json:"disable_default_ontology,omitempty" url:"-"`
 	// The email address of the user.
@@ -32,18 +36,25 @@ type CreateUserRequest struct {
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
 	// The user's IANA time zone.
 	TimeZone *string `json:"time_zone,omitempty" url:"-"`
-	// An optional developer-assigned identifier for the user.
-	UserID *string `json:"user_id,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
 func (c *CreateUserRequest) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetContentPolicy sets the ContentPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetContentPolicy(contentPolicy *GraphContentPolicyRequest) {
+	c.ContentPolicy = contentPolicy
+	c.require(createUserRequestFieldContentPolicy)
 }
 
 // SetDisableDefaultOntology sets the DisableDefaultOntology field and marks it as non-optional;
@@ -88,13 +99,6 @@ func (c *CreateUserRequest) SetTimeZone(timeZone *string) {
 	c.require(createUserRequestFieldTimeZone)
 }
 
-// SetUserID sets the UserID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateUserRequest) SetUserID(userID *string) {
-	c.UserID = userID
-	c.require(createUserRequestFieldUserID)
-}
-
 func (c *CreateUserRequest) UnmarshalJSON(data []byte) error {
 	type unmarshaler CreateUserRequest
 	var body unmarshaler
@@ -130,9 +134,9 @@ type UserListRequest struct {
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
-	OrderBy *string `json:"-" url:"order_by,omitempty"`
+	OrderBy *UserListRequestOrderBy `json:"-" url:"order_by,omitempty"`
 	// asc or desc
-	Order *string `json:"-" url:"order,omitempty"`
+	Order *UserListRequestOrder `json:"-" url:"order,omitempty"`
 	// Filters results to users whose user ID, email, or name contains this text.
 	Search *string `json:"search,omitempty" url:"-"`
 
@@ -141,10 +145,12 @@ type UserListRequest struct {
 }
 
 func (u *UserListRequest) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -163,14 +169,14 @@ func (u *UserListRequest) SetCursor(cursor *string) {
 
 // SetOrderBy sets the OrderBy field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UserListRequest) SetOrderBy(orderBy *string) {
+func (u *UserListRequest) SetOrderBy(orderBy *UserListRequestOrderBy) {
 	u.OrderBy = orderBy
 	u.require(userListRequestFieldOrderBy)
 }
 
 // SetOrder sets the Order field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UserListRequest) SetOrder(order *string) {
+func (u *UserListRequest) SetOrder(order *UserListRequestOrder) {
 	u.Order = order
 	u.require(userListRequestFieldOrder)
 }
@@ -234,10 +240,12 @@ func (u *UserDeleteResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (u *UserDeleteResult) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetTask sets the Task field and marks it as non-optional;
@@ -289,6 +297,56 @@ func (u *UserDeleteResult) String() string {
 	return fmt.Sprintf("%#v", u)
 }
 
+type UserListRequestOrder string
+
+const (
+	UserListRequestOrderAsc  UserListRequestOrder = "asc"
+	UserListRequestOrderDesc UserListRequestOrder = "desc"
+)
+
+func NewUserListRequestOrderFromString(s string) (UserListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return UserListRequestOrderAsc, nil
+	case "desc":
+		return UserListRequestOrderDesc, nil
+	}
+	var t UserListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (u UserListRequestOrder) Ptr() *UserListRequestOrder {
+	return &u
+}
+
+type UserListRequestOrderBy string
+
+const (
+	UserListRequestOrderByCreatedAt UserListRequestOrderBy = "created_at"
+	UserListRequestOrderByUserID    UserListRequestOrderBy = "user_id"
+	UserListRequestOrderByEmail     UserListRequestOrderBy = "email"
+	UserListRequestOrderByUUID      UserListRequestOrderBy = "uuid"
+)
+
+func NewUserListRequestOrderByFromString(s string) (UserListRequestOrderBy, error) {
+	switch s {
+	case "created_at":
+		return UserListRequestOrderByCreatedAt, nil
+	case "user_id":
+		return UserListRequestOrderByUserID, nil
+	case "email":
+		return UserListRequestOrderByEmail, nil
+	case "uuid":
+		return UserListRequestOrderByUUID, nil
+	}
+	var t UserListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (u UserListRequestOrderBy) Ptr() *UserListRequestOrderBy {
+	return &u
+}
+
 var (
 	patchUserRequestFieldDisableDefaultOntology = big.NewInt(1 << 0)
 	patchUserRequestFieldEmail                  = big.NewInt(1 << 1)
@@ -317,10 +375,12 @@ type PatchUserRequest struct {
 }
 
 func (p *PatchUserRequest) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetDisableDefaultOntology sets the DisableDefaultOntology field and marks it as non-optional;

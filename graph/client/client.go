@@ -12,6 +12,7 @@ import (
 	documentsummary "github.com/getzep/zep-go/v4/graph/documentsummary"
 	edge "github.com/getzep/zep-go/v4/graph/edge"
 	episode "github.com/getzep/zep-go/v4/graph/episode"
+	hyperedge "github.com/getzep/zep-go/v4/graph/hyperedge"
 	node "github.com/getzep/zep-go/v4/graph/node"
 	observation "github.com/getzep/zep-go/v4/graph/observation"
 	threadsummary "github.com/getzep/zep-go/v4/graph/threadsummary"
@@ -24,6 +25,7 @@ type Client struct {
 	DocumentSummary *documentsummary.Client
 	Episode         *episode.Client
 	Edge            *edge.Client
+	Hyperedge       *hyperedge.Client
 	Node            *node.Client
 	Observation     *observation.Client
 	ThreadSummary   *threadsummary.Client
@@ -41,6 +43,7 @@ func NewClient(options *core.RequestOptions) *Client {
 		DocumentSummary: documentsummary.NewClient(options),
 		Episode:         episode.NewClient(options),
 		Edge:            edge.NewClient(options),
+		Hyperedge:       hyperedge.NewClient(options),
 		Node:            node.NewClient(options),
 		Observation:     observation.NewClient(options),
 		ThreadSummary:   threadsummary.NewClient(options),
@@ -82,20 +85,7 @@ func (c *Client) Create(
 
 // Example:
 //
-//	request := &zep.GraphListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	    OrderBy: zep.String(
-//	        "order_by",
-//	    ),
-//	    Order: zep.String(
-//	        "order",
-//	    ),
-//	}
+//	request := &zep.GraphListRequest{}
 //	client.Graph.List(
 //	    context.TODO(),
 //	    request,
@@ -103,9 +93,9 @@ func (c *Client) Create(
 func (c *Client) List(
 	ctx context.Context,
 	request *zep.GraphListRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Graph, *zep.GraphPage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -121,6 +111,8 @@ func (c *Client) List(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -172,7 +164,7 @@ func (c *Client) List(
 func (c *Client) Lookup(
 	ctx context.Context,
 	request *zep.LookupRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*zep.Graph, error) {
 	response, err := c.WithRawResponse.Lookup(
 		ctx,
@@ -260,7 +252,9 @@ func (c *Client) Update(
 
 // Example:
 //
-//	request := &zep.CloneGraphRequest{}
+//	request := map[string]any{
+//	    "key": "value",
+//	}
 //	client.Graph.Clone(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -270,7 +264,7 @@ func (c *Client) Clone(
 	ctx context.Context,
 	// Graph UUID
 	graphUUID string,
-	request *zep.CloneGraphRequest,
+	request zep.CloneGraphRequest,
 	opts ...option.IdempotentRequestOption,
 ) (*zep.CloneGraphResult, error) {
 	response, err := c.WithRawResponse.Clone(
@@ -283,6 +277,110 @@ func (c *Client) Clone(
 		return nil, err
 	}
 	return response.Body, nil
+}
+
+// Returns the content policy the graph bound at creation. The policy of a graph does not change after creation. A graph without a content policy returns revision 0 with no categories and no rules.
+//
+// Example:
+//
+//	client.Graph.GetContentPolicy(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
+func (c *Client) GetContentPolicy(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	opts ...option.RequestOption,
+) (*zep.GraphContentPolicy, error) {
+	response, err := c.WithRawResponse.GetContentPolicy(
+		ctx,
+		graphUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Lists the content policy decisions recorded for a graph, newest first. Each event carries identifiers only. A graph without a content policy returns an empty list.
+//
+// Example:
+//
+//	request := &zep.ContentPolicyEventListRequest{}
+//	client.Graph.ListContentPolicyEvents(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) ListContentPolicyEvents(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.ContentPolicyEventListRequest,
+	opts ...option.RequestOption,
+) (*core.Page[*string, *zep.ContentPolicyEvent, *zep.ContentPolicyEventPage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/content-policy/events/list",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.ContentPolicyEventPage) *core.PageResponse[*string, *zep.ContentPolicyEvent, *zep.ContentPolicyEventPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.ContentPolicyEvent, *zep.ContentPolicyEventPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
 }
 
 // Example:
@@ -300,7 +398,7 @@ func (c *Client) GetContext(
 	// Graph UUID
 	graphUUID string,
 	request *zep.GraphContextRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*zep.GraphContextResponse, error) {
 	response, err := c.WithRawResponse.GetContext(
 		ctx,
@@ -467,12 +565,6 @@ func (c *Client) SetOntology(
 // Example:
 //
 //	request := &zep.GraphSearchEdgesRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.SearchRequest{
 //	        Query: "query",
 //	    },
@@ -487,9 +579,9 @@ func (c *Client) SearchEdges(
 	// Graph UUID
 	graphUUID string,
 	request *zep.GraphSearchEdgesRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Edge, *zep.EdgePage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -508,6 +600,8 @@ func (c *Client) SearchEdges(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -552,12 +646,6 @@ func (c *Client) SearchEdges(
 // Example:
 //
 //	request := &zep.GraphSearchEpisodesRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.SearchRequest{
 //	        Query: "query",
 //	    },
@@ -572,9 +660,9 @@ func (c *Client) SearchEpisodes(
 	// Graph UUID
 	graphUUID string,
 	request *zep.GraphSearchEpisodesRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -593,6 +681,8 @@ func (c *Client) SearchEpisodes(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -637,12 +727,6 @@ func (c *Client) SearchEpisodes(
 // Example:
 //
 //	request := &zep.GraphSearchNodesRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.SearchRequest{
 //	        Query: "query",
 //	    },
@@ -657,9 +741,9 @@ func (c *Client) SearchNodes(
 	// Graph UUID
 	graphUUID string,
 	request *zep.GraphSearchNodesRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Node, *zep.NodePage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -678,6 +762,8 @@ func (c *Client) SearchNodes(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -722,12 +808,6 @@ func (c *Client) SearchNodes(
 // Example:
 //
 //	request := &zep.GraphSearchObservationsRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.SearchRequest{
 //	        Query: "query",
 //	    },
@@ -742,9 +822,9 @@ func (c *Client) SearchObservations(
 	// Graph UUID
 	graphUUID string,
 	request *zep.GraphSearchObservationsRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Observation, *zep.ObservationPage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -763,6 +843,8 @@ func (c *Client) SearchObservations(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -807,12 +889,6 @@ func (c *Client) SearchObservations(
 // Example:
 //
 //	request := &zep.GraphSearchThreadSummariesRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.SearchRequest{
 //	        Query: "query",
 //	    },
@@ -827,9 +903,9 @@ func (c *Client) SearchThreadSummaries(
 	// Graph UUID
 	graphUUID string,
 	request *zep.GraphSearchThreadSummariesRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.ThreadSummary, *zep.ThreadSummaryPage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -848,6 +924,8 @@ func (c *Client) SearchThreadSummaries(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -906,7 +984,7 @@ func (c *Client) GetSubgraph(
 	// Graph UUID
 	graphUUID string,
 	request *zep.SubgraphRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*zep.SubgraphResponse, error) {
 	response, err := c.WithRawResponse.GetSubgraph(
 		ctx,

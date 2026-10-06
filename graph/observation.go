@@ -25,10 +25,12 @@ type ObservationListRequest struct {
 }
 
 func (o *ObservationListRequest) require(field *big.Int) {
-	if o.explicitFields == nil {
-		o.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
 	}
-	o.explicitFields.Or(o.explicitFields, field)
+	next.Or(next, field)
+	o.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;

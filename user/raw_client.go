@@ -49,6 +49,8 @@ func (r *RawClient) Create(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.User
 	raw, err := r.caller.Call(
 		ctx,
@@ -79,9 +81,9 @@ func (r *RawClient) Create(
 func (r *RawClient) Lookup(
 	ctx context.Context,
 	request *zep.LookupRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Response[*zep.User], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		r.baseURL,
@@ -92,6 +94,8 @@ func (r *RawClient) Lookup(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.User
 	raw, err := r.caller.Call(
 		ctx,
@@ -185,6 +189,8 @@ func (r *RawClient) Delete(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.UserDeleteResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -233,6 +239,8 @@ func (r *RawClient) Update(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.User
 	raw, err := r.caller.Call(
 		ctx,
@@ -373,6 +381,8 @@ func (r *RawClient) SetSummaryInstructions(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.UserSummaryInstructions
 	raw, err := r.caller.Call(
 		ctx,

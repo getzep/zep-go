@@ -41,14 +41,7 @@ func NewClient(options *core.RequestOptions) *Client {
 
 // Example:
 //
-//	request := &zep.TaskListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &zep.TaskListRequest{}
 //	client.Task.List(
 //	    context.TODO(),
 //	    request,

@@ -89,11 +89,15 @@ func TestGraphEdgeAddWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.AddEdgeRequest{
-		Fact:       "fact",
-		FactName:   "fact_name",
-		SourceNode: &zep.EdgeNodeRef{},
-		TargetNode: &zep.EdgeNodeRef{},
+	request := &graph.AddEdgesRequest{
+		Edges: []*zep.EdgeInput{
+			&zep.EdgeInput{
+				Fact:       "Ada works at Acme Corp",
+				FactName:   "WORKS_AT",
+				SourceNode: &zep.EdgeNodeRef{},
+				TargetNode: &zep.EdgeNodeRef{},
+			},
+		},
 	}
 	_, invocationErr := client.Graph.Edge.Add(
 		context.TODO(),
@@ -120,12 +124,6 @@ func TestGraphEdgeListWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &graph.EdgeListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.ArtifactListRequest{},
 	}
 	_, invocationErr := client.Graph.Edge.List(
@@ -138,7 +136,7 @@ func TestGraphEdgeListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphEdgeListWithWireMock", "POST", "/graphs/graph_uuid/edges/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphEdgeListWithWireMock", "POST", "/graphs/graph_uuid/edges/list", nil, 1)
 }
 
 func TestGraphEdgeGetWithWireMock(

@@ -34,10 +34,12 @@ type AddMessagesRequest struct {
 }
 
 func (a *AddMessagesRequest) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetIgnoreRoles sets the IgnoreRoles field and marks it as non-optional;
@@ -90,13 +92,10 @@ func (a *AddMessagesRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	createThreadRequestFieldThreadID = big.NewInt(1 << 0)
-	createThreadRequestFieldUserUUID = big.NewInt(1 << 1)
+	createThreadRequestFieldUserUUID = big.NewInt(1 << 0)
 )
 
 type CreateThreadRequest struct {
-	// An optional developer-assigned identifier for the thread.
-	ThreadID *string `json:"thread_id,omitempty" url:"-"`
 	// The UUID of the user this thread belongs to.
 	UserUUID string `json:"user_uuid" url:"-"`
 
@@ -105,17 +104,12 @@ type CreateThreadRequest struct {
 }
 
 func (c *CreateThreadRequest) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
-}
-
-// SetThreadID sets the ThreadID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateThreadRequest) SetThreadID(threadID *string) {
-	c.ThreadID = threadID
-	c.require(createThreadRequestFieldThreadID)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetUserUUID sets the UserUUID field and marks it as non-optional;
@@ -159,10 +153,12 @@ type ThreadGetContextRequest struct {
 }
 
 func (t *ThreadGetContextRequest) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetTemplateUUID sets the TemplateUUID field and marks it as non-optional;
@@ -186,9 +182,9 @@ type ThreadListRequest struct {
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
-	OrderBy *string `json:"-" url:"order_by,omitempty"`
+	OrderBy *ThreadListRequestOrderBy `json:"-" url:"order_by,omitempty"`
 	// asc or desc
-	Order *string `json:"-" url:"order,omitempty"`
+	Order *ThreadListRequestOrder `json:"-" url:"order,omitempty"`
 	// Filter by user UUID
 	UserUUID *string `json:"-" url:"user_uuid,omitempty"`
 
@@ -197,10 +193,12 @@ type ThreadListRequest struct {
 }
 
 func (t *ThreadListRequest) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -219,14 +217,14 @@ func (t *ThreadListRequest) SetCursor(cursor *string) {
 
 // SetOrderBy sets the OrderBy field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadListRequest) SetOrderBy(orderBy *string) {
+func (t *ThreadListRequest) SetOrderBy(orderBy *ThreadListRequestOrderBy) {
 	t.OrderBy = orderBy
 	t.require(threadListRequestFieldOrderBy)
 }
 
 // SetOrder sets the Order field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadListRequest) SetOrder(order *string) {
+func (t *ThreadListRequest) SetOrder(order *ThreadListRequestOrder) {
 	t.Order = order
 	t.require(threadListRequestFieldOrder)
 }
@@ -254,10 +252,12 @@ type ThreadListEpisodesRequest struct {
 }
 
 func (t *ThreadListEpisodesRequest) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -275,8 +275,10 @@ func (t *ThreadListEpisodesRequest) SetCursor(cursor *string) {
 }
 
 var (
-	threadListMessagesRequestFieldLimit  = big.NewInt(1 << 0)
-	threadListMessagesRequestFieldCursor = big.NewInt(1 << 1)
+	threadListMessagesRequestFieldLimit   = big.NewInt(1 << 0)
+	threadListMessagesRequestFieldCursor  = big.NewInt(1 << 1)
+	threadListMessagesRequestFieldOrderBy = big.NewInt(1 << 2)
+	threadListMessagesRequestFieldOrder   = big.NewInt(1 << 3)
 )
 
 type ThreadListMessagesRequest struct {
@@ -284,16 +286,22 @@ type ThreadListMessagesRequest struct {
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort field
+	OrderBy *string `json:"-" url:"order_by,omitempty"`
+	// Sort direction: asc or desc
+	Order *ThreadListMessagesRequestOrder `json:"-" url:"order,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
 func (t *ThreadListMessagesRequest) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -310,18 +318,36 @@ func (t *ThreadListMessagesRequest) SetCursor(cursor *string) {
 	t.require(threadListMessagesRequestFieldCursor)
 }
 
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListMessagesRequest) SetOrderBy(orderBy *string) {
+	t.OrderBy = orderBy
+	t.require(threadListMessagesRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadListMessagesRequest) SetOrder(order *ThreadListMessagesRequestOrder) {
+	t.Order = order
+	t.require(threadListMessagesRequestFieldOrder)
+}
+
 var (
-	addMessageFieldContent  = big.NewInt(1 << 0)
-	addMessageFieldMetadata = big.NewInt(1 << 1)
-	addMessageFieldName     = big.NewInt(1 << 2)
-	addMessageFieldRole     = big.NewInt(1 << 3)
-	addMessageFieldUUID     = big.NewInt(1 << 4)
+	addMessageFieldContent   = big.NewInt(1 << 0)
+	addMessageFieldCreatedAt = big.NewInt(1 << 1)
+	addMessageFieldMetadata  = big.NewInt(1 << 2)
+	addMessageFieldName      = big.NewInt(1 << 3)
+	addMessageFieldRole      = big.NewInt(1 << 4)
+	addMessageFieldUUID      = big.NewInt(1 << 5)
 )
 
 type AddMessage struct {
 	// The content of the message.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
-	// Custom metadata to store with the message.
+	// The message's reference time, used for temporal reasoning rather than
+	// ingestion time. Defaults to the ingestion time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// Custom metadata to store with the message. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// A customizable name for the sender of the message, for example "john" or
 	// "sales_agent".
@@ -344,6 +370,13 @@ func (a *AddMessage) GetContent() *string {
 		return nil
 	}
 	return a.Content
+}
+
+func (a *AddMessage) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
 }
 
 func (a *AddMessage) GetMetadata() map[string]any {
@@ -382,10 +415,12 @@ func (a *AddMessage) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *AddMessage) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetContent sets the Content field and marks it as non-optional;
@@ -393,6 +428,13 @@ func (a *AddMessage) require(field *big.Int) {
 func (a *AddMessage) SetContent(content *string) {
 	a.Content = content
 	a.require(addMessageFieldContent)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessage) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(addMessageFieldCreatedAt)
 }
 
 // SetMetadata sets the Metadata field and marks it as non-optional;
@@ -517,10 +559,12 @@ func (a *AddMessagesResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *AddMessagesResult) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetContext sets the Context field and marks it as non-optional;
@@ -638,10 +682,12 @@ func (m *MessagePage) GetExtraProperties() map[string]interface{} {
 }
 
 func (m *MessagePage) require(field *big.Int) {
-	if m.explicitFields == nil {
-		m.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if m.explicitFields != nil {
+		next.Set(m.explicitFields)
 	}
-	m.explicitFields.Or(m.explicitFields, field)
+	next.Or(next, field)
+	m.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -787,10 +833,12 @@ func (t *Thread) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *Thread) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -883,8 +931,8 @@ var (
 
 type ThreadContextResponse struct {
 	// The context block containing relevant facts, entities, and messages or
-	// episodes from the user's graph, meant to be placed in the system prompt on
-	// every turn.
+	// episodes from the user's graph. Pass it through the model provider's
+	// untrusted-data channel.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -909,10 +957,12 @@ func (t *ThreadContextResponse) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *ThreadContextResponse) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetContext sets the Context field and marks it as non-optional;
@@ -994,10 +1044,12 @@ func (t *ThreadDeleteResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *ThreadDeleteResult) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetTask sets the Task field and marks it as non-optional;
@@ -1101,10 +1153,12 @@ func (t *ThreadPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *ThreadPage) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -1168,4 +1222,73 @@ func (t *ThreadPage) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+type ThreadListMessagesRequestOrder string
+
+const (
+	ThreadListMessagesRequestOrderAsc  ThreadListMessagesRequestOrder = "asc"
+	ThreadListMessagesRequestOrderDesc ThreadListMessagesRequestOrder = "desc"
+)
+
+func NewThreadListMessagesRequestOrderFromString(s string) (ThreadListMessagesRequestOrder, error) {
+	switch s {
+	case "asc":
+		return ThreadListMessagesRequestOrderAsc, nil
+	case "desc":
+		return ThreadListMessagesRequestOrderDesc, nil
+	}
+	var t ThreadListMessagesRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t ThreadListMessagesRequestOrder) Ptr() *ThreadListMessagesRequestOrder {
+	return &t
+}
+
+type ThreadListRequestOrder string
+
+const (
+	ThreadListRequestOrderAsc  ThreadListRequestOrder = "asc"
+	ThreadListRequestOrderDesc ThreadListRequestOrder = "desc"
+)
+
+func NewThreadListRequestOrderFromString(s string) (ThreadListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return ThreadListRequestOrderAsc, nil
+	case "desc":
+		return ThreadListRequestOrderDesc, nil
+	}
+	var t ThreadListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t ThreadListRequestOrder) Ptr() *ThreadListRequestOrder {
+	return &t
+}
+
+type ThreadListRequestOrderBy string
+
+const (
+	ThreadListRequestOrderByCreatedAt ThreadListRequestOrderBy = "created_at"
+	ThreadListRequestOrderByUpdatedAt ThreadListRequestOrderBy = "updated_at"
+	ThreadListRequestOrderByUUID      ThreadListRequestOrderBy = "uuid"
+)
+
+func NewThreadListRequestOrderByFromString(s string) (ThreadListRequestOrderBy, error) {
+	switch s {
+	case "created_at":
+		return ThreadListRequestOrderByCreatedAt, nil
+	case "updated_at":
+		return ThreadListRequestOrderByUpdatedAt, nil
+	case "uuid":
+		return ThreadListRequestOrderByUUID, nil
+	}
+	var t ThreadListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t ThreadListRequestOrderBy) Ptr() *ThreadListRequestOrderBy {
+	return &t
 }

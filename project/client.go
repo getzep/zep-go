@@ -4,6 +4,7 @@ package project
 
 import (
 	context "context"
+	http "net/http"
 	os "os"
 
 	zep "github.com/getzep/zep-go/v4"
@@ -72,6 +73,144 @@ func (c *Client) Update(
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Returns the current content policy revision of the project. A new graph binds this revision at creation.
+//
+// Example:
+//
+//	client.Project.GetContentPolicy(
+//	    context.TODO(),
+//	)
+func (c *Client) GetContentPolicy(
+	ctx context.Context,
+	opts ...option.RequestOption,
+) (*zep.ContentPolicy, error) {
+	response, err := c.WithRawResponse.GetContentPolicy(
+		ctx,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Replaces the project content policy and creates a new immutable revision. Graphs that already exist keep the revision they bound. An empty policy (no categories and no rules) removes the content policy for new graphs.
+//
+// Example:
+//
+//	request := &zep.ContentPolicyRequest{}
+//	client.Project.SetContentPolicy(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) SetContentPolicy(
+	ctx context.Context,
+	request *zep.ContentPolicyRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.ContentPolicy, error) {
+	response, err := c.WithRawResponse.SetContentPolicy(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Lists every revision of the project content policy, newest first, including revision 0.
+//
+// Example:
+//
+//	request := &zep.ProjectListContentPolicyRevisionsRequest{}
+//	client.Project.ListContentPolicyRevisions(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) ListContentPolicyRevisions(
+	ctx context.Context,
+	request *zep.ProjectListContentPolicyRevisionsRequest,
+	opts ...option.RequestOption,
+) (*core.Page[*string, *zep.ContentPolicy, *zep.ContentPolicyRevisionPage], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := baseURL + "/project/content-policy/revisions"
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.ContentPolicyRevisionPage) *core.PageResponse[*string, *zep.ContentPolicy, *zep.ContentPolicyRevisionPage] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.ContentPolicy, *zep.ContentPolicyRevisionPage]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
+}
+
+// Example:
+//
+//	client.Project.GetContentPolicyRevision(
+//	    context.TODO(),
+//	    "revision_uuid",
+//	)
+func (c *Client) GetContentPolicyRevision(
+	ctx context.Context,
+	// Revision UUID
+	revisionUUID string,
+	opts ...option.RequestOption,
+) (*zep.ContentPolicy, error) {
+	response, err := c.WithRawResponse.GetContentPolicyRevision(
+		ctx,
+		revisionUUID,
 		opts...,
 	)
 	if err != nil {
@@ -183,6 +322,8 @@ func (c *Client) GetOntology(
 	return response.Body, nil
 }
 
+// Replaces the entity types and the edge types that the project uses.
+//
 // Example:
 //
 //	request := &zep.Ontology{}

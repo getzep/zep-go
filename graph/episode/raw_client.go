@@ -55,6 +55,8 @@ func (r *RawClient) Add(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.AddEpisodeResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -154,6 +156,8 @@ func (r *RawClient) Delete(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.AsyncResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -205,6 +209,8 @@ func (r *RawClient) Update(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Episode
 	raw, err := r.caller.Call(
 		ctx,
@@ -226,6 +232,55 @@ func (r *RawClient) Update(
 		return nil, err
 	}
 	return &core.Response[*zep.Episode]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
+func (r *RawClient) GetDebugLogs(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	// Episode UUID
+	episodeUUID string,
+	opts ...option.RequestOption,
+) (*core.Response[*zep.EpisodeDebugLog], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/episodes/%v/debug-logs",
+		graphUUID,
+		episodeUUID,
+	)
+	headers := internal.MergeHeaders(
+		r.options.ToHeader(),
+		options.ToHeader(),
+	)
+	var response *zep.EpisodeDebugLog
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(graph.ErrorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*zep.EpisodeDebugLog]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

@@ -25,10 +25,12 @@ type TaskListRequest struct {
 }
 
 func (t *TaskListRequest) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -97,10 +99,12 @@ func (t *TaskPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *TaskPage) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;

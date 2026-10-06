@@ -121,12 +121,6 @@ func TestGraphNodeListWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &graph.NodeListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.ArtifactListRequest{},
 	}
 	_, invocationErr := client.Graph.Node.List(
@@ -139,7 +133,7 @@ func TestGraphNodeListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphNodeListWithWireMock", "POST", "/graphs/graph_uuid/nodes/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphNodeListWithWireMock", "POST", "/graphs/graph_uuid/nodes/list", nil, 1)
 }
 
 func TestGraphNodeGetWithWireMock(
@@ -227,14 +221,7 @@ func TestGraphNodeListNeighborsWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.NeighborsRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-	}
+	request := &graph.NeighborsRequest{}
 	_, invocationErr := client.Graph.Node.ListNeighbors(
 		context.TODO(),
 		"graph_uuid",
@@ -246,5 +233,5 @@ func TestGraphNodeListNeighborsWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphNodeListNeighborsWithWireMock", "POST", "/graphs/graph_uuid/nodes/node_uuid/neighbors", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestGraphNodeListNeighborsWithWireMock", "POST", "/graphs/graph_uuid/nodes/node_uuid/neighbors", nil, 1)
 }

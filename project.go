@@ -10,11 +10,388 @@ import (
 )
 
 var (
-	projectFieldCreatedAt       = big.NewInt(1 << 0)
-	projectFieldDefaultTimeZone = big.NewInt(1 << 1)
-	projectFieldDescription     = big.NewInt(1 << 2)
-	projectFieldName            = big.NewInt(1 << 3)
-	projectFieldUUID            = big.NewInt(1 << 4)
+	projectListContentPolicyRevisionsRequestFieldLimit  = big.NewInt(1 << 0)
+	projectListContentPolicyRevisionsRequestFieldCursor = big.NewInt(1 << 1)
+)
+
+type ProjectListContentPolicyRevisionsRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (p *ProjectListContentPolicyRevisionsRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
+	}
+	next.Or(next, field)
+	p.explicitFields = next
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *ProjectListContentPolicyRevisionsRequest) SetLimit(limit *int) {
+	p.Limit = limit
+	p.require(projectListContentPolicyRevisionsRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *ProjectListContentPolicyRevisionsRequest) SetCursor(cursor *string) {
+	p.Cursor = cursor
+	p.require(projectListContentPolicyRevisionsRequestFieldCursor)
+}
+
+var (
+	contentPolicyRequestFieldCategories = big.NewInt(1 << 0)
+	contentPolicyRequestFieldRules      = big.NewInt(1 << 1)
+)
+
+type ContentPolicyRequest struct {
+	// The categories of the policy. Maximum 16. An empty list with no rules
+	// means no content policy.
+	Categories []*ContentPolicyCategoryRequest `json:"categories,omitempty" url:"-"`
+	// The rules of the policy. Maximum 32.
+	Rules []*ContentPolicyRuleRequest `json:"rules,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (c *ContentPolicyRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetCategories sets the Categories field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRequest) SetCategories(categories []*ContentPolicyCategoryRequest) {
+	c.Categories = categories
+	c.require(contentPolicyRequestFieldCategories)
+}
+
+// SetRules sets the Rules field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRequest) SetRules(rules []*ContentPolicyRuleRequest) {
+	c.Rules = rules
+	c.require(contentPolicyRequestFieldRules)
+}
+
+func (c *ContentPolicyRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*c = ContentPolicyRequest(body)
+	return nil
+}
+
+func (c *ContentPolicyRequest) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	contentPolicyFieldCategories = big.NewInt(1 << 0)
+	contentPolicyFieldCreatedAt  = big.NewInt(1 << 1)
+	contentPolicyFieldRevision   = big.NewInt(1 << 2)
+	contentPolicyFieldRules      = big.NewInt(1 << 3)
+	contentPolicyFieldUUID       = big.NewInt(1 << 4)
+)
+
+type ContentPolicy struct {
+	// The categories of the policy.
+	Categories []*ContentPolicyCategory `json:"categories,omitempty" url:"categories,omitempty"`
+	// When this policy set was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The project revision number. 0 is the empty policy of a new project.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The rules of the policy.
+	Rules []*ContentPolicyRule `json:"rules,omitempty" url:"rules,omitempty"`
+	// The identifier of this policy set. A project revision and every graph
+	// that binds it without additions share one uuid.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ContentPolicy) GetCategories() []*ContentPolicyCategory {
+	if c == nil {
+		return nil
+	}
+	return c.Categories
+}
+
+func (c *ContentPolicy) GetCreatedAt() *string {
+	if c == nil {
+		return nil
+	}
+	return c.CreatedAt
+}
+
+func (c *ContentPolicy) GetRevision() *int {
+	if c == nil {
+		return nil
+	}
+	return c.Revision
+}
+
+func (c *ContentPolicy) GetRules() []*ContentPolicyRule {
+	if c == nil {
+		return nil
+	}
+	return c.Rules
+}
+
+func (c *ContentPolicy) GetUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.UUID
+}
+
+func (c *ContentPolicy) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicy) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetCategories sets the Categories field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicy) SetCategories(categories []*ContentPolicyCategory) {
+	c.Categories = categories
+	c.require(contentPolicyFieldCategories)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicy) SetCreatedAt(createdAt *string) {
+	c.CreatedAt = createdAt
+	c.require(contentPolicyFieldCreatedAt)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicy) SetRevision(revision *int) {
+	c.Revision = revision
+	c.require(contentPolicyFieldRevision)
+}
+
+// SetRules sets the Rules field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicy) SetRules(rules []*ContentPolicyRule) {
+	c.Rules = rules
+	c.require(contentPolicyFieldRules)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicy) SetUUID(uuid *string) {
+	c.UUID = uuid
+	c.require(contentPolicyFieldUUID)
+}
+
+func (c *ContentPolicy) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicy
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicy(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicy) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicy
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicy) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
+	contentPolicyRevisionPageFieldItems      = big.NewInt(1 << 0)
+	contentPolicyRevisionPageFieldNextCursor = big.NewInt(1 << 1)
+	contentPolicyRevisionPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type ContentPolicyRevisionPage struct {
+	// The revisions on this page, newest first.
+	Items []*ContentPolicy `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of revisions, including revision 0.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ContentPolicyRevisionPage) GetItems() []*ContentPolicy {
+	if c == nil {
+		return nil
+	}
+	return c.Items
+}
+
+func (c *ContentPolicyRevisionPage) GetNextCursor() *string {
+	if c == nil {
+		return nil
+	}
+	return c.NextCursor
+}
+
+func (c *ContentPolicyRevisionPage) GetTotalSize() *int {
+	if c == nil {
+		return nil
+	}
+	return c.TotalSize
+}
+
+func (c *ContentPolicyRevisionPage) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicyRevisionPage) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRevisionPage) SetItems(items []*ContentPolicy) {
+	c.Items = items
+	c.require(contentPolicyRevisionPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRevisionPage) SetNextCursor(nextCursor *string) {
+	c.NextCursor = nextCursor
+	c.require(contentPolicyRevisionPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRevisionPage) SetTotalSize(totalSize *int) {
+	c.TotalSize = totalSize
+	c.require(contentPolicyRevisionPageFieldTotalSize)
+}
+
+func (c *ContentPolicyRevisionPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyRevisionPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicyRevisionPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicyRevisionPage) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyRevisionPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicyRevisionPage) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
+	projectFieldCreatedAt                      = big.NewInt(1 << 0)
+	projectFieldDefaultTimeZone                = big.NewInt(1 << 1)
+	projectFieldDescription                    = big.NewInt(1 << 2)
+	projectFieldIncludePolicyViolatingEpisodes = big.NewInt(1 << 3)
+	projectFieldName                           = big.NewInt(1 << 4)
+	projectFieldUUID                           = big.NewInt(1 << 5)
 )
 
 type Project struct {
@@ -25,6 +402,9 @@ type Project struct {
 	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"default_time_zone,omitempty"`
 	// A human-readable description of the project.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// When true, episode reads on graphs with a content policy include the
+	// episodes that violated the policy. The default is false.
+	IncludePolicyViolatingEpisodes *bool `json:"include_policy_violating_episodes,omitempty" url:"include_policy_violating_episodes,omitempty"`
 	// The name of the project.
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// The unique identifier of the project.
@@ -58,6 +438,13 @@ func (p *Project) GetDescription() *string {
 	return p.Description
 }
 
+func (p *Project) GetIncludePolicyViolatingEpisodes() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.IncludePolicyViolatingEpisodes
+}
+
 func (p *Project) GetName() *string {
 	if p == nil {
 		return nil
@@ -80,10 +467,12 @@ func (p *Project) GetExtraProperties() map[string]interface{} {
 }
 
 func (p *Project) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -105,6 +494,13 @@ func (p *Project) SetDefaultTimeZone(defaultTimeZone *string) {
 func (p *Project) SetDescription(description *string) {
 	p.Description = description
 	p.require(projectFieldDescription)
+}
+
+// SetIncludePolicyViolatingEpisodes sets the IncludePolicyViolatingEpisodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Project) SetIncludePolicyViolatingEpisodes(includePolicyViolatingEpisodes *bool) {
+	p.IncludePolicyViolatingEpisodes = includePolicyViolatingEpisodes
+	p.require(projectFieldIncludePolicyViolatingEpisodes)
 }
 
 // SetName sets the Name field and marks it as non-optional;
@@ -164,23 +560,29 @@ func (p *Project) String() string {
 }
 
 var (
-	patchProjectRequestFieldDefaultTimeZone = big.NewInt(1 << 0)
+	patchProjectRequestFieldDefaultTimeZone                = big.NewInt(1 << 0)
+	patchProjectRequestFieldIncludePolicyViolatingEpisodes = big.NewInt(1 << 1)
 )
 
 type PatchProjectRequest struct {
 	// The project's IANA fallback time zone. Set to null to clear the existing
 	// value.
 	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"-"`
+	// When true, episode reads on graphs with a content policy include the
+	// episodes that violated the policy.
+	IncludePolicyViolatingEpisodes *bool `json:"include_policy_violating_episodes,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
 func (p *PatchProjectRequest) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetDefaultTimeZone sets the DefaultTimeZone field and marks it as non-optional;
@@ -188,6 +590,13 @@ func (p *PatchProjectRequest) require(field *big.Int) {
 func (p *PatchProjectRequest) SetDefaultTimeZone(defaultTimeZone *string) {
 	p.DefaultTimeZone = defaultTimeZone
 	p.require(patchProjectRequestFieldDefaultTimeZone)
+}
+
+// SetIncludePolicyViolatingEpisodes sets the IncludePolicyViolatingEpisodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchProjectRequest) SetIncludePolicyViolatingEpisodes(includePolicyViolatingEpisodes *bool) {
+	p.IncludePolicyViolatingEpisodes = includePolicyViolatingEpisodes
+	p.require(patchProjectRequestFieldIncludePolicyViolatingEpisodes)
 }
 
 func (p *PatchProjectRequest) UnmarshalJSON(data []byte) error {

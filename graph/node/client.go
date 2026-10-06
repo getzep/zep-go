@@ -76,12 +76,6 @@ func (c *Client) Add(
 // Example:
 //
 //	request := &graph.NodeListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.ArtifactListRequest{},
 //	}
 //	client.Graph.Node.List(
@@ -94,9 +88,9 @@ func (c *Client) List(
 	// Graph UUID
 	graphUUID string,
 	request *graph.NodeListRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Node, *zep.NodePage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -115,6 +109,8 @@ func (c *Client) List(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -243,14 +239,7 @@ func (c *Client) Update(
 
 // Example:
 //
-//	request := &graph.NeighborsRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &graph.NeighborsRequest{}
 //	client.Graph.Node.ListNeighbors(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -264,9 +253,9 @@ func (c *Client) ListNeighbors(
 	// Node UUID
 	nodeUUID string,
 	request *graph.NeighborsRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.NeighborEntry, *zep.NeighborPage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -286,6 +275,8 @@ func (c *Client) ListNeighbors(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)

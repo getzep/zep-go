@@ -7,6 +7,7 @@ import (
 	fmt "fmt"
 	internal "github.com/getzep/zep-go/v4/internal"
 	big "math/big"
+	time "time"
 )
 
 var (
@@ -38,10 +39,12 @@ func (a *APIError) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *APIError) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetError sets the Error field and marks it as non-optional;
@@ -94,17 +97,11 @@ func (a *APIError) String() string {
 }
 
 var (
-	addEdgeResultFieldEdge = big.NewInt(1 << 0)
-	addEdgeResultFieldTask = big.NewInt(1 << 1)
+	addAgentSkillUseOutcomeRequestFieldOutcome = big.NewInt(1 << 0)
 )
 
-type AddEdgeResult struct {
-	// An accept-time acknowledgement of the fact you submitted, carrying the
-	// identifier and fields you supplied rather than the full edge resource
-	// returned by later reads.
-	Edge *AddedEdge `json:"edge,omitempty" url:"edge,omitempty"`
-	// The asynchronous task that tracks the edge's extraction and indexing.
-	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+type AddAgentSkillUseOutcomeRequest struct {
+	Outcome AddAgentSkillUseOutcomeRequestOutcome `json:"outcome" url:"outcome"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -113,55 +110,43 @@ type AddEdgeResult struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AddEdgeResult) GetEdge() *AddedEdge {
+func (a *AddAgentSkillUseOutcomeRequest) GetOutcome() AddAgentSkillUseOutcomeRequestOutcome {
 	if a == nil {
-		return nil
+		return ""
 	}
-	return a.Edge
+	return a.Outcome
 }
 
-func (a *AddEdgeResult) GetTask() *Task {
-	if a == nil {
-		return nil
-	}
-	return a.Task
-}
-
-func (a *AddEdgeResult) GetExtraProperties() map[string]interface{} {
+func (a *AddAgentSkillUseOutcomeRequest) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AddEdgeResult) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+func (a *AddAgentSkillUseOutcomeRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
-// SetEdge sets the Edge field and marks it as non-optional;
+// SetOutcome sets the Outcome field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeResult) SetEdge(edge *AddedEdge) {
-	a.Edge = edge
-	a.require(addEdgeResultFieldEdge)
+func (a *AddAgentSkillUseOutcomeRequest) SetOutcome(outcome AddAgentSkillUseOutcomeRequestOutcome) {
+	a.Outcome = outcome
+	a.require(addAgentSkillUseOutcomeRequestFieldOutcome)
 }
 
-// SetTask sets the Task field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEdgeResult) SetTask(task *Task) {
-	a.Task = task
-	a.require(addEdgeResultFieldTask)
-}
-
-func (a *AddEdgeResult) UnmarshalJSON(data []byte) error {
-	type unmarshaler AddEdgeResult
+func (a *AddAgentSkillUseOutcomeRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddAgentSkillUseOutcomeRequest
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AddEdgeResult(value)
+	*a = AddAgentSkillUseOutcomeRequest(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -171,8 +156,8 @@ func (a *AddEdgeResult) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AddEdgeResult) MarshalJSON() ([]byte, error) {
-	type embed AddEdgeResult
+func (a *AddAgentSkillUseOutcomeRequest) MarshalJSON() ([]byte, error) {
+	type embed AddAgentSkillUseOutcomeRequest
 	var marshaler = struct {
 		embed
 	}{
@@ -182,7 +167,142 @@ func (a *AddEdgeResult) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AddEdgeResult) String() string {
+func (a *AddAgentSkillUseOutcomeRequest) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AddAgentSkillUseOutcomeRequestOutcome string
+
+const (
+	AddAgentSkillUseOutcomeRequestOutcomeSucceeded AddAgentSkillUseOutcomeRequestOutcome = "succeeded"
+	AddAgentSkillUseOutcomeRequestOutcomeFailed    AddAgentSkillUseOutcomeRequestOutcome = "failed"
+	AddAgentSkillUseOutcomeRequestOutcomePartial   AddAgentSkillUseOutcomeRequestOutcome = "partial"
+	AddAgentSkillUseOutcomeRequestOutcomeAbandoned AddAgentSkillUseOutcomeRequestOutcome = "abandoned"
+	AddAgentSkillUseOutcomeRequestOutcomeUnknown   AddAgentSkillUseOutcomeRequestOutcome = "unknown"
+)
+
+func NewAddAgentSkillUseOutcomeRequestOutcomeFromString(s string) (AddAgentSkillUseOutcomeRequestOutcome, error) {
+	switch s {
+	case "succeeded":
+		return AddAgentSkillUseOutcomeRequestOutcomeSucceeded, nil
+	case "failed":
+		return AddAgentSkillUseOutcomeRequestOutcomeFailed, nil
+	case "partial":
+		return AddAgentSkillUseOutcomeRequestOutcomePartial, nil
+	case "abandoned":
+		return AddAgentSkillUseOutcomeRequestOutcomeAbandoned, nil
+	case "unknown":
+		return AddAgentSkillUseOutcomeRequestOutcomeUnknown, nil
+	}
+	var t AddAgentSkillUseOutcomeRequestOutcome
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AddAgentSkillUseOutcomeRequestOutcome) Ptr() *AddAgentSkillUseOutcomeRequestOutcome {
+	return &a
+}
+
+var (
+	addEdgesResultFieldEdges = big.NewInt(1 << 0)
+	addEdgesResultFieldTask  = big.NewInt(1 << 1)
+)
+
+type AddEdgesResult struct {
+	// The accept-time acknowledgements in request order.
+	Edges []*AddedEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	// The asynchronous task that tracks edge creation and indexing.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddEdgesResult) GetEdges() []*AddedEdge {
+	if a == nil {
+		return nil
+	}
+	return a.Edges
+}
+
+func (a *AddEdgesResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
+}
+
+func (a *AddEdgesResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddEdgesResult) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetEdges sets the Edges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgesResult) SetEdges(edges []*AddedEdge) {
+	a.Edges = edges
+	a.require(addEdgesResultFieldEdges)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEdgesResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(addEdgesResultFieldTask)
+}
+
+func (a *AddEdgesResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddEdgesResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddEdgesResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddEdgesResult) MarshalJSON() ([]byte, error) {
+	type embed AddEdgesResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddEdgesResult) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -239,10 +359,12 @@ func (a *AddEpisodeResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *AddEpisodeResult) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetEpisode sets the Episode field and marks it as non-optional;
@@ -302,6 +424,215 @@ func (a *AddEpisodeResult) String() string {
 }
 
 var (
+	addHyperedgeEdgeResultFieldEdge = big.NewInt(1 << 0)
+	addHyperedgeEdgeResultFieldTask = big.NewInt(1 << 1)
+)
+
+type AddHyperedgeEdgeResult struct {
+	// An accept-time acknowledgement of the member edge, carrying the
+	// identifier Zep assigned and the hyperedge's shared fields.
+	Edge *AddedEdge `json:"edge,omitempty" url:"edge,omitempty"`
+	// The asynchronous task that tracks writing the member edge.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddHyperedgeEdgeResult) GetEdge() *AddedEdge {
+	if a == nil {
+		return nil
+	}
+	return a.Edge
+}
+
+func (a *AddHyperedgeEdgeResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
+}
+
+func (a *AddHyperedgeEdgeResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddHyperedgeEdgeResult) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetEdge sets the Edge field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddHyperedgeEdgeResult) SetEdge(edge *AddedEdge) {
+	a.Edge = edge
+	a.require(addHyperedgeEdgeResultFieldEdge)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddHyperedgeEdgeResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(addHyperedgeEdgeResultFieldTask)
+}
+
+func (a *AddHyperedgeEdgeResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddHyperedgeEdgeResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddHyperedgeEdgeResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddHyperedgeEdgeResult) MarshalJSON() ([]byte, error) {
+	type embed AddHyperedgeEdgeResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddHyperedgeEdgeResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	addHyperedgeResultFieldHyperedge = big.NewInt(1 << 0)
+	addHyperedgeResultFieldTask      = big.NewInt(1 << 1)
+)
+
+type AddHyperedgeResult struct {
+	// An accept-time acknowledgement of the hyperedge you submitted.
+	Hyperedge *AddedHyperedge `json:"hyperedge,omitempty" url:"hyperedge,omitempty"`
+	// The asynchronous task that tracks writing the member edges.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddHyperedgeResult) GetHyperedge() *AddedHyperedge {
+	if a == nil {
+		return nil
+	}
+	return a.Hyperedge
+}
+
+func (a *AddHyperedgeResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
+}
+
+func (a *AddHyperedgeResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddHyperedgeResult) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetHyperedge sets the Hyperedge field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddHyperedgeResult) SetHyperedge(hyperedge *AddedHyperedge) {
+	a.Hyperedge = hyperedge
+	a.require(addHyperedgeResultFieldHyperedge)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddHyperedgeResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(addHyperedgeResultFieldTask)
+}
+
+func (a *AddHyperedgeResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddHyperedgeResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddHyperedgeResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddHyperedgeResult) MarshalJSON() ([]byte, error) {
+	type embed AddHyperedgeResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddHyperedgeResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
 	addNodesResultFieldNodes = big.NewInt(1 << 0)
 	addNodesResultFieldTask  = big.NewInt(1 << 1)
 )
@@ -343,10 +674,12 @@ func (a *AddNodesResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *AddNodesResult) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetNodes sets the Nodes field and marks it as non-optional;
@@ -406,16 +739,18 @@ func (a *AddNodesResult) String() string {
 }
 
 var (
-	addedEdgeFieldAttributes = big.NewInt(1 << 0)
-	addedEdgeFieldExpiredAt  = big.NewInt(1 << 1)
-	addedEdgeFieldFact       = big.NewInt(1 << 2)
-	addedEdgeFieldFactName   = big.NewInt(1 << 3)
-	addedEdgeFieldInvalidAt  = big.NewInt(1 << 4)
-	addedEdgeFieldMetadata   = big.NewInt(1 << 5)
-	addedEdgeFieldSourceNode = big.NewInt(1 << 6)
-	addedEdgeFieldTargetNode = big.NewInt(1 << 7)
-	addedEdgeFieldUUID       = big.NewInt(1 << 8)
-	addedEdgeFieldValidAt    = big.NewInt(1 << 9)
+	addedEdgeFieldAttributes     = big.NewInt(1 << 0)
+	addedEdgeFieldExpiredAt      = big.NewInt(1 << 1)
+	addedEdgeFieldFact           = big.NewInt(1 << 2)
+	addedEdgeFieldFactName       = big.NewInt(1 << 3)
+	addedEdgeFieldInvalidAt      = big.NewInt(1 << 4)
+	addedEdgeFieldMetadata       = big.NewInt(1 << 5)
+	addedEdgeFieldSourceNode     = big.NewInt(1 << 6)
+	addedEdgeFieldSourceNodeUUID = big.NewInt(1 << 7)
+	addedEdgeFieldTargetNode     = big.NewInt(1 << 8)
+	addedEdgeFieldTargetNodeUUID = big.NewInt(1 << 9)
+	addedEdgeFieldUUID           = big.NewInt(1 << 10)
+	addedEdgeFieldValidAt        = big.NewInt(1 << 11)
 )
 
 type AddedEdge struct {
@@ -433,8 +768,16 @@ type AddedEdge struct {
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// The source node fields you supplied when creating this edge.
 	SourceNode *EdgeNodeRef `json:"source_node,omitempty" url:"source_node,omitempty"`
+	// The source node UUID is set when deduplicate is false. It is the UUID you
+	// supplied, or the UUID Zep assigned to a node that the request creates.
+	// When deduplicate is true, read the endpoint from the task result.
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
 	// The target node fields you supplied when creating this edge.
 	TargetNode *EdgeNodeRef `json:"target_node,omitempty" url:"target_node,omitempty"`
+	// The target node UUID is set when deduplicate is false. It is the UUID you
+	// supplied, or the UUID Zep assigned to a node that the request creates.
+	// When deduplicate is true, read the endpoint from the task result.
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
 	// The unique identifier assigned to the edge.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 	// The time from which the fact is considered true.
@@ -496,11 +839,25 @@ func (a *AddedEdge) GetSourceNode() *EdgeNodeRef {
 	return a.SourceNode
 }
 
+func (a *AddedEdge) GetSourceNodeUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceNodeUUID
+}
+
 func (a *AddedEdge) GetTargetNode() *EdgeNodeRef {
 	if a == nil {
 		return nil
 	}
 	return a.TargetNode
+}
+
+func (a *AddedEdge) GetTargetNodeUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TargetNodeUUID
 }
 
 func (a *AddedEdge) GetUUID() *string {
@@ -525,10 +882,12 @@ func (a *AddedEdge) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *AddedEdge) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -580,11 +939,25 @@ func (a *AddedEdge) SetSourceNode(sourceNode *EdgeNodeRef) {
 	a.require(addedEdgeFieldSourceNode)
 }
 
+// SetSourceNodeUUID sets the SourceNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetSourceNodeUUID(sourceNodeUUID *string) {
+	a.SourceNodeUUID = sourceNodeUUID
+	a.require(addedEdgeFieldSourceNodeUUID)
+}
+
 // SetTargetNode sets the TargetNode field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (a *AddedEdge) SetTargetNode(targetNode *EdgeNodeRef) {
 	a.TargetNode = targetNode
 	a.require(addedEdgeFieldTargetNode)
+}
+
+// SetTargetNodeUUID sets the TargetNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedEdge) SetTargetNodeUUID(targetNodeUUID *string) {
+	a.TargetNodeUUID = targetNodeUUID
+	a.require(addedEdgeFieldTargetNodeUUID)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
@@ -629,6 +1002,350 @@ func (a *AddedEdge) MarshalJSON() ([]byte, error) {
 }
 
 func (a *AddedEdge) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	addedHyperedgeFieldAttributes = big.NewInt(1 << 0)
+	addedHyperedgeFieldEdges      = big.NewInt(1 << 1)
+	addedHyperedgeFieldExpiredAt  = big.NewInt(1 << 2)
+	addedHyperedgeFieldFact       = big.NewInt(1 << 3)
+	addedHyperedgeFieldInvalidAt  = big.NewInt(1 << 4)
+	addedHyperedgeFieldMetadata   = big.NewInt(1 << 5)
+	addedHyperedgeFieldUUID       = big.NewInt(1 << 6)
+	addedHyperedgeFieldValidAt    = big.NewInt(1 << 7)
+)
+
+type AddedHyperedge struct {
+	// The attributes you supplied for every member edge.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The member edges, each with its assigned identifier.
+	Edges []*AddedHyperedgeEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	// The time the fact was superseded or removed.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// The natural-language fact you submitted.
+	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// The episode metadata you supplied.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The unique identifier assigned to the hyperedge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time from which the fact is considered true.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddedHyperedge) GetAttributes() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Attributes
+}
+
+func (a *AddedHyperedge) GetEdges() []*AddedHyperedgeEdge {
+	if a == nil {
+		return nil
+	}
+	return a.Edges
+}
+
+func (a *AddedHyperedge) GetExpiredAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ExpiredAt
+}
+
+func (a *AddedHyperedge) GetFact() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Fact
+}
+
+func (a *AddedHyperedge) GetInvalidAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.InvalidAt
+}
+
+func (a *AddedHyperedge) GetMetadata() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AddedHyperedge) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AddedHyperedge) GetValidAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ValidAt
+}
+
+func (a *AddedHyperedge) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddedHyperedge) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedge) SetAttributes(attributes map[string]any) {
+	a.Attributes = attributes
+	a.require(addedHyperedgeFieldAttributes)
+}
+
+// SetEdges sets the Edges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedge) SetEdges(edges []*AddedHyperedgeEdge) {
+	a.Edges = edges
+	a.require(addedHyperedgeFieldEdges)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedge) SetExpiredAt(expiredAt *string) {
+	a.ExpiredAt = expiredAt
+	a.require(addedHyperedgeFieldExpiredAt)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedge) SetFact(fact *string) {
+	a.Fact = fact
+	a.require(addedHyperedgeFieldFact)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedge) SetInvalidAt(invalidAt *string) {
+	a.InvalidAt = invalidAt
+	a.require(addedHyperedgeFieldInvalidAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedge) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(addedHyperedgeFieldMetadata)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedge) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(addedHyperedgeFieldUUID)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedge) SetValidAt(validAt *string) {
+	a.ValidAt = validAt
+	a.require(addedHyperedgeFieldValidAt)
+}
+
+func (a *AddedHyperedge) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddedHyperedge
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddedHyperedge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddedHyperedge) MarshalJSON() ([]byte, error) {
+	type embed AddedHyperedge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddedHyperedge) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	addedHyperedgeEdgeFieldName       = big.NewInt(1 << 0)
+	addedHyperedgeEdgeFieldSourceNode = big.NewInt(1 << 1)
+	addedHyperedgeEdgeFieldTargetNode = big.NewInt(1 << 2)
+	addedHyperedgeEdgeFieldUUID       = big.NewInt(1 << 3)
+)
+
+type AddedHyperedgeEdge struct {
+	// The name of the member edge you supplied.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The source node fields you supplied for this member.
+	SourceNode *EdgeNodeRef `json:"source_node,omitempty" url:"source_node,omitempty"`
+	// The target node fields you supplied for this member.
+	TargetNode *EdgeNodeRef `json:"target_node,omitempty" url:"target_node,omitempty"`
+	// The unique identifier assigned to this member edge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AddedHyperedgeEdge) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *AddedHyperedgeEdge) GetSourceNode() *EdgeNodeRef {
+	if a == nil {
+		return nil
+	}
+	return a.SourceNode
+}
+
+func (a *AddedHyperedgeEdge) GetTargetNode() *EdgeNodeRef {
+	if a == nil {
+		return nil
+	}
+	return a.TargetNode
+}
+
+func (a *AddedHyperedgeEdge) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AddedHyperedgeEdge) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AddedHyperedgeEdge) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedgeEdge) SetName(name *string) {
+	a.Name = name
+	a.require(addedHyperedgeEdgeFieldName)
+}
+
+// SetSourceNode sets the SourceNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedgeEdge) SetSourceNode(sourceNode *EdgeNodeRef) {
+	a.SourceNode = sourceNode
+	a.require(addedHyperedgeEdgeFieldSourceNode)
+}
+
+// SetTargetNode sets the TargetNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedgeEdge) SetTargetNode(targetNode *EdgeNodeRef) {
+	a.TargetNode = targetNode
+	a.require(addedHyperedgeEdgeFieldTargetNode)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddedHyperedgeEdge) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(addedHyperedgeEdgeFieldUUID)
+}
+
+func (a *AddedHyperedgeEdge) UnmarshalJSON(data []byte) error {
+	type unmarshaler AddedHyperedgeEdge
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AddedHyperedgeEdge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AddedHyperedgeEdge) MarshalJSON() ([]byte, error) {
+	type embed AddedHyperedgeEdge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AddedHyperedgeEdge) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -733,10 +1450,12 @@ func (a *AddedNode) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *AddedNode) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -831,6 +1550,10591 @@ func (a *AddedNode) String() string {
 }
 
 var (
+	agentLearningStateFieldApproval                = big.NewInt(1 << 0)
+	agentLearningStateFieldCompilationMode         = big.NewInt(1 << 1)
+	agentLearningStateFieldCompilationPending      = big.NewInt(1 << 2)
+	agentLearningStateFieldEligibleTrajectoryCount = big.NewInt(1 << 3)
+	agentLearningStateFieldMinimumAttemptFamilies  = big.NewInt(1 << 4)
+	agentLearningStateFieldNextStep                = big.NewInt(1 << 5)
+	agentLearningStateFieldRequiredEvaluations     = big.NewInt(1 << 6)
+	agentLearningStateFieldTaskFamily              = big.NewInt(1 << 7)
+)
+
+type AgentLearningState struct {
+	// Approval is the approval mode of the Agent: manual or auto. The default is auto.
+	Approval        *string `json:"approval,omitempty" url:"approval,omitempty"`
+	CompilationMode *string `json:"compilation_mode,omitempty" url:"compilation_mode,omitempty"`
+	// CompilationPending is true while a learning run for the task family
+	// waits to start or runs. Skills from that run are not yet available.
+	CompilationPending      *bool    `json:"compilation_pending,omitempty" url:"compilation_pending,omitempty"`
+	EligibleTrajectoryCount *int     `json:"eligible_trajectory_count,omitempty" url:"eligible_trajectory_count,omitempty"`
+	MinimumAttemptFamilies  *int     `json:"minimum_attempt_families,omitempty" url:"minimum_attempt_families,omitempty"`
+	NextStep                *string  `json:"next_step,omitempty" url:"next_step,omitempty"`
+	RequiredEvaluations     []string `json:"required_evaluations,omitempty" url:"required_evaluations,omitempty"`
+	TaskFamily              *string  `json:"task_family,omitempty" url:"task_family,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentLearningState) GetApproval() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Approval
+}
+
+func (a *AgentLearningState) GetCompilationMode() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CompilationMode
+}
+
+func (a *AgentLearningState) GetCompilationPending() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.CompilationPending
+}
+
+func (a *AgentLearningState) GetEligibleTrajectoryCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.EligibleTrajectoryCount
+}
+
+func (a *AgentLearningState) GetMinimumAttemptFamilies() *int {
+	if a == nil {
+		return nil
+	}
+	return a.MinimumAttemptFamilies
+}
+
+func (a *AgentLearningState) GetNextStep() *string {
+	if a == nil {
+		return nil
+	}
+	return a.NextStep
+}
+
+func (a *AgentLearningState) GetRequiredEvaluations() []string {
+	if a == nil {
+		return nil
+	}
+	return a.RequiredEvaluations
+}
+
+func (a *AgentLearningState) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentLearningState) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentLearningState) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetApproval sets the Approval field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLearningState) SetApproval(approval *string) {
+	a.Approval = approval
+	a.require(agentLearningStateFieldApproval)
+}
+
+// SetCompilationMode sets the CompilationMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLearningState) SetCompilationMode(compilationMode *string) {
+	a.CompilationMode = compilationMode
+	a.require(agentLearningStateFieldCompilationMode)
+}
+
+// SetCompilationPending sets the CompilationPending field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLearningState) SetCompilationPending(compilationPending *bool) {
+	a.CompilationPending = compilationPending
+	a.require(agentLearningStateFieldCompilationPending)
+}
+
+// SetEligibleTrajectoryCount sets the EligibleTrajectoryCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLearningState) SetEligibleTrajectoryCount(eligibleTrajectoryCount *int) {
+	a.EligibleTrajectoryCount = eligibleTrajectoryCount
+	a.require(agentLearningStateFieldEligibleTrajectoryCount)
+}
+
+// SetMinimumAttemptFamilies sets the MinimumAttemptFamilies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLearningState) SetMinimumAttemptFamilies(minimumAttemptFamilies *int) {
+	a.MinimumAttemptFamilies = minimumAttemptFamilies
+	a.require(agentLearningStateFieldMinimumAttemptFamilies)
+}
+
+// SetNextStep sets the NextStep field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLearningState) SetNextStep(nextStep *string) {
+	a.NextStep = nextStep
+	a.require(agentLearningStateFieldNextStep)
+}
+
+// SetRequiredEvaluations sets the RequiredEvaluations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLearningState) SetRequiredEvaluations(requiredEvaluations []string) {
+	a.RequiredEvaluations = requiredEvaluations
+	a.require(agentLearningStateFieldRequiredEvaluations)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLearningState) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentLearningStateFieldTaskFamily)
+}
+
+func (a *AgentLearningState) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentLearningState
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentLearningState(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentLearningState) MarshalJSON() ([]byte, error) {
+	type embed AgentLearningState
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentLearningState) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentLiteralPolicyFieldAllowlistedClasses     = big.NewInt(1 << 0)
+	agentLiteralPolicyFieldAllowlistedValues      = big.NewInt(1 << 1)
+	agentLiteralPolicyFieldCreatedAt              = big.NewInt(1 << 2)
+	agentLiteralPolicyFieldCreatedByPrincipalID   = big.NewInt(1 << 3)
+	agentLiteralPolicyFieldCreatedByPrincipalType = big.NewInt(1 << 4)
+	agentLiteralPolicyFieldDefault                = big.NewInt(1 << 5)
+	agentLiteralPolicyFieldDigest                 = big.NewInt(1 << 6)
+	agentLiteralPolicyFieldRevision               = big.NewInt(1 << 7)
+)
+
+type AgentLiteralPolicy struct {
+	// Typed classes that the policy may preserve.
+	AllowlistedClasses *AgentLiteralPolicyClasses `json:"allowlisted_classes,omitempty" url:"allowlisted_classes,omitempty"`
+	// Exact reusable values that the policy may preserve when applicability matches.
+	AllowlistedValues *AgentLiteralPolicyValues `json:"allowlisted_values,omitempty" url:"allowlisted_values,omitempty"`
+	// The time this explicit revision was created. Omitted for revision zero.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The principal identifier that created this explicit revision. Empty for revision zero.
+	CreatedByPrincipalID *string `json:"created_by_principal_id,omitempty" url:"created_by_principal_id,omitempty"`
+	// The principal type that created this explicit revision. Empty for revision zero.
+	CreatedByPrincipalType *string `json:"created_by_principal_type,omitempty" url:"created_by_principal_type,omitempty"`
+	// The remediation for literals that are not explicitly allowed.
+	Default *string `json:"default,omitempty" url:"default,omitempty"`
+	// SHA-256 of the canonical policy JSON.
+	Digest *string `json:"digest,omitempty" url:"digest,omitempty"`
+	// The immutable policy revision. Revision zero is the built-in strict default.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentLiteralPolicy) GetAllowlistedClasses() *AgentLiteralPolicyClasses {
+	if a == nil {
+		return nil
+	}
+	return a.AllowlistedClasses
+}
+
+func (a *AgentLiteralPolicy) GetAllowlistedValues() *AgentLiteralPolicyValues {
+	if a == nil {
+		return nil
+	}
+	return a.AllowlistedValues
+}
+
+func (a *AgentLiteralPolicy) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentLiteralPolicy) GetCreatedByPrincipalID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedByPrincipalID
+}
+
+func (a *AgentLiteralPolicy) GetCreatedByPrincipalType() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedByPrincipalType
+}
+
+func (a *AgentLiteralPolicy) GetDefault() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Default
+}
+
+func (a *AgentLiteralPolicy) GetDigest() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Digest
+}
+
+func (a *AgentLiteralPolicy) GetRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Revision
+}
+
+func (a *AgentLiteralPolicy) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentLiteralPolicy) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAllowlistedClasses sets the AllowlistedClasses field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicy) SetAllowlistedClasses(allowlistedClasses *AgentLiteralPolicyClasses) {
+	a.AllowlistedClasses = allowlistedClasses
+	a.require(agentLiteralPolicyFieldAllowlistedClasses)
+}
+
+// SetAllowlistedValues sets the AllowlistedValues field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicy) SetAllowlistedValues(allowlistedValues *AgentLiteralPolicyValues) {
+	a.AllowlistedValues = allowlistedValues
+	a.require(agentLiteralPolicyFieldAllowlistedValues)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicy) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentLiteralPolicyFieldCreatedAt)
+}
+
+// SetCreatedByPrincipalID sets the CreatedByPrincipalID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicy) SetCreatedByPrincipalID(createdByPrincipalID *string) {
+	a.CreatedByPrincipalID = createdByPrincipalID
+	a.require(agentLiteralPolicyFieldCreatedByPrincipalID)
+}
+
+// SetCreatedByPrincipalType sets the CreatedByPrincipalType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicy) SetCreatedByPrincipalType(createdByPrincipalType *string) {
+	a.CreatedByPrincipalType = createdByPrincipalType
+	a.require(agentLiteralPolicyFieldCreatedByPrincipalType)
+}
+
+// SetDefault sets the Default field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicy) SetDefault(default_ *string) {
+	a.Default = default_
+	a.require(agentLiteralPolicyFieldDefault)
+}
+
+// SetDigest sets the Digest field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicy) SetDigest(digest *string) {
+	a.Digest = digest
+	a.require(agentLiteralPolicyFieldDigest)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicy) SetRevision(revision *int) {
+	a.Revision = revision
+	a.require(agentLiteralPolicyFieldRevision)
+}
+
+func (a *AgentLiteralPolicy) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentLiteralPolicy
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentLiteralPolicy(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentLiteralPolicy) MarshalJSON() ([]byte, error) {
+	type embed AgentLiteralPolicy
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentLiteralPolicy) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentLiteralPolicyClassesFieldEnvironments = big.NewInt(1 << 0)
+	agentLiteralPolicyClassesFieldTools        = big.NewInt(1 << 1)
+)
+
+type AgentLiteralPolicyClasses struct {
+	// Reusable environment literal classes.
+	Environments []string `json:"environments" url:"environments"`
+	// Reusable tool literal classes.
+	Tools []string `json:"tools" url:"tools"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentLiteralPolicyClasses) GetEnvironments() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Environments
+}
+
+func (a *AgentLiteralPolicyClasses) GetTools() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Tools
+}
+
+func (a *AgentLiteralPolicyClasses) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentLiteralPolicyClasses) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetEnvironments sets the Environments field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicyClasses) SetEnvironments(environments []string) {
+	a.Environments = environments
+	a.require(agentLiteralPolicyClassesFieldEnvironments)
+}
+
+// SetTools sets the Tools field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicyClasses) SetTools(tools []string) {
+	a.Tools = tools
+	a.require(agentLiteralPolicyClassesFieldTools)
+}
+
+func (a *AgentLiteralPolicyClasses) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentLiteralPolicyClasses
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentLiteralPolicyClasses(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentLiteralPolicyClasses) MarshalJSON() ([]byte, error) {
+	type embed AgentLiteralPolicyClasses
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentLiteralPolicyClasses) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentLiteralPolicyValuesFieldEnvironments = big.NewInt(1 << 0)
+	agentLiteralPolicyValuesFieldTools        = big.NewInt(1 << 1)
+)
+
+type AgentLiteralPolicyValues struct {
+	// Exact reusable values eligible for a permitted environment literal class.
+	Environments []string `json:"environments" url:"environments"`
+	// Exact reusable values eligible for a permitted tool literal class.
+	Tools []string `json:"tools" url:"tools"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentLiteralPolicyValues) GetEnvironments() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Environments
+}
+
+func (a *AgentLiteralPolicyValues) GetTools() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Tools
+}
+
+func (a *AgentLiteralPolicyValues) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentLiteralPolicyValues) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetEnvironments sets the Environments field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicyValues) SetEnvironments(environments []string) {
+	a.Environments = environments
+	a.require(agentLiteralPolicyValuesFieldEnvironments)
+}
+
+// SetTools sets the Tools field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentLiteralPolicyValues) SetTools(tools []string) {
+	a.Tools = tools
+	a.require(agentLiteralPolicyValuesFieldTools)
+}
+
+func (a *AgentLiteralPolicyValues) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentLiteralPolicyValues
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentLiteralPolicyValues(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentLiteralPolicyValues) MarshalJSON() ([]byte, error) {
+	type embed AgentLiteralPolicyValues
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentLiteralPolicyValues) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentMemoryEvaluationPolicyFieldRequirements = big.NewInt(1 << 0)
+	agentMemoryEvaluationPolicyFieldTaskFamily   = big.NewInt(1 << 1)
+)
+
+type AgentMemoryEvaluationPolicy struct {
+	Requirements []*AgentMemoryEvaluationRequirement `json:"requirements" url:"requirements"`
+	TaskFamily   string                              `json:"task_family" url:"task_family"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentMemoryEvaluationPolicy) GetRequirements() []*AgentMemoryEvaluationRequirement {
+	if a == nil {
+		return nil
+	}
+	return a.Requirements
+}
+
+func (a *AgentMemoryEvaluationPolicy) GetTaskFamily() string {
+	if a == nil {
+		return ""
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentMemoryEvaluationPolicy) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentMemoryEvaluationPolicy) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetRequirements sets the Requirements field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemoryEvaluationPolicy) SetRequirements(requirements []*AgentMemoryEvaluationRequirement) {
+	a.Requirements = requirements
+	a.require(agentMemoryEvaluationPolicyFieldRequirements)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemoryEvaluationPolicy) SetTaskFamily(taskFamily string) {
+	a.TaskFamily = taskFamily
+	a.require(agentMemoryEvaluationPolicyFieldTaskFamily)
+}
+
+func (a *AgentMemoryEvaluationPolicy) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentMemoryEvaluationPolicy
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentMemoryEvaluationPolicy(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentMemoryEvaluationPolicy) MarshalJSON() ([]byte, error) {
+	type embed AgentMemoryEvaluationPolicy
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentMemoryEvaluationPolicy) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentMemoryEvaluationRequirementFieldControlled       = big.NewInt(1 << 0)
+	agentMemoryEvaluationRequirementFieldEnvironment      = big.NewInt(1 << 1)
+	agentMemoryEvaluationRequirementFieldEvaluatedBy      = big.NewInt(1 << 2)
+	agentMemoryEvaluationRequirementFieldEvaluatorVersion = big.NewInt(1 << 3)
+	agentMemoryEvaluationRequirementFieldResult           = big.NewInt(1 << 4)
+)
+
+type AgentMemoryEvaluationRequirement struct {
+	Controlled       *bool   `json:"controlled,omitempty" url:"controlled,omitempty"`
+	Environment      *string `json:"environment,omitempty" url:"environment,omitempty"`
+	EvaluatedBy      string  `json:"evaluated_by" url:"evaluated_by"`
+	EvaluatorVersion string  `json:"evaluator_version" url:"evaluator_version"`
+	Result           string  `json:"result" url:"result"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentMemoryEvaluationRequirement) GetControlled() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.Controlled
+}
+
+func (a *AgentMemoryEvaluationRequirement) GetEnvironment() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Environment
+}
+
+func (a *AgentMemoryEvaluationRequirement) GetEvaluatedBy() string {
+	if a == nil {
+		return ""
+	}
+	return a.EvaluatedBy
+}
+
+func (a *AgentMemoryEvaluationRequirement) GetEvaluatorVersion() string {
+	if a == nil {
+		return ""
+	}
+	return a.EvaluatorVersion
+}
+
+func (a *AgentMemoryEvaluationRequirement) GetResult() string {
+	if a == nil {
+		return ""
+	}
+	return a.Result
+}
+
+func (a *AgentMemoryEvaluationRequirement) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentMemoryEvaluationRequirement) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetControlled sets the Controlled field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemoryEvaluationRequirement) SetControlled(controlled *bool) {
+	a.Controlled = controlled
+	a.require(agentMemoryEvaluationRequirementFieldControlled)
+}
+
+// SetEnvironment sets the Environment field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemoryEvaluationRequirement) SetEnvironment(environment *string) {
+	a.Environment = environment
+	a.require(agentMemoryEvaluationRequirementFieldEnvironment)
+}
+
+// SetEvaluatedBy sets the EvaluatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemoryEvaluationRequirement) SetEvaluatedBy(evaluatedBy string) {
+	a.EvaluatedBy = evaluatedBy
+	a.require(agentMemoryEvaluationRequirementFieldEvaluatedBy)
+}
+
+// SetEvaluatorVersion sets the EvaluatorVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemoryEvaluationRequirement) SetEvaluatorVersion(evaluatorVersion string) {
+	a.EvaluatorVersion = evaluatorVersion
+	a.require(agentMemoryEvaluationRequirementFieldEvaluatorVersion)
+}
+
+// SetResult sets the Result field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemoryEvaluationRequirement) SetResult(result string) {
+	a.Result = result
+	a.require(agentMemoryEvaluationRequirementFieldResult)
+}
+
+func (a *AgentMemoryEvaluationRequirement) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentMemoryEvaluationRequirement
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentMemoryEvaluationRequirement(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentMemoryEvaluationRequirement) MarshalJSON() ([]byte, error) {
+	type embed AgentMemoryEvaluationRequirement
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentMemoryEvaluationRequirement) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentMemorySettingsFieldAdmissionEvaluationRequirements = big.NewInt(1 << 0)
+	agentMemorySettingsFieldApproval                        = big.NewInt(1 << 1)
+	agentMemorySettingsFieldApprovalMinimumAttemptFamilies  = big.NewInt(1 << 2)
+	agentMemorySettingsFieldApprovalRequiredTools           = big.NewInt(1 << 3)
+	agentMemorySettingsFieldAutoApprovalTaskFamilies        = big.NewInt(1 << 4)
+	agentMemorySettingsFieldCompilationMode                 = big.NewInt(1 << 5)
+	agentMemorySettingsFieldProvisionalExpiryDays           = big.NewInt(1 << 6)
+	agentMemorySettingsFieldProvisionalSkillLimit           = big.NewInt(1 << 7)
+	agentMemorySettingsFieldRetentionDays                   = big.NewInt(1 << 8)
+)
+
+type AgentMemorySettings struct {
+	AdmissionEvaluationRequirements []*AgentMemoryEvaluationPolicy `json:"admission_evaluation_requirements,omitempty" url:"admission_evaluation_requirements,omitempty"`
+	Approval                        *AgentMemorySettingsApproval   `json:"approval,omitempty" url:"approval,omitempty"`
+	ApprovalMinimumAttemptFamilies  *int                           `json:"approval_minimum_attempt_families,omitempty" url:"approval_minimum_attempt_families,omitempty"`
+	// ApprovalRequiredTools lists the tool names that need a member approval in
+	// auto approval. A generated Skill that uses one of these tools waits for a
+	// member. The default is an empty list.
+	ApprovalRequiredTools    []string                            `json:"approval_required_tools,omitempty" url:"approval_required_tools,omitempty"`
+	AutoApprovalTaskFamilies []string                            `json:"auto_approval_task_families,omitempty" url:"auto_approval_task_families,omitempty"`
+	CompilationMode          *AgentMemorySettingsCompilationMode `json:"compilation_mode,omitempty" url:"compilation_mode,omitempty"`
+	// ProvisionalExpiryDays is the period after which Zep retires a provisional
+	// Skill that no application used. When it is not set, provisional Skills do
+	// not expire.
+	ProvisionalExpiryDays *int `json:"provisional_expiry_days,omitempty" url:"provisional_expiry_days,omitempty"`
+	// ProvisionalSkillLimit is the maximum count of provisional Skills in one
+	// task family. Over the limit, a new provisional Skill waits for a member.
+	// When it is not set, no limit applies.
+	ProvisionalSkillLimit *int `json:"provisional_skill_limit,omitempty" url:"provisional_skill_limit,omitempty"`
+	RetentionDays         *int `json:"retention_days,omitempty" url:"retention_days,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentMemorySettings) GetAdmissionEvaluationRequirements() []*AgentMemoryEvaluationPolicy {
+	if a == nil {
+		return nil
+	}
+	return a.AdmissionEvaluationRequirements
+}
+
+func (a *AgentMemorySettings) GetApproval() *AgentMemorySettingsApproval {
+	if a == nil {
+		return nil
+	}
+	return a.Approval
+}
+
+func (a *AgentMemorySettings) GetApprovalMinimumAttemptFamilies() *int {
+	if a == nil {
+		return nil
+	}
+	return a.ApprovalMinimumAttemptFamilies
+}
+
+func (a *AgentMemorySettings) GetApprovalRequiredTools() []string {
+	if a == nil {
+		return nil
+	}
+	return a.ApprovalRequiredTools
+}
+
+func (a *AgentMemorySettings) GetAutoApprovalTaskFamilies() []string {
+	if a == nil {
+		return nil
+	}
+	return a.AutoApprovalTaskFamilies
+}
+
+func (a *AgentMemorySettings) GetCompilationMode() *AgentMemorySettingsCompilationMode {
+	if a == nil {
+		return nil
+	}
+	return a.CompilationMode
+}
+
+func (a *AgentMemorySettings) GetProvisionalExpiryDays() *int {
+	if a == nil {
+		return nil
+	}
+	return a.ProvisionalExpiryDays
+}
+
+func (a *AgentMemorySettings) GetProvisionalSkillLimit() *int {
+	if a == nil {
+		return nil
+	}
+	return a.ProvisionalSkillLimit
+}
+
+func (a *AgentMemorySettings) GetRetentionDays() *int {
+	if a == nil {
+		return nil
+	}
+	return a.RetentionDays
+}
+
+func (a *AgentMemorySettings) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentMemorySettings) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAdmissionEvaluationRequirements sets the AdmissionEvaluationRequirements field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetAdmissionEvaluationRequirements(admissionEvaluationRequirements []*AgentMemoryEvaluationPolicy) {
+	a.AdmissionEvaluationRequirements = admissionEvaluationRequirements
+	a.require(agentMemorySettingsFieldAdmissionEvaluationRequirements)
+}
+
+// SetApproval sets the Approval field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetApproval(approval *AgentMemorySettingsApproval) {
+	a.Approval = approval
+	a.require(agentMemorySettingsFieldApproval)
+}
+
+// SetApprovalMinimumAttemptFamilies sets the ApprovalMinimumAttemptFamilies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetApprovalMinimumAttemptFamilies(approvalMinimumAttemptFamilies *int) {
+	a.ApprovalMinimumAttemptFamilies = approvalMinimumAttemptFamilies
+	a.require(agentMemorySettingsFieldApprovalMinimumAttemptFamilies)
+}
+
+// SetApprovalRequiredTools sets the ApprovalRequiredTools field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetApprovalRequiredTools(approvalRequiredTools []string) {
+	a.ApprovalRequiredTools = approvalRequiredTools
+	a.require(agentMemorySettingsFieldApprovalRequiredTools)
+}
+
+// SetAutoApprovalTaskFamilies sets the AutoApprovalTaskFamilies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetAutoApprovalTaskFamilies(autoApprovalTaskFamilies []string) {
+	a.AutoApprovalTaskFamilies = autoApprovalTaskFamilies
+	a.require(agentMemorySettingsFieldAutoApprovalTaskFamilies)
+}
+
+// SetCompilationMode sets the CompilationMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetCompilationMode(compilationMode *AgentMemorySettingsCompilationMode) {
+	a.CompilationMode = compilationMode
+	a.require(agentMemorySettingsFieldCompilationMode)
+}
+
+// SetProvisionalExpiryDays sets the ProvisionalExpiryDays field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetProvisionalExpiryDays(provisionalExpiryDays *int) {
+	a.ProvisionalExpiryDays = provisionalExpiryDays
+	a.require(agentMemorySettingsFieldProvisionalExpiryDays)
+}
+
+// SetProvisionalSkillLimit sets the ProvisionalSkillLimit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetProvisionalSkillLimit(provisionalSkillLimit *int) {
+	a.ProvisionalSkillLimit = provisionalSkillLimit
+	a.require(agentMemorySettingsFieldProvisionalSkillLimit)
+}
+
+// SetRetentionDays sets the RetentionDays field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentMemorySettings) SetRetentionDays(retentionDays *int) {
+	a.RetentionDays = retentionDays
+	a.require(agentMemorySettingsFieldRetentionDays)
+}
+
+func (a *AgentMemorySettings) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentMemorySettings
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentMemorySettings(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentMemorySettings) MarshalJSON() ([]byte, error) {
+	type embed AgentMemorySettings
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentMemorySettings) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentMemorySettingsApproval string
+
+const (
+	AgentMemorySettingsApprovalManual AgentMemorySettingsApproval = "manual"
+	AgentMemorySettingsApprovalAuto   AgentMemorySettingsApproval = "auto"
+)
+
+func NewAgentMemorySettingsApprovalFromString(s string) (AgentMemorySettingsApproval, error) {
+	switch s {
+	case "manual":
+		return AgentMemorySettingsApprovalManual, nil
+	case "auto":
+		return AgentMemorySettingsApprovalAuto, nil
+	}
+	var t AgentMemorySettingsApproval
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentMemorySettingsApproval) Ptr() *AgentMemorySettingsApproval {
+	return &a
+}
+
+type AgentMemorySettingsCompilationMode string
+
+const (
+	AgentMemorySettingsCompilationModeScheduled AgentMemorySettingsCompilationMode = "scheduled"
+	AgentMemorySettingsCompilationModeManual    AgentMemorySettingsCompilationMode = "manual"
+	AgentMemorySettingsCompilationModeOnClose   AgentMemorySettingsCompilationMode = "on_close"
+)
+
+func NewAgentMemorySettingsCompilationModeFromString(s string) (AgentMemorySettingsCompilationMode, error) {
+	switch s {
+	case "scheduled":
+		return AgentMemorySettingsCompilationModeScheduled, nil
+	case "manual":
+		return AgentMemorySettingsCompilationModeManual, nil
+	case "on_close":
+		return AgentMemorySettingsCompilationModeOnClose, nil
+	}
+	var t AgentMemorySettingsCompilationMode
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentMemorySettingsCompilationMode) Ptr() *AgentMemorySettingsCompilationMode {
+	return &a
+}
+
+var (
+	agentSkillFieldAgentVersions     = big.NewInt(1 << 0)
+	agentSkillFieldCreatedAt         = big.NewInt(1 << 1)
+	agentSkillFieldCurrentVersion    = big.NewInt(1 << 2)
+	agentSkillFieldKind              = big.NewInt(1 << 3)
+	agentSkillFieldPackageName       = big.NewInt(1 << 4)
+	agentSkillFieldSearchable        = big.NewInt(1 << 5)
+	agentSkillFieldSkillID           = big.NewInt(1 << 6)
+	agentSkillFieldStatus            = big.NewInt(1 << 7)
+	agentSkillFieldTaskFamily        = big.NewInt(1 << 8)
+	agentSkillFieldUnavailableReason = big.NewInt(1 << 9)
+	agentSkillFieldUpdatedAt         = big.NewInt(1 << 10)
+	agentSkillFieldUUID              = big.NewInt(1 << 11)
+)
+
+type AgentSkill struct {
+	AgentVersions     []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	CreatedAt         *string  `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CurrentVersion    *int     `json:"current_version,omitempty" url:"current_version,omitempty"`
+	Kind              *string  `json:"kind,omitempty" url:"kind,omitempty"`
+	PackageName       *string  `json:"package_name,omitempty" url:"package_name,omitempty"`
+	Searchable        *bool    `json:"searchable,omitempty" url:"searchable,omitempty"`
+	SkillID           *string  `json:"skill_id,omitempty" url:"skill_id,omitempty"`
+	Status            *string  `json:"status,omitempty" url:"status,omitempty"`
+	TaskFamily        *string  `json:"task_family,omitempty" url:"task_family,omitempty"`
+	UnavailableReason *string  `json:"unavailable_reason,omitempty" url:"unavailable_reason,omitempty"`
+	UpdatedAt         *string  `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID              *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkill) GetAgentVersions() []string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentVersions
+}
+
+func (a *AgentSkill) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkill) GetCurrentVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.CurrentVersion
+}
+
+func (a *AgentSkill) GetKind() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Kind
+}
+
+func (a *AgentSkill) GetPackageName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PackageName
+}
+
+func (a *AgentSkill) GetSearchable() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.Searchable
+}
+
+func (a *AgentSkill) GetSkillID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SkillID
+}
+
+func (a *AgentSkill) GetStatus() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AgentSkill) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentSkill) GetUnavailableReason() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UnavailableReason
+}
+
+func (a *AgentSkill) GetUpdatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UpdatedAt
+}
+
+func (a *AgentSkill) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkill) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkill) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentVersions sets the AgentVersions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetAgentVersions(agentVersions []string) {
+	a.AgentVersions = agentVersions
+	a.require(agentSkillFieldAgentVersions)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillFieldCreatedAt)
+}
+
+// SetCurrentVersion sets the CurrentVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetCurrentVersion(currentVersion *int) {
+	a.CurrentVersion = currentVersion
+	a.require(agentSkillFieldCurrentVersion)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetKind(kind *string) {
+	a.Kind = kind
+	a.require(agentSkillFieldKind)
+}
+
+// SetPackageName sets the PackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetPackageName(packageName *string) {
+	a.PackageName = packageName
+	a.require(agentSkillFieldPackageName)
+}
+
+// SetSearchable sets the Searchable field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetSearchable(searchable *bool) {
+	a.Searchable = searchable
+	a.require(agentSkillFieldSearchable)
+}
+
+// SetSkillID sets the SkillID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetSkillID(skillID *string) {
+	a.SkillID = skillID
+	a.require(agentSkillFieldSkillID)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetStatus(status *string) {
+	a.Status = status
+	a.require(agentSkillFieldStatus)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentSkillFieldTaskFamily)
+}
+
+// SetUnavailableReason sets the UnavailableReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetUnavailableReason(unavailableReason *string) {
+	a.UnavailableReason = unavailableReason
+	a.require(agentSkillFieldUnavailableReason)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetUpdatedAt(updatedAt *string) {
+	a.UpdatedAt = updatedAt
+	a.require(agentSkillFieldUpdatedAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillFieldUUID)
+}
+
+func (a *AgentSkill) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkill
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkill(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkill) MarshalJSON() ([]byte, error) {
+	type embed AgentSkill
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkill) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillAdmissionDecisionFieldCreatedAt                 = big.NewInt(1 << 0)
+	agentSkillAdmissionDecisionFieldDecision                  = big.NewInt(1 << 1)
+	agentSkillAdmissionDecisionFieldMode                      = big.NewInt(1 << 2)
+	agentSkillAdmissionDecisionFieldReasonCode                = big.NewInt(1 << 3)
+	agentSkillAdmissionDecisionFieldSkillVersion              = big.NewInt(1 << 4)
+	agentSkillAdmissionDecisionFieldSupportingAttemptFamilies = big.NewInt(1 << 5)
+)
+
+type AgentSkillAdmissionDecision struct {
+	CreatedAt                 *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Decision                  *string `json:"decision,omitempty" url:"decision,omitempty"`
+	Mode                      *string `json:"mode,omitempty" url:"mode,omitempty"`
+	ReasonCode                *string `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	SkillVersion              *int    `json:"skill_version,omitempty" url:"skill_version,omitempty"`
+	SupportingAttemptFamilies *int    `json:"supporting_attempt_families,omitempty" url:"supporting_attempt_families,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillAdmissionDecision) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillAdmissionDecision) GetDecision() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Decision
+}
+
+func (a *AgentSkillAdmissionDecision) GetMode() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Mode
+}
+
+func (a *AgentSkillAdmissionDecision) GetReasonCode() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReasonCode
+}
+
+func (a *AgentSkillAdmissionDecision) GetSkillVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.SkillVersion
+}
+
+func (a *AgentSkillAdmissionDecision) GetSupportingAttemptFamilies() *int {
+	if a == nil {
+		return nil
+	}
+	return a.SupportingAttemptFamilies
+}
+
+func (a *AgentSkillAdmissionDecision) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillAdmissionDecision) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillAdmissionDecision) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillAdmissionDecisionFieldCreatedAt)
+}
+
+// SetDecision sets the Decision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillAdmissionDecision) SetDecision(decision *string) {
+	a.Decision = decision
+	a.require(agentSkillAdmissionDecisionFieldDecision)
+}
+
+// SetMode sets the Mode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillAdmissionDecision) SetMode(mode *string) {
+	a.Mode = mode
+	a.require(agentSkillAdmissionDecisionFieldMode)
+}
+
+// SetReasonCode sets the ReasonCode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillAdmissionDecision) SetReasonCode(reasonCode *string) {
+	a.ReasonCode = reasonCode
+	a.require(agentSkillAdmissionDecisionFieldReasonCode)
+}
+
+// SetSkillVersion sets the SkillVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillAdmissionDecision) SetSkillVersion(skillVersion *int) {
+	a.SkillVersion = skillVersion
+	a.require(agentSkillAdmissionDecisionFieldSkillVersion)
+}
+
+// SetSupportingAttemptFamilies sets the SupportingAttemptFamilies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillAdmissionDecision) SetSupportingAttemptFamilies(supportingAttemptFamilies *int) {
+	a.SupportingAttemptFamilies = supportingAttemptFamilies
+	a.require(agentSkillAdmissionDecisionFieldSupportingAttemptFamilies)
+}
+
+func (a *AgentSkillAdmissionDecision) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillAdmissionDecision
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillAdmissionDecision(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillAdmissionDecision) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillAdmissionDecision
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillAdmissionDecision) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillCandidateFieldAgentVersions = big.NewInt(1 << 0)
+	agentSkillCandidateFieldBaseVersions  = big.NewInt(1 << 1)
+	agentSkillCandidateFieldConfidence    = big.NewInt(1 << 2)
+	agentSkillCandidateFieldDecision      = big.NewInt(1 << 3)
+	agentSkillCandidateFieldDescription   = big.NewInt(1 << 4)
+	agentSkillCandidateFieldDoNotUseWhen  = big.NewInt(1 << 5)
+	agentSkillCandidateFieldEvidence      = big.NewInt(1 << 6)
+	agentSkillCandidateFieldKind          = big.NewInt(1 << 7)
+	agentSkillCandidateFieldMarkdown      = big.NewInt(1 << 8)
+	agentSkillCandidateFieldName          = big.NewInt(1 << 9)
+	agentSkillCandidateFieldPackageName   = big.NewInt(1 << 10)
+	agentSkillCandidateFieldTaskFamily    = big.NewInt(1 << 11)
+	agentSkillCandidateFieldUUID          = big.NewInt(1 << 12)
+)
+
+type AgentSkillCandidate struct {
+	AgentVersions []string                          `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	BaseVersions  []*AgentSkillCandidateBaseVersion `json:"base_versions,omitempty" url:"base_versions,omitempty"`
+	Confidence    *float64                          `json:"confidence,omitempty" url:"confidence,omitempty"`
+	Decision      *string                           `json:"decision,omitempty" url:"decision,omitempty"`
+	Description   *string                           `json:"description,omitempty" url:"description,omitempty"`
+	DoNotUseWhen  []string                          `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
+	Evidence      []*AgentSkillCandidateEvidence    `json:"evidence,omitempty" url:"evidence,omitempty"`
+	Kind          *string                           `json:"kind,omitempty" url:"kind,omitempty"`
+	Markdown      *string                           `json:"markdown,omitempty" url:"markdown,omitempty"`
+	Name          *string                           `json:"name,omitempty" url:"name,omitempty"`
+	PackageName   *string                           `json:"package_name,omitempty" url:"package_name,omitempty"`
+	TaskFamily    *string                           `json:"task_family,omitempty" url:"task_family,omitempty"`
+	UUID          *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillCandidate) GetAgentVersions() []string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentVersions
+}
+
+func (a *AgentSkillCandidate) GetBaseVersions() []*AgentSkillCandidateBaseVersion {
+	if a == nil {
+		return nil
+	}
+	return a.BaseVersions
+}
+
+func (a *AgentSkillCandidate) GetConfidence() *float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Confidence
+}
+
+func (a *AgentSkillCandidate) GetDecision() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Decision
+}
+
+func (a *AgentSkillCandidate) GetDescription() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Description
+}
+
+func (a *AgentSkillCandidate) GetDoNotUseWhen() []string {
+	if a == nil {
+		return nil
+	}
+	return a.DoNotUseWhen
+}
+
+func (a *AgentSkillCandidate) GetEvidence() []*AgentSkillCandidateEvidence {
+	if a == nil {
+		return nil
+	}
+	return a.Evidence
+}
+
+func (a *AgentSkillCandidate) GetKind() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Kind
+}
+
+func (a *AgentSkillCandidate) GetMarkdown() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Markdown
+}
+
+func (a *AgentSkillCandidate) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *AgentSkillCandidate) GetPackageName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PackageName
+}
+
+func (a *AgentSkillCandidate) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentSkillCandidate) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillCandidate) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillCandidate) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentVersions sets the AgentVersions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetAgentVersions(agentVersions []string) {
+	a.AgentVersions = agentVersions
+	a.require(agentSkillCandidateFieldAgentVersions)
+}
+
+// SetBaseVersions sets the BaseVersions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetBaseVersions(baseVersions []*AgentSkillCandidateBaseVersion) {
+	a.BaseVersions = baseVersions
+	a.require(agentSkillCandidateFieldBaseVersions)
+}
+
+// SetConfidence sets the Confidence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetConfidence(confidence *float64) {
+	a.Confidence = confidence
+	a.require(agentSkillCandidateFieldConfidence)
+}
+
+// SetDecision sets the Decision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetDecision(decision *string) {
+	a.Decision = decision
+	a.require(agentSkillCandidateFieldDecision)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetDescription(description *string) {
+	a.Description = description
+	a.require(agentSkillCandidateFieldDescription)
+}
+
+// SetDoNotUseWhen sets the DoNotUseWhen field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetDoNotUseWhen(doNotUseWhen []string) {
+	a.DoNotUseWhen = doNotUseWhen
+	a.require(agentSkillCandidateFieldDoNotUseWhen)
+}
+
+// SetEvidence sets the Evidence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetEvidence(evidence []*AgentSkillCandidateEvidence) {
+	a.Evidence = evidence
+	a.require(agentSkillCandidateFieldEvidence)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetKind(kind *string) {
+	a.Kind = kind
+	a.require(agentSkillCandidateFieldKind)
+}
+
+// SetMarkdown sets the Markdown field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetMarkdown(markdown *string) {
+	a.Markdown = markdown
+	a.require(agentSkillCandidateFieldMarkdown)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetName(name *string) {
+	a.Name = name
+	a.require(agentSkillCandidateFieldName)
+}
+
+// SetPackageName sets the PackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetPackageName(packageName *string) {
+	a.PackageName = packageName
+	a.require(agentSkillCandidateFieldPackageName)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentSkillCandidateFieldTaskFamily)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidate) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillCandidateFieldUUID)
+}
+
+func (a *AgentSkillCandidate) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillCandidate
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillCandidate(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillCandidate) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillCandidate
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillCandidate) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillCandidateBaseVersionFieldAgentVersions = big.NewInt(1 << 0)
+	agentSkillCandidateBaseVersionFieldDescription   = big.NewInt(1 << 1)
+	agentSkillCandidateBaseVersionFieldDoNotUseWhen  = big.NewInt(1 << 2)
+	agentSkillCandidateBaseVersionFieldMarkdown      = big.NewInt(1 << 3)
+	agentSkillCandidateBaseVersionFieldName          = big.NewInt(1 << 4)
+	agentSkillCandidateBaseVersionFieldSkillUUID     = big.NewInt(1 << 5)
+	agentSkillCandidateBaseVersionFieldVersion       = big.NewInt(1 << 6)
+)
+
+type AgentSkillCandidateBaseVersion struct {
+	AgentVersions []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	Description   *string  `json:"description,omitempty" url:"description,omitempty"`
+	DoNotUseWhen  []string `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
+	Markdown      *string  `json:"markdown,omitempty" url:"markdown,omitempty"`
+	Name          *string  `json:"name,omitempty" url:"name,omitempty"`
+	SkillUUID     *string  `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	Version       *int     `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillCandidateBaseVersion) GetAgentVersions() []string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentVersions
+}
+
+func (a *AgentSkillCandidateBaseVersion) GetDescription() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Description
+}
+
+func (a *AgentSkillCandidateBaseVersion) GetDoNotUseWhen() []string {
+	if a == nil {
+		return nil
+	}
+	return a.DoNotUseWhen
+}
+
+func (a *AgentSkillCandidateBaseVersion) GetMarkdown() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Markdown
+}
+
+func (a *AgentSkillCandidateBaseVersion) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *AgentSkillCandidateBaseVersion) GetSkillUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SkillUUID
+}
+
+func (a *AgentSkillCandidateBaseVersion) GetVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Version
+}
+
+func (a *AgentSkillCandidateBaseVersion) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillCandidateBaseVersion) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentVersions sets the AgentVersions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateBaseVersion) SetAgentVersions(agentVersions []string) {
+	a.AgentVersions = agentVersions
+	a.require(agentSkillCandidateBaseVersionFieldAgentVersions)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateBaseVersion) SetDescription(description *string) {
+	a.Description = description
+	a.require(agentSkillCandidateBaseVersionFieldDescription)
+}
+
+// SetDoNotUseWhen sets the DoNotUseWhen field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateBaseVersion) SetDoNotUseWhen(doNotUseWhen []string) {
+	a.DoNotUseWhen = doNotUseWhen
+	a.require(agentSkillCandidateBaseVersionFieldDoNotUseWhen)
+}
+
+// SetMarkdown sets the Markdown field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateBaseVersion) SetMarkdown(markdown *string) {
+	a.Markdown = markdown
+	a.require(agentSkillCandidateBaseVersionFieldMarkdown)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateBaseVersion) SetName(name *string) {
+	a.Name = name
+	a.require(agentSkillCandidateBaseVersionFieldName)
+}
+
+// SetSkillUUID sets the SkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateBaseVersion) SetSkillUUID(skillUUID *string) {
+	a.SkillUUID = skillUUID
+	a.require(agentSkillCandidateBaseVersionFieldSkillUUID)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateBaseVersion) SetVersion(version *int) {
+	a.Version = version
+	a.require(agentSkillCandidateBaseVersionFieldVersion)
+}
+
+func (a *AgentSkillCandidateBaseVersion) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillCandidateBaseVersion
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillCandidateBaseVersion(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillCandidateBaseVersion) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillCandidateBaseVersion
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillCandidateBaseVersion) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillCandidateEvaluationFieldCandidateUUID     = big.NewInt(1 << 0)
+	agentSkillCandidateEvaluationFieldControlledTest    = big.NewInt(1 << 1)
+	agentSkillCandidateEvaluationFieldCreatedAt         = big.NewInt(1 << 2)
+	agentSkillCandidateEvaluationFieldEnvironment       = big.NewInt(1 << 3)
+	agentSkillCandidateEvaluationFieldEvaluatedBy       = big.NewInt(1 << 4)
+	agentSkillCandidateEvaluationFieldEvaluatorVersion  = big.NewInt(1 << 5)
+	agentSkillCandidateEvaluationFieldEvidenceReference = big.NewInt(1 << 6)
+	agentSkillCandidateEvaluationFieldMetrics           = big.NewInt(1 << 7)
+	agentSkillCandidateEvaluationFieldReviewUUID        = big.NewInt(1 << 8)
+	agentSkillCandidateEvaluationFieldRevision          = big.NewInt(1 << 9)
+	agentSkillCandidateEvaluationFieldUUID              = big.NewInt(1 << 10)
+	agentSkillCandidateEvaluationFieldVerdict           = big.NewInt(1 << 11)
+)
+
+type AgentSkillCandidateEvaluation struct {
+	CandidateUUID     *string            `json:"candidate_uuid,omitempty" url:"candidate_uuid,omitempty"`
+	ControlledTest    *bool              `json:"controlled_test,omitempty" url:"controlled_test,omitempty"`
+	CreatedAt         *string            `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Environment       *string            `json:"environment,omitempty" url:"environment,omitempty"`
+	EvaluatedBy       *string            `json:"evaluated_by,omitempty" url:"evaluated_by,omitempty"`
+	EvaluatorVersion  *string            `json:"evaluator_version,omitempty" url:"evaluator_version,omitempty"`
+	EvidenceReference *string            `json:"evidence_reference,omitempty" url:"evidence_reference,omitempty"`
+	Metrics           map[string]float64 `json:"metrics,omitempty" url:"metrics,omitempty"`
+	ReviewUUID        *string            `json:"review_uuid,omitempty" url:"review_uuid,omitempty"`
+	Revision          *int               `json:"revision,omitempty" url:"revision,omitempty"`
+	UUID              *string            `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Verdict           *string            `json:"verdict,omitempty" url:"verdict,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillCandidateEvaluation) GetCandidateUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CandidateUUID
+}
+
+func (a *AgentSkillCandidateEvaluation) GetControlledTest() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.ControlledTest
+}
+
+func (a *AgentSkillCandidateEvaluation) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillCandidateEvaluation) GetEnvironment() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Environment
+}
+
+func (a *AgentSkillCandidateEvaluation) GetEvaluatedBy() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EvaluatedBy
+}
+
+func (a *AgentSkillCandidateEvaluation) GetEvaluatorVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EvaluatorVersion
+}
+
+func (a *AgentSkillCandidateEvaluation) GetEvidenceReference() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EvidenceReference
+}
+
+func (a *AgentSkillCandidateEvaluation) GetMetrics() map[string]float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Metrics
+}
+
+func (a *AgentSkillCandidateEvaluation) GetReviewUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReviewUUID
+}
+
+func (a *AgentSkillCandidateEvaluation) GetRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Revision
+}
+
+func (a *AgentSkillCandidateEvaluation) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillCandidateEvaluation) GetVerdict() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Verdict
+}
+
+func (a *AgentSkillCandidateEvaluation) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillCandidateEvaluation) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCandidateUUID sets the CandidateUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetCandidateUUID(candidateUUID *string) {
+	a.CandidateUUID = candidateUUID
+	a.require(agentSkillCandidateEvaluationFieldCandidateUUID)
+}
+
+// SetControlledTest sets the ControlledTest field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetControlledTest(controlledTest *bool) {
+	a.ControlledTest = controlledTest
+	a.require(agentSkillCandidateEvaluationFieldControlledTest)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillCandidateEvaluationFieldCreatedAt)
+}
+
+// SetEnvironment sets the Environment field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetEnvironment(environment *string) {
+	a.Environment = environment
+	a.require(agentSkillCandidateEvaluationFieldEnvironment)
+}
+
+// SetEvaluatedBy sets the EvaluatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetEvaluatedBy(evaluatedBy *string) {
+	a.EvaluatedBy = evaluatedBy
+	a.require(agentSkillCandidateEvaluationFieldEvaluatedBy)
+}
+
+// SetEvaluatorVersion sets the EvaluatorVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetEvaluatorVersion(evaluatorVersion *string) {
+	a.EvaluatorVersion = evaluatorVersion
+	a.require(agentSkillCandidateEvaluationFieldEvaluatorVersion)
+}
+
+// SetEvidenceReference sets the EvidenceReference field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetEvidenceReference(evidenceReference *string) {
+	a.EvidenceReference = evidenceReference
+	a.require(agentSkillCandidateEvaluationFieldEvidenceReference)
+}
+
+// SetMetrics sets the Metrics field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetMetrics(metrics map[string]float64) {
+	a.Metrics = metrics
+	a.require(agentSkillCandidateEvaluationFieldMetrics)
+}
+
+// SetReviewUUID sets the ReviewUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetReviewUUID(reviewUUID *string) {
+	a.ReviewUUID = reviewUUID
+	a.require(agentSkillCandidateEvaluationFieldReviewUUID)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetRevision(revision *int) {
+	a.Revision = revision
+	a.require(agentSkillCandidateEvaluationFieldRevision)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillCandidateEvaluationFieldUUID)
+}
+
+// SetVerdict sets the Verdict field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvaluation) SetVerdict(verdict *string) {
+	a.Verdict = verdict
+	a.require(agentSkillCandidateEvaluationFieldVerdict)
+}
+
+func (a *AgentSkillCandidateEvaluation) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillCandidateEvaluation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillCandidateEvaluation(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillCandidateEvaluation) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillCandidateEvaluation
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillCandidateEvaluation) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillCandidateEvidenceFieldImportedProvider = big.NewInt(1 << 0)
+	agentSkillCandidateEvidenceFieldOccurredAt       = big.NewInt(1 << 1)
+	agentSkillCandidateEvidenceFieldOutcome          = big.NewInt(1 << 2)
+	agentSkillCandidateEvidenceFieldPolarity         = big.NewInt(1 << 3)
+	agentSkillCandidateEvidenceFieldSourceKind       = big.NewInt(1 << 4)
+	agentSkillCandidateEvidenceFieldTrajectoryUUID   = big.NewInt(1 << 5)
+	agentSkillCandidateEvidenceFieldVerification     = big.NewInt(1 << 6)
+)
+
+type AgentSkillCandidateEvidence struct {
+	// ImportedProvider is the provider of the source import, when this Trajectory was imported.
+	ImportedProvider *string `json:"imported_provider,omitempty" url:"imported_provider,omitempty"`
+	OccurredAt       *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
+	Outcome          *string `json:"outcome,omitempty" url:"outcome,omitempty"`
+	Polarity         *string `json:"polarity,omitempty" url:"polarity,omitempty"`
+	SourceKind       *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
+	TrajectoryUUID   *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	Verification     *string `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillCandidateEvidence) GetImportedProvider() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ImportedProvider
+}
+
+func (a *AgentSkillCandidateEvidence) GetOccurredAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.OccurredAt
+}
+
+func (a *AgentSkillCandidateEvidence) GetOutcome() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Outcome
+}
+
+func (a *AgentSkillCandidateEvidence) GetPolarity() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Polarity
+}
+
+func (a *AgentSkillCandidateEvidence) GetSourceKind() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceKind
+}
+
+func (a *AgentSkillCandidateEvidence) GetTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryUUID
+}
+
+func (a *AgentSkillCandidateEvidence) GetVerification() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Verification
+}
+
+func (a *AgentSkillCandidateEvidence) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillCandidateEvidence) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetImportedProvider sets the ImportedProvider field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvidence) SetImportedProvider(importedProvider *string) {
+	a.ImportedProvider = importedProvider
+	a.require(agentSkillCandidateEvidenceFieldImportedProvider)
+}
+
+// SetOccurredAt sets the OccurredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvidence) SetOccurredAt(occurredAt *string) {
+	a.OccurredAt = occurredAt
+	a.require(agentSkillCandidateEvidenceFieldOccurredAt)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvidence) SetOutcome(outcome *string) {
+	a.Outcome = outcome
+	a.require(agentSkillCandidateEvidenceFieldOutcome)
+}
+
+// SetPolarity sets the Polarity field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvidence) SetPolarity(polarity *string) {
+	a.Polarity = polarity
+	a.require(agentSkillCandidateEvidenceFieldPolarity)
+}
+
+// SetSourceKind sets the SourceKind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvidence) SetSourceKind(sourceKind *string) {
+	a.SourceKind = sourceKind
+	a.require(agentSkillCandidateEvidenceFieldSourceKind)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvidence) SetTrajectoryUUID(trajectoryUUID *string) {
+	a.TrajectoryUUID = trajectoryUUID
+	a.require(agentSkillCandidateEvidenceFieldTrajectoryUUID)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateEvidence) SetVerification(verification *string) {
+	a.Verification = verification
+	a.require(agentSkillCandidateEvidenceFieldVerification)
+}
+
+func (a *AgentSkillCandidateEvidence) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillCandidateEvidence
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillCandidateEvidence(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillCandidateEvidence) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillCandidateEvidence
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillCandidateEvidence) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillCandidateReviewFieldCandidateCount       = big.NewInt(1 << 0)
+	agentSkillCandidateReviewFieldCandidates           = big.NewInt(1 << 1)
+	agentSkillCandidateReviewFieldCreatedAt            = big.NewInt(1 << 2)
+	agentSkillCandidateReviewFieldImportReviewRequired = big.NewInt(1 << 3)
+	agentSkillCandidateReviewFieldReasonCode           = big.NewInt(1 << 4)
+	agentSkillCandidateReviewFieldResults              = big.NewInt(1 << 5)
+	agentSkillCandidateReviewFieldReviewedAt           = big.NewInt(1 << 6)
+	agentSkillCandidateReviewFieldRevision             = big.NewInt(1 << 7)
+	agentSkillCandidateReviewFieldStatus               = big.NewInt(1 << 8)
+	agentSkillCandidateReviewFieldTaskFamily           = big.NewInt(1 << 9)
+	agentSkillCandidateReviewFieldUUID                 = big.NewInt(1 << 10)
+)
+
+type AgentSkillCandidateReview struct {
+	CandidateCount *int                   `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
+	Candidates     []*AgentSkillCandidate `json:"candidates,omitempty" url:"candidates,omitempty"`
+	CreatedAt      *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// ImportReviewRequired reports whether any evidence import requires approval.
+	ImportReviewRequired *bool                              `json:"import_review_required,omitempty" url:"import_review_required,omitempty"`
+	ReasonCode           *string                            `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	Results              []*AgentSkillCandidateReviewResult `json:"results,omitempty" url:"results,omitempty"`
+	ReviewedAt           *string                            `json:"reviewed_at,omitempty" url:"reviewed_at,omitempty"`
+	Revision             *int                               `json:"revision,omitempty" url:"revision,omitempty"`
+	Status               *string                            `json:"status,omitempty" url:"status,omitempty"`
+	TaskFamily           *string                            `json:"task_family,omitempty" url:"task_family,omitempty"`
+	UUID                 *string                            `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillCandidateReview) GetCandidateCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.CandidateCount
+}
+
+func (a *AgentSkillCandidateReview) GetCandidates() []*AgentSkillCandidate {
+	if a == nil {
+		return nil
+	}
+	return a.Candidates
+}
+
+func (a *AgentSkillCandidateReview) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillCandidateReview) GetImportReviewRequired() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.ImportReviewRequired
+}
+
+func (a *AgentSkillCandidateReview) GetReasonCode() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReasonCode
+}
+
+func (a *AgentSkillCandidateReview) GetResults() []*AgentSkillCandidateReviewResult {
+	if a == nil {
+		return nil
+	}
+	return a.Results
+}
+
+func (a *AgentSkillCandidateReview) GetReviewedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReviewedAt
+}
+
+func (a *AgentSkillCandidateReview) GetRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Revision
+}
+
+func (a *AgentSkillCandidateReview) GetStatus() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AgentSkillCandidateReview) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentSkillCandidateReview) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillCandidateReview) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillCandidateReview) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCandidateCount sets the CandidateCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetCandidateCount(candidateCount *int) {
+	a.CandidateCount = candidateCount
+	a.require(agentSkillCandidateReviewFieldCandidateCount)
+}
+
+// SetCandidates sets the Candidates field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetCandidates(candidates []*AgentSkillCandidate) {
+	a.Candidates = candidates
+	a.require(agentSkillCandidateReviewFieldCandidates)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillCandidateReviewFieldCreatedAt)
+}
+
+// SetImportReviewRequired sets the ImportReviewRequired field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetImportReviewRequired(importReviewRequired *bool) {
+	a.ImportReviewRequired = importReviewRequired
+	a.require(agentSkillCandidateReviewFieldImportReviewRequired)
+}
+
+// SetReasonCode sets the ReasonCode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetReasonCode(reasonCode *string) {
+	a.ReasonCode = reasonCode
+	a.require(agentSkillCandidateReviewFieldReasonCode)
+}
+
+// SetResults sets the Results field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetResults(results []*AgentSkillCandidateReviewResult) {
+	a.Results = results
+	a.require(agentSkillCandidateReviewFieldResults)
+}
+
+// SetReviewedAt sets the ReviewedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetReviewedAt(reviewedAt *string) {
+	a.ReviewedAt = reviewedAt
+	a.require(agentSkillCandidateReviewFieldReviewedAt)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetRevision(revision *int) {
+	a.Revision = revision
+	a.require(agentSkillCandidateReviewFieldRevision)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetStatus(status *string) {
+	a.Status = status
+	a.require(agentSkillCandidateReviewFieldStatus)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentSkillCandidateReviewFieldTaskFamily)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReview) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillCandidateReviewFieldUUID)
+}
+
+func (a *AgentSkillCandidateReview) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillCandidateReview
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillCandidateReview(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillCandidateReview) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillCandidateReview
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillCandidateReview) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillCandidateReviewResultFieldBaseVersions     = big.NewInt(1 << 0)
+	agentSkillCandidateReviewResultFieldCandidateUUIDs   = big.NewInt(1 << 1)
+	agentSkillCandidateReviewResultFieldDecision         = big.NewInt(1 << 2)
+	agentSkillCandidateReviewResultFieldTargetSkillUUIDs = big.NewInt(1 << 3)
+	agentSkillCandidateReviewResultFieldUUID             = big.NewInt(1 << 4)
+)
+
+type AgentSkillCandidateReviewResult struct {
+	BaseVersions     []*AgentSkillCandidateBaseVersion `json:"base_versions,omitempty" url:"base_versions,omitempty"`
+	CandidateUUIDs   []string                          `json:"candidate_uuids,omitempty" url:"candidate_uuids,omitempty"`
+	Decision         *string                           `json:"decision,omitempty" url:"decision,omitempty"`
+	TargetSkillUUIDs []string                          `json:"target_skill_uuids,omitempty" url:"target_skill_uuids,omitempty"`
+	UUID             *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillCandidateReviewResult) GetBaseVersions() []*AgentSkillCandidateBaseVersion {
+	if a == nil {
+		return nil
+	}
+	return a.BaseVersions
+}
+
+func (a *AgentSkillCandidateReviewResult) GetCandidateUUIDs() []string {
+	if a == nil {
+		return nil
+	}
+	return a.CandidateUUIDs
+}
+
+func (a *AgentSkillCandidateReviewResult) GetDecision() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Decision
+}
+
+func (a *AgentSkillCandidateReviewResult) GetTargetSkillUUIDs() []string {
+	if a == nil {
+		return nil
+	}
+	return a.TargetSkillUUIDs
+}
+
+func (a *AgentSkillCandidateReviewResult) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillCandidateReviewResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillCandidateReviewResult) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetBaseVersions sets the BaseVersions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewResult) SetBaseVersions(baseVersions []*AgentSkillCandidateBaseVersion) {
+	a.BaseVersions = baseVersions
+	a.require(agentSkillCandidateReviewResultFieldBaseVersions)
+}
+
+// SetCandidateUUIDs sets the CandidateUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewResult) SetCandidateUUIDs(candidateUUIDs []string) {
+	a.CandidateUUIDs = candidateUUIDs
+	a.require(agentSkillCandidateReviewResultFieldCandidateUUIDs)
+}
+
+// SetDecision sets the Decision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewResult) SetDecision(decision *string) {
+	a.Decision = decision
+	a.require(agentSkillCandidateReviewResultFieldDecision)
+}
+
+// SetTargetSkillUUIDs sets the TargetSkillUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewResult) SetTargetSkillUUIDs(targetSkillUUIDs []string) {
+	a.TargetSkillUUIDs = targetSkillUUIDs
+	a.require(agentSkillCandidateReviewResultFieldTargetSkillUUIDs)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewResult) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillCandidateReviewResultFieldUUID)
+}
+
+func (a *AgentSkillCandidateReviewResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillCandidateReviewResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillCandidateReviewResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillCandidateReviewResult) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillCandidateReviewResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillCandidateReviewResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillCandidateReviewSummaryFieldCandidateCount = big.NewInt(1 << 0)
+	agentSkillCandidateReviewSummaryFieldCreatedAt      = big.NewInt(1 << 1)
+	agentSkillCandidateReviewSummaryFieldReasonCode     = big.NewInt(1 << 2)
+	agentSkillCandidateReviewSummaryFieldReviewedAt     = big.NewInt(1 << 3)
+	agentSkillCandidateReviewSummaryFieldRevision       = big.NewInt(1 << 4)
+	agentSkillCandidateReviewSummaryFieldStatus         = big.NewInt(1 << 5)
+	agentSkillCandidateReviewSummaryFieldTaskFamily     = big.NewInt(1 << 6)
+	agentSkillCandidateReviewSummaryFieldUUID           = big.NewInt(1 << 7)
+)
+
+type AgentSkillCandidateReviewSummary struct {
+	CandidateCount *int    `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
+	CreatedAt      *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	ReasonCode     *string `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	ReviewedAt     *string `json:"reviewed_at,omitempty" url:"reviewed_at,omitempty"`
+	Revision       *int    `json:"revision,omitempty" url:"revision,omitempty"`
+	Status         *string `json:"status,omitempty" url:"status,omitempty"`
+	TaskFamily     *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	UUID           *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetCandidateCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.CandidateCount
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetReasonCode() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReasonCode
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetReviewedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReviewedAt
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Revision
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetStatus() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillCandidateReviewSummary) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillCandidateReviewSummary) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCandidateCount sets the CandidateCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewSummary) SetCandidateCount(candidateCount *int) {
+	a.CandidateCount = candidateCount
+	a.require(agentSkillCandidateReviewSummaryFieldCandidateCount)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewSummary) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillCandidateReviewSummaryFieldCreatedAt)
+}
+
+// SetReasonCode sets the ReasonCode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewSummary) SetReasonCode(reasonCode *string) {
+	a.ReasonCode = reasonCode
+	a.require(agentSkillCandidateReviewSummaryFieldReasonCode)
+}
+
+// SetReviewedAt sets the ReviewedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewSummary) SetReviewedAt(reviewedAt *string) {
+	a.ReviewedAt = reviewedAt
+	a.require(agentSkillCandidateReviewSummaryFieldReviewedAt)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewSummary) SetRevision(revision *int) {
+	a.Revision = revision
+	a.require(agentSkillCandidateReviewSummaryFieldRevision)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewSummary) SetStatus(status *string) {
+	a.Status = status
+	a.require(agentSkillCandidateReviewSummaryFieldStatus)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewSummary) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentSkillCandidateReviewSummaryFieldTaskFamily)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCandidateReviewSummary) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillCandidateReviewSummaryFieldUUID)
+}
+
+func (a *AgentSkillCandidateReviewSummary) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillCandidateReviewSummary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillCandidateReviewSummary(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillCandidateReviewSummary) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillCandidateReviewSummary
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillCandidateReviewSummary) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillCompilationOutcomeFieldAgentUUID             = big.NewInt(1 << 0)
+	agentSkillCompilationOutcomeFieldAttempts              = big.NewInt(1 << 1)
+	agentSkillCompilationOutcomeFieldCandidateCount        = big.NewInt(1 << 2)
+	agentSkillCompilationOutcomeFieldCompilationIdentity   = big.NewInt(1 << 3)
+	agentSkillCompilationOutcomeFieldCompilationWindowUUID = big.NewInt(1 << 4)
+	agentSkillCompilationOutcomeFieldCreatedAt             = big.NewInt(1 << 5)
+	agentSkillCompilationOutcomeFieldDecision              = big.NewInt(1 << 6)
+	agentSkillCompilationOutcomeFieldProposalCount         = big.NewInt(1 << 7)
+	agentSkillCompilationOutcomeFieldReasonText            = big.NewInt(1 << 8)
+	agentSkillCompilationOutcomeFieldRejectedAddCount      = big.NewInt(1 << 9)
+	agentSkillCompilationOutcomeFieldRejectionClass        = big.NewInt(1 << 10)
+	agentSkillCompilationOutcomeFieldStage                 = big.NewInt(1 << 11)
+	agentSkillCompilationOutcomeFieldTaskFamily            = big.NewInt(1 << 12)
+	agentSkillCompilationOutcomeFieldTrajectoryCount       = big.NewInt(1 << 13)
+	agentSkillCompilationOutcomeFieldUUID                  = big.NewInt(1 << 14)
+)
+
+type AgentSkillCompilationOutcome struct {
+	AgentUUID             *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	Attempts              *int    `json:"attempts,omitempty" url:"attempts,omitempty"`
+	CandidateCount        *int    `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
+	CompilationIdentity   *string `json:"compilation_identity,omitempty" url:"compilation_identity,omitempty"`
+	CompilationWindowUUID *string `json:"compilation_window_uuid,omitempty" url:"compilation_window_uuid,omitempty"`
+	CreatedAt             *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Decision              *string `json:"decision,omitempty" url:"decision,omitempty"`
+	ProposalCount         *int    `json:"proposal_count,omitempty" url:"proposal_count,omitempty"`
+	ReasonText            *string `json:"reason_text,omitempty" url:"reason_text,omitempty"`
+	// RejectedAddCount is the count of add proposals that the Reflector,
+	// the proposal scanner, or the Curator rejected in this compilation.
+	RejectedAddCount *int                                        `json:"rejected_add_count,omitempty" url:"rejected_add_count,omitempty"`
+	RejectionClass   *AgentSkillCompilationOutcomeRejectionClass `json:"rejection_class,omitempty" url:"rejection_class,omitempty"`
+	Stage            *string                                     `json:"stage,omitempty" url:"stage,omitempty"`
+	TaskFamily       *string                                     `json:"task_family,omitempty" url:"task_family,omitempty"`
+	TrajectoryCount  *int                                        `json:"trajectory_count,omitempty" url:"trajectory_count,omitempty"`
+	UUID             *string                                     `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillCompilationOutcome) GetAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentUUID
+}
+
+func (a *AgentSkillCompilationOutcome) GetAttempts() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Attempts
+}
+
+func (a *AgentSkillCompilationOutcome) GetCandidateCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.CandidateCount
+}
+
+func (a *AgentSkillCompilationOutcome) GetCompilationIdentity() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CompilationIdentity
+}
+
+func (a *AgentSkillCompilationOutcome) GetCompilationWindowUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CompilationWindowUUID
+}
+
+func (a *AgentSkillCompilationOutcome) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillCompilationOutcome) GetDecision() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Decision
+}
+
+func (a *AgentSkillCompilationOutcome) GetProposalCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.ProposalCount
+}
+
+func (a *AgentSkillCompilationOutcome) GetReasonText() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReasonText
+}
+
+func (a *AgentSkillCompilationOutcome) GetRejectedAddCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.RejectedAddCount
+}
+
+func (a *AgentSkillCompilationOutcome) GetRejectionClass() *AgentSkillCompilationOutcomeRejectionClass {
+	if a == nil {
+		return nil
+	}
+	return a.RejectionClass
+}
+
+func (a *AgentSkillCompilationOutcome) GetStage() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Stage
+}
+
+func (a *AgentSkillCompilationOutcome) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentSkillCompilationOutcome) GetTrajectoryCount() *int {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryCount
+}
+
+func (a *AgentSkillCompilationOutcome) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillCompilationOutcome) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillCompilationOutcome) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetAgentUUID(agentUUID *string) {
+	a.AgentUUID = agentUUID
+	a.require(agentSkillCompilationOutcomeFieldAgentUUID)
+}
+
+// SetAttempts sets the Attempts field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetAttempts(attempts *int) {
+	a.Attempts = attempts
+	a.require(agentSkillCompilationOutcomeFieldAttempts)
+}
+
+// SetCandidateCount sets the CandidateCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetCandidateCount(candidateCount *int) {
+	a.CandidateCount = candidateCount
+	a.require(agentSkillCompilationOutcomeFieldCandidateCount)
+}
+
+// SetCompilationIdentity sets the CompilationIdentity field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetCompilationIdentity(compilationIdentity *string) {
+	a.CompilationIdentity = compilationIdentity
+	a.require(agentSkillCompilationOutcomeFieldCompilationIdentity)
+}
+
+// SetCompilationWindowUUID sets the CompilationWindowUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetCompilationWindowUUID(compilationWindowUUID *string) {
+	a.CompilationWindowUUID = compilationWindowUUID
+	a.require(agentSkillCompilationOutcomeFieldCompilationWindowUUID)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillCompilationOutcomeFieldCreatedAt)
+}
+
+// SetDecision sets the Decision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetDecision(decision *string) {
+	a.Decision = decision
+	a.require(agentSkillCompilationOutcomeFieldDecision)
+}
+
+// SetProposalCount sets the ProposalCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetProposalCount(proposalCount *int) {
+	a.ProposalCount = proposalCount
+	a.require(agentSkillCompilationOutcomeFieldProposalCount)
+}
+
+// SetReasonText sets the ReasonText field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetReasonText(reasonText *string) {
+	a.ReasonText = reasonText
+	a.require(agentSkillCompilationOutcomeFieldReasonText)
+}
+
+// SetRejectedAddCount sets the RejectedAddCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetRejectedAddCount(rejectedAddCount *int) {
+	a.RejectedAddCount = rejectedAddCount
+	a.require(agentSkillCompilationOutcomeFieldRejectedAddCount)
+}
+
+// SetRejectionClass sets the RejectionClass field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetRejectionClass(rejectionClass *AgentSkillCompilationOutcomeRejectionClass) {
+	a.RejectionClass = rejectionClass
+	a.require(agentSkillCompilationOutcomeFieldRejectionClass)
+}
+
+// SetStage sets the Stage field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetStage(stage *string) {
+	a.Stage = stage
+	a.require(agentSkillCompilationOutcomeFieldStage)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentSkillCompilationOutcomeFieldTaskFamily)
+}
+
+// SetTrajectoryCount sets the TrajectoryCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetTrajectoryCount(trajectoryCount *int) {
+	a.TrajectoryCount = trajectoryCount
+	a.require(agentSkillCompilationOutcomeFieldTrajectoryCount)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillCompilationOutcome) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillCompilationOutcomeFieldUUID)
+}
+
+func (a *AgentSkillCompilationOutcome) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillCompilationOutcome
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillCompilationOutcome(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillCompilationOutcome) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillCompilationOutcome
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillCompilationOutcome) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentSkillCompilationOutcomeRejectionClass string
+
+const (
+	AgentSkillCompilationOutcomeRejectionClassNoEligibleTrajectories    AgentSkillCompilationOutcomeRejectionClass = "no_eligible_trajectories"
+	AgentSkillCompilationOutcomeRejectionClassReflectorInvalidOutput    AgentSkillCompilationOutcomeRejectionClass = "reflector_invalid_output"
+	AgentSkillCompilationOutcomeRejectionClassApplicabilityUngrounded   AgentSkillCompilationOutcomeRejectionClass = "applicability_ungrounded"
+	AgentSkillCompilationOutcomeRejectionClassCorroborationInsufficient AgentSkillCompilationOutcomeRejectionClass = "corroboration_insufficient"
+	AgentSkillCompilationOutcomeRejectionClassScannerRejected           AgentSkillCompilationOutcomeRejectionClass = "scanner_rejected"
+	AgentSkillCompilationOutcomeRejectionClassCuratorRejected           AgentSkillCompilationOutcomeRejectionClass = "curator_rejected"
+	AgentSkillCompilationOutcomeRejectionClassCuratorAttemptsExhausted  AgentSkillCompilationOutcomeRejectionClass = "curator_attempts_exhausted"
+	AgentSkillCompilationOutcomeRejectionClassPromptBudgetExceeded      AgentSkillCompilationOutcomeRejectionClass = "prompt_budget_exceeded"
+	AgentSkillCompilationOutcomeRejectionClassProviderError             AgentSkillCompilationOutcomeRejectionClass = "provider_error"
+)
+
+func NewAgentSkillCompilationOutcomeRejectionClassFromString(s string) (AgentSkillCompilationOutcomeRejectionClass, error) {
+	switch s {
+	case "no_eligible_trajectories":
+		return AgentSkillCompilationOutcomeRejectionClassNoEligibleTrajectories, nil
+	case "reflector_invalid_output":
+		return AgentSkillCompilationOutcomeRejectionClassReflectorInvalidOutput, nil
+	case "applicability_ungrounded":
+		return AgentSkillCompilationOutcomeRejectionClassApplicabilityUngrounded, nil
+	case "corroboration_insufficient":
+		return AgentSkillCompilationOutcomeRejectionClassCorroborationInsufficient, nil
+	case "scanner_rejected":
+		return AgentSkillCompilationOutcomeRejectionClassScannerRejected, nil
+	case "curator_rejected":
+		return AgentSkillCompilationOutcomeRejectionClassCuratorRejected, nil
+	case "curator_attempts_exhausted":
+		return AgentSkillCompilationOutcomeRejectionClassCuratorAttemptsExhausted, nil
+	case "prompt_budget_exceeded":
+		return AgentSkillCompilationOutcomeRejectionClassPromptBudgetExceeded, nil
+	case "provider_error":
+		return AgentSkillCompilationOutcomeRejectionClassProviderError, nil
+	}
+	var t AgentSkillCompilationOutcomeRejectionClass
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentSkillCompilationOutcomeRejectionClass) Ptr() *AgentSkillCompilationOutcomeRejectionClass {
+	return &a
+}
+
+var (
+	agentSkillEvaluationFieldControlledTest    = big.NewInt(1 << 0)
+	agentSkillEvaluationFieldCreatedAt         = big.NewInt(1 << 1)
+	agentSkillEvaluationFieldEnvironment       = big.NewInt(1 << 2)
+	agentSkillEvaluationFieldEvaluatedBy       = big.NewInt(1 << 3)
+	agentSkillEvaluationFieldEvaluatorVersion  = big.NewInt(1 << 4)
+	agentSkillEvaluationFieldEvidenceReference = big.NewInt(1 << 5)
+	agentSkillEvaluationFieldMetrics           = big.NewInt(1 << 6)
+	agentSkillEvaluationFieldSkillUUID         = big.NewInt(1 << 7)
+	agentSkillEvaluationFieldSkillVersion      = big.NewInt(1 << 8)
+	agentSkillEvaluationFieldTrajectoryUUID    = big.NewInt(1 << 9)
+	agentSkillEvaluationFieldUseUUID           = big.NewInt(1 << 10)
+	agentSkillEvaluationFieldUUID              = big.NewInt(1 << 11)
+	agentSkillEvaluationFieldVerdict           = big.NewInt(1 << 12)
+)
+
+type AgentSkillEvaluation struct {
+	ControlledTest    *bool              `json:"controlled_test,omitempty" url:"controlled_test,omitempty"`
+	CreatedAt         *string            `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Environment       *string            `json:"environment,omitempty" url:"environment,omitempty"`
+	EvaluatedBy       *string            `json:"evaluated_by,omitempty" url:"evaluated_by,omitempty"`
+	EvaluatorVersion  *string            `json:"evaluator_version,omitempty" url:"evaluator_version,omitempty"`
+	EvidenceReference *string            `json:"evidence_reference,omitempty" url:"evidence_reference,omitempty"`
+	Metrics           map[string]float64 `json:"metrics,omitempty" url:"metrics,omitempty"`
+	SkillUUID         *string            `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	SkillVersion      *int               `json:"skill_version,omitempty" url:"skill_version,omitempty"`
+	TrajectoryUUID    *string            `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	UseUUID           *string            `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
+	UUID              *string            `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Verdict           *string            `json:"verdict,omitempty" url:"verdict,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillEvaluation) GetControlledTest() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.ControlledTest
+}
+
+func (a *AgentSkillEvaluation) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillEvaluation) GetEnvironment() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Environment
+}
+
+func (a *AgentSkillEvaluation) GetEvaluatedBy() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EvaluatedBy
+}
+
+func (a *AgentSkillEvaluation) GetEvaluatorVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EvaluatorVersion
+}
+
+func (a *AgentSkillEvaluation) GetEvidenceReference() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EvidenceReference
+}
+
+func (a *AgentSkillEvaluation) GetMetrics() map[string]float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Metrics
+}
+
+func (a *AgentSkillEvaluation) GetSkillUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SkillUUID
+}
+
+func (a *AgentSkillEvaluation) GetSkillVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.SkillVersion
+}
+
+func (a *AgentSkillEvaluation) GetTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryUUID
+}
+
+func (a *AgentSkillEvaluation) GetUseUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UseUUID
+}
+
+func (a *AgentSkillEvaluation) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillEvaluation) GetVerdict() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Verdict
+}
+
+func (a *AgentSkillEvaluation) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillEvaluation) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetControlledTest sets the ControlledTest field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetControlledTest(controlledTest *bool) {
+	a.ControlledTest = controlledTest
+	a.require(agentSkillEvaluationFieldControlledTest)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillEvaluationFieldCreatedAt)
+}
+
+// SetEnvironment sets the Environment field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetEnvironment(environment *string) {
+	a.Environment = environment
+	a.require(agentSkillEvaluationFieldEnvironment)
+}
+
+// SetEvaluatedBy sets the EvaluatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetEvaluatedBy(evaluatedBy *string) {
+	a.EvaluatedBy = evaluatedBy
+	a.require(agentSkillEvaluationFieldEvaluatedBy)
+}
+
+// SetEvaluatorVersion sets the EvaluatorVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetEvaluatorVersion(evaluatorVersion *string) {
+	a.EvaluatorVersion = evaluatorVersion
+	a.require(agentSkillEvaluationFieldEvaluatorVersion)
+}
+
+// SetEvidenceReference sets the EvidenceReference field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetEvidenceReference(evidenceReference *string) {
+	a.EvidenceReference = evidenceReference
+	a.require(agentSkillEvaluationFieldEvidenceReference)
+}
+
+// SetMetrics sets the Metrics field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetMetrics(metrics map[string]float64) {
+	a.Metrics = metrics
+	a.require(agentSkillEvaluationFieldMetrics)
+}
+
+// SetSkillUUID sets the SkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetSkillUUID(skillUUID *string) {
+	a.SkillUUID = skillUUID
+	a.require(agentSkillEvaluationFieldSkillUUID)
+}
+
+// SetSkillVersion sets the SkillVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetSkillVersion(skillVersion *int) {
+	a.SkillVersion = skillVersion
+	a.require(agentSkillEvaluationFieldSkillVersion)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetTrajectoryUUID(trajectoryUUID *string) {
+	a.TrajectoryUUID = trajectoryUUID
+	a.require(agentSkillEvaluationFieldTrajectoryUUID)
+}
+
+// SetUseUUID sets the UseUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetUseUUID(useUUID *string) {
+	a.UseUUID = useUUID
+	a.require(agentSkillEvaluationFieldUseUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillEvaluationFieldUUID)
+}
+
+// SetVerdict sets the Verdict field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvaluation) SetVerdict(verdict *string) {
+	a.Verdict = verdict
+	a.require(agentSkillEvaluationFieldVerdict)
+}
+
+func (a *AgentSkillEvaluation) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillEvaluation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillEvaluation(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillEvaluation) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillEvaluation
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillEvaluation) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillEvidenceFieldAssertionUUID       = big.NewInt(1 << 0)
+	agentSkillEvidenceFieldCreatedAt           = big.NewInt(1 << 1)
+	agentSkillEvidenceFieldOccurredAt          = big.NewInt(1 << 2)
+	agentSkillEvidenceFieldPolarity            = big.NewInt(1 << 3)
+	agentSkillEvidenceFieldSourceKind          = big.NewInt(1 << 4)
+	agentSkillEvidenceFieldSummaryVersionUUID  = big.NewInt(1 << 5)
+	agentSkillEvidenceFieldTrajectoryEventUUID = big.NewInt(1 << 6)
+	agentSkillEvidenceFieldTrajectoryUUID      = big.NewInt(1 << 7)
+	agentSkillEvidenceFieldVerification        = big.NewInt(1 << 8)
+)
+
+type AgentSkillEvidence struct {
+	AssertionUUID       *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	CreatedAt           *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	OccurredAt          *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
+	Polarity            *string `json:"polarity,omitempty" url:"polarity,omitempty"`
+	SourceKind          *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
+	SummaryVersionUUID  *string `json:"summary_version_uuid,omitempty" url:"summary_version_uuid,omitempty"`
+	TrajectoryEventUUID *string `json:"trajectory_event_uuid,omitempty" url:"trajectory_event_uuid,omitempty"`
+	TrajectoryUUID      *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	Verification        *string `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillEvidence) GetAssertionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AssertionUUID
+}
+
+func (a *AgentSkillEvidence) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillEvidence) GetOccurredAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.OccurredAt
+}
+
+func (a *AgentSkillEvidence) GetPolarity() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Polarity
+}
+
+func (a *AgentSkillEvidence) GetSourceKind() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceKind
+}
+
+func (a *AgentSkillEvidence) GetSummaryVersionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SummaryVersionUUID
+}
+
+func (a *AgentSkillEvidence) GetTrajectoryEventUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryEventUUID
+}
+
+func (a *AgentSkillEvidence) GetTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryUUID
+}
+
+func (a *AgentSkillEvidence) GetVerification() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Verification
+}
+
+func (a *AgentSkillEvidence) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillEvidence) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAssertionUUID sets the AssertionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetAssertionUUID(assertionUUID *string) {
+	a.AssertionUUID = assertionUUID
+	a.require(agentSkillEvidenceFieldAssertionUUID)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillEvidenceFieldCreatedAt)
+}
+
+// SetOccurredAt sets the OccurredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetOccurredAt(occurredAt *string) {
+	a.OccurredAt = occurredAt
+	a.require(agentSkillEvidenceFieldOccurredAt)
+}
+
+// SetPolarity sets the Polarity field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetPolarity(polarity *string) {
+	a.Polarity = polarity
+	a.require(agentSkillEvidenceFieldPolarity)
+}
+
+// SetSourceKind sets the SourceKind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetSourceKind(sourceKind *string) {
+	a.SourceKind = sourceKind
+	a.require(agentSkillEvidenceFieldSourceKind)
+}
+
+// SetSummaryVersionUUID sets the SummaryVersionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetSummaryVersionUUID(summaryVersionUUID *string) {
+	a.SummaryVersionUUID = summaryVersionUUID
+	a.require(agentSkillEvidenceFieldSummaryVersionUUID)
+}
+
+// SetTrajectoryEventUUID sets the TrajectoryEventUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetTrajectoryEventUUID(trajectoryEventUUID *string) {
+	a.TrajectoryEventUUID = trajectoryEventUUID
+	a.require(agentSkillEvidenceFieldTrajectoryEventUUID)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetTrajectoryUUID(trajectoryUUID *string) {
+	a.TrajectoryUUID = trajectoryUUID
+	a.require(agentSkillEvidenceFieldTrajectoryUUID)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillEvidence) SetVerification(verification *string) {
+	a.Verification = verification
+	a.require(agentSkillEvidenceFieldVerification)
+}
+
+func (a *AgentSkillEvidence) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillEvidence
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillEvidence(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillEvidence) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillEvidence
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillEvidence) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillPublicationLineageFieldDestinationAgentUUID   = big.NewInt(1 << 0)
+	agentSkillPublicationLineageFieldDestinationSkillUUID   = big.NewInt(1 << 1)
+	agentSkillPublicationLineageFieldDestinationVersionUUID = big.NewInt(1 << 2)
+	agentSkillPublicationLineageFieldPolicyRevision         = big.NewInt(1 << 3)
+	agentSkillPublicationLineageFieldPolicyUUID             = big.NewInt(1 << 4)
+	agentSkillPublicationLineageFieldPublicationUUID        = big.NewInt(1 << 5)
+	agentSkillPublicationLineageFieldSourceAgentUUID        = big.NewInt(1 << 6)
+	agentSkillPublicationLineageFieldSourceSkillUUID        = big.NewInt(1 << 7)
+	agentSkillPublicationLineageFieldSourceVersion          = big.NewInt(1 << 8)
+	agentSkillPublicationLineageFieldSourceVersionUUID      = big.NewInt(1 << 9)
+)
+
+type AgentSkillPublicationLineage struct {
+	// The destination Agent UUID.
+	DestinationAgentUUID *string `json:"destination_agent_uuid,omitempty" url:"destination_agent_uuid,omitempty"`
+	// The destination Skill UUID.
+	DestinationSkillUUID *string `json:"destination_skill_uuid,omitempty" url:"destination_skill_uuid,omitempty"`
+	// The destination version UUID.
+	DestinationVersionUUID *string `json:"destination_version_uuid,omitempty" url:"destination_version_uuid,omitempty"`
+	// The policy revision that allowed automatic publication.
+	PolicyRevision *int `json:"policy_revision,omitempty" url:"policy_revision,omitempty"`
+	// The policy UUID that allowed automatic publication.
+	PolicyUUID *string `json:"policy_uuid,omitempty" url:"policy_uuid,omitempty"`
+	// The publication UUID.
+	PublicationUUID *string `json:"publication_uuid,omitempty" url:"publication_uuid,omitempty"`
+	// The source Agent UUID.
+	SourceAgentUUID *string `json:"source_agent_uuid,omitempty" url:"source_agent_uuid,omitempty"`
+	// The source Skill UUID.
+	SourceSkillUUID *string `json:"source_skill_uuid,omitempty" url:"source_skill_uuid,omitempty"`
+	// The source version number.
+	SourceVersion *int `json:"source_version,omitempty" url:"source_version,omitempty"`
+	// The source version UUID.
+	SourceVersionUUID *string `json:"source_version_uuid,omitempty" url:"source_version_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillPublicationLineage) GetDestinationAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.DestinationAgentUUID
+}
+
+func (a *AgentSkillPublicationLineage) GetDestinationSkillUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.DestinationSkillUUID
+}
+
+func (a *AgentSkillPublicationLineage) GetDestinationVersionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.DestinationVersionUUID
+}
+
+func (a *AgentSkillPublicationLineage) GetPolicyRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.PolicyRevision
+}
+
+func (a *AgentSkillPublicationLineage) GetPolicyUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PolicyUUID
+}
+
+func (a *AgentSkillPublicationLineage) GetPublicationUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PublicationUUID
+}
+
+func (a *AgentSkillPublicationLineage) GetSourceAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceAgentUUID
+}
+
+func (a *AgentSkillPublicationLineage) GetSourceSkillUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceSkillUUID
+}
+
+func (a *AgentSkillPublicationLineage) GetSourceVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.SourceVersion
+}
+
+func (a *AgentSkillPublicationLineage) GetSourceVersionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceVersionUUID
+}
+
+func (a *AgentSkillPublicationLineage) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillPublicationLineage) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetDestinationAgentUUID sets the DestinationAgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetDestinationAgentUUID(destinationAgentUUID *string) {
+	a.DestinationAgentUUID = destinationAgentUUID
+	a.require(agentSkillPublicationLineageFieldDestinationAgentUUID)
+}
+
+// SetDestinationSkillUUID sets the DestinationSkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetDestinationSkillUUID(destinationSkillUUID *string) {
+	a.DestinationSkillUUID = destinationSkillUUID
+	a.require(agentSkillPublicationLineageFieldDestinationSkillUUID)
+}
+
+// SetDestinationVersionUUID sets the DestinationVersionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetDestinationVersionUUID(destinationVersionUUID *string) {
+	a.DestinationVersionUUID = destinationVersionUUID
+	a.require(agentSkillPublicationLineageFieldDestinationVersionUUID)
+}
+
+// SetPolicyRevision sets the PolicyRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetPolicyRevision(policyRevision *int) {
+	a.PolicyRevision = policyRevision
+	a.require(agentSkillPublicationLineageFieldPolicyRevision)
+}
+
+// SetPolicyUUID sets the PolicyUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetPolicyUUID(policyUUID *string) {
+	a.PolicyUUID = policyUUID
+	a.require(agentSkillPublicationLineageFieldPolicyUUID)
+}
+
+// SetPublicationUUID sets the PublicationUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetPublicationUUID(publicationUUID *string) {
+	a.PublicationUUID = publicationUUID
+	a.require(agentSkillPublicationLineageFieldPublicationUUID)
+}
+
+// SetSourceAgentUUID sets the SourceAgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetSourceAgentUUID(sourceAgentUUID *string) {
+	a.SourceAgentUUID = sourceAgentUUID
+	a.require(agentSkillPublicationLineageFieldSourceAgentUUID)
+}
+
+// SetSourceSkillUUID sets the SourceSkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetSourceSkillUUID(sourceSkillUUID *string) {
+	a.SourceSkillUUID = sourceSkillUUID
+	a.require(agentSkillPublicationLineageFieldSourceSkillUUID)
+}
+
+// SetSourceVersion sets the SourceVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetSourceVersion(sourceVersion *int) {
+	a.SourceVersion = sourceVersion
+	a.require(agentSkillPublicationLineageFieldSourceVersion)
+}
+
+// SetSourceVersionUUID sets the SourceVersionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillPublicationLineage) SetSourceVersionUUID(sourceVersionUUID *string) {
+	a.SourceVersionUUID = sourceVersionUUID
+	a.require(agentSkillPublicationLineageFieldSourceVersionUUID)
+}
+
+func (a *AgentSkillPublicationLineage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillPublicationLineage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillPublicationLineage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillPublicationLineage) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillPublicationLineage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillPublicationLineage) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillRelationshipFieldApplicationState          = big.NewInt(1 << 0)
+	agentSkillRelationshipFieldKind                      = big.NewInt(1 << 1)
+	agentSkillRelationshipFieldRelatedPackageName        = big.NewInt(1 << 2)
+	agentSkillRelationshipFieldRelatedSkillKind          = big.NewInt(1 << 3)
+	agentSkillRelationshipFieldRelatedSkillName          = big.NewInt(1 << 4)
+	agentSkillRelationshipFieldRelatedSkillTaskFamily    = big.NewInt(1 << 5)
+	agentSkillRelationshipFieldRelatedSkillUUID          = big.NewInt(1 << 6)
+	agentSkillRelationshipFieldRelatedSkillVersion       = big.NewInt(1 << 7)
+	agentSkillRelationshipFieldRelatedVersionConstraint  = big.NewInt(1 << 8)
+	agentSkillRelationshipFieldResourceName              = big.NewInt(1 << 9)
+	agentSkillRelationshipFieldResourceVersionConstraint = big.NewInt(1 << 10)
+	agentSkillRelationshipFieldTrajectoryOutcome         = big.NewInt(1 << 11)
+	agentSkillRelationshipFieldTrajectoryTaskFamily      = big.NewInt(1 << 12)
+	agentSkillRelationshipFieldTrajectoryUUID            = big.NewInt(1 << 13)
+	agentSkillRelationshipFieldTrajectoryVerification    = big.NewInt(1 << 14)
+)
+
+type AgentSkillRelationship struct {
+	ApplicationState          *string `json:"application_state,omitempty" url:"application_state,omitempty"`
+	Kind                      *string `json:"kind,omitempty" url:"kind,omitempty"`
+	RelatedPackageName        *string `json:"related_package_name,omitempty" url:"related_package_name,omitempty"`
+	RelatedSkillKind          *string `json:"related_skill_kind,omitempty" url:"related_skill_kind,omitempty"`
+	RelatedSkillName          *string `json:"related_skill_name,omitempty" url:"related_skill_name,omitempty"`
+	RelatedSkillTaskFamily    *string `json:"related_skill_task_family,omitempty" url:"related_skill_task_family,omitempty"`
+	RelatedSkillUUID          *string `json:"related_skill_uuid,omitempty" url:"related_skill_uuid,omitempty"`
+	RelatedSkillVersion       *int    `json:"related_skill_version,omitempty" url:"related_skill_version,omitempty"`
+	RelatedVersionConstraint  *string `json:"related_version_constraint,omitempty" url:"related_version_constraint,omitempty"`
+	ResourceName              *string `json:"resource_name,omitempty" url:"resource_name,omitempty"`
+	ResourceVersionConstraint *string `json:"resource_version_constraint,omitempty" url:"resource_version_constraint,omitempty"`
+	TrajectoryOutcome         *string `json:"trajectory_outcome,omitempty" url:"trajectory_outcome,omitempty"`
+	TrajectoryTaskFamily      *string `json:"trajectory_task_family,omitempty" url:"trajectory_task_family,omitempty"`
+	TrajectoryUUID            *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	TrajectoryVerification    *string `json:"trajectory_verification,omitempty" url:"trajectory_verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillRelationship) GetApplicationState() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ApplicationState
+}
+
+func (a *AgentSkillRelationship) GetKind() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Kind
+}
+
+func (a *AgentSkillRelationship) GetRelatedPackageName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RelatedPackageName
+}
+
+func (a *AgentSkillRelationship) GetRelatedSkillKind() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RelatedSkillKind
+}
+
+func (a *AgentSkillRelationship) GetRelatedSkillName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RelatedSkillName
+}
+
+func (a *AgentSkillRelationship) GetRelatedSkillTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RelatedSkillTaskFamily
+}
+
+func (a *AgentSkillRelationship) GetRelatedSkillUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RelatedSkillUUID
+}
+
+func (a *AgentSkillRelationship) GetRelatedSkillVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.RelatedSkillVersion
+}
+
+func (a *AgentSkillRelationship) GetRelatedVersionConstraint() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RelatedVersionConstraint
+}
+
+func (a *AgentSkillRelationship) GetResourceName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ResourceName
+}
+
+func (a *AgentSkillRelationship) GetResourceVersionConstraint() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ResourceVersionConstraint
+}
+
+func (a *AgentSkillRelationship) GetTrajectoryOutcome() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryOutcome
+}
+
+func (a *AgentSkillRelationship) GetTrajectoryTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryTaskFamily
+}
+
+func (a *AgentSkillRelationship) GetTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryUUID
+}
+
+func (a *AgentSkillRelationship) GetTrajectoryVerification() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryVerification
+}
+
+func (a *AgentSkillRelationship) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillRelationship) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetApplicationState sets the ApplicationState field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetApplicationState(applicationState *string) {
+	a.ApplicationState = applicationState
+	a.require(agentSkillRelationshipFieldApplicationState)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetKind(kind *string) {
+	a.Kind = kind
+	a.require(agentSkillRelationshipFieldKind)
+}
+
+// SetRelatedPackageName sets the RelatedPackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetRelatedPackageName(relatedPackageName *string) {
+	a.RelatedPackageName = relatedPackageName
+	a.require(agentSkillRelationshipFieldRelatedPackageName)
+}
+
+// SetRelatedSkillKind sets the RelatedSkillKind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetRelatedSkillKind(relatedSkillKind *string) {
+	a.RelatedSkillKind = relatedSkillKind
+	a.require(agentSkillRelationshipFieldRelatedSkillKind)
+}
+
+// SetRelatedSkillName sets the RelatedSkillName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetRelatedSkillName(relatedSkillName *string) {
+	a.RelatedSkillName = relatedSkillName
+	a.require(agentSkillRelationshipFieldRelatedSkillName)
+}
+
+// SetRelatedSkillTaskFamily sets the RelatedSkillTaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetRelatedSkillTaskFamily(relatedSkillTaskFamily *string) {
+	a.RelatedSkillTaskFamily = relatedSkillTaskFamily
+	a.require(agentSkillRelationshipFieldRelatedSkillTaskFamily)
+}
+
+// SetRelatedSkillUUID sets the RelatedSkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetRelatedSkillUUID(relatedSkillUUID *string) {
+	a.RelatedSkillUUID = relatedSkillUUID
+	a.require(agentSkillRelationshipFieldRelatedSkillUUID)
+}
+
+// SetRelatedSkillVersion sets the RelatedSkillVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetRelatedSkillVersion(relatedSkillVersion *int) {
+	a.RelatedSkillVersion = relatedSkillVersion
+	a.require(agentSkillRelationshipFieldRelatedSkillVersion)
+}
+
+// SetRelatedVersionConstraint sets the RelatedVersionConstraint field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetRelatedVersionConstraint(relatedVersionConstraint *string) {
+	a.RelatedVersionConstraint = relatedVersionConstraint
+	a.require(agentSkillRelationshipFieldRelatedVersionConstraint)
+}
+
+// SetResourceName sets the ResourceName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetResourceName(resourceName *string) {
+	a.ResourceName = resourceName
+	a.require(agentSkillRelationshipFieldResourceName)
+}
+
+// SetResourceVersionConstraint sets the ResourceVersionConstraint field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetResourceVersionConstraint(resourceVersionConstraint *string) {
+	a.ResourceVersionConstraint = resourceVersionConstraint
+	a.require(agentSkillRelationshipFieldResourceVersionConstraint)
+}
+
+// SetTrajectoryOutcome sets the TrajectoryOutcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetTrajectoryOutcome(trajectoryOutcome *string) {
+	a.TrajectoryOutcome = trajectoryOutcome
+	a.require(agentSkillRelationshipFieldTrajectoryOutcome)
+}
+
+// SetTrajectoryTaskFamily sets the TrajectoryTaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetTrajectoryTaskFamily(trajectoryTaskFamily *string) {
+	a.TrajectoryTaskFamily = trajectoryTaskFamily
+	a.require(agentSkillRelationshipFieldTrajectoryTaskFamily)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetTrajectoryUUID(trajectoryUUID *string) {
+	a.TrajectoryUUID = trajectoryUUID
+	a.require(agentSkillRelationshipFieldTrajectoryUUID)
+}
+
+// SetTrajectoryVerification sets the TrajectoryVerification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillRelationship) SetTrajectoryVerification(trajectoryVerification *string) {
+	a.TrajectoryVerification = trajectoryVerification
+	a.require(agentSkillRelationshipFieldTrajectoryVerification)
+}
+
+func (a *AgentSkillRelationship) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillRelationship
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillRelationship(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillRelationship) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillRelationship
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillRelationship) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillSearchHitFieldAgentVersions         = big.NewInt(1 << 0)
+	agentSkillSearchHitFieldDescription           = big.NewInt(1 << 1)
+	agentSkillSearchHitFieldEnvironments          = big.NewInt(1 << 2)
+	agentSkillSearchHitFieldKind                  = big.NewInt(1 << 3)
+	agentSkillSearchHitFieldMarkdown              = big.NewInt(1 << 4)
+	agentSkillSearchHitFieldMaturity              = big.NewInt(1 << 5)
+	agentSkillSearchHitFieldName                  = big.NewInt(1 << 6)
+	agentSkillSearchHitFieldPackageName           = big.NewInt(1 << 7)
+	agentSkillSearchHitFieldSelfContained         = big.NewInt(1 << 8)
+	agentSkillSearchHitFieldSkillID               = big.NewInt(1 << 9)
+	agentSkillSearchHitFieldSourceAttemptFamilies = big.NewInt(1 << 10)
+	agentSkillSearchHitFieldTaskFamily            = big.NewInt(1 << 11)
+	agentSkillSearchHitFieldTools                 = big.NewInt(1 << 12)
+	agentSkillSearchHitFieldTrust                 = big.NewInt(1 << 13)
+	agentSkillSearchHitFieldUUID                  = big.NewInt(1 << 14)
+	agentSkillSearchHitFieldVerifiedApplications  = big.NewInt(1 << 15)
+	agentSkillSearchHitFieldVersion               = big.NewInt(1 << 16)
+)
+
+type AgentSkillSearchHit struct {
+	AgentVersions []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	Description   *string  `json:"description,omitempty" url:"description,omitempty"`
+	Environments  []string `json:"environments,omitempty" url:"environments,omitempty"`
+	Kind          *string  `json:"kind,omitempty" url:"kind,omitempty"`
+	Markdown      *string  `json:"markdown,omitempty" url:"markdown,omitempty"`
+	// Maturity is the trust tier of the Skill: provisional (one source attempt
+	// family), corroborated (two or more), established (a Trust of 0.6 or
+	// more from verified applications), or authored (no compiled source).
+	Maturity      *AgentSkillSearchHitMaturity `json:"maturity,omitempty" url:"maturity,omitempty"`
+	Name          *string                      `json:"name,omitempty" url:"name,omitempty"`
+	PackageName   *string                      `json:"package_name,omitempty" url:"package_name,omitempty"`
+	SelfContained *bool                        `json:"self_contained,omitempty" url:"self_contained,omitempty"`
+	SkillID       *string                      `json:"skill_id,omitempty" url:"skill_id,omitempty"`
+	// SourceAttemptFamilies is the count of distinct, successful, verified
+	// attempt families that support the current version.
+	SourceAttemptFamilies *int     `json:"source_attempt_families,omitempty" url:"source_attempt_families,omitempty"`
+	TaskFamily            *string  `json:"task_family,omitempty" url:"task_family,omitempty"`
+	Tools                 []string `json:"tools,omitempty" url:"tools,omitempty"`
+	// Trust is the lower bound of the 95% Wilson score interval for the
+	// success rate of strongly verified applications of the Skill. It is 0
+	// when the Skill has no verified application.
+	Trust *float64 `json:"trust,omitempty" url:"trust,omitempty"`
+	UUID  *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// VerifiedApplications is the count of strongly verified applications
+	// that end in success or failure.
+	VerifiedApplications *int `json:"verified_applications,omitempty" url:"verified_applications,omitempty"`
+	Version              *int `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillSearchHit) GetAgentVersions() []string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentVersions
+}
+
+func (a *AgentSkillSearchHit) GetDescription() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Description
+}
+
+func (a *AgentSkillSearchHit) GetEnvironments() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Environments
+}
+
+func (a *AgentSkillSearchHit) GetKind() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Kind
+}
+
+func (a *AgentSkillSearchHit) GetMarkdown() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Markdown
+}
+
+func (a *AgentSkillSearchHit) GetMaturity() *AgentSkillSearchHitMaturity {
+	if a == nil {
+		return nil
+	}
+	return a.Maturity
+}
+
+func (a *AgentSkillSearchHit) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *AgentSkillSearchHit) GetPackageName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PackageName
+}
+
+func (a *AgentSkillSearchHit) GetSelfContained() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.SelfContained
+}
+
+func (a *AgentSkillSearchHit) GetSkillID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SkillID
+}
+
+func (a *AgentSkillSearchHit) GetSourceAttemptFamilies() *int {
+	if a == nil {
+		return nil
+	}
+	return a.SourceAttemptFamilies
+}
+
+func (a *AgentSkillSearchHit) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentSkillSearchHit) GetTools() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Tools
+}
+
+func (a *AgentSkillSearchHit) GetTrust() *float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Trust
+}
+
+func (a *AgentSkillSearchHit) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillSearchHit) GetVerifiedApplications() *int {
+	if a == nil {
+		return nil
+	}
+	return a.VerifiedApplications
+}
+
+func (a *AgentSkillSearchHit) GetVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Version
+}
+
+func (a *AgentSkillSearchHit) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillSearchHit) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentVersions sets the AgentVersions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetAgentVersions(agentVersions []string) {
+	a.AgentVersions = agentVersions
+	a.require(agentSkillSearchHitFieldAgentVersions)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetDescription(description *string) {
+	a.Description = description
+	a.require(agentSkillSearchHitFieldDescription)
+}
+
+// SetEnvironments sets the Environments field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetEnvironments(environments []string) {
+	a.Environments = environments
+	a.require(agentSkillSearchHitFieldEnvironments)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetKind(kind *string) {
+	a.Kind = kind
+	a.require(agentSkillSearchHitFieldKind)
+}
+
+// SetMarkdown sets the Markdown field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetMarkdown(markdown *string) {
+	a.Markdown = markdown
+	a.require(agentSkillSearchHitFieldMarkdown)
+}
+
+// SetMaturity sets the Maturity field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetMaturity(maturity *AgentSkillSearchHitMaturity) {
+	a.Maturity = maturity
+	a.require(agentSkillSearchHitFieldMaturity)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetName(name *string) {
+	a.Name = name
+	a.require(agentSkillSearchHitFieldName)
+}
+
+// SetPackageName sets the PackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetPackageName(packageName *string) {
+	a.PackageName = packageName
+	a.require(agentSkillSearchHitFieldPackageName)
+}
+
+// SetSelfContained sets the SelfContained field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetSelfContained(selfContained *bool) {
+	a.SelfContained = selfContained
+	a.require(agentSkillSearchHitFieldSelfContained)
+}
+
+// SetSkillID sets the SkillID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetSkillID(skillID *string) {
+	a.SkillID = skillID
+	a.require(agentSkillSearchHitFieldSkillID)
+}
+
+// SetSourceAttemptFamilies sets the SourceAttemptFamilies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetSourceAttemptFamilies(sourceAttemptFamilies *int) {
+	a.SourceAttemptFamilies = sourceAttemptFamilies
+	a.require(agentSkillSearchHitFieldSourceAttemptFamilies)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentSkillSearchHitFieldTaskFamily)
+}
+
+// SetTools sets the Tools field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetTools(tools []string) {
+	a.Tools = tools
+	a.require(agentSkillSearchHitFieldTools)
+}
+
+// SetTrust sets the Trust field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetTrust(trust *float64) {
+	a.Trust = trust
+	a.require(agentSkillSearchHitFieldTrust)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillSearchHitFieldUUID)
+}
+
+// SetVerifiedApplications sets the VerifiedApplications field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetVerifiedApplications(verifiedApplications *int) {
+	a.VerifiedApplications = verifiedApplications
+	a.require(agentSkillSearchHitFieldVerifiedApplications)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetVersion(version *int) {
+	a.Version = version
+	a.require(agentSkillSearchHitFieldVersion)
+}
+
+func (a *AgentSkillSearchHit) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillSearchHit
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillSearchHit(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillSearchHit) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillSearchHit
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillSearchHit) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+// Maturity is the trust tier of the Skill: provisional (one source attempt
+// family), corroborated (two or more), established (a Trust of 0.6 or
+// more from verified applications), or authored (no compiled source).
+type AgentSkillSearchHitMaturity string
+
+const (
+	AgentSkillSearchHitMaturityProvisional  AgentSkillSearchHitMaturity = "provisional"
+	AgentSkillSearchHitMaturityCorroborated AgentSkillSearchHitMaturity = "corroborated"
+	AgentSkillSearchHitMaturityEstablished  AgentSkillSearchHitMaturity = "established"
+	AgentSkillSearchHitMaturityAuthored     AgentSkillSearchHitMaturity = "authored"
+)
+
+func NewAgentSkillSearchHitMaturityFromString(s string) (AgentSkillSearchHitMaturity, error) {
+	switch s {
+	case "provisional":
+		return AgentSkillSearchHitMaturityProvisional, nil
+	case "corroborated":
+		return AgentSkillSearchHitMaturityCorroborated, nil
+	case "established":
+		return AgentSkillSearchHitMaturityEstablished, nil
+	case "authored":
+		return AgentSkillSearchHitMaturityAuthored, nil
+	}
+	var t AgentSkillSearchHitMaturity
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentSkillSearchHitMaturity) Ptr() *AgentSkillSearchHitMaturity {
+	return &a
+}
+
+var (
+	agentSkillSearchResponseFieldItems      = big.NewInt(1 << 0)
+	agentSkillSearchResponseFieldNextCursor = big.NewInt(1 << 1)
+	agentSkillSearchResponseFieldSearchID   = big.NewInt(1 << 2)
+)
+
+type AgentSkillSearchResponse struct {
+	Items      []*AgentSkillSearchHit `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string                `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	SearchID   *string                `json:"search_id,omitempty" url:"search_id,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillSearchResponse) GetItems() []*AgentSkillSearchHit {
+	if a == nil {
+		return nil
+	}
+	return a.Items
+}
+
+func (a *AgentSkillSearchResponse) GetNextCursor() *string {
+	if a == nil {
+		return nil
+	}
+	return a.NextCursor
+}
+
+func (a *AgentSkillSearchResponse) GetSearchID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SearchID
+}
+
+func (a *AgentSkillSearchResponse) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillSearchResponse) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchResponse) SetItems(items []*AgentSkillSearchHit) {
+	a.Items = items
+	a.require(agentSkillSearchResponseFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchResponse) SetNextCursor(nextCursor *string) {
+	a.NextCursor = nextCursor
+	a.require(agentSkillSearchResponseFieldNextCursor)
+}
+
+// SetSearchID sets the SearchID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchResponse) SetSearchID(searchID *string) {
+	a.SearchID = searchID
+	a.require(agentSkillSearchResponseFieldSearchID)
+}
+
+func (a *AgentSkillSearchResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillSearchResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillSearchResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillSearchResponse) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillSearchResponse
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillSearchResponse) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillUseFieldAgentVersion   = big.NewInt(1 << 0)
+	agentSkillUseFieldCreatedAt      = big.NewInt(1 << 1)
+	agentSkillUseFieldOutcome        = big.NewInt(1 << 2)
+	agentSkillUseFieldReasonCode     = big.NewInt(1 << 3)
+	agentSkillUseFieldSkillUUID      = big.NewInt(1 << 4)
+	agentSkillUseFieldSkillVersion   = big.NewInt(1 << 5)
+	agentSkillUseFieldTrajectoryUUID = big.NewInt(1 << 6)
+	agentSkillUseFieldUsage          = big.NewInt(1 << 7)
+	agentSkillUseFieldUUID           = big.NewInt(1 << 8)
+)
+
+type AgentSkillUse struct {
+	AgentVersion   *string               `json:"agent_version,omitempty" url:"agent_version,omitempty"`
+	CreatedAt      *string               `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Outcome        *AgentSkillUseOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	ReasonCode     *string               `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	SkillUUID      *string               `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	SkillVersion   *int                  `json:"skill_version,omitempty" url:"skill_version,omitempty"`
+	TrajectoryUUID *string               `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	Usage          *string               `json:"usage,omitempty" url:"usage,omitempty"`
+	UUID           *string               `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillUse) GetAgentVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentVersion
+}
+
+func (a *AgentSkillUse) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillUse) GetOutcome() *AgentSkillUseOutcome {
+	if a == nil {
+		return nil
+	}
+	return a.Outcome
+}
+
+func (a *AgentSkillUse) GetReasonCode() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReasonCode
+}
+
+func (a *AgentSkillUse) GetSkillUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SkillUUID
+}
+
+func (a *AgentSkillUse) GetSkillVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.SkillVersion
+}
+
+func (a *AgentSkillUse) GetTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryUUID
+}
+
+func (a *AgentSkillUse) GetUsage() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Usage
+}
+
+func (a *AgentSkillUse) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillUse) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillUse) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentVersion sets the AgentVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetAgentVersion(agentVersion *string) {
+	a.AgentVersion = agentVersion
+	a.require(agentSkillUseFieldAgentVersion)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillUseFieldCreatedAt)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetOutcome(outcome *AgentSkillUseOutcome) {
+	a.Outcome = outcome
+	a.require(agentSkillUseFieldOutcome)
+}
+
+// SetReasonCode sets the ReasonCode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetReasonCode(reasonCode *string) {
+	a.ReasonCode = reasonCode
+	a.require(agentSkillUseFieldReasonCode)
+}
+
+// SetSkillUUID sets the SkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetSkillUUID(skillUUID *string) {
+	a.SkillUUID = skillUUID
+	a.require(agentSkillUseFieldSkillUUID)
+}
+
+// SetSkillVersion sets the SkillVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetSkillVersion(skillVersion *int) {
+	a.SkillVersion = skillVersion
+	a.require(agentSkillUseFieldSkillVersion)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetTrajectoryUUID(trajectoryUUID *string) {
+	a.TrajectoryUUID = trajectoryUUID
+	a.require(agentSkillUseFieldTrajectoryUUID)
+}
+
+// SetUsage sets the Usage field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetUsage(usage *string) {
+	a.Usage = usage
+	a.require(agentSkillUseFieldUsage)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUse) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillUseFieldUUID)
+}
+
+func (a *AgentSkillUse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillUse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillUse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillUse) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillUse
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillUse) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillUseOutcomeFieldAssertionUUID  = big.NewInt(1 << 0)
+	agentSkillUseOutcomeFieldCreatedAt      = big.NewInt(1 << 1)
+	agentSkillUseOutcomeFieldOutcome        = big.NewInt(1 << 2)
+	agentSkillUseOutcomeFieldTrajectoryUUID = big.NewInt(1 << 3)
+	agentSkillUseOutcomeFieldUseUUID        = big.NewInt(1 << 4)
+	agentSkillUseOutcomeFieldUUID           = big.NewInt(1 << 5)
+	agentSkillUseOutcomeFieldVerification   = big.NewInt(1 << 6)
+)
+
+type AgentSkillUseOutcome struct {
+	AssertionUUID  *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	CreatedAt      *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Outcome        *string `json:"outcome,omitempty" url:"outcome,omitempty"`
+	TrajectoryUUID *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	UseUUID        *string `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
+	UUID           *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Verification   *string `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillUseOutcome) GetAssertionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AssertionUUID
+}
+
+func (a *AgentSkillUseOutcome) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillUseOutcome) GetOutcome() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Outcome
+}
+
+func (a *AgentSkillUseOutcome) GetTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryUUID
+}
+
+func (a *AgentSkillUseOutcome) GetUseUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UseUUID
+}
+
+func (a *AgentSkillUseOutcome) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentSkillUseOutcome) GetVerification() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Verification
+}
+
+func (a *AgentSkillUseOutcome) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillUseOutcome) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAssertionUUID sets the AssertionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUseOutcome) SetAssertionUUID(assertionUUID *string) {
+	a.AssertionUUID = assertionUUID
+	a.require(agentSkillUseOutcomeFieldAssertionUUID)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUseOutcome) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillUseOutcomeFieldCreatedAt)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUseOutcome) SetOutcome(outcome *string) {
+	a.Outcome = outcome
+	a.require(agentSkillUseOutcomeFieldOutcome)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUseOutcome) SetTrajectoryUUID(trajectoryUUID *string) {
+	a.TrajectoryUUID = trajectoryUUID
+	a.require(agentSkillUseOutcomeFieldTrajectoryUUID)
+}
+
+// SetUseUUID sets the UseUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUseOutcome) SetUseUUID(useUUID *string) {
+	a.UseUUID = useUUID
+	a.require(agentSkillUseOutcomeFieldUseUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUseOutcome) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentSkillUseOutcomeFieldUUID)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillUseOutcome) SetVerification(verification *string) {
+	a.Verification = verification
+	a.require(agentSkillUseOutcomeFieldVerification)
+}
+
+func (a *AgentSkillUseOutcome) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillUseOutcome
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillUseOutcome(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillUseOutcome) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillUseOutcome
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillUseOutcome) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillVersionFieldContract      = big.NewInt(1 << 0)
+	agentSkillVersionFieldCreatedAt     = big.NewInt(1 << 1)
+	agentSkillVersionFieldDefinition    = big.NewInt(1 << 2)
+	agentSkillVersionFieldMarkdown      = big.NewInt(1 << 3)
+	agentSkillVersionFieldSelfContained = big.NewInt(1 << 4)
+	agentSkillVersionFieldVersion       = big.NewInt(1 << 5)
+)
+
+type AgentSkillVersion struct {
+	Contract   map[string]any   `json:"contract,omitempty" url:"contract,omitempty"`
+	CreatedAt  *string          `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Definition *SkillDefinition `json:"definition,omitempty" url:"definition,omitempty"`
+	// Markdown is the agent view of the Skill unless the request selects
+	// `markdown_format=full`.
+	Markdown      *string `json:"markdown,omitempty" url:"markdown,omitempty"`
+	SelfContained *bool   `json:"self_contained,omitempty" url:"self_contained,omitempty"`
+	Version       *int    `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillVersion) GetContract() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Contract
+}
+
+func (a *AgentSkillVersion) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentSkillVersion) GetDefinition() *SkillDefinition {
+	if a == nil {
+		return nil
+	}
+	return a.Definition
+}
+
+func (a *AgentSkillVersion) GetMarkdown() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Markdown
+}
+
+func (a *AgentSkillVersion) GetSelfContained() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.SelfContained
+}
+
+func (a *AgentSkillVersion) GetVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Version
+}
+
+func (a *AgentSkillVersion) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillVersion) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetContract sets the Contract field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersion) SetContract(contract map[string]any) {
+	a.Contract = contract
+	a.require(agentSkillVersionFieldContract)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersion) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentSkillVersionFieldCreatedAt)
+}
+
+// SetDefinition sets the Definition field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersion) SetDefinition(definition *SkillDefinition) {
+	a.Definition = definition
+	a.require(agentSkillVersionFieldDefinition)
+}
+
+// SetMarkdown sets the Markdown field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersion) SetMarkdown(markdown *string) {
+	a.Markdown = markdown
+	a.require(agentSkillVersionFieldMarkdown)
+}
+
+// SetSelfContained sets the SelfContained field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersion) SetSelfContained(selfContained *bool) {
+	a.SelfContained = selfContained
+	a.require(agentSkillVersionFieldSelfContained)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersion) SetVersion(version *int) {
+	a.Version = version
+	a.require(agentSkillVersionFieldVersion)
+}
+
+func (a *AgentSkillVersion) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillVersion
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillVersion(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillVersion) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillVersion
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillVersion) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillVersionComparisonFieldChangedFields = big.NewInt(1 << 0)
+	agentSkillVersionComparisonFieldFrom          = big.NewInt(1 << 1)
+	agentSkillVersionComparisonFieldTo            = big.NewInt(1 << 2)
+)
+
+type AgentSkillVersionComparison struct {
+	ChangedFields []string           `json:"changed_fields,omitempty" url:"changed_fields,omitempty"`
+	From          *AgentSkillVersion `json:"from,omitempty" url:"from,omitempty"`
+	To            *AgentSkillVersion `json:"to,omitempty" url:"to,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillVersionComparison) GetChangedFields() []string {
+	if a == nil {
+		return nil
+	}
+	return a.ChangedFields
+}
+
+func (a *AgentSkillVersionComparison) GetFrom() *AgentSkillVersion {
+	if a == nil {
+		return nil
+	}
+	return a.From
+}
+
+func (a *AgentSkillVersionComparison) GetTo() *AgentSkillVersion {
+	if a == nil {
+		return nil
+	}
+	return a.To
+}
+
+func (a *AgentSkillVersionComparison) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillVersionComparison) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetChangedFields sets the ChangedFields field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersionComparison) SetChangedFields(changedFields []string) {
+	a.ChangedFields = changedFields
+	a.require(agentSkillVersionComparisonFieldChangedFields)
+}
+
+// SetFrom sets the From field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersionComparison) SetFrom(from *AgentSkillVersion) {
+	a.From = from
+	a.require(agentSkillVersionComparisonFieldFrom)
+}
+
+// SetTo sets the To field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillVersionComparison) SetTo(to *AgentSkillVersion) {
+	a.To = to
+	a.require(agentSkillVersionComparisonFieldTo)
+}
+
+func (a *AgentSkillVersionComparison) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillVersionComparison
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillVersionComparison(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillVersionComparison) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillVersionComparison
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillVersionComparison) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSplitPlanFieldAuthorizesAgentCreation = big.NewInt(1 << 0)
+	agentSplitPlanFieldAuthorizesPublication   = big.NewInt(1 << 1)
+	agentSplitPlanFieldCreatesResources        = big.NewInt(1 << 2)
+	agentSplitPlanFieldDestinations            = big.NewInt(1 << 3)
+	agentSplitPlanFieldRationale               = big.NewInt(1 << 4)
+	agentSplitPlanFieldReviewAcknowledged      = big.NewInt(1 << 5)
+	agentSplitPlanFieldSource                  = big.NewInt(1 << 6)
+)
+
+type AgentSplitPlan struct {
+	AuthorizesAgentCreation *bool `json:"authorizes_agent_creation,omitempty" url:"authorizes_agent_creation,omitempty"`
+	AuthorizesPublication   *bool `json:"authorizes_publication,omitempty" url:"authorizes_publication,omitempty"`
+	// A split plan is not human approval and grants no authority for later commands.
+	CreatesResources   *bool                        `json:"creates_resources,omitempty" url:"creates_resources,omitempty"`
+	Destinations       []*AgentSplitPlanDestination `json:"destinations,omitempty" url:"destinations,omitempty"`
+	Rationale          *string                      `json:"rationale,omitempty" url:"rationale,omitempty"`
+	ReviewAcknowledged *bool                        `json:"review_acknowledged,omitempty" url:"review_acknowledged,omitempty"`
+	Source             *AgentSplitPlanSource        `json:"source,omitempty" url:"source,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSplitPlan) GetAuthorizesAgentCreation() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.AuthorizesAgentCreation
+}
+
+func (a *AgentSplitPlan) GetAuthorizesPublication() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.AuthorizesPublication
+}
+
+func (a *AgentSplitPlan) GetCreatesResources() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.CreatesResources
+}
+
+func (a *AgentSplitPlan) GetDestinations() []*AgentSplitPlanDestination {
+	if a == nil {
+		return nil
+	}
+	return a.Destinations
+}
+
+func (a *AgentSplitPlan) GetRationale() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Rationale
+}
+
+func (a *AgentSplitPlan) GetReviewAcknowledged() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.ReviewAcknowledged
+}
+
+func (a *AgentSplitPlan) GetSource() *AgentSplitPlanSource {
+	if a == nil {
+		return nil
+	}
+	return a.Source
+}
+
+func (a *AgentSplitPlan) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSplitPlan) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAuthorizesAgentCreation sets the AuthorizesAgentCreation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlan) SetAuthorizesAgentCreation(authorizesAgentCreation *bool) {
+	a.AuthorizesAgentCreation = authorizesAgentCreation
+	a.require(agentSplitPlanFieldAuthorizesAgentCreation)
+}
+
+// SetAuthorizesPublication sets the AuthorizesPublication field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlan) SetAuthorizesPublication(authorizesPublication *bool) {
+	a.AuthorizesPublication = authorizesPublication
+	a.require(agentSplitPlanFieldAuthorizesPublication)
+}
+
+// SetCreatesResources sets the CreatesResources field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlan) SetCreatesResources(createsResources *bool) {
+	a.CreatesResources = createsResources
+	a.require(agentSplitPlanFieldCreatesResources)
+}
+
+// SetDestinations sets the Destinations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlan) SetDestinations(destinations []*AgentSplitPlanDestination) {
+	a.Destinations = destinations
+	a.require(agentSplitPlanFieldDestinations)
+}
+
+// SetRationale sets the Rationale field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlan) SetRationale(rationale *string) {
+	a.Rationale = rationale
+	a.require(agentSplitPlanFieldRationale)
+}
+
+// SetReviewAcknowledged sets the ReviewAcknowledged field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlan) SetReviewAcknowledged(reviewAcknowledged *bool) {
+	a.ReviewAcknowledged = reviewAcknowledged
+	a.require(agentSplitPlanFieldReviewAcknowledged)
+}
+
+// SetSource sets the Source field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlan) SetSource(source *AgentSplitPlanSource) {
+	a.Source = source
+	a.require(agentSplitPlanFieldSource)
+}
+
+func (a *AgentSplitPlan) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSplitPlan
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSplitPlan(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSplitPlan) MarshalJSON() ([]byte, error) {
+	type embed AgentSplitPlan
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSplitPlan) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSplitPlanDestinationFieldAgent  = big.NewInt(1 << 0)
+	agentSplitPlanDestinationFieldSkills = big.NewInt(1 << 1)
+)
+
+type AgentSplitPlanDestination struct {
+	Agent  *CreateAgentRequest             `json:"agent,omitempty" url:"agent,omitempty"`
+	Skills []*AgentSplitPlanSkillReference `json:"skills,omitempty" url:"skills,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSplitPlanDestination) GetAgent() *CreateAgentRequest {
+	if a == nil {
+		return nil
+	}
+	return a.Agent
+}
+
+func (a *AgentSplitPlanDestination) GetSkills() []*AgentSplitPlanSkillReference {
+	if a == nil {
+		return nil
+	}
+	return a.Skills
+}
+
+func (a *AgentSplitPlanDestination) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSplitPlanDestination) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgent sets the Agent field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanDestination) SetAgent(agent *CreateAgentRequest) {
+	a.Agent = agent
+	a.require(agentSplitPlanDestinationFieldAgent)
+}
+
+// SetSkills sets the Skills field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanDestination) SetSkills(skills []*AgentSplitPlanSkillReference) {
+	a.Skills = skills
+	a.require(agentSplitPlanDestinationFieldSkills)
+}
+
+func (a *AgentSplitPlanDestination) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSplitPlanDestination
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSplitPlanDestination(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSplitPlanDestination) MarshalJSON() ([]byte, error) {
+	type embed AgentSplitPlanDestination
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSplitPlanDestination) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSplitPlanDestinationRequestFieldAgent  = big.NewInt(1 << 0)
+	agentSplitPlanDestinationRequestFieldSkills = big.NewInt(1 << 1)
+)
+
+type AgentSplitPlanDestinationRequest struct {
+	Agent  *CreateAgentRequest                    `json:"agent" url:"agent"`
+	Skills []*AgentSplitPlanSkillSelectionRequest `json:"skills" url:"skills"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSplitPlanDestinationRequest) GetAgent() *CreateAgentRequest {
+	if a == nil {
+		return nil
+	}
+	return a.Agent
+}
+
+func (a *AgentSplitPlanDestinationRequest) GetSkills() []*AgentSplitPlanSkillSelectionRequest {
+	if a == nil {
+		return nil
+	}
+	return a.Skills
+}
+
+func (a *AgentSplitPlanDestinationRequest) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSplitPlanDestinationRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgent sets the Agent field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanDestinationRequest) SetAgent(agent *CreateAgentRequest) {
+	a.Agent = agent
+	a.require(agentSplitPlanDestinationRequestFieldAgent)
+}
+
+// SetSkills sets the Skills field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanDestinationRequest) SetSkills(skills []*AgentSplitPlanSkillSelectionRequest) {
+	a.Skills = skills
+	a.require(agentSplitPlanDestinationRequestFieldSkills)
+}
+
+func (a *AgentSplitPlanDestinationRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSplitPlanDestinationRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSplitPlanDestinationRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSplitPlanDestinationRequest) MarshalJSON() ([]byte, error) {
+	type embed AgentSplitPlanDestinationRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSplitPlanDestinationRequest) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSplitPlanSkillReferenceFieldPackageName      = big.NewInt(1 << 0)
+	agentSplitPlanSkillReferenceFieldSkillID          = big.NewInt(1 << 1)
+	agentSplitPlanSkillReferenceFieldSkillUUID        = big.NewInt(1 << 2)
+	agentSplitPlanSkillReferenceFieldSkillVersionUUID = big.NewInt(1 << 3)
+	agentSplitPlanSkillReferenceFieldStatus           = big.NewInt(1 << 4)
+	agentSplitPlanSkillReferenceFieldVersion          = big.NewInt(1 << 5)
+)
+
+type AgentSplitPlanSkillReference struct {
+	PackageName      *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	SkillID          *string `json:"skill_id,omitempty" url:"skill_id,omitempty"`
+	SkillUUID        *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	SkillVersionUUID *string `json:"skill_version_uuid,omitempty" url:"skill_version_uuid,omitempty"`
+	Status           *string `json:"status,omitempty" url:"status,omitempty"`
+	Version          *int    `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSplitPlanSkillReference) GetPackageName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PackageName
+}
+
+func (a *AgentSplitPlanSkillReference) GetSkillID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SkillID
+}
+
+func (a *AgentSplitPlanSkillReference) GetSkillUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SkillUUID
+}
+
+func (a *AgentSplitPlanSkillReference) GetSkillVersionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SkillVersionUUID
+}
+
+func (a *AgentSplitPlanSkillReference) GetStatus() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AgentSplitPlanSkillReference) GetVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Version
+}
+
+func (a *AgentSplitPlanSkillReference) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSplitPlanSkillReference) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetPackageName sets the PackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillReference) SetPackageName(packageName *string) {
+	a.PackageName = packageName
+	a.require(agentSplitPlanSkillReferenceFieldPackageName)
+}
+
+// SetSkillID sets the SkillID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillReference) SetSkillID(skillID *string) {
+	a.SkillID = skillID
+	a.require(agentSplitPlanSkillReferenceFieldSkillID)
+}
+
+// SetSkillUUID sets the SkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillReference) SetSkillUUID(skillUUID *string) {
+	a.SkillUUID = skillUUID
+	a.require(agentSplitPlanSkillReferenceFieldSkillUUID)
+}
+
+// SetSkillVersionUUID sets the SkillVersionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillReference) SetSkillVersionUUID(skillVersionUUID *string) {
+	a.SkillVersionUUID = skillVersionUUID
+	a.require(agentSplitPlanSkillReferenceFieldSkillVersionUUID)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillReference) SetStatus(status *string) {
+	a.Status = status
+	a.require(agentSplitPlanSkillReferenceFieldStatus)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillReference) SetVersion(version *int) {
+	a.Version = version
+	a.require(agentSplitPlanSkillReferenceFieldVersion)
+}
+
+func (a *AgentSplitPlanSkillReference) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSplitPlanSkillReference
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSplitPlanSkillReference(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSplitPlanSkillReference) MarshalJSON() ([]byte, error) {
+	type embed AgentSplitPlanSkillReference
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSplitPlanSkillReference) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSplitPlanSkillSelectionRequestFieldSkillUUID        = big.NewInt(1 << 0)
+	agentSplitPlanSkillSelectionRequestFieldSkillVersionUUID = big.NewInt(1 << 1)
+	agentSplitPlanSkillSelectionRequestFieldVersion          = big.NewInt(1 << 2)
+)
+
+type AgentSplitPlanSkillSelectionRequest struct {
+	SkillUUID        string `json:"skill_uuid" url:"skill_uuid"`
+	SkillVersionUUID string `json:"skill_version_uuid" url:"skill_version_uuid"`
+	Version          int    `json:"version" url:"version"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSplitPlanSkillSelectionRequest) GetSkillUUID() string {
+	if a == nil {
+		return ""
+	}
+	return a.SkillUUID
+}
+
+func (a *AgentSplitPlanSkillSelectionRequest) GetSkillVersionUUID() string {
+	if a == nil {
+		return ""
+	}
+	return a.SkillVersionUUID
+}
+
+func (a *AgentSplitPlanSkillSelectionRequest) GetVersion() int {
+	if a == nil {
+		return 0
+	}
+	return a.Version
+}
+
+func (a *AgentSplitPlanSkillSelectionRequest) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSplitPlanSkillSelectionRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetSkillUUID sets the SkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillSelectionRequest) SetSkillUUID(skillUUID string) {
+	a.SkillUUID = skillUUID
+	a.require(agentSplitPlanSkillSelectionRequestFieldSkillUUID)
+}
+
+// SetSkillVersionUUID sets the SkillVersionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillSelectionRequest) SetSkillVersionUUID(skillVersionUUID string) {
+	a.SkillVersionUUID = skillVersionUUID
+	a.require(agentSplitPlanSkillSelectionRequestFieldSkillVersionUUID)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSkillSelectionRequest) SetVersion(version int) {
+	a.Version = version
+	a.require(agentSplitPlanSkillSelectionRequestFieldVersion)
+}
+
+func (a *AgentSplitPlanSkillSelectionRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSplitPlanSkillSelectionRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSplitPlanSkillSelectionRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSplitPlanSkillSelectionRequest) MarshalJSON() ([]byte, error) {
+	type embed AgentSplitPlanSkillSelectionRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSplitPlanSkillSelectionRequest) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSplitPlanSourceFieldAgentUUID = big.NewInt(1 << 0)
+	agentSplitPlanSourceFieldRevision  = big.NewInt(1 << 1)
+)
+
+type AgentSplitPlanSource struct {
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	Revision  *int    `json:"revision,omitempty" url:"revision,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSplitPlanSource) GetAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentUUID
+}
+
+func (a *AgentSplitPlanSource) GetRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Revision
+}
+
+func (a *AgentSplitPlanSource) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSplitPlanSource) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSource) SetAgentUUID(agentUUID *string) {
+	a.AgentUUID = agentUUID
+	a.require(agentSplitPlanSourceFieldAgentUUID)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSplitPlanSource) SetRevision(revision *int) {
+	a.Revision = revision
+	a.require(agentSplitPlanSourceFieldRevision)
+}
+
+func (a *AgentSplitPlanSource) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSplitPlanSource
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSplitPlanSource(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSplitPlanSource) MarshalJSON() ([]byte, error) {
+	type embed AgentSplitPlanSource
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSplitPlanSource) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectoryFieldAbandonedAt          = big.NewInt(1 << 0)
+	agentTrajectoryFieldAgentUUID            = big.NewInt(1 << 1)
+	agentTrajectoryFieldAttemptFamilyUUID    = big.NewInt(1 << 2)
+	agentTrajectoryFieldClosedAt             = big.NewInt(1 << 3)
+	agentTrajectoryFieldCreatedAt            = big.NewInt(1 << 4)
+	agentTrajectoryFieldInternal             = big.NewInt(1 << 5)
+	agentTrajectoryFieldLearnFrom            = big.NewInt(1 << 6)
+	agentTrajectoryFieldLearnFromReason      = big.NewInt(1 << 7)
+	agentTrajectoryFieldMetadata             = big.NewInt(1 << 8)
+	agentTrajectoryFieldObjective            = big.NewInt(1 << 9)
+	agentTrajectoryFieldOutcome              = big.NewInt(1 << 10)
+	agentTrajectoryFieldParentTrajectoryUUID = big.NewInt(1 << 11)
+	agentTrajectoryFieldRevision             = big.NewInt(1 << 12)
+	agentTrajectoryFieldSource               = big.NewInt(1 << 13)
+	agentTrajectoryFieldStatus               = big.NewInt(1 << 14)
+	agentTrajectoryFieldTaskFamily           = big.NewInt(1 << 15)
+	agentTrajectoryFieldTrajectoryID         = big.NewInt(1 << 16)
+	agentTrajectoryFieldUpdatedAt            = big.NewInt(1 << 17)
+	agentTrajectoryFieldUUID                 = big.NewInt(1 << 18)
+	agentTrajectoryFieldVerification         = big.NewInt(1 << 19)
+)
+
+type AgentTrajectory struct {
+	// The time the Trajectory was abandoned.
+	AbandonedAt *string `json:"abandoned_at,omitempty" url:"abandoned_at,omitempty"`
+	// The owning Agent UUID.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// The stable retry-family identity shared with declared child attempts.
+	AttemptFamilyUUID *string `json:"attempt_family_uuid,omitempty" url:"attempt_family_uuid,omitempty"`
+	// The time the Trajectory closed.
+	ClosedAt *string `json:"closed_at,omitempty" url:"closed_at,omitempty"`
+	// The time the Trajectory was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// Server-owned fields that are not part of the top-level capture contract.
+	Internal *AgentTrajectoryInternal `json:"internal,omitempty" url:"internal,omitempty"`
+	// Whether eligible evidence may participate in learning.
+	LearnFrom *bool `json:"learn_from,omitempty" url:"learn_from,omitempty"`
+	// Why the Trajectory is not eligible for learning.
+	LearnFromReason *string `json:"learn_from_reason,omitempty" url:"learn_from_reason,omitempty"`
+	// Developer metadata used for exact containment filters.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The task-instance objective captured for this attempt.
+	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
+	// The caller-owned task outcome.
+	Outcome *AgentTrajectoryOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// The parent attempt when this Trajectory is a retry.
+	ParentTrajectoryUUID *string `json:"parent_trajectory_uuid,omitempty" url:"parent_trajectory_uuid,omitempty"`
+	// The revision required by the next update or lifecycle command.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The source record for an imported Trajectory.
+	Source *AgentTrajectorySource `json:"source,omitempty" url:"source,omitempty"`
+	// The current lifecycle state.
+	Status *AgentTrajectoryLifecycle `json:"status,omitempty" url:"status,omitempty"`
+	// The optional opaque task-family classification slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The optional customer-assigned identifier, unique within the Agent.
+	TrajectoryID *string `json:"trajectory_id,omitempty" url:"trajectory_id,omitempty"`
+	// The time the Trajectory was last updated.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The stable Trajectory UUID.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The strength of the accepted outcome verification.
+	Verification *AgentTrajectoryVerification `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectory) GetAbandonedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AbandonedAt
+}
+
+func (a *AgentTrajectory) GetAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentUUID
+}
+
+func (a *AgentTrajectory) GetAttemptFamilyUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AttemptFamilyUUID
+}
+
+func (a *AgentTrajectory) GetClosedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ClosedAt
+}
+
+func (a *AgentTrajectory) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentTrajectory) GetInternal() *AgentTrajectoryInternal {
+	if a == nil {
+		return nil
+	}
+	return a.Internal
+}
+
+func (a *AgentTrajectory) GetLearnFrom() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.LearnFrom
+}
+
+func (a *AgentTrajectory) GetLearnFromReason() *string {
+	if a == nil {
+		return nil
+	}
+	return a.LearnFromReason
+}
+
+func (a *AgentTrajectory) GetMetadata() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AgentTrajectory) GetObjective() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Objective
+}
+
+func (a *AgentTrajectory) GetOutcome() *AgentTrajectoryOutcome {
+	if a == nil {
+		return nil
+	}
+	return a.Outcome
+}
+
+func (a *AgentTrajectory) GetParentTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ParentTrajectoryUUID
+}
+
+func (a *AgentTrajectory) GetRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Revision
+}
+
+func (a *AgentTrajectory) GetSource() *AgentTrajectorySource {
+	if a == nil {
+		return nil
+	}
+	return a.Source
+}
+
+func (a *AgentTrajectory) GetStatus() *AgentTrajectoryLifecycle {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AgentTrajectory) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentTrajectory) GetTrajectoryID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryID
+}
+
+func (a *AgentTrajectory) GetUpdatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UpdatedAt
+}
+
+func (a *AgentTrajectory) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentTrajectory) GetVerification() *AgentTrajectoryVerification {
+	if a == nil {
+		return nil
+	}
+	return a.Verification
+}
+
+func (a *AgentTrajectory) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectory) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAbandonedAt sets the AbandonedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetAbandonedAt(abandonedAt *string) {
+	a.AbandonedAt = abandonedAt
+	a.require(agentTrajectoryFieldAbandonedAt)
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetAgentUUID(agentUUID *string) {
+	a.AgentUUID = agentUUID
+	a.require(agentTrajectoryFieldAgentUUID)
+}
+
+// SetAttemptFamilyUUID sets the AttemptFamilyUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetAttemptFamilyUUID(attemptFamilyUUID *string) {
+	a.AttemptFamilyUUID = attemptFamilyUUID
+	a.require(agentTrajectoryFieldAttemptFamilyUUID)
+}
+
+// SetClosedAt sets the ClosedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetClosedAt(closedAt *string) {
+	a.ClosedAt = closedAt
+	a.require(agentTrajectoryFieldClosedAt)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentTrajectoryFieldCreatedAt)
+}
+
+// SetInternal sets the Internal field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetInternal(internal_ *AgentTrajectoryInternal) {
+	a.Internal = internal_
+	a.require(agentTrajectoryFieldInternal)
+}
+
+// SetLearnFrom sets the LearnFrom field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetLearnFrom(learnFrom *bool) {
+	a.LearnFrom = learnFrom
+	a.require(agentTrajectoryFieldLearnFrom)
+}
+
+// SetLearnFromReason sets the LearnFromReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetLearnFromReason(learnFromReason *string) {
+	a.LearnFromReason = learnFromReason
+	a.require(agentTrajectoryFieldLearnFromReason)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(agentTrajectoryFieldMetadata)
+}
+
+// SetObjective sets the Objective field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetObjective(objective *string) {
+	a.Objective = objective
+	a.require(agentTrajectoryFieldObjective)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetOutcome(outcome *AgentTrajectoryOutcome) {
+	a.Outcome = outcome
+	a.require(agentTrajectoryFieldOutcome)
+}
+
+// SetParentTrajectoryUUID sets the ParentTrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetParentTrajectoryUUID(parentTrajectoryUUID *string) {
+	a.ParentTrajectoryUUID = parentTrajectoryUUID
+	a.require(agentTrajectoryFieldParentTrajectoryUUID)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetRevision(revision *int) {
+	a.Revision = revision
+	a.require(agentTrajectoryFieldRevision)
+}
+
+// SetSource sets the Source field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetSource(source *AgentTrajectorySource) {
+	a.Source = source
+	a.require(agentTrajectoryFieldSource)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetStatus(status *AgentTrajectoryLifecycle) {
+	a.Status = status
+	a.require(agentTrajectoryFieldStatus)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentTrajectoryFieldTaskFamily)
+}
+
+// SetTrajectoryID sets the TrajectoryID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetTrajectoryID(trajectoryID *string) {
+	a.TrajectoryID = trajectoryID
+	a.require(agentTrajectoryFieldTrajectoryID)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetUpdatedAt(updatedAt *string) {
+	a.UpdatedAt = updatedAt
+	a.require(agentTrajectoryFieldUpdatedAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentTrajectoryFieldUUID)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectory) SetVerification(verification *AgentTrajectoryVerification) {
+	a.Verification = verification
+	a.require(agentTrajectoryFieldVerification)
+}
+
+func (a *AgentTrajectory) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectory
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectory(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectory) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectory
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectory) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectoryCloseVerifierFieldAssertionID       = big.NewInt(1 << 0)
+	agentTrajectoryCloseVerifierFieldClass             = big.NewInt(1 << 1)
+	agentTrajectoryCloseVerifierFieldEvidenceReference = big.NewInt(1 << 2)
+	agentTrajectoryCloseVerifierFieldOutcome           = big.NewInt(1 << 3)
+	agentTrajectoryCloseVerifierFieldVerifierID        = big.NewInt(1 << 4)
+)
+
+type AgentTrajectoryCloseVerifier struct {
+	AssertionID       *string                        `json:"assertion_id,omitempty" url:"assertion_id,omitempty"`
+	Class             *string                        `json:"class,omitempty" url:"class,omitempty"`
+	EvidenceReference *string                        `json:"evidence_reference,omitempty" url:"evidence_reference,omitempty"`
+	Outcome           *AgentVerifierAssertionOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	VerifierID        string                         `json:"verifier_id" url:"verifier_id"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryCloseVerifier) GetAssertionID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AssertionID
+}
+
+func (a *AgentTrajectoryCloseVerifier) GetClass() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Class
+}
+
+func (a *AgentTrajectoryCloseVerifier) GetEvidenceReference() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EvidenceReference
+}
+
+func (a *AgentTrajectoryCloseVerifier) GetOutcome() *AgentVerifierAssertionOutcome {
+	if a == nil {
+		return nil
+	}
+	return a.Outcome
+}
+
+func (a *AgentTrajectoryCloseVerifier) GetVerifierID() string {
+	if a == nil {
+		return ""
+	}
+	return a.VerifierID
+}
+
+func (a *AgentTrajectoryCloseVerifier) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryCloseVerifier) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAssertionID sets the AssertionID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryCloseVerifier) SetAssertionID(assertionID *string) {
+	a.AssertionID = assertionID
+	a.require(agentTrajectoryCloseVerifierFieldAssertionID)
+}
+
+// SetClass sets the Class field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryCloseVerifier) SetClass(class *string) {
+	a.Class = class
+	a.require(agentTrajectoryCloseVerifierFieldClass)
+}
+
+// SetEvidenceReference sets the EvidenceReference field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryCloseVerifier) SetEvidenceReference(evidenceReference *string) {
+	a.EvidenceReference = evidenceReference
+	a.require(agentTrajectoryCloseVerifierFieldEvidenceReference)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryCloseVerifier) SetOutcome(outcome *AgentVerifierAssertionOutcome) {
+	a.Outcome = outcome
+	a.require(agentTrajectoryCloseVerifierFieldOutcome)
+}
+
+// SetVerifierID sets the VerifierID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryCloseVerifier) SetVerifierID(verifierID string) {
+	a.VerifierID = verifierID
+	a.require(agentTrajectoryCloseVerifierFieldVerifierID)
+}
+
+func (a *AgentTrajectoryCloseVerifier) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryCloseVerifier
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryCloseVerifier(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryCloseVerifier) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryCloseVerifier
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryCloseVerifier) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectoryEventFieldAgentUUID       = big.NewInt(1 << 0)
+	agentTrajectoryEventFieldContent         = big.NewInt(1 << 1)
+	agentTrajectoryEventFieldContext         = big.NewInt(1 << 2)
+	agentTrajectoryEventFieldCreatedAt       = big.NewInt(1 << 3)
+	agentTrajectoryEventFieldEventID         = big.NewInt(1 << 4)
+	agentTrajectoryEventFieldEventType       = big.NewInt(1 << 5)
+	agentTrajectoryEventFieldFailedAt        = big.NewInt(1 << 6)
+	agentTrajectoryEventFieldMetadata        = big.NewInt(1 << 7)
+	agentTrajectoryEventFieldOccurredAt      = big.NewInt(1 << 8)
+	agentTrajectoryEventFieldProcessedAt     = big.NewInt(1 << 9)
+	agentTrajectoryEventFieldProcessingState = big.NewInt(1 << 10)
+	agentTrajectoryEventFieldSequence        = big.NewInt(1 << 11)
+	agentTrajectoryEventFieldSources         = big.NewInt(1 << 12)
+	agentTrajectoryEventFieldTrajectoryUUID  = big.NewInt(1 << 13)
+	agentTrajectoryEventFieldUpdatedAt       = big.NewInt(1 << 14)
+	agentTrajectoryEventFieldUUID            = big.NewInt(1 << 15)
+)
+
+type AgentTrajectoryEvent struct {
+	AgentUUID       *string                              `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	Content         *string                              `json:"content,omitempty" url:"content,omitempty"`
+	Context         *AgentTrajectoryEventContext         `json:"context,omitempty" url:"context,omitempty"`
+	CreatedAt       *string                              `json:"created_at,omitempty" url:"created_at,omitempty"`
+	EventID         *string                              `json:"event_id,omitempty" url:"event_id,omitempty"`
+	EventType       *AgentTrajectoryEventType            `json:"event_type,omitempty" url:"event_type,omitempty"`
+	FailedAt        *string                              `json:"failed_at,omitempty" url:"failed_at,omitempty"`
+	Metadata        map[string]any                       `json:"metadata,omitempty" url:"metadata,omitempty"`
+	OccurredAt      *string                              `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
+	ProcessedAt     *string                              `json:"processed_at,omitempty" url:"processed_at,omitempty"`
+	ProcessingState *AgentTrajectoryEventProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
+	Sequence        *int                                 `json:"sequence,omitempty" url:"sequence,omitempty"`
+	Sources         []*AgentTrajectoryEventSource        `json:"sources,omitempty" url:"sources,omitempty"`
+	TrajectoryUUID  *string                              `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	UpdatedAt       *string                              `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID            *string                              `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryEvent) GetAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentUUID
+}
+
+func (a *AgentTrajectoryEvent) GetContent() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Content
+}
+
+func (a *AgentTrajectoryEvent) GetContext() *AgentTrajectoryEventContext {
+	if a == nil {
+		return nil
+	}
+	return a.Context
+}
+
+func (a *AgentTrajectoryEvent) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentTrajectoryEvent) GetEventID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EventID
+}
+
+func (a *AgentTrajectoryEvent) GetEventType() *AgentTrajectoryEventType {
+	if a == nil {
+		return nil
+	}
+	return a.EventType
+}
+
+func (a *AgentTrajectoryEvent) GetFailedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.FailedAt
+}
+
+func (a *AgentTrajectoryEvent) GetMetadata() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AgentTrajectoryEvent) GetOccurredAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.OccurredAt
+}
+
+func (a *AgentTrajectoryEvent) GetProcessedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ProcessedAt
+}
+
+func (a *AgentTrajectoryEvent) GetProcessingState() *AgentTrajectoryEventProcessingState {
+	if a == nil {
+		return nil
+	}
+	return a.ProcessingState
+}
+
+func (a *AgentTrajectoryEvent) GetSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Sequence
+}
+
+func (a *AgentTrajectoryEvent) GetSources() []*AgentTrajectoryEventSource {
+	if a == nil {
+		return nil
+	}
+	return a.Sources
+}
+
+func (a *AgentTrajectoryEvent) GetTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryUUID
+}
+
+func (a *AgentTrajectoryEvent) GetUpdatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UpdatedAt
+}
+
+func (a *AgentTrajectoryEvent) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentTrajectoryEvent) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetAgentUUID(agentUUID *string) {
+	a.AgentUUID = agentUUID
+	a.require(agentTrajectoryEventFieldAgentUUID)
+}
+
+// SetContent sets the Content field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetContent(content *string) {
+	a.Content = content
+	a.require(agentTrajectoryEventFieldContent)
+}
+
+// SetContext sets the Context field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetContext(context *AgentTrajectoryEventContext) {
+	a.Context = context
+	a.require(agentTrajectoryEventFieldContext)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentTrajectoryEventFieldCreatedAt)
+}
+
+// SetEventID sets the EventID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetEventID(eventID *string) {
+	a.EventID = eventID
+	a.require(agentTrajectoryEventFieldEventID)
+}
+
+// SetEventType sets the EventType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetEventType(eventType *AgentTrajectoryEventType) {
+	a.EventType = eventType
+	a.require(agentTrajectoryEventFieldEventType)
+}
+
+// SetFailedAt sets the FailedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetFailedAt(failedAt *string) {
+	a.FailedAt = failedAt
+	a.require(agentTrajectoryEventFieldFailedAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(agentTrajectoryEventFieldMetadata)
+}
+
+// SetOccurredAt sets the OccurredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetOccurredAt(occurredAt *string) {
+	a.OccurredAt = occurredAt
+	a.require(agentTrajectoryEventFieldOccurredAt)
+}
+
+// SetProcessedAt sets the ProcessedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetProcessedAt(processedAt *string) {
+	a.ProcessedAt = processedAt
+	a.require(agentTrajectoryEventFieldProcessedAt)
+}
+
+// SetProcessingState sets the ProcessingState field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetProcessingState(processingState *AgentTrajectoryEventProcessingState) {
+	a.ProcessingState = processingState
+	a.require(agentTrajectoryEventFieldProcessingState)
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetSequence(sequence *int) {
+	a.Sequence = sequence
+	a.require(agentTrajectoryEventFieldSequence)
+}
+
+// SetSources sets the Sources field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetSources(sources []*AgentTrajectoryEventSource) {
+	a.Sources = sources
+	a.require(agentTrajectoryEventFieldSources)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetTrajectoryUUID(trajectoryUUID *string) {
+	a.TrajectoryUUID = trajectoryUUID
+	a.require(agentTrajectoryEventFieldTrajectoryUUID)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetUpdatedAt(updatedAt *string) {
+	a.UpdatedAt = updatedAt
+	a.require(agentTrajectoryEventFieldUpdatedAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEvent) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentTrajectoryEventFieldUUID)
+}
+
+func (a *AgentTrajectoryEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryEvent) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryEvent) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectoryEventContextFieldArtifacts    = big.NewInt(1 << 0)
+	agentTrajectoryEventContextFieldEnvironments = big.NewInt(1 << 1)
+	agentTrajectoryEventContextFieldModel        = big.NewInt(1 << 2)
+	agentTrajectoryEventContextFieldTools        = big.NewInt(1 << 3)
+	agentTrajectoryEventContextFieldVerification = big.NewInt(1 << 4)
+)
+
+type AgentTrajectoryEventContext struct {
+	Artifacts    []*AgentTrajectoryResourceRef `json:"artifacts,omitempty" url:"artifacts,omitempty"`
+	Environments []*AgentTrajectoryResourceRef `json:"environments,omitempty" url:"environments,omitempty"`
+	Model        *AgentTrajectoryResourceRef   `json:"model,omitempty" url:"model,omitempty"`
+	Tools        []*AgentTrajectoryResourceRef `json:"tools,omitempty" url:"tools,omitempty"`
+	Verification *string                       `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryEventContext) GetArtifacts() []*AgentTrajectoryResourceRef {
+	if a == nil {
+		return nil
+	}
+	return a.Artifacts
+}
+
+func (a *AgentTrajectoryEventContext) GetEnvironments() []*AgentTrajectoryResourceRef {
+	if a == nil {
+		return nil
+	}
+	return a.Environments
+}
+
+func (a *AgentTrajectoryEventContext) GetModel() *AgentTrajectoryResourceRef {
+	if a == nil {
+		return nil
+	}
+	return a.Model
+}
+
+func (a *AgentTrajectoryEventContext) GetTools() []*AgentTrajectoryResourceRef {
+	if a == nil {
+		return nil
+	}
+	return a.Tools
+}
+
+func (a *AgentTrajectoryEventContext) GetVerification() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Verification
+}
+
+func (a *AgentTrajectoryEventContext) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryEventContext) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetArtifacts sets the Artifacts field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventContext) SetArtifacts(artifacts []*AgentTrajectoryResourceRef) {
+	a.Artifacts = artifacts
+	a.require(agentTrajectoryEventContextFieldArtifacts)
+}
+
+// SetEnvironments sets the Environments field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventContext) SetEnvironments(environments []*AgentTrajectoryResourceRef) {
+	a.Environments = environments
+	a.require(agentTrajectoryEventContextFieldEnvironments)
+}
+
+// SetModel sets the Model field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventContext) SetModel(model *AgentTrajectoryResourceRef) {
+	a.Model = model
+	a.require(agentTrajectoryEventContextFieldModel)
+}
+
+// SetTools sets the Tools field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventContext) SetTools(tools []*AgentTrajectoryResourceRef) {
+	a.Tools = tools
+	a.require(agentTrajectoryEventContextFieldTools)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventContext) SetVerification(verification *string) {
+	a.Verification = verification
+	a.require(agentTrajectoryEventContextFieldVerification)
+}
+
+func (a *AgentTrajectoryEventContext) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryEventContext
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryEventContext(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryEventContext) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryEventContext
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryEventContext) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectoryEventPageFieldItems      = big.NewInt(1 << 0)
+	agentTrajectoryEventPageFieldNextCursor = big.NewInt(1 << 1)
+	agentTrajectoryEventPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type AgentTrajectoryEventPage struct {
+	Items      []*AgentTrajectoryEvent `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string                 `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                    `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryEventPage) GetItems() []*AgentTrajectoryEvent {
+	if a == nil {
+		return nil
+	}
+	return a.Items
+}
+
+func (a *AgentTrajectoryEventPage) GetNextCursor() *string {
+	if a == nil {
+		return nil
+	}
+	return a.NextCursor
+}
+
+func (a *AgentTrajectoryEventPage) GetTotalSize() *int {
+	if a == nil {
+		return nil
+	}
+	return a.TotalSize
+}
+
+func (a *AgentTrajectoryEventPage) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryEventPage) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventPage) SetItems(items []*AgentTrajectoryEvent) {
+	a.Items = items
+	a.require(agentTrajectoryEventPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventPage) SetNextCursor(nextCursor *string) {
+	a.NextCursor = nextCursor
+	a.require(agentTrajectoryEventPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventPage) SetTotalSize(totalSize *int) {
+	a.TotalSize = totalSize
+	a.require(agentTrajectoryEventPageFieldTotalSize)
+}
+
+func (a *AgentTrajectoryEventPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryEventPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryEventPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryEventPage) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryEventPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryEventPage) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentTrajectoryEventProcessingState string
+
+const (
+	AgentTrajectoryEventProcessingStatePending    AgentTrajectoryEventProcessingState = "pending"
+	AgentTrajectoryEventProcessingStateProcessing AgentTrajectoryEventProcessingState = "processing"
+	AgentTrajectoryEventProcessingStateProcessed  AgentTrajectoryEventProcessingState = "processed"
+	AgentTrajectoryEventProcessingStateFailed     AgentTrajectoryEventProcessingState = "failed"
+)
+
+func NewAgentTrajectoryEventProcessingStateFromString(s string) (AgentTrajectoryEventProcessingState, error) {
+	switch s {
+	case "pending":
+		return AgentTrajectoryEventProcessingStatePending, nil
+	case "processing":
+		return AgentTrajectoryEventProcessingStateProcessing, nil
+	case "processed":
+		return AgentTrajectoryEventProcessingStateProcessed, nil
+	case "failed":
+		return AgentTrajectoryEventProcessingStateFailed, nil
+	}
+	var t AgentTrajectoryEventProcessingState
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectoryEventProcessingState) Ptr() *AgentTrajectoryEventProcessingState {
+	return &a
+}
+
+var (
+	agentTrajectoryEventSourceFieldCopyMode      = big.NewInt(1 << 0)
+	agentTrajectoryEventSourceFieldKind          = big.NewInt(1 << 1)
+	agentTrajectoryEventSourceFieldRetentionMode = big.NewInt(1 << 2)
+	agentTrajectoryEventSourceFieldUUID          = big.NewInt(1 << 3)
+)
+
+type AgentTrajectoryEventSource struct {
+	CopyMode      *AgentTrajectoryEventSourceCopyMode      `json:"copy_mode,omitempty" url:"copy_mode,omitempty"`
+	Kind          string                                   `json:"kind" url:"kind"`
+	RetentionMode *AgentTrajectoryEventSourceRetentionMode `json:"retention_mode,omitempty" url:"retention_mode,omitempty"`
+	UUID          string                                   `json:"uuid" url:"uuid"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryEventSource) GetCopyMode() *AgentTrajectoryEventSourceCopyMode {
+	if a == nil {
+		return nil
+	}
+	return a.CopyMode
+}
+
+func (a *AgentTrajectoryEventSource) GetKind() string {
+	if a == nil {
+		return ""
+	}
+	return a.Kind
+}
+
+func (a *AgentTrajectoryEventSource) GetRetentionMode() *AgentTrajectoryEventSourceRetentionMode {
+	if a == nil {
+		return nil
+	}
+	return a.RetentionMode
+}
+
+func (a *AgentTrajectoryEventSource) GetUUID() string {
+	if a == nil {
+		return ""
+	}
+	return a.UUID
+}
+
+func (a *AgentTrajectoryEventSource) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryEventSource) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCopyMode sets the CopyMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventSource) SetCopyMode(copyMode *AgentTrajectoryEventSourceCopyMode) {
+	a.CopyMode = copyMode
+	a.require(agentTrajectoryEventSourceFieldCopyMode)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventSource) SetKind(kind string) {
+	a.Kind = kind
+	a.require(agentTrajectoryEventSourceFieldKind)
+}
+
+// SetRetentionMode sets the RetentionMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventSource) SetRetentionMode(retentionMode *AgentTrajectoryEventSourceRetentionMode) {
+	a.RetentionMode = retentionMode
+	a.require(agentTrajectoryEventSourceFieldRetentionMode)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryEventSource) SetUUID(uuid string) {
+	a.UUID = uuid
+	a.require(agentTrajectoryEventSourceFieldUUID)
+}
+
+func (a *AgentTrajectoryEventSource) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryEventSource
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryEventSource(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryEventSource) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryEventSource
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryEventSource) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentTrajectoryEventSourceCopyMode string
+
+const (
+	AgentTrajectoryEventSourceCopyModeReference AgentTrajectoryEventSourceCopyMode = "reference"
+	AgentTrajectoryEventSourceCopyModeCopied    AgentTrajectoryEventSourceCopyMode = "copied"
+)
+
+func NewAgentTrajectoryEventSourceCopyModeFromString(s string) (AgentTrajectoryEventSourceCopyMode, error) {
+	switch s {
+	case "reference":
+		return AgentTrajectoryEventSourceCopyModeReference, nil
+	case "copied":
+		return AgentTrajectoryEventSourceCopyModeCopied, nil
+	}
+	var t AgentTrajectoryEventSourceCopyMode
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectoryEventSourceCopyMode) Ptr() *AgentTrajectoryEventSourceCopyMode {
+	return &a
+}
+
+type AgentTrajectoryEventSourceRetentionMode string
+
+const (
+	AgentTrajectoryEventSourceRetentionModeDeleteWithSource AgentTrajectoryEventSourceRetentionMode = "delete_with_source"
+	AgentTrajectoryEventSourceRetentionModeKeep             AgentTrajectoryEventSourceRetentionMode = "keep"
+)
+
+func NewAgentTrajectoryEventSourceRetentionModeFromString(s string) (AgentTrajectoryEventSourceRetentionMode, error) {
+	switch s {
+	case "delete_with_source":
+		return AgentTrajectoryEventSourceRetentionModeDeleteWithSource, nil
+	case "keep":
+		return AgentTrajectoryEventSourceRetentionModeKeep, nil
+	}
+	var t AgentTrajectoryEventSourceRetentionMode
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectoryEventSourceRetentionMode) Ptr() *AgentTrajectoryEventSourceRetentionMode {
+	return &a
+}
+
+type AgentTrajectoryEventType string
+
+const (
+	AgentTrajectoryEventTypeInputReference AgentTrajectoryEventType = "input_reference"
+	AgentTrajectoryEventTypeObservation    AgentTrajectoryEventType = "observation"
+	AgentTrajectoryEventTypeDecision       AgentTrajectoryEventType = "decision"
+	AgentTrajectoryEventTypeToolCall       AgentTrajectoryEventType = "tool_call"
+	AgentTrajectoryEventTypeToolResult     AgentTrajectoryEventType = "tool_result"
+	AgentTrajectoryEventTypeArtifact       AgentTrajectoryEventType = "artifact"
+	AgentTrajectoryEventTypeCheckpoint     AgentTrajectoryEventType = "checkpoint"
+	AgentTrajectoryEventTypeFeedback       AgentTrajectoryEventType = "feedback"
+	AgentTrajectoryEventTypeCorrection     AgentTrajectoryEventType = "correction"
+	AgentTrajectoryEventTypeReflection     AgentTrajectoryEventType = "reflection"
+	AgentTrajectoryEventTypeVerification   AgentTrajectoryEventType = "verification"
+)
+
+func NewAgentTrajectoryEventTypeFromString(s string) (AgentTrajectoryEventType, error) {
+	switch s {
+	case "input_reference":
+		return AgentTrajectoryEventTypeInputReference, nil
+	case "observation":
+		return AgentTrajectoryEventTypeObservation, nil
+	case "decision":
+		return AgentTrajectoryEventTypeDecision, nil
+	case "tool_call":
+		return AgentTrajectoryEventTypeToolCall, nil
+	case "tool_result":
+		return AgentTrajectoryEventTypeToolResult, nil
+	case "artifact":
+		return AgentTrajectoryEventTypeArtifact, nil
+	case "checkpoint":
+		return AgentTrajectoryEventTypeCheckpoint, nil
+	case "feedback":
+		return AgentTrajectoryEventTypeFeedback, nil
+	case "correction":
+		return AgentTrajectoryEventTypeCorrection, nil
+	case "reflection":
+		return AgentTrajectoryEventTypeReflection, nil
+	case "verification":
+		return AgentTrajectoryEventTypeVerification, nil
+	}
+	var t AgentTrajectoryEventType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectoryEventType) Ptr() *AgentTrajectoryEventType {
+	return &a
+}
+
+var (
+	agentTrajectoryFinalizationResultFieldTask       = big.NewInt(1 << 0)
+	agentTrajectoryFinalizationResultFieldTrajectory = big.NewInt(1 << 1)
+)
+
+type AgentTrajectoryFinalizationResult struct {
+	Task       *Task            `json:"task,omitempty" url:"task,omitempty"`
+	Trajectory *AgentTrajectory `json:"trajectory,omitempty" url:"trajectory,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryFinalizationResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
+}
+
+func (a *AgentTrajectoryFinalizationResult) GetTrajectory() *AgentTrajectory {
+	if a == nil {
+		return nil
+	}
+	return a.Trajectory
+}
+
+func (a *AgentTrajectoryFinalizationResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryFinalizationResult) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryFinalizationResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(agentTrajectoryFinalizationResultFieldTask)
+}
+
+// SetTrajectory sets the Trajectory field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryFinalizationResult) SetTrajectory(trajectory *AgentTrajectory) {
+	a.Trajectory = trajectory
+	a.require(agentTrajectoryFinalizationResultFieldTrajectory)
+}
+
+func (a *AgentTrajectoryFinalizationResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryFinalizationResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryFinalizationResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryFinalizationResult) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryFinalizationResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryFinalizationResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectoryInternalFieldAssertionUUID         = big.NewInt(1 << 0)
+	agentTrajectoryInternalFieldClosingSequence       = big.NewInt(1 << 1)
+	agentTrajectoryInternalFieldCurrentSummaryVersion = big.NewInt(1 << 2)
+	agentTrajectoryInternalFieldLastTaskUUID          = big.NewInt(1 << 3)
+	agentTrajectoryInternalFieldNextSequence          = big.NewInt(1 << 4)
+	agentTrajectoryInternalFieldProcessingState       = big.NewInt(1 << 5)
+)
+
+type AgentTrajectoryInternal struct {
+	AssertionUUID         *string                         `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	ClosingSequence       *int                            `json:"closing_sequence,omitempty" url:"closing_sequence,omitempty"`
+	CurrentSummaryVersion *int                            `json:"current_summary_version,omitempty" url:"current_summary_version,omitempty"`
+	LastTaskUUID          *string                         `json:"last_task_uuid,omitempty" url:"last_task_uuid,omitempty"`
+	NextSequence          *int                            `json:"next_sequence,omitempty" url:"next_sequence,omitempty"`
+	ProcessingState       *AgentTrajectoryProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryInternal) GetAssertionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AssertionUUID
+}
+
+func (a *AgentTrajectoryInternal) GetClosingSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.ClosingSequence
+}
+
+func (a *AgentTrajectoryInternal) GetCurrentSummaryVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.CurrentSummaryVersion
+}
+
+func (a *AgentTrajectoryInternal) GetLastTaskUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.LastTaskUUID
+}
+
+func (a *AgentTrajectoryInternal) GetNextSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.NextSequence
+}
+
+func (a *AgentTrajectoryInternal) GetProcessingState() *AgentTrajectoryProcessingState {
+	if a == nil {
+		return nil
+	}
+	return a.ProcessingState
+}
+
+func (a *AgentTrajectoryInternal) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryInternal) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAssertionUUID sets the AssertionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryInternal) SetAssertionUUID(assertionUUID *string) {
+	a.AssertionUUID = assertionUUID
+	a.require(agentTrajectoryInternalFieldAssertionUUID)
+}
+
+// SetClosingSequence sets the ClosingSequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryInternal) SetClosingSequence(closingSequence *int) {
+	a.ClosingSequence = closingSequence
+	a.require(agentTrajectoryInternalFieldClosingSequence)
+}
+
+// SetCurrentSummaryVersion sets the CurrentSummaryVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryInternal) SetCurrentSummaryVersion(currentSummaryVersion *int) {
+	a.CurrentSummaryVersion = currentSummaryVersion
+	a.require(agentTrajectoryInternalFieldCurrentSummaryVersion)
+}
+
+// SetLastTaskUUID sets the LastTaskUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryInternal) SetLastTaskUUID(lastTaskUUID *string) {
+	a.LastTaskUUID = lastTaskUUID
+	a.require(agentTrajectoryInternalFieldLastTaskUUID)
+}
+
+// SetNextSequence sets the NextSequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryInternal) SetNextSequence(nextSequence *int) {
+	a.NextSequence = nextSequence
+	a.require(agentTrajectoryInternalFieldNextSequence)
+}
+
+// SetProcessingState sets the ProcessingState field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryInternal) SetProcessingState(processingState *AgentTrajectoryProcessingState) {
+	a.ProcessingState = processingState
+	a.require(agentTrajectoryInternalFieldProcessingState)
+}
+
+func (a *AgentTrajectoryInternal) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryInternal
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryInternal(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryInternal) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryInternal
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryInternal) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentTrajectoryLifecycle string
+
+const (
+	AgentTrajectoryLifecycleOpen      AgentTrajectoryLifecycle = "open"
+	AgentTrajectoryLifecycleClosing   AgentTrajectoryLifecycle = "closing"
+	AgentTrajectoryLifecycleClosed    AgentTrajectoryLifecycle = "closed"
+	AgentTrajectoryLifecycleAbandoned AgentTrajectoryLifecycle = "abandoned"
+	AgentTrajectoryLifecycleDeleted   AgentTrajectoryLifecycle = "deleted"
+)
+
+func NewAgentTrajectoryLifecycleFromString(s string) (AgentTrajectoryLifecycle, error) {
+	switch s {
+	case "open":
+		return AgentTrajectoryLifecycleOpen, nil
+	case "closing":
+		return AgentTrajectoryLifecycleClosing, nil
+	case "closed":
+		return AgentTrajectoryLifecycleClosed, nil
+	case "abandoned":
+		return AgentTrajectoryLifecycleAbandoned, nil
+	case "deleted":
+		return AgentTrajectoryLifecycleDeleted, nil
+	}
+	var t AgentTrajectoryLifecycle
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectoryLifecycle) Ptr() *AgentTrajectoryLifecycle {
+	return &a
+}
+
+type AgentTrajectoryOutcome string
+
+const (
+	AgentTrajectoryOutcomeSucceeded AgentTrajectoryOutcome = "succeeded"
+	AgentTrajectoryOutcomeFailed    AgentTrajectoryOutcome = "failed"
+	AgentTrajectoryOutcomePartial   AgentTrajectoryOutcome = "partial"
+	AgentTrajectoryOutcomeAbandoned AgentTrajectoryOutcome = "abandoned"
+	AgentTrajectoryOutcomeUnknown   AgentTrajectoryOutcome = "unknown"
+)
+
+func NewAgentTrajectoryOutcomeFromString(s string) (AgentTrajectoryOutcome, error) {
+	switch s {
+	case "succeeded":
+		return AgentTrajectoryOutcomeSucceeded, nil
+	case "failed":
+		return AgentTrajectoryOutcomeFailed, nil
+	case "partial":
+		return AgentTrajectoryOutcomePartial, nil
+	case "abandoned":
+		return AgentTrajectoryOutcomeAbandoned, nil
+	case "unknown":
+		return AgentTrajectoryOutcomeUnknown, nil
+	}
+	var t AgentTrajectoryOutcome
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectoryOutcome) Ptr() *AgentTrajectoryOutcome {
+	return &a
+}
+
+var (
+	agentTrajectoryPageFieldItems      = big.NewInt(1 << 0)
+	agentTrajectoryPageFieldNextCursor = big.NewInt(1 << 1)
+	agentTrajectoryPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type AgentTrajectoryPage struct {
+	// The Trajectories on this page.
+	Items []*AgentTrajectory `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results are available.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of Trajectories matching the filters within the owning Agent.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryPage) GetItems() []*AgentTrajectory {
+	if a == nil {
+		return nil
+	}
+	return a.Items
+}
+
+func (a *AgentTrajectoryPage) GetNextCursor() *string {
+	if a == nil {
+		return nil
+	}
+	return a.NextCursor
+}
+
+func (a *AgentTrajectoryPage) GetTotalSize() *int {
+	if a == nil {
+		return nil
+	}
+	return a.TotalSize
+}
+
+func (a *AgentTrajectoryPage) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryPage) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryPage) SetItems(items []*AgentTrajectory) {
+	a.Items = items
+	a.require(agentTrajectoryPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryPage) SetNextCursor(nextCursor *string) {
+	a.NextCursor = nextCursor
+	a.require(agentTrajectoryPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryPage) SetTotalSize(totalSize *int) {
+	a.TotalSize = totalSize
+	a.require(agentTrajectoryPageFieldTotalSize)
+}
+
+func (a *AgentTrajectoryPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryPage) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryPage) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentTrajectoryProcessingState string
+
+const (
+	AgentTrajectoryProcessingStateIdle       AgentTrajectoryProcessingState = "idle"
+	AgentTrajectoryProcessingStatePending    AgentTrajectoryProcessingState = "pending"
+	AgentTrajectoryProcessingStateProcessing AgentTrajectoryProcessingState = "processing"
+	AgentTrajectoryProcessingStateFailed     AgentTrajectoryProcessingState = "failed"
+)
+
+func NewAgentTrajectoryProcessingStateFromString(s string) (AgentTrajectoryProcessingState, error) {
+	switch s {
+	case "idle":
+		return AgentTrajectoryProcessingStateIdle, nil
+	case "pending":
+		return AgentTrajectoryProcessingStatePending, nil
+	case "processing":
+		return AgentTrajectoryProcessingStateProcessing, nil
+	case "failed":
+		return AgentTrajectoryProcessingStateFailed, nil
+	}
+	var t AgentTrajectoryProcessingState
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectoryProcessingState) Ptr() *AgentTrajectoryProcessingState {
+	return &a
+}
+
+var (
+	agentTrajectoryResourceRefFieldName    = big.NewInt(1 << 0)
+	agentTrajectoryResourceRefFieldVersion = big.NewInt(1 << 1)
+)
+
+type AgentTrajectoryResourceRef struct {
+	Name    string  `json:"name" url:"name"`
+	Version *string `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectoryResourceRef) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AgentTrajectoryResourceRef) GetVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Version
+}
+
+func (a *AgentTrajectoryResourceRef) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectoryResourceRef) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryResourceRef) SetName(name string) {
+	a.Name = name
+	a.require(agentTrajectoryResourceRefFieldName)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectoryResourceRef) SetVersion(version *string) {
+	a.Version = version
+	a.require(agentTrajectoryResourceRefFieldVersion)
+}
+
+func (a *AgentTrajectoryResourceRef) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectoryResourceRef
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectoryResourceRef(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectoryResourceRef) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectoryResourceRef
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectoryResourceRef) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectorySequenceRangeFieldFirst = big.NewInt(1 << 0)
+	agentTrajectorySequenceRangeFieldLast  = big.NewInt(1 << 1)
+)
+
+type AgentTrajectorySequenceRange struct {
+	First int `json:"first" url:"first"`
+	Last  int `json:"last" url:"last"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectorySequenceRange) GetFirst() int {
+	if a == nil {
+		return 0
+	}
+	return a.First
+}
+
+func (a *AgentTrajectorySequenceRange) GetLast() int {
+	if a == nil {
+		return 0
+	}
+	return a.Last
+}
+
+func (a *AgentTrajectorySequenceRange) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectorySequenceRange) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetFirst sets the First field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySequenceRange) SetFirst(first int) {
+	a.First = first
+	a.require(agentTrajectorySequenceRangeFieldFirst)
+}
+
+// SetLast sets the Last field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySequenceRange) SetLast(last int) {
+	a.Last = last
+	a.require(agentTrajectorySequenceRangeFieldLast)
+}
+
+func (a *AgentTrajectorySequenceRange) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectorySequenceRange
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectorySequenceRange(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectorySequenceRange) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectorySequenceRange
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectorySequenceRange) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectorySourceFieldConnectionUUID    = big.NewInt(1 << 0)
+	agentTrajectorySourceFieldImportUUID        = big.NewInt(1 << 1)
+	agentTrajectorySourceFieldImportedAt        = big.NewInt(1 << 2)
+	agentTrajectorySourceFieldKind              = big.NewInt(1 << 3)
+	agentTrajectorySourceFieldProvider          = big.NewInt(1 << 4)
+	agentTrajectorySourceFieldProviderProjectID = big.NewInt(1 << 5)
+	agentTrajectorySourceFieldRunUUID           = big.NewInt(1 << 6)
+	agentTrajectorySourceFieldScores            = big.NewInt(1 << 7)
+	agentTrajectorySourceFieldSourceChanged     = big.NewInt(1 << 8)
+	agentTrajectorySourceFieldSourceRevision    = big.NewInt(1 << 9)
+	agentTrajectorySourceFieldSourceURL         = big.NewInt(1 << 10)
+	agentTrajectorySourceFieldTraceEndedAt      = big.NewInt(1 << 11)
+	agentTrajectorySourceFieldTraceID           = big.NewInt(1 << 12)
+	agentTrajectorySourceFieldTraceStartedAt    = big.NewInt(1 << 13)
+)
+
+type AgentTrajectorySource struct {
+	ConnectionUUID    *string        `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
+	ImportUUID        *string        `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
+	ImportedAt        *string        `json:"imported_at,omitempty" url:"imported_at,omitempty"`
+	Kind              *string        `json:"kind,omitempty" url:"kind,omitempty"`
+	Provider          *string        `json:"provider,omitempty" url:"provider,omitempty"`
+	ProviderProjectID *string        `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
+	RunUUID           *string        `json:"run_uuid,omitempty" url:"run_uuid,omitempty"`
+	Scores            map[string]any `json:"scores,omitempty" url:"scores,omitempty"`
+	// SourceChanged reports whether the provider trace changed after import.
+	SourceChanged  *bool   `json:"source_changed,omitempty" url:"source_changed,omitempty"`
+	SourceRevision *string `json:"source_revision,omitempty" url:"source_revision,omitempty"`
+	SourceURL      *string `json:"source_url,omitempty" url:"source_url,omitempty"`
+	TraceEndedAt   *string `json:"trace_ended_at,omitempty" url:"trace_ended_at,omitempty"`
+	TraceID        *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
+	TraceStartedAt *string `json:"trace_started_at,omitempty" url:"trace_started_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectorySource) GetConnectionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ConnectionUUID
+}
+
+func (a *AgentTrajectorySource) GetImportUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ImportUUID
+}
+
+func (a *AgentTrajectorySource) GetImportedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ImportedAt
+}
+
+func (a *AgentTrajectorySource) GetProvider() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Provider
+}
+
+func (a *AgentTrajectorySource) GetProviderProjectID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ProviderProjectID
+}
+
+func (a *AgentTrajectorySource) GetRunUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RunUUID
+}
+
+func (a *AgentTrajectorySource) GetScores() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Scores
+}
+
+func (a *AgentTrajectorySource) GetSourceChanged() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.SourceChanged
+}
+
+func (a *AgentTrajectorySource) GetSourceRevision() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceRevision
+}
+
+func (a *AgentTrajectorySource) GetSourceURL() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceURL
+}
+
+func (a *AgentTrajectorySource) GetTraceEndedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TraceEndedAt
+}
+
+func (a *AgentTrajectorySource) GetTraceID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TraceID
+}
+
+func (a *AgentTrajectorySource) GetTraceStartedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TraceStartedAt
+}
+
+func (a *AgentTrajectorySource) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectorySource) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetConnectionUUID sets the ConnectionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetConnectionUUID(connectionUUID *string) {
+	a.ConnectionUUID = connectionUUID
+	a.require(agentTrajectorySourceFieldConnectionUUID)
+}
+
+// SetImportUUID sets the ImportUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetImportUUID(importUUID *string) {
+	a.ImportUUID = importUUID
+	a.require(agentTrajectorySourceFieldImportUUID)
+}
+
+// SetImportedAt sets the ImportedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetImportedAt(importedAt *string) {
+	a.ImportedAt = importedAt
+	a.require(agentTrajectorySourceFieldImportedAt)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetKind(kind *string) {
+	a.Kind = kind
+	a.require(agentTrajectorySourceFieldKind)
+}
+
+// SetProvider sets the Provider field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetProvider(provider *string) {
+	a.Provider = provider
+	a.require(agentTrajectorySourceFieldProvider)
+}
+
+// SetProviderProjectID sets the ProviderProjectID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetProviderProjectID(providerProjectID *string) {
+	a.ProviderProjectID = providerProjectID
+	a.require(agentTrajectorySourceFieldProviderProjectID)
+}
+
+// SetRunUUID sets the RunUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetRunUUID(runUUID *string) {
+	a.RunUUID = runUUID
+	a.require(agentTrajectorySourceFieldRunUUID)
+}
+
+// SetScores sets the Scores field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetScores(scores map[string]any) {
+	a.Scores = scores
+	a.require(agentTrajectorySourceFieldScores)
+}
+
+// SetSourceChanged sets the SourceChanged field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetSourceChanged(sourceChanged *bool) {
+	a.SourceChanged = sourceChanged
+	a.require(agentTrajectorySourceFieldSourceChanged)
+}
+
+// SetSourceRevision sets the SourceRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetSourceRevision(sourceRevision *string) {
+	a.SourceRevision = sourceRevision
+	a.require(agentTrajectorySourceFieldSourceRevision)
+}
+
+// SetSourceURL sets the SourceURL field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetSourceURL(sourceURL *string) {
+	a.SourceURL = sourceURL
+	a.require(agentTrajectorySourceFieldSourceURL)
+}
+
+// SetTraceEndedAt sets the TraceEndedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetTraceEndedAt(traceEndedAt *string) {
+	a.TraceEndedAt = traceEndedAt
+	a.require(agentTrajectorySourceFieldTraceEndedAt)
+}
+
+// SetTraceID sets the TraceID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetTraceID(traceID *string) {
+	a.TraceID = traceID
+	a.require(agentTrajectorySourceFieldTraceID)
+}
+
+// SetTraceStartedAt sets the TraceStartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySource) SetTraceStartedAt(traceStartedAt *string) {
+	a.TraceStartedAt = traceStartedAt
+	a.require(agentTrajectorySourceFieldTraceStartedAt)
+}
+
+func (a *AgentTrajectorySource) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectorySource
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectorySource(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectorySource) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectorySource
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectorySource) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectorySourceDeletionResultFieldAffectedSkills    = big.NewInt(1 << 0)
+	agentTrajectorySourceDeletionResultFieldDeletionUUID      = big.NewInt(1 << 1)
+	agentTrajectorySourceDeletionResultFieldSkillRepairTask   = big.NewInt(1 << 2)
+	agentTrajectorySourceDeletionResultFieldSummaryRepairTask = big.NewInt(1 << 3)
+	agentTrajectorySourceDeletionResultFieldTrajectory        = big.NewInt(1 << 4)
+)
+
+type AgentTrajectorySourceDeletionResult struct {
+	AffectedSkills    *int             `json:"affected_skills,omitempty" url:"affected_skills,omitempty"`
+	DeletionUUID      *string          `json:"deletion_uuid,omitempty" url:"deletion_uuid,omitempty"`
+	SkillRepairTask   *Task            `json:"skill_repair_task,omitempty" url:"skill_repair_task,omitempty"`
+	SummaryRepairTask *Task            `json:"summary_repair_task,omitempty" url:"summary_repair_task,omitempty"`
+	Trajectory        *AgentTrajectory `json:"trajectory,omitempty" url:"trajectory,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectorySourceDeletionResult) GetAffectedSkills() *int {
+	if a == nil {
+		return nil
+	}
+	return a.AffectedSkills
+}
+
+func (a *AgentTrajectorySourceDeletionResult) GetDeletionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.DeletionUUID
+}
+
+func (a *AgentTrajectorySourceDeletionResult) GetSkillRepairTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.SkillRepairTask
+}
+
+func (a *AgentTrajectorySourceDeletionResult) GetSummaryRepairTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.SummaryRepairTask
+}
+
+func (a *AgentTrajectorySourceDeletionResult) GetTrajectory() *AgentTrajectory {
+	if a == nil {
+		return nil
+	}
+	return a.Trajectory
+}
+
+func (a *AgentTrajectorySourceDeletionResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectorySourceDeletionResult) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAffectedSkills sets the AffectedSkills field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySourceDeletionResult) SetAffectedSkills(affectedSkills *int) {
+	a.AffectedSkills = affectedSkills
+	a.require(agentTrajectorySourceDeletionResultFieldAffectedSkills)
+}
+
+// SetDeletionUUID sets the DeletionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySourceDeletionResult) SetDeletionUUID(deletionUUID *string) {
+	a.DeletionUUID = deletionUUID
+	a.require(agentTrajectorySourceDeletionResultFieldDeletionUUID)
+}
+
+// SetSkillRepairTask sets the SkillRepairTask field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySourceDeletionResult) SetSkillRepairTask(skillRepairTask *Task) {
+	a.SkillRepairTask = skillRepairTask
+	a.require(agentTrajectorySourceDeletionResultFieldSkillRepairTask)
+}
+
+// SetSummaryRepairTask sets the SummaryRepairTask field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySourceDeletionResult) SetSummaryRepairTask(summaryRepairTask *Task) {
+	a.SummaryRepairTask = summaryRepairTask
+	a.require(agentTrajectorySourceDeletionResultFieldSummaryRepairTask)
+}
+
+// SetTrajectory sets the Trajectory field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySourceDeletionResult) SetTrajectory(trajectory *AgentTrajectory) {
+	a.Trajectory = trajectory
+	a.require(agentTrajectorySourceDeletionResultFieldTrajectory)
+}
+
+func (a *AgentTrajectorySourceDeletionResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectorySourceDeletionResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectorySourceDeletionResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectorySourceDeletionResult) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectorySourceDeletionResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectorySourceDeletionResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentTrajectorySummaryCreationReason string
+
+const (
+	AgentTrajectorySummaryCreationReasonClose                AgentTrajectorySummaryCreationReason = "close"
+	AgentTrajectorySummaryCreationReasonAbandon              AgentTrajectorySummaryCreationReason = "abandon"
+	AgentTrajectorySummaryCreationReasonRevision             AgentTrajectorySummaryCreationReason = "revision"
+	AgentTrajectorySummaryCreationReasonTaskFamilyCorrection AgentTrajectorySummaryCreationReason = "task_family_correction"
+	AgentTrajectorySummaryCreationReasonEvidenceDeletion     AgentTrajectorySummaryCreationReason = "evidence_deletion"
+	AgentTrajectorySummaryCreationReasonPolicyChange         AgentTrajectorySummaryCreationReason = "policy_change"
+)
+
+func NewAgentTrajectorySummaryCreationReasonFromString(s string) (AgentTrajectorySummaryCreationReason, error) {
+	switch s {
+	case "close":
+		return AgentTrajectorySummaryCreationReasonClose, nil
+	case "abandon":
+		return AgentTrajectorySummaryCreationReasonAbandon, nil
+	case "revision":
+		return AgentTrajectorySummaryCreationReasonRevision, nil
+	case "task_family_correction":
+		return AgentTrajectorySummaryCreationReasonTaskFamilyCorrection, nil
+	case "evidence_deletion":
+		return AgentTrajectorySummaryCreationReasonEvidenceDeletion, nil
+	case "policy_change":
+		return AgentTrajectorySummaryCreationReasonPolicyChange, nil
+	}
+	var t AgentTrajectorySummaryCreationReason
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectorySummaryCreationReason) Ptr() *AgentTrajectorySummaryCreationReason {
+	return &a
+}
+
+type AgentTrajectorySummaryOmissionReason string
+
+const (
+	AgentTrajectorySummaryOmissionReasonNarrowerAuthorization AgentTrajectorySummaryOmissionReason = "narrower_authorization_boundary"
+	AgentTrajectorySummaryOmissionReasonAcknowledgedGap       AgentTrajectorySummaryOmissionReason = "acknowledged_gap"
+	AgentTrajectorySummaryOmissionReasonAbandonedGap          AgentTrajectorySummaryOmissionReason = "abandoned_gap"
+	AgentTrajectorySummaryOmissionReasonProcessingFailed      AgentTrajectorySummaryOmissionReason = "processing_failed"
+	AgentTrajectorySummaryOmissionReasonSourceDeleted         AgentTrajectorySummaryOmissionReason = "source_deleted"
+)
+
+func NewAgentTrajectorySummaryOmissionReasonFromString(s string) (AgentTrajectorySummaryOmissionReason, error) {
+	switch s {
+	case "narrower_authorization_boundary":
+		return AgentTrajectorySummaryOmissionReasonNarrowerAuthorization, nil
+	case "acknowledged_gap":
+		return AgentTrajectorySummaryOmissionReasonAcknowledgedGap, nil
+	case "abandoned_gap":
+		return AgentTrajectorySummaryOmissionReasonAbandonedGap, nil
+	case "processing_failed":
+		return AgentTrajectorySummaryOmissionReasonProcessingFailed, nil
+	case "source_deleted":
+		return AgentTrajectorySummaryOmissionReasonSourceDeleted, nil
+	}
+	var t AgentTrajectorySummaryOmissionReason
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectorySummaryOmissionReason) Ptr() *AgentTrajectorySummaryOmissionReason {
+	return &a
+}
+
+var (
+	agentTrajectorySummaryOmittedRangeFieldFirstSequence = big.NewInt(1 << 0)
+	agentTrajectorySummaryOmittedRangeFieldLastSequence  = big.NewInt(1 << 1)
+	agentTrajectorySummaryOmittedRangeFieldReason        = big.NewInt(1 << 2)
+)
+
+type AgentTrajectorySummaryOmittedRange struct {
+	FirstSequence *int                                  `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
+	LastSequence  *int                                  `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	Reason        *AgentTrajectorySummaryOmissionReason `json:"reason,omitempty" url:"reason,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectorySummaryOmittedRange) GetFirstSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.FirstSequence
+}
+
+func (a *AgentTrajectorySummaryOmittedRange) GetLastSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.LastSequence
+}
+
+func (a *AgentTrajectorySummaryOmittedRange) GetReason() *AgentTrajectorySummaryOmissionReason {
+	if a == nil {
+		return nil
+	}
+	return a.Reason
+}
+
+func (a *AgentTrajectorySummaryOmittedRange) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectorySummaryOmittedRange) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetFirstSequence sets the FirstSequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryOmittedRange) SetFirstSequence(firstSequence *int) {
+	a.FirstSequence = firstSequence
+	a.require(agentTrajectorySummaryOmittedRangeFieldFirstSequence)
+}
+
+// SetLastSequence sets the LastSequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryOmittedRange) SetLastSequence(lastSequence *int) {
+	a.LastSequence = lastSequence
+	a.require(agentTrajectorySummaryOmittedRangeFieldLastSequence)
+}
+
+// SetReason sets the Reason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryOmittedRange) SetReason(reason *AgentTrajectorySummaryOmissionReason) {
+	a.Reason = reason
+	a.require(agentTrajectorySummaryOmittedRangeFieldReason)
+}
+
+func (a *AgentTrajectorySummaryOmittedRange) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectorySummaryOmittedRange
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectorySummaryOmittedRange(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectorySummaryOmittedRange) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectorySummaryOmittedRange
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectorySummaryOmittedRange) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectorySummaryPageFieldItems      = big.NewInt(1 << 0)
+	agentTrajectorySummaryPageFieldNextCursor = big.NewInt(1 << 1)
+	agentTrajectorySummaryPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type AgentTrajectorySummaryPage struct {
+	Items      []*AgentTrajectorySummaryVersion `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string                          `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                             `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectorySummaryPage) GetItems() []*AgentTrajectorySummaryVersion {
+	if a == nil {
+		return nil
+	}
+	return a.Items
+}
+
+func (a *AgentTrajectorySummaryPage) GetNextCursor() *string {
+	if a == nil {
+		return nil
+	}
+	return a.NextCursor
+}
+
+func (a *AgentTrajectorySummaryPage) GetTotalSize() *int {
+	if a == nil {
+		return nil
+	}
+	return a.TotalSize
+}
+
+func (a *AgentTrajectorySummaryPage) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectorySummaryPage) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryPage) SetItems(items []*AgentTrajectorySummaryVersion) {
+	a.Items = items
+	a.require(agentTrajectorySummaryPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryPage) SetNextCursor(nextCursor *string) {
+	a.NextCursor = nextCursor
+	a.require(agentTrajectorySummaryPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryPage) SetTotalSize(totalSize *int) {
+	a.TotalSize = totalSize
+	a.require(agentTrajectorySummaryPageFieldTotalSize)
+}
+
+func (a *AgentTrajectorySummaryPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectorySummaryPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectorySummaryPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectorySummaryPage) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectorySummaryPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectorySummaryPage) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTrajectorySummaryVersionFieldAgentUUID             = big.NewInt(1 << 0)
+	agentTrajectorySummaryVersionFieldAssertionUUID         = big.NewInt(1 << 1)
+	agentTrajectorySummaryVersionFieldCreatedAt             = big.NewInt(1 << 2)
+	agentTrajectorySummaryVersionFieldCreationReason        = big.NewInt(1 << 3)
+	agentTrajectorySummaryVersionFieldFirstOccurredAt       = big.NewInt(1 << 4)
+	agentTrajectorySummaryVersionFieldFirstSequence         = big.NewInt(1 << 5)
+	agentTrajectorySummaryVersionFieldLastOccurredAt        = big.NewInt(1 << 6)
+	agentTrajectorySummaryVersionFieldLastSequence          = big.NewInt(1 << 7)
+	agentTrajectorySummaryVersionFieldOmittedSequenceRanges = big.NewInt(1 << 8)
+	agentTrajectorySummaryVersionFieldOutcome               = big.NewInt(1 << 9)
+	agentTrajectorySummaryVersionFieldParentVersionUUID     = big.NewInt(1 << 10)
+	agentTrajectorySummaryVersionFieldStructuredSummary     = big.NewInt(1 << 11)
+	agentTrajectorySummaryVersionFieldText                  = big.NewInt(1 << 12)
+	agentTrajectorySummaryVersionFieldTrajectoryUUID        = big.NewInt(1 << 13)
+	agentTrajectorySummaryVersionFieldUUID                  = big.NewInt(1 << 14)
+	agentTrajectorySummaryVersionFieldVerification          = big.NewInt(1 << 15)
+	agentTrajectorySummaryVersionFieldVersion               = big.NewInt(1 << 16)
+)
+
+type AgentTrajectorySummaryVersion struct {
+	AgentUUID             *string                               `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	AssertionUUID         *string                               `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	CreatedAt             *string                               `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreationReason        *AgentTrajectorySummaryCreationReason `json:"creation_reason,omitempty" url:"creation_reason,omitempty"`
+	FirstOccurredAt       *string                               `json:"first_occurred_at,omitempty" url:"first_occurred_at,omitempty"`
+	FirstSequence         *int                                  `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
+	LastOccurredAt        *string                               `json:"last_occurred_at,omitempty" url:"last_occurred_at,omitempty"`
+	LastSequence          *int                                  `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	OmittedSequenceRanges []*AgentTrajectorySummaryOmittedRange `json:"omitted_sequence_ranges,omitempty" url:"omitted_sequence_ranges,omitempty"`
+	Outcome               *AgentTrajectoryOutcome               `json:"outcome,omitempty" url:"outcome,omitempty"`
+	ParentVersionUUID     *string                               `json:"parent_version_uuid,omitempty" url:"parent_version_uuid,omitempty"`
+	StructuredSummary     map[string]any                        `json:"structured_summary,omitempty" url:"structured_summary,omitempty"`
+	Text                  *string                               `json:"text,omitempty" url:"text,omitempty"`
+	TrajectoryUUID        *string                               `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	UUID                  *string                               `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Verification          *AgentTrajectoryVerification          `json:"verification,omitempty" url:"verification,omitempty"`
+	Version               *int                                  `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrajectorySummaryVersion) GetAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentUUID
+}
+
+func (a *AgentTrajectorySummaryVersion) GetAssertionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AssertionUUID
+}
+
+func (a *AgentTrajectorySummaryVersion) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentTrajectorySummaryVersion) GetCreationReason() *AgentTrajectorySummaryCreationReason {
+	if a == nil {
+		return nil
+	}
+	return a.CreationReason
+}
+
+func (a *AgentTrajectorySummaryVersion) GetFirstOccurredAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.FirstOccurredAt
+}
+
+func (a *AgentTrajectorySummaryVersion) GetFirstSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.FirstSequence
+}
+
+func (a *AgentTrajectorySummaryVersion) GetLastOccurredAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.LastOccurredAt
+}
+
+func (a *AgentTrajectorySummaryVersion) GetLastSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.LastSequence
+}
+
+func (a *AgentTrajectorySummaryVersion) GetOmittedSequenceRanges() []*AgentTrajectorySummaryOmittedRange {
+	if a == nil {
+		return nil
+	}
+	return a.OmittedSequenceRanges
+}
+
+func (a *AgentTrajectorySummaryVersion) GetOutcome() *AgentTrajectoryOutcome {
+	if a == nil {
+		return nil
+	}
+	return a.Outcome
+}
+
+func (a *AgentTrajectorySummaryVersion) GetParentVersionUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ParentVersionUUID
+}
+
+func (a *AgentTrajectorySummaryVersion) GetStructuredSummary() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.StructuredSummary
+}
+
+func (a *AgentTrajectorySummaryVersion) GetText() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Text
+}
+
+func (a *AgentTrajectorySummaryVersion) GetTrajectoryUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryUUID
+}
+
+func (a *AgentTrajectorySummaryVersion) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentTrajectorySummaryVersion) GetVerification() *AgentTrajectoryVerification {
+	if a == nil {
+		return nil
+	}
+	return a.Verification
+}
+
+func (a *AgentTrajectorySummaryVersion) GetVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Version
+}
+
+func (a *AgentTrajectorySummaryVersion) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrajectorySummaryVersion) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetAgentUUID(agentUUID *string) {
+	a.AgentUUID = agentUUID
+	a.require(agentTrajectorySummaryVersionFieldAgentUUID)
+}
+
+// SetAssertionUUID sets the AssertionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetAssertionUUID(assertionUUID *string) {
+	a.AssertionUUID = assertionUUID
+	a.require(agentTrajectorySummaryVersionFieldAssertionUUID)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentTrajectorySummaryVersionFieldCreatedAt)
+}
+
+// SetCreationReason sets the CreationReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetCreationReason(creationReason *AgentTrajectorySummaryCreationReason) {
+	a.CreationReason = creationReason
+	a.require(agentTrajectorySummaryVersionFieldCreationReason)
+}
+
+// SetFirstOccurredAt sets the FirstOccurredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetFirstOccurredAt(firstOccurredAt *string) {
+	a.FirstOccurredAt = firstOccurredAt
+	a.require(agentTrajectorySummaryVersionFieldFirstOccurredAt)
+}
+
+// SetFirstSequence sets the FirstSequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetFirstSequence(firstSequence *int) {
+	a.FirstSequence = firstSequence
+	a.require(agentTrajectorySummaryVersionFieldFirstSequence)
+}
+
+// SetLastOccurredAt sets the LastOccurredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetLastOccurredAt(lastOccurredAt *string) {
+	a.LastOccurredAt = lastOccurredAt
+	a.require(agentTrajectorySummaryVersionFieldLastOccurredAt)
+}
+
+// SetLastSequence sets the LastSequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetLastSequence(lastSequence *int) {
+	a.LastSequence = lastSequence
+	a.require(agentTrajectorySummaryVersionFieldLastSequence)
+}
+
+// SetOmittedSequenceRanges sets the OmittedSequenceRanges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetOmittedSequenceRanges(omittedSequenceRanges []*AgentTrajectorySummaryOmittedRange) {
+	a.OmittedSequenceRanges = omittedSequenceRanges
+	a.require(agentTrajectorySummaryVersionFieldOmittedSequenceRanges)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetOutcome(outcome *AgentTrajectoryOutcome) {
+	a.Outcome = outcome
+	a.require(agentTrajectorySummaryVersionFieldOutcome)
+}
+
+// SetParentVersionUUID sets the ParentVersionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetParentVersionUUID(parentVersionUUID *string) {
+	a.ParentVersionUUID = parentVersionUUID
+	a.require(agentTrajectorySummaryVersionFieldParentVersionUUID)
+}
+
+// SetStructuredSummary sets the StructuredSummary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetStructuredSummary(structuredSummary map[string]any) {
+	a.StructuredSummary = structuredSummary
+	a.require(agentTrajectorySummaryVersionFieldStructuredSummary)
+}
+
+// SetText sets the Text field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetText(text *string) {
+	a.Text = text
+	a.require(agentTrajectorySummaryVersionFieldText)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetTrajectoryUUID(trajectoryUUID *string) {
+	a.TrajectoryUUID = trajectoryUUID
+	a.require(agentTrajectorySummaryVersionFieldTrajectoryUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentTrajectorySummaryVersionFieldUUID)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetVerification(verification *AgentTrajectoryVerification) {
+	a.Verification = verification
+	a.require(agentTrajectorySummaryVersionFieldVerification)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrajectorySummaryVersion) SetVersion(version *int) {
+	a.Version = version
+	a.require(agentTrajectorySummaryVersionFieldVersion)
+}
+
+func (a *AgentTrajectorySummaryVersion) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrajectorySummaryVersion
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrajectorySummaryVersion(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrajectorySummaryVersion) MarshalJSON() ([]byte, error) {
+	type embed AgentTrajectorySummaryVersion
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrajectorySummaryVersion) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentTrajectoryVerification string
+
+const (
+	AgentTrajectoryVerificationNone     AgentTrajectoryVerification = "none"
+	AgentTrajectoryVerificationAgent    AgentTrajectoryVerification = "agent"
+	AgentTrajectoryVerificationTool     AgentTrajectoryVerification = "tool"
+	AgentTrajectoryVerificationCustomer AgentTrajectoryVerification = "customer"
+	AgentTrajectoryVerificationExternal AgentTrajectoryVerification = "external"
+)
+
+func NewAgentTrajectoryVerificationFromString(s string) (AgentTrajectoryVerification, error) {
+	switch s {
+	case "none":
+		return AgentTrajectoryVerificationNone, nil
+	case "agent":
+		return AgentTrajectoryVerificationAgent, nil
+	case "tool":
+		return AgentTrajectoryVerificationTool, nil
+	case "customer":
+		return AgentTrajectoryVerificationCustomer, nil
+	case "external":
+		return AgentTrajectoryVerificationExternal, nil
+	}
+	var t AgentTrajectoryVerification
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTrajectoryVerification) Ptr() *AgentTrajectoryVerification {
+	return &a
+}
+
+type AgentVerificationStrength string
+
+const (
+	AgentVerificationStrengthTool     AgentVerificationStrength = "tool_verified"
+	AgentVerificationStrengthCustomer AgentVerificationStrength = "customer_verified"
+	AgentVerificationStrengthExternal AgentVerificationStrength = "externally_verified"
+)
+
+func NewAgentVerificationStrengthFromString(s string) (AgentVerificationStrength, error) {
+	switch s {
+	case "tool_verified":
+		return AgentVerificationStrengthTool, nil
+	case "customer_verified":
+		return AgentVerificationStrengthCustomer, nil
+	case "externally_verified":
+		return AgentVerificationStrengthExternal, nil
+	}
+	var t AgentVerificationStrength
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentVerificationStrength) Ptr() *AgentVerificationStrength {
+	return &a
+}
+
+var (
+	agentVerifierFieldAgentUUID          = big.NewInt(1 << 0)
+	agentVerifierFieldCapabilities       = big.NewInt(1 << 1)
+	agentVerifierFieldClass              = big.NewInt(1 << 2)
+	agentVerifierFieldCreatedAt          = big.NewInt(1 << 3)
+	agentVerifierFieldCreatedBy          = big.NewInt(1 << 4)
+	agentVerifierFieldMetadata           = big.NewInt(1 << 5)
+	agentVerifierFieldPermittedStrengths = big.NewInt(1 << 6)
+	agentVerifierFieldPrincipalBindings  = big.NewInt(1 << 7)
+	agentVerifierFieldRevision           = big.NewInt(1 << 8)
+	agentVerifierFieldRevokedAt          = big.NewInt(1 << 9)
+	agentVerifierFieldStatus             = big.NewInt(1 << 10)
+	agentVerifierFieldUpdatedAt          = big.NewInt(1 << 11)
+	agentVerifierFieldUUID               = big.NewInt(1 << 12)
+	agentVerifierFieldVerifierID         = big.NewInt(1 << 13)
+)
+
+type AgentVerifier struct {
+	// The owning Agent UUID.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// Structured capabilities reported by the verifier integration.
+	Capabilities map[string]any `json:"capabilities,omitempty" url:"capabilities,omitempty"`
+	// The immutable verifier class.
+	Class *string `json:"class,omitempty" url:"class,omitempty"`
+	// The time the registration was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The authenticated principal that created this registration.
+	CreatedBy *AgentVerifierPrincipal `json:"created_by,omitempty" url:"created_by,omitempty"`
+	// Developer metadata used to organize the registration.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Verification strengths this registration may assert.
+	PermittedStrengths []AgentVerificationStrength `json:"permitted_strengths,omitempty" url:"permitted_strengths,omitempty"`
+	// Exact authenticated principals permitted to submit verifier assertions.
+	PrincipalBindings []*AgentVerifierPrincipalBinding `json:"principal_bindings,omitempty" url:"principal_bindings,omitempty"`
+	// The revision required by the next update or revoke request.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The time the registration was revoked.
+	RevokedAt *string `json:"revoked_at,omitempty" url:"revoked_at,omitempty"`
+	// The registration lifecycle status.
+	Status *AgentVerifierStatus `json:"status,omitempty" url:"status,omitempty"`
+	// The time the registration was last updated.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The stable verifier registration UUID.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The developer-assigned verifier identifier, unique within the Agent.
+	VerifierID *string `json:"verifier_id,omitempty" url:"verifier_id,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentVerifier) GetAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentUUID
+}
+
+func (a *AgentVerifier) GetCapabilities() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Capabilities
+}
+
+func (a *AgentVerifier) GetClass() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Class
+}
+
+func (a *AgentVerifier) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentVerifier) GetCreatedBy() *AgentVerifierPrincipal {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedBy
+}
+
+func (a *AgentVerifier) GetMetadata() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AgentVerifier) GetPermittedStrengths() []AgentVerificationStrength {
+	if a == nil {
+		return nil
+	}
+	return a.PermittedStrengths
+}
+
+func (a *AgentVerifier) GetPrincipalBindings() []*AgentVerifierPrincipalBinding {
+	if a == nil {
+		return nil
+	}
+	return a.PrincipalBindings
+}
+
+func (a *AgentVerifier) GetRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Revision
+}
+
+func (a *AgentVerifier) GetRevokedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RevokedAt
+}
+
+func (a *AgentVerifier) GetStatus() *AgentVerifierStatus {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AgentVerifier) GetUpdatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UpdatedAt
+}
+
+func (a *AgentVerifier) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentVerifier) GetVerifierID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.VerifierID
+}
+
+func (a *AgentVerifier) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentVerifier) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetAgentUUID(agentUUID *string) {
+	a.AgentUUID = agentUUID
+	a.require(agentVerifierFieldAgentUUID)
+}
+
+// SetCapabilities sets the Capabilities field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetCapabilities(capabilities map[string]any) {
+	a.Capabilities = capabilities
+	a.require(agentVerifierFieldCapabilities)
+}
+
+// SetClass sets the Class field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetClass(class *string) {
+	a.Class = class
+	a.require(agentVerifierFieldClass)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentVerifierFieldCreatedAt)
+}
+
+// SetCreatedBy sets the CreatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetCreatedBy(createdBy *AgentVerifierPrincipal) {
+	a.CreatedBy = createdBy
+	a.require(agentVerifierFieldCreatedBy)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(agentVerifierFieldMetadata)
+}
+
+// SetPermittedStrengths sets the PermittedStrengths field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetPermittedStrengths(permittedStrengths []AgentVerificationStrength) {
+	a.PermittedStrengths = permittedStrengths
+	a.require(agentVerifierFieldPermittedStrengths)
+}
+
+// SetPrincipalBindings sets the PrincipalBindings field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetPrincipalBindings(principalBindings []*AgentVerifierPrincipalBinding) {
+	a.PrincipalBindings = principalBindings
+	a.require(agentVerifierFieldPrincipalBindings)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetRevision(revision *int) {
+	a.Revision = revision
+	a.require(agentVerifierFieldRevision)
+}
+
+// SetRevokedAt sets the RevokedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetRevokedAt(revokedAt *string) {
+	a.RevokedAt = revokedAt
+	a.require(agentVerifierFieldRevokedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetStatus(status *AgentVerifierStatus) {
+	a.Status = status
+	a.require(agentVerifierFieldStatus)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetUpdatedAt(updatedAt *string) {
+	a.UpdatedAt = updatedAt
+	a.require(agentVerifierFieldUpdatedAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentVerifierFieldUUID)
+}
+
+// SetVerifierID sets the VerifierID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifier) SetVerifierID(verifierID *string) {
+	a.VerifierID = verifierID
+	a.require(agentVerifierFieldVerifierID)
+}
+
+func (a *AgentVerifier) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentVerifier
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentVerifier(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentVerifier) MarshalJSON() ([]byte, error) {
+	type embed AgentVerifier
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentVerifier) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentVerifierAssertionOutcome string
+
+const (
+	AgentVerifierAssertionOutcomeSucceeded AgentVerifierAssertionOutcome = "succeeded"
+	AgentVerifierAssertionOutcomeFailed    AgentVerifierAssertionOutcome = "failed"
+	AgentVerifierAssertionOutcomePartial   AgentVerifierAssertionOutcome = "partial"
+	AgentVerifierAssertionOutcomeAbandoned AgentVerifierAssertionOutcome = "abandoned"
+	AgentVerifierAssertionOutcomeUnknown   AgentVerifierAssertionOutcome = "unknown"
+)
+
+func NewAgentVerifierAssertionOutcomeFromString(s string) (AgentVerifierAssertionOutcome, error) {
+	switch s {
+	case "succeeded":
+		return AgentVerifierAssertionOutcomeSucceeded, nil
+	case "failed":
+		return AgentVerifierAssertionOutcomeFailed, nil
+	case "partial":
+		return AgentVerifierAssertionOutcomePartial, nil
+	case "abandoned":
+		return AgentVerifierAssertionOutcomeAbandoned, nil
+	case "unknown":
+		return AgentVerifierAssertionOutcomeUnknown, nil
+	}
+	var t AgentVerifierAssertionOutcome
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentVerifierAssertionOutcome) Ptr() *AgentVerifierAssertionOutcome {
+	return &a
+}
+
+var (
+	agentVerifierEvidenceInvalidationResultFieldAffectedSkillUUIDs = big.NewInt(1 << 0)
+	agentVerifierEvidenceInvalidationResultFieldAgentUUID          = big.NewInt(1 << 1)
+	agentVerifierEvidenceInvalidationResultFieldCreatedAt          = big.NewInt(1 << 2)
+	agentVerifierEvidenceInvalidationResultFieldCreatedBy          = big.NewInt(1 << 3)
+	agentVerifierEvidenceInvalidationResultFieldReason             = big.NewInt(1 << 4)
+	agentVerifierEvidenceInvalidationResultFieldTask               = big.NewInt(1 << 5)
+	agentVerifierEvidenceInvalidationResultFieldUUID               = big.NewInt(1 << 6)
+	agentVerifierEvidenceInvalidationResultFieldVerifierRevisions  = big.NewInt(1 << 7)
+	agentVerifierEvidenceInvalidationResultFieldVerifierUUID       = big.NewInt(1 << 8)
+)
+
+type AgentVerifierEvidenceInvalidationResult struct {
+	AffectedSkillUUIDs []string                `json:"affected_skill_uuids,omitempty" url:"affected_skill_uuids,omitempty"`
+	AgentUUID          *string                 `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	CreatedAt          *string                 `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreatedBy          *AgentVerifierPrincipal `json:"created_by,omitempty" url:"created_by,omitempty"`
+	Reason             *string                 `json:"reason,omitempty" url:"reason,omitempty"`
+	Task               *Task                   `json:"task,omitempty" url:"task,omitempty"`
+	UUID               *string                 `json:"uuid,omitempty" url:"uuid,omitempty"`
+	VerifierRevisions  []int                   `json:"verifier_revisions,omitempty" url:"verifier_revisions,omitempty"`
+	VerifierUUID       *string                 `json:"verifier_uuid,omitempty" url:"verifier_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetAffectedSkillUUIDs() []string {
+	if a == nil {
+		return nil
+	}
+	return a.AffectedSkillUUIDs
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentUUID
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetCreatedBy() *AgentVerifierPrincipal {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedBy
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetReason() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Reason
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetTask() *Task {
+	if a == nil {
+		return nil
+	}
+	return a.Task
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetVerifierRevisions() []int {
+	if a == nil {
+		return nil
+	}
+	return a.VerifierRevisions
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetVerifierUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.VerifierUUID
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAffectedSkillUUIDs sets the AffectedSkillUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetAffectedSkillUUIDs(affectedSkillUUIDs []string) {
+	a.AffectedSkillUUIDs = affectedSkillUUIDs
+	a.require(agentVerifierEvidenceInvalidationResultFieldAffectedSkillUUIDs)
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetAgentUUID(agentUUID *string) {
+	a.AgentUUID = agentUUID
+	a.require(agentVerifierEvidenceInvalidationResultFieldAgentUUID)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentVerifierEvidenceInvalidationResultFieldCreatedAt)
+}
+
+// SetCreatedBy sets the CreatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetCreatedBy(createdBy *AgentVerifierPrincipal) {
+	a.CreatedBy = createdBy
+	a.require(agentVerifierEvidenceInvalidationResultFieldCreatedBy)
+}
+
+// SetReason sets the Reason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetReason(reason *string) {
+	a.Reason = reason
+	a.require(agentVerifierEvidenceInvalidationResultFieldReason)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetTask(task *Task) {
+	a.Task = task
+	a.require(agentVerifierEvidenceInvalidationResultFieldTask)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentVerifierEvidenceInvalidationResultFieldUUID)
+}
+
+// SetVerifierRevisions sets the VerifierRevisions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetVerifierRevisions(verifierRevisions []int) {
+	a.VerifierRevisions = verifierRevisions
+	a.require(agentVerifierEvidenceInvalidationResultFieldVerifierRevisions)
+}
+
+// SetVerifierUUID sets the VerifierUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierEvidenceInvalidationResult) SetVerifierUUID(verifierUUID *string) {
+	a.VerifierUUID = verifierUUID
+	a.require(agentVerifierEvidenceInvalidationResultFieldVerifierUUID)
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentVerifierEvidenceInvalidationResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentVerifierEvidenceInvalidationResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) MarshalJSON() ([]byte, error) {
+	type embed AgentVerifierEvidenceInvalidationResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentVerifierEvidenceInvalidationResult) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentVerifierPrincipalFieldPrincipalID   = big.NewInt(1 << 0)
+	agentVerifierPrincipalFieldPrincipalType = big.NewInt(1 << 1)
+)
+
+type AgentVerifierPrincipal struct {
+	// The exact principal identifier. Wildcards are not supported.
+	PrincipalID string `json:"principal_id" url:"principal_id"`
+	// The authenticated principal type: member, project-api-key, service, or mcp_user.
+	PrincipalType string `json:"principal_type" url:"principal_type"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentVerifierPrincipal) GetPrincipalID() string {
+	if a == nil {
+		return ""
+	}
+	return a.PrincipalID
+}
+
+func (a *AgentVerifierPrincipal) GetPrincipalType() string {
+	if a == nil {
+		return ""
+	}
+	return a.PrincipalType
+}
+
+func (a *AgentVerifierPrincipal) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentVerifierPrincipal) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetPrincipalID sets the PrincipalID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipal) SetPrincipalID(principalID string) {
+	a.PrincipalID = principalID
+	a.require(agentVerifierPrincipalFieldPrincipalID)
+}
+
+// SetPrincipalType sets the PrincipalType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipal) SetPrincipalType(principalType string) {
+	a.PrincipalType = principalType
+	a.require(agentVerifierPrincipalFieldPrincipalType)
+}
+
+func (a *AgentVerifierPrincipal) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentVerifierPrincipal
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentVerifierPrincipal(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentVerifierPrincipal) MarshalJSON() ([]byte, error) {
+	type embed AgentVerifierPrincipal
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentVerifierPrincipal) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentVerifierPrincipalBindingFieldCreatedAt         = big.NewInt(1 << 0)
+	agentVerifierPrincipalBindingFieldEffectiveStrength = big.NewInt(1 << 1)
+	agentVerifierPrincipalBindingFieldPrincipalID       = big.NewInt(1 << 2)
+	agentVerifierPrincipalBindingFieldPrincipalType     = big.NewInt(1 << 3)
+)
+
+type AgentVerifierPrincipalBinding struct {
+	// The time the binding was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The verification strength assigned to this principal binding.
+	EffectiveStrength *AgentVerificationStrength `json:"effective_strength,omitempty" url:"effective_strength,omitempty"`
+	// The exact principal identifier bound to this verifier.
+	PrincipalID *string `json:"principal_id,omitempty" url:"principal_id,omitempty"`
+	// The authenticated principal type bound to this verifier.
+	PrincipalType *string `json:"principal_type,omitempty" url:"principal_type,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentVerifierPrincipalBinding) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentVerifierPrincipalBinding) GetEffectiveStrength() *AgentVerificationStrength {
+	if a == nil {
+		return nil
+	}
+	return a.EffectiveStrength
+}
+
+func (a *AgentVerifierPrincipalBinding) GetPrincipalID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PrincipalID
+}
+
+func (a *AgentVerifierPrincipalBinding) GetPrincipalType() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PrincipalType
+}
+
+func (a *AgentVerifierPrincipalBinding) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentVerifierPrincipalBinding) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipalBinding) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentVerifierPrincipalBindingFieldCreatedAt)
+}
+
+// SetEffectiveStrength sets the EffectiveStrength field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipalBinding) SetEffectiveStrength(effectiveStrength *AgentVerificationStrength) {
+	a.EffectiveStrength = effectiveStrength
+	a.require(agentVerifierPrincipalBindingFieldEffectiveStrength)
+}
+
+// SetPrincipalID sets the PrincipalID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipalBinding) SetPrincipalID(principalID *string) {
+	a.PrincipalID = principalID
+	a.require(agentVerifierPrincipalBindingFieldPrincipalID)
+}
+
+// SetPrincipalType sets the PrincipalType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipalBinding) SetPrincipalType(principalType *string) {
+	a.PrincipalType = principalType
+	a.require(agentVerifierPrincipalBindingFieldPrincipalType)
+}
+
+func (a *AgentVerifierPrincipalBinding) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentVerifierPrincipalBinding
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentVerifierPrincipalBinding(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentVerifierPrincipalBinding) MarshalJSON() ([]byte, error) {
+	type embed AgentVerifierPrincipalBinding
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentVerifierPrincipalBinding) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentVerifierPrincipalBindingInputFieldEffectiveStrength = big.NewInt(1 << 0)
+	agentVerifierPrincipalBindingInputFieldPrincipalID       = big.NewInt(1 << 1)
+	agentVerifierPrincipalBindingInputFieldPrincipalType     = big.NewInt(1 << 2)
+)
+
+type AgentVerifierPrincipalBindingInput struct {
+	// The verification strength assigned to this principal binding.
+	EffectiveStrength AgentVerificationStrength `json:"effective_strength" url:"effective_strength"`
+	// The exact principal identifier. Wildcards are not supported.
+	PrincipalID string `json:"principal_id" url:"principal_id"`
+	// The authenticated principal type: member, project-api-key, service, or mcp_user.
+	PrincipalType string `json:"principal_type" url:"principal_type"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentVerifierPrincipalBindingInput) GetEffectiveStrength() AgentVerificationStrength {
+	if a == nil {
+		return ""
+	}
+	return a.EffectiveStrength
+}
+
+func (a *AgentVerifierPrincipalBindingInput) GetPrincipalID() string {
+	if a == nil {
+		return ""
+	}
+	return a.PrincipalID
+}
+
+func (a *AgentVerifierPrincipalBindingInput) GetPrincipalType() string {
+	if a == nil {
+		return ""
+	}
+	return a.PrincipalType
+}
+
+func (a *AgentVerifierPrincipalBindingInput) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentVerifierPrincipalBindingInput) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetEffectiveStrength sets the EffectiveStrength field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipalBindingInput) SetEffectiveStrength(effectiveStrength AgentVerificationStrength) {
+	a.EffectiveStrength = effectiveStrength
+	a.require(agentVerifierPrincipalBindingInputFieldEffectiveStrength)
+}
+
+// SetPrincipalID sets the PrincipalID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipalBindingInput) SetPrincipalID(principalID string) {
+	a.PrincipalID = principalID
+	a.require(agentVerifierPrincipalBindingInputFieldPrincipalID)
+}
+
+// SetPrincipalType sets the PrincipalType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentVerifierPrincipalBindingInput) SetPrincipalType(principalType string) {
+	a.PrincipalType = principalType
+	a.require(agentVerifierPrincipalBindingInputFieldPrincipalType)
+}
+
+func (a *AgentVerifierPrincipalBindingInput) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentVerifierPrincipalBindingInput
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentVerifierPrincipalBindingInput(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentVerifierPrincipalBindingInput) MarshalJSON() ([]byte, error) {
+	type embed AgentVerifierPrincipalBindingInput
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentVerifierPrincipalBindingInput) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentVerifierStatus string
+
+const (
+	AgentVerifierStatusActive  AgentVerifierStatus = "active"
+	AgentVerifierStatusRevoked AgentVerifierStatus = "revoked"
+)
+
+func NewAgentVerifierStatusFromString(s string) (AgentVerifierStatus, error) {
+	switch s {
+	case "active":
+		return AgentVerifierStatusActive, nil
+	case "revoked":
+		return AgentVerifierStatusRevoked, nil
+	}
+	var t AgentVerifierStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentVerifierStatus) Ptr() *AgentVerifierStatus {
+	return &a
+}
+
+var (
 	artifactListRequestFieldFilters = big.NewInt(1 << 0)
 )
 
@@ -860,10 +12164,12 @@ func (a *ArtifactListRequest) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *ArtifactListRequest) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetFilters sets the Filters field and marks it as non-optional;
@@ -945,10 +12251,12 @@ func (a *AsyncResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (a *AsyncResult) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetTask sets the Task field and marks it as non-optional;
@@ -1000,50 +12308,735 @@ func (a *AsyncResult) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type ComparisonOperator string
-
-const (
-	ComparisonOperatorEquals           ComparisonOperator = "="
-	ComparisonOperatorNotEquals        ComparisonOperator = "<>"
-	ComparisonOperatorGreaterThan      ComparisonOperator = ">"
-	ComparisonOperatorLessThan         ComparisonOperator = "<"
-	ComparisonOperatorGreaterThanEqual ComparisonOperator = ">="
-	ComparisonOperatorLessThanEqual    ComparisonOperator = "<="
-	ComparisonOperatorIsNull           ComparisonOperator = "IS NULL"
-	ComparisonOperatorIsNullAlias      ComparisonOperator = "is_null"
-	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
-	ComparisonOperatorContains         ComparisonOperator = "CONTAINS"
+var (
+	contentPolicyCategoryFieldDescription = big.NewInt(1 << 0)
+	contentPolicyCategoryFieldID          = big.NewInt(1 << 1)
+	contentPolicyCategoryFieldKey         = big.NewInt(1 << 2)
 )
 
-func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
-	switch s {
-	case "=":
-		return ComparisonOperatorEquals, nil
-	case "<>":
-		return ComparisonOperatorNotEquals, nil
-	case ">":
-		return ComparisonOperatorGreaterThan, nil
-	case "<":
-		return ComparisonOperatorLessThan, nil
-	case ">=":
-		return ComparisonOperatorGreaterThanEqual, nil
-	case "<=":
-		return ComparisonOperatorLessThanEqual, nil
-	case "IS NULL":
-		return ComparisonOperatorIsNull, nil
-	case "is_null":
-		return ComparisonOperatorIsNullAlias, nil
-	case "IS NOT NULL":
-		return ComparisonOperatorIsNotNull, nil
-	case "CONTAINS":
-		return ComparisonOperatorContains, nil
-	}
-	var t ComparisonOperator
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
+type ContentPolicyCategory struct {
+	// What the category covers.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The server-assigned identifier of the category. Stable across revisions
+	// while the key is unchanged.
+	ID *string `json:"id,omitempty" url:"id,omitempty"`
+	// The stable key of the category.
+	Key *string `json:"key,omitempty" url:"key,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
 }
 
-func (c ComparisonOperator) Ptr() *ComparisonOperator {
-	return &c
+func (c *ContentPolicyCategory) GetDescription() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Description
+}
+
+func (c *ContentPolicyCategory) GetID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ID
+}
+
+func (c *ContentPolicyCategory) GetKey() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Key
+}
+
+func (c *ContentPolicyCategory) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicyCategory) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyCategory) SetDescription(description *string) {
+	c.Description = description
+	c.require(contentPolicyCategoryFieldDescription)
+}
+
+// SetID sets the ID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyCategory) SetID(id *string) {
+	c.ID = id
+	c.require(contentPolicyCategoryFieldID)
+}
+
+// SetKey sets the Key field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyCategory) SetKey(key *string) {
+	c.Key = key
+	c.require(contentPolicyCategoryFieldKey)
+}
+
+func (c *ContentPolicyCategory) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyCategory
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicyCategory(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicyCategory) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyCategory
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicyCategory) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
+	contentPolicyCategoryRequestFieldDescription = big.NewInt(1 << 0)
+	contentPolicyCategoryRequestFieldKey         = big.NewInt(1 << 1)
+)
+
+type ContentPolicyCategoryRequest struct {
+	// What the category covers, in plain language. Maximum 500 characters.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// A stable key for the category, unique within the policy. Lowercase
+	// letters, digits, and underscores; 2 to 64 characters.
+	Key *string `json:"key,omitempty" url:"key,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ContentPolicyCategoryRequest) GetDescription() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Description
+}
+
+func (c *ContentPolicyCategoryRequest) GetKey() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Key
+}
+
+func (c *ContentPolicyCategoryRequest) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicyCategoryRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyCategoryRequest) SetDescription(description *string) {
+	c.Description = description
+	c.require(contentPolicyCategoryRequestFieldDescription)
+}
+
+// SetKey sets the Key field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyCategoryRequest) SetKey(key *string) {
+	c.Key = key
+	c.require(contentPolicyCategoryRequestFieldKey)
+}
+
+func (c *ContentPolicyCategoryRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyCategoryRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicyCategoryRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicyCategoryRequest) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyCategoryRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicyCategoryRequest) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
+	contentPolicyRuleFieldCategoryKey        = big.NewInt(1 << 0)
+	contentPolicyRuleFieldDescription        = big.NewInt(1 << 1)
+	contentPolicyRuleFieldID                 = big.NewInt(1 << 2)
+	contentPolicyRuleFieldPermittedExamples  = big.NewInt(1 << 3)
+	contentPolicyRuleFieldProhibitedExamples = big.NewInt(1 << 4)
+)
+
+type ContentPolicyRule struct {
+	// The key of the category this rule belongs to.
+	CategoryKey *string `json:"category_key,omitempty" url:"category_key,omitempty"`
+	// The content this rule prohibits.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The server-assigned identifier of the rule. Stable across revisions while
+	// the category key and description are unchanged.
+	ID *string `json:"id,omitempty" url:"id,omitempty"`
+	// Examples of similar content the rule permits.
+	PermittedExamples []string `json:"permitted_examples,omitempty" url:"permitted_examples,omitempty"`
+	// Examples of content the rule prohibits.
+	ProhibitedExamples []string `json:"prohibited_examples,omitempty" url:"prohibited_examples,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ContentPolicyRule) GetCategoryKey() *string {
+	if c == nil {
+		return nil
+	}
+	return c.CategoryKey
+}
+
+func (c *ContentPolicyRule) GetDescription() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Description
+}
+
+func (c *ContentPolicyRule) GetID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ID
+}
+
+func (c *ContentPolicyRule) GetPermittedExamples() []string {
+	if c == nil {
+		return nil
+	}
+	return c.PermittedExamples
+}
+
+func (c *ContentPolicyRule) GetProhibitedExamples() []string {
+	if c == nil {
+		return nil
+	}
+	return c.ProhibitedExamples
+}
+
+func (c *ContentPolicyRule) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicyRule) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetCategoryKey sets the CategoryKey field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetCategoryKey(categoryKey *string) {
+	c.CategoryKey = categoryKey
+	c.require(contentPolicyRuleFieldCategoryKey)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetDescription(description *string) {
+	c.Description = description
+	c.require(contentPolicyRuleFieldDescription)
+}
+
+// SetID sets the ID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetID(id *string) {
+	c.ID = id
+	c.require(contentPolicyRuleFieldID)
+}
+
+// SetPermittedExamples sets the PermittedExamples field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetPermittedExamples(permittedExamples []string) {
+	c.PermittedExamples = permittedExamples
+	c.require(contentPolicyRuleFieldPermittedExamples)
+}
+
+// SetProhibitedExamples sets the ProhibitedExamples field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetProhibitedExamples(prohibitedExamples []string) {
+	c.ProhibitedExamples = prohibitedExamples
+	c.require(contentPolicyRuleFieldProhibitedExamples)
+}
+
+func (c *ContentPolicyRule) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyRule
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicyRule(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicyRule) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyRule
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicyRule) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
+	contentPolicyRuleRequestFieldCategoryKey        = big.NewInt(1 << 0)
+	contentPolicyRuleRequestFieldDescription        = big.NewInt(1 << 1)
+	contentPolicyRuleRequestFieldPermittedExamples  = big.NewInt(1 << 2)
+	contentPolicyRuleRequestFieldProhibitedExamples = big.NewInt(1 << 3)
+)
+
+type ContentPolicyRuleRequest struct {
+	// The key of the category this rule belongs to. The category must be in
+	// the same policy.
+	CategoryKey *string `json:"category_key,omitempty" url:"category_key,omitempty"`
+	// The content this rule prohibits, in plain language. Maximum 1000
+	// characters.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// Examples of similar content the rule permits. 0 to 8 items, each at most
+	// 500 characters.
+	PermittedExamples []string `json:"permitted_examples,omitempty" url:"permitted_examples,omitempty"`
+	// Examples of content the rule prohibits. 1 to 8 items, each at most 500
+	// characters.
+	ProhibitedExamples []string `json:"prohibited_examples,omitempty" url:"prohibited_examples,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ContentPolicyRuleRequest) GetCategoryKey() *string {
+	if c == nil {
+		return nil
+	}
+	return c.CategoryKey
+}
+
+func (c *ContentPolicyRuleRequest) GetDescription() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Description
+}
+
+func (c *ContentPolicyRuleRequest) GetPermittedExamples() []string {
+	if c == nil {
+		return nil
+	}
+	return c.PermittedExamples
+}
+
+func (c *ContentPolicyRuleRequest) GetProhibitedExamples() []string {
+	if c == nil {
+		return nil
+	}
+	return c.ProhibitedExamples
+}
+
+func (c *ContentPolicyRuleRequest) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicyRuleRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetCategoryKey sets the CategoryKey field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetCategoryKey(categoryKey *string) {
+	c.CategoryKey = categoryKey
+	c.require(contentPolicyRuleRequestFieldCategoryKey)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetDescription(description *string) {
+	c.Description = description
+	c.require(contentPolicyRuleRequestFieldDescription)
+}
+
+// SetPermittedExamples sets the PermittedExamples field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetPermittedExamples(permittedExamples []string) {
+	c.PermittedExamples = permittedExamples
+	c.require(contentPolicyRuleRequestFieldPermittedExamples)
+}
+
+// SetProhibitedExamples sets the ProhibitedExamples field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetProhibitedExamples(prohibitedExamples []string) {
+	c.ProhibitedExamples = prohibitedExamples
+	c.require(contentPolicyRuleRequestFieldProhibitedExamples)
+}
+
+func (c *ContentPolicyRuleRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyRuleRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicyRuleRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicyRuleRequest) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyRuleRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicyRuleRequest) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
+	createAgentRequestFieldAgentID        = big.NewInt(1 << 0)
+	createAgentRequestFieldDeploymentID   = big.NewInt(1 << 1)
+	createAgentRequestFieldDescription    = big.NewInt(1 << 2)
+	createAgentRequestFieldMemorySettings = big.NewInt(1 << 3)
+	createAgentRequestFieldMetadata       = big.NewInt(1 << 4)
+	createAgentRequestFieldName           = big.NewInt(1 << 5)
+	createAgentRequestFieldSecurityDomain = big.NewInt(1 << 6)
+	createAgentRequestFieldVersion        = big.NewInt(1 << 7)
+)
+
+type CreateAgentRequest struct {
+	// The developer-assigned Agent identifier, unique within the project.
+	AgentID string `json:"agent_id" url:"agent_id"`
+	// The customer deployment this Agent represents.
+	DeploymentID *string `json:"deployment_id,omitempty" url:"deployment_id,omitempty"`
+	// A human-readable description of the Agent.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// Agent Memory capture, compilation, and promotion settings.
+	MemorySettings *AgentMemorySettings `json:"memory_settings,omitempty" url:"memory_settings,omitempty"`
+	// Developer metadata used to organize and filter Agents.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The Agent's display name.
+	Name string `json:"name" url:"name"`
+	// The immutable boundary within which Skills may be synthesized. 1 to 200 characters of lowercase letters, digits, and the characters : . - _
+	SecurityDomain string `json:"security_domain" url:"security_domain"`
+	// The customer deployment version this Agent represents. If you omit it, the version is "default".
+	Version *string `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *CreateAgentRequest) GetAgentID() string {
+	if c == nil {
+		return ""
+	}
+	return c.AgentID
+}
+
+func (c *CreateAgentRequest) GetDeploymentID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.DeploymentID
+}
+
+func (c *CreateAgentRequest) GetDescription() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Description
+}
+
+func (c *CreateAgentRequest) GetMemorySettings() *AgentMemorySettings {
+	if c == nil {
+		return nil
+	}
+	return c.MemorySettings
+}
+
+func (c *CreateAgentRequest) GetMetadata() map[string]any {
+	if c == nil {
+		return nil
+	}
+	return c.Metadata
+}
+
+func (c *CreateAgentRequest) GetName() string {
+	if c == nil {
+		return ""
+	}
+	return c.Name
+}
+
+func (c *CreateAgentRequest) GetSecurityDomain() string {
+	if c == nil {
+		return ""
+	}
+	return c.SecurityDomain
+}
+
+func (c *CreateAgentRequest) GetVersion() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Version
+}
+
+func (c *CreateAgentRequest) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *CreateAgentRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetAgentID sets the AgentID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateAgentRequest) SetAgentID(agentID string) {
+	c.AgentID = agentID
+	c.require(createAgentRequestFieldAgentID)
+}
+
+// SetDeploymentID sets the DeploymentID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateAgentRequest) SetDeploymentID(deploymentID *string) {
+	c.DeploymentID = deploymentID
+	c.require(createAgentRequestFieldDeploymentID)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateAgentRequest) SetDescription(description *string) {
+	c.Description = description
+	c.require(createAgentRequestFieldDescription)
+}
+
+// SetMemorySettings sets the MemorySettings field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateAgentRequest) SetMemorySettings(memorySettings *AgentMemorySettings) {
+	c.MemorySettings = memorySettings
+	c.require(createAgentRequestFieldMemorySettings)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateAgentRequest) SetMetadata(metadata map[string]any) {
+	c.Metadata = metadata
+	c.require(createAgentRequestFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateAgentRequest) SetName(name string) {
+	c.Name = name
+	c.require(createAgentRequestFieldName)
+}
+
+// SetSecurityDomain sets the SecurityDomain field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateAgentRequest) SetSecurityDomain(securityDomain string) {
+	c.SecurityDomain = securityDomain
+	c.require(createAgentRequestFieldSecurityDomain)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateAgentRequest) SetVersion(version *string) {
+	c.Version = version
+	c.require(createAgentRequestFieldVersion)
+}
+
+func (c *CreateAgentRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreateAgentRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CreateAgentRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CreateAgentRequest) MarshalJSON() ([]byte, error) {
+	type embed CreateAgentRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *CreateAgentRequest) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
 }
 
 var (
@@ -1086,10 +13079,12 @@ func (c *CustomInstruction) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *CustomInstruction) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetName sets the Name field and marks it as non-optional;
@@ -1149,16 +13144,18 @@ func (c *CustomInstruction) String() string {
 }
 
 var (
-	dateFilterFieldComparisonOperator = big.NewInt(1 << 0)
-	dateFilterFieldDate               = big.NewInt(1 << 1)
+	dateFilterFieldField    = big.NewInt(1 << 0)
+	dateFilterFieldOperator = big.NewInt(1 << 1)
+	dateFilterFieldValue    = big.NewInt(1 << 2)
 )
 
 type DateFilter struct {
-	// Comparison operator for date filter
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Date to filter on. Required for non-null operators (`=`, `<>`, `>`, `<`, `>=`, `<=`).
-	// Should be omitted for IS NULL (or is_null) and IS NOT NULL operators.
-	Date *string `json:"date,omitempty" url:"date,omitempty"`
+	// The temporal field to compare.
+	Field *DateFilterField `json:"field,omitempty" url:"field,omitempty"`
+	// The lowercase comparison operator.
+	Operator *DateFilterOperator `json:"operator,omitempty" url:"operator,omitempty"`
+	// The RFC 3339 timestamp. Omit this field for null operators.
+	Value *time.Time `json:"value,omitempty" url:"value,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1167,18 +13164,25 @@ type DateFilter struct {
 	rawJSON         json.RawMessage
 }
 
-func (d *DateFilter) GetComparisonOperator() ComparisonOperator {
-	if d == nil {
-		return ""
-	}
-	return d.ComparisonOperator
-}
-
-func (d *DateFilter) GetDate() *string {
+func (d *DateFilter) GetField() *DateFilterField {
 	if d == nil {
 		return nil
 	}
-	return d.Date
+	return d.Field
+}
+
+func (d *DateFilter) GetOperator() *DateFilterOperator {
+	if d == nil {
+		return nil
+	}
+	return d.Operator
+}
+
+func (d *DateFilter) GetValue() *time.Time {
+	if d == nil {
+		return nil
+	}
+	return d.Value
 }
 
 func (d *DateFilter) GetExtraProperties() map[string]interface{} {
@@ -1189,33 +13193,48 @@ func (d *DateFilter) GetExtraProperties() map[string]interface{} {
 }
 
 func (d *DateFilter) require(field *big.Int) {
-	if d.explicitFields == nil {
-		d.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if d.explicitFields != nil {
+		next.Set(d.explicitFields)
 	}
-	d.explicitFields.Or(d.explicitFields, field)
+	next.Or(next, field)
+	d.explicitFields = next
 }
 
-// SetComparisonOperator sets the ComparisonOperator field and marks it as non-optional;
+// SetField sets the Field field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DateFilter) SetComparisonOperator(comparisonOperator ComparisonOperator) {
-	d.ComparisonOperator = comparisonOperator
-	d.require(dateFilterFieldComparisonOperator)
+func (d *DateFilter) SetField(field *DateFilterField) {
+	d.Field = field
+	d.require(dateFilterFieldField)
 }
 
-// SetDate sets the Date field and marks it as non-optional;
+// SetOperator sets the Operator field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DateFilter) SetDate(date *string) {
-	d.Date = date
-	d.require(dateFilterFieldDate)
+func (d *DateFilter) SetOperator(operator *DateFilterOperator) {
+	d.Operator = operator
+	d.require(dateFilterFieldOperator)
+}
+
+// SetValue sets the Value field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DateFilter) SetValue(value *time.Time) {
+	d.Value = value
+	d.require(dateFilterFieldValue)
 }
 
 func (d *DateFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler DateFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed DateFilter
+	var unmarshaler = struct {
+		embed
+		Value *internal.DateTime `json:"value,omitempty"`
+	}{
+		embed: embed(*d),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*d = DateFilter(value)
+	*d = DateFilter(unmarshaler.embed)
+	d.Value = unmarshaler.Value.TimePtr()
 	extraProperties, err := internal.ExtractExtraProperties(data, *d)
 	if err != nil {
 		return err
@@ -1229,6 +13248,124 @@ func (d *DateFilter) MarshalJSON() ([]byte, error) {
 	type embed DateFilter
 	var marshaler = struct {
 		embed
+		Value *internal.DateTime `json:"value,omitempty"`
+	}{
+		embed: embed(*d),
+		Value: internal.NewOptionalDateTime(d.Value),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (d *DateFilter) String() string {
+	if d == nil {
+		return "<nil>"
+	}
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+// The temporal field to compare.
+type DateFilterField string
+
+const (
+	DateFilterFieldCreatedAt DateFilterField = "created_at"
+	DateFilterFieldValidAt   DateFilterField = "valid_at"
+	DateFilterFieldInvalidAt DateFilterField = "invalid_at"
+	DateFilterFieldExpiredAt DateFilterField = "expired_at"
+)
+
+func NewDateFilterFieldFromString(s string) (DateFilterField, error) {
+	switch s {
+	case "created_at":
+		return DateFilterFieldCreatedAt, nil
+	case "valid_at":
+		return DateFilterFieldValidAt, nil
+	case "invalid_at":
+		return DateFilterFieldInvalidAt, nil
+	case "expired_at":
+		return DateFilterFieldExpiredAt, nil
+	}
+	var t DateFilterField
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (d DateFilterField) Ptr() *DateFilterField {
+	return &d
+}
+
+var (
+	dateFilterGroupFieldAllOf = big.NewInt(1 << 0)
+)
+
+type DateFilterGroup struct {
+	// All conditions in the group must match.
+	AllOf []*DateFilter `json:"all_of,omitempty" url:"all_of,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DateFilterGroup) GetAllOf() []*DateFilter {
+	if d == nil {
+		return nil
+	}
+	return d.AllOf
+}
+
+func (d *DateFilterGroup) GetExtraProperties() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
+	return d.extraProperties
+}
+
+func (d *DateFilterGroup) require(field *big.Int) {
+	next := new(big.Int)
+	if d.explicitFields != nil {
+		next.Set(d.explicitFields)
+	}
+	next.Or(next, field)
+	d.explicitFields = next
+}
+
+// SetAllOf sets the AllOf field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DateFilterGroup) SetAllOf(allOf []*DateFilter) {
+	d.AllOf = allOf
+	d.require(dateFilterGroupFieldAllOf)
+}
+
+func (d *DateFilterGroup) UnmarshalJSON(data []byte) error {
+	type unmarshaler DateFilterGroup
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DateFilterGroup(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DateFilterGroup) MarshalJSON() ([]byte, error) {
+	type embed DateFilterGroup
+	var marshaler = struct {
+		embed
 	}{
 		embed: embed(*d),
 	}
@@ -1236,7 +13373,395 @@ func (d *DateFilter) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (d *DateFilter) String() string {
+func (d *DateFilterGroup) String() string {
+	if d == nil {
+		return "<nil>"
+	}
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+// The lowercase comparison operator.
+type DateFilterOperator string
+
+const (
+	DateFilterOperatorEq        DateFilterOperator = "eq"
+	DateFilterOperatorNe        DateFilterOperator = "ne"
+	DateFilterOperatorGt        DateFilterOperator = "gt"
+	DateFilterOperatorLt        DateFilterOperator = "lt"
+	DateFilterOperatorGte       DateFilterOperator = "gte"
+	DateFilterOperatorLte       DateFilterOperator = "lte"
+	DateFilterOperatorIsNull    DateFilterOperator = "is_null"
+	DateFilterOperatorIsNotNull DateFilterOperator = "is_not_null"
+)
+
+func NewDateFilterOperatorFromString(s string) (DateFilterOperator, error) {
+	switch s {
+	case "eq":
+		return DateFilterOperatorEq, nil
+	case "ne":
+		return DateFilterOperatorNe, nil
+	case "gt":
+		return DateFilterOperatorGt, nil
+	case "lt":
+		return DateFilterOperatorLt, nil
+	case "gte":
+		return DateFilterOperatorGte, nil
+	case "lte":
+		return DateFilterOperatorLte, nil
+	case "is_null":
+		return DateFilterOperatorIsNull, nil
+	case "is_not_null":
+		return DateFilterOperatorIsNotNull, nil
+	}
+	var t DateFilterOperator
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (d DateFilterOperator) Ptr() *DateFilterOperator {
+	return &d
+}
+
+var (
+	dateFiltersFieldAnyOf = big.NewInt(1 << 0)
+)
+
+type DateFilters struct {
+	// Each group is combined with OR logic.
+	AnyOf []*DateFilterGroup `json:"any_of,omitempty" url:"any_of,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DateFilters) GetAnyOf() []*DateFilterGroup {
+	if d == nil {
+		return nil
+	}
+	return d.AnyOf
+}
+
+func (d *DateFilters) GetExtraProperties() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
+	return d.extraProperties
+}
+
+func (d *DateFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if d.explicitFields != nil {
+		next.Set(d.explicitFields)
+	}
+	next.Or(next, field)
+	d.explicitFields = next
+}
+
+// SetAnyOf sets the AnyOf field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DateFilters) SetAnyOf(anyOf []*DateFilterGroup) {
+	d.AnyOf = anyOf
+	d.require(dateFiltersFieldAnyOf)
+}
+
+func (d *DateFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler DateFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DateFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DateFilters) MarshalJSON() ([]byte, error) {
+	type embed DateFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (d *DateFilters) String() string {
+	if d == nil {
+		return "<nil>"
+	}
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+var (
+	debugLogEntryFieldLevel    = big.NewInt(1 << 0)
+	debugLogEntryFieldLoggedAt = big.NewInt(1 << 1)
+	debugLogEntryFieldMessage  = big.NewInt(1 << 2)
+)
+
+type DebugLogEntry struct {
+	// The severity of the entry.
+	Level *DebugLogLevel `json:"level,omitempty" url:"level,omitempty"`
+	// The time the entry was written.
+	LoggedAt *string `json:"logged_at,omitempty" url:"logged_at,omitempty"`
+	// The log message.
+	Message *string `json:"message,omitempty" url:"message,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DebugLogEntry) GetLevel() *DebugLogLevel {
+	if d == nil {
+		return nil
+	}
+	return d.Level
+}
+
+func (d *DebugLogEntry) GetLoggedAt() *string {
+	if d == nil {
+		return nil
+	}
+	return d.LoggedAt
+}
+
+func (d *DebugLogEntry) GetMessage() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Message
+}
+
+func (d *DebugLogEntry) GetExtraProperties() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
+	return d.extraProperties
+}
+
+func (d *DebugLogEntry) require(field *big.Int) {
+	next := new(big.Int)
+	if d.explicitFields != nil {
+		next.Set(d.explicitFields)
+	}
+	next.Or(next, field)
+	d.explicitFields = next
+}
+
+// SetLevel sets the Level field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DebugLogEntry) SetLevel(level *DebugLogLevel) {
+	d.Level = level
+	d.require(debugLogEntryFieldLevel)
+}
+
+// SetLoggedAt sets the LoggedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DebugLogEntry) SetLoggedAt(loggedAt *string) {
+	d.LoggedAt = loggedAt
+	d.require(debugLogEntryFieldLoggedAt)
+}
+
+// SetMessage sets the Message field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DebugLogEntry) SetMessage(message *string) {
+	d.Message = message
+	d.require(debugLogEntryFieldMessage)
+}
+
+func (d *DebugLogEntry) UnmarshalJSON(data []byte) error {
+	type unmarshaler DebugLogEntry
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DebugLogEntry(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DebugLogEntry) MarshalJSON() ([]byte, error) {
+	type embed DebugLogEntry
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (d *DebugLogEntry) String() string {
+	if d == nil {
+		return "<nil>"
+	}
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+type DebugLogLevel string
+
+const (
+	DebugLogLevelDebug   DebugLogLevel = "debug"
+	DebugLogLevelInfo    DebugLogLevel = "info"
+	DebugLogLevelWarning DebugLogLevel = "warning"
+	DebugLogLevelError   DebugLogLevel = "error"
+)
+
+func NewDebugLogLevelFromString(s string) (DebugLogLevel, error) {
+	switch s {
+	case "debug":
+		return DebugLogLevelDebug, nil
+	case "info":
+		return DebugLogLevelInfo, nil
+	case "warning":
+		return DebugLogLevelWarning, nil
+	case "error":
+		return DebugLogLevelError, nil
+	}
+	var t DebugLogLevel
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (d DebugLogLevel) Ptr() *DebugLogLevel {
+	return &d
+}
+
+type DebugLogStatus string
+
+const (
+	DebugLogStatusRunning   DebugLogStatus = "running"
+	DebugLogStatusCompleted DebugLogStatus = "completed"
+	DebugLogStatusError     DebugLogStatus = "error"
+)
+
+func NewDebugLogStatusFromString(s string) (DebugLogStatus, error) {
+	switch s {
+	case "running":
+		return DebugLogStatusRunning, nil
+	case "completed":
+		return DebugLogStatusCompleted, nil
+	case "error":
+		return DebugLogStatusError, nil
+	}
+	var t DebugLogStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (d DebugLogStatus) Ptr() *DebugLogStatus {
+	return &d
+}
+
+var (
+	deleteAgentTrajectoryRequestFieldExpectedRevision = big.NewInt(1 << 0)
+)
+
+type DeleteAgentTrajectoryRequest struct {
+	ExpectedRevision int `json:"expected_revision" url:"expected_revision"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DeleteAgentTrajectoryRequest) GetExpectedRevision() int {
+	if d == nil {
+		return 0
+	}
+	return d.ExpectedRevision
+}
+
+func (d *DeleteAgentTrajectoryRequest) GetExtraProperties() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
+	return d.extraProperties
+}
+
+func (d *DeleteAgentTrajectoryRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if d.explicitFields != nil {
+		next.Set(d.explicitFields)
+	}
+	next.Or(next, field)
+	d.explicitFields = next
+}
+
+// SetExpectedRevision sets the ExpectedRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DeleteAgentTrajectoryRequest) SetExpectedRevision(expectedRevision int) {
+	d.ExpectedRevision = expectedRevision
+	d.require(deleteAgentTrajectoryRequestFieldExpectedRevision)
+}
+
+func (d *DeleteAgentTrajectoryRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler DeleteAgentTrajectoryRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DeleteAgentTrajectoryRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DeleteAgentTrajectoryRequest) MarshalJSON() ([]byte, error) {
+	type embed DeleteAgentTrajectoryRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (d *DeleteAgentTrajectoryRequest) String() string {
 	if d == nil {
 		return "<nil>"
 	}
@@ -1331,10 +13856,12 @@ func (d *DocumentSummary) GetExtraProperties() map[string]interface{} {
 }
 
 func (d *DocumentSummary) require(field *big.Int) {
-	if d.explicitFields == nil {
-		d.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if d.explicitFields != nil {
+		next.Set(d.explicitFields)
 	}
-	d.explicitFields.Or(d.explicitFields, field)
+	next.Or(next, field)
+	d.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -1473,10 +14000,12 @@ func (d *DocumentSummaryPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (d *DocumentSummaryPage) require(field *big.Int) {
-	if d.explicitFields == nil {
-		d.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if d.explicitFields != nil {
+		next.Set(d.explicitFields)
 	}
-	d.explicitFields.Or(d.explicitFields, field)
+	next.Or(next, field)
+	d.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -1549,19 +14078,20 @@ var (
 	edgeFieldExpiredAt        = big.NewInt(1 << 3)
 	edgeFieldFact             = big.NewInt(1 << 4)
 	edgeFieldGraphUUID        = big.NewInt(1 << 5)
-	edgeFieldInvalidAt        = big.NewInt(1 << 6)
-	edgeFieldName             = big.NewInt(1 << 7)
-	edgeFieldRelevance        = big.NewInt(1 << 8)
-	edgeFieldScope            = big.NewInt(1 << 9)
-	edgeFieldScore            = big.NewInt(1 << 10)
-	edgeFieldSourceNodeLabels = big.NewInt(1 << 11)
-	edgeFieldSourceNodeName   = big.NewInt(1 << 12)
-	edgeFieldSourceNodeUUID   = big.NewInt(1 << 13)
-	edgeFieldTargetNodeLabels = big.NewInt(1 << 14)
-	edgeFieldTargetNodeName   = big.NewInt(1 << 15)
-	edgeFieldTargetNodeUUID   = big.NewInt(1 << 16)
-	edgeFieldUUID             = big.NewInt(1 << 17)
-	edgeFieldValidAt          = big.NewInt(1 << 18)
+	edgeFieldHyperedgeUUID    = big.NewInt(1 << 6)
+	edgeFieldInvalidAt        = big.NewInt(1 << 7)
+	edgeFieldName             = big.NewInt(1 << 8)
+	edgeFieldRelevance        = big.NewInt(1 << 9)
+	edgeFieldScope            = big.NewInt(1 << 10)
+	edgeFieldScore            = big.NewInt(1 << 11)
+	edgeFieldSourceNodeLabels = big.NewInt(1 << 12)
+	edgeFieldSourceNodeName   = big.NewInt(1 << 13)
+	edgeFieldSourceNodeUUID   = big.NewInt(1 << 14)
+	edgeFieldTargetNodeLabels = big.NewInt(1 << 15)
+	edgeFieldTargetNodeName   = big.NewInt(1 << 16)
+	edgeFieldTargetNodeUUID   = big.NewInt(1 << 17)
+	edgeFieldUUID             = big.NewInt(1 << 18)
+	edgeFieldValidAt          = big.NewInt(1 << 19)
 )
 
 type Edge struct {
@@ -1577,6 +14107,9 @@ type Edge struct {
 	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
 	// The unique identifier of the graph this edge belongs to.
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The unique identifier of the hyperedge this edge is a member of. Omitted
+	// when the edge is not part of a hyperedge.
+	HyperedgeUUID *string `json:"hyperedge_uuid,omitempty" url:"hyperedge_uuid,omitempty"`
 	// The time at which the fact stopped being true.
 	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// The name of the edge, in upper snake case, for example RELATES_TO.
@@ -1662,6 +14195,13 @@ func (e *Edge) GetGraphUUID() *string {
 		return nil
 	}
 	return e.GraphUUID
+}
+
+func (e *Edge) GetHyperedgeUUID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.HyperedgeUUID
 }
 
 func (e *Edge) GetInvalidAt() *string {
@@ -1763,10 +14303,12 @@ func (e *Edge) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *Edge) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -1809,6 +14351,13 @@ func (e *Edge) SetFact(fact *string) {
 func (e *Edge) SetGraphUUID(graphUUID *string) {
 	e.GraphUUID = graphUUID
 	e.require(edgeFieldGraphUUID)
+}
+
+// SetHyperedgeUUID sets the HyperedgeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetHyperedgeUUID(hyperedgeUUID *string) {
+	e.HyperedgeUUID = hyperedgeUUID
+	e.require(edgeFieldHyperedgeUUID)
 }
 
 // SetInvalidAt sets the InvalidAt field and marks it as non-optional;
@@ -1945,6 +14494,232 @@ func (e *Edge) String() string {
 }
 
 var (
+	edgeInputFieldAttributes = big.NewInt(1 << 0)
+	edgeInputFieldExpiredAt  = big.NewInt(1 << 1)
+	edgeInputFieldFact       = big.NewInt(1 << 2)
+	edgeInputFieldFactName   = big.NewInt(1 << 3)
+	edgeInputFieldInvalidAt  = big.NewInt(1 << 4)
+	edgeInputFieldMetadata   = big.NewInt(1 << 5)
+	edgeInputFieldSourceNode = big.NewInt(1 << 6)
+	edgeInputFieldTargetNode = big.NewInt(1 << 7)
+	edgeInputFieldValidAt    = big.NewInt(1 << 8)
+)
+
+type EdgeInput struct {
+	// Additional attributes to store on the edge.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time at which the fact was superseded or invalidated.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// The fact text describing the relationship between the source and target
+	// nodes.
+	Fact string `json:"fact" url:"fact"`
+	// The name of the edge, in upper snake case, for example RELATES_TO.
+	FactName string `json:"fact_name" url:"fact_name"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// Metadata attached to the episode created for this edge.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The source node. A name creates a node without deduplication, or matches
+	// an existing node by name first when deduplication is enabled.
+	SourceNode *EdgeNodeRef `json:"source_node" url:"source_node"`
+	// The target node. A name creates a node without deduplication, or matches
+	// an existing node by name first when deduplication is enabled.
+	TargetNode *EdgeNodeRef `json:"target_node" url:"target_node"`
+	// The time at which the fact became true.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EdgeInput) GetAttributes() map[string]any {
+	if e == nil {
+		return nil
+	}
+	return e.Attributes
+}
+
+func (e *EdgeInput) GetExpiredAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ExpiredAt
+}
+
+func (e *EdgeInput) GetFact() string {
+	if e == nil {
+		return ""
+	}
+	return e.Fact
+}
+
+func (e *EdgeInput) GetFactName() string {
+	if e == nil {
+		return ""
+	}
+	return e.FactName
+}
+
+func (e *EdgeInput) GetInvalidAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.InvalidAt
+}
+
+func (e *EdgeInput) GetMetadata() map[string]any {
+	if e == nil {
+		return nil
+	}
+	return e.Metadata
+}
+
+func (e *EdgeInput) GetSourceNode() *EdgeNodeRef {
+	if e == nil {
+		return nil
+	}
+	return e.SourceNode
+}
+
+func (e *EdgeInput) GetTargetNode() *EdgeNodeRef {
+	if e == nil {
+		return nil
+	}
+	return e.TargetNode
+}
+
+func (e *EdgeInput) GetValidAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ValidAt
+}
+
+func (e *EdgeInput) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EdgeInput) require(field *big.Int) {
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
+	}
+	next.Or(next, field)
+	e.explicitFields = next
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetAttributes(attributes map[string]any) {
+	e.Attributes = attributes
+	e.require(edgeInputFieldAttributes)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetExpiredAt(expiredAt *string) {
+	e.ExpiredAt = expiredAt
+	e.require(edgeInputFieldExpiredAt)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetFact(fact string) {
+	e.Fact = fact
+	e.require(edgeInputFieldFact)
+}
+
+// SetFactName sets the FactName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetFactName(factName string) {
+	e.FactName = factName
+	e.require(edgeInputFieldFactName)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetInvalidAt(invalidAt *string) {
+	e.InvalidAt = invalidAt
+	e.require(edgeInputFieldInvalidAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetMetadata(metadata map[string]any) {
+	e.Metadata = metadata
+	e.require(edgeInputFieldMetadata)
+}
+
+// SetSourceNode sets the SourceNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetSourceNode(sourceNode *EdgeNodeRef) {
+	e.SourceNode = sourceNode
+	e.require(edgeInputFieldSourceNode)
+}
+
+// SetTargetNode sets the TargetNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetTargetNode(targetNode *EdgeNodeRef) {
+	e.TargetNode = targetNode
+	e.require(edgeInputFieldTargetNode)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeInput) SetValidAt(validAt *string) {
+	e.ValidAt = validAt
+	e.require(edgeInputFieldValidAt)
+}
+
+func (e *EdgeInput) UnmarshalJSON(data []byte) error {
+	type unmarshaler EdgeInput
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EdgeInput(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EdgeInput) MarshalJSON() ([]byte, error) {
+	type embed EdgeInput
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EdgeInput) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
 	edgeNodeRefFieldAttributes = big.NewInt(1 << 0)
 	edgeNodeRefFieldLabels     = big.NewInt(1 << 1)
 	edgeNodeRefFieldName       = big.NewInt(1 << 2)
@@ -1957,7 +14732,7 @@ type EdgeNodeRef struct {
 	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// The entity type labels to assign to the node.
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
-	// The name of the node to create or match.
+	// The name of the node to create, or to match when deduplication is enabled.
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// A summary of the node.
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
@@ -2014,10 +14789,12 @@ func (e *EdgeNodeRef) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *EdgeNodeRef) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -2149,10 +14926,12 @@ func (e *EdgePage) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *EdgePage) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -2258,10 +15037,12 @@ func (e *EdgeSourceTarget) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *EdgeSourceTarget) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetSource sets the Source field and marks it as non-optional;
@@ -2381,10 +15162,12 @@ func (e *EdgeType) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *EdgeType) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetDescription sets the Description field and marks it as non-optional;
@@ -2507,10 +15290,12 @@ func (e *EntityProperty) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *EntityProperty) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetDescription sets the Description field and marks it as non-optional;
@@ -2665,10 +15450,12 @@ func (e *EntityType) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *EntityType) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetDescription sets the Description field and marks it as non-optional;
@@ -2743,25 +15530,29 @@ func (e *EntityType) String() string {
 
 var (
 	episodeFieldContent           = big.NewInt(1 << 0)
-	episodeFieldCreatedAt         = big.NewInt(1 << 1)
-	episodeFieldDocumentID        = big.NewInt(1 << 2)
-	episodeFieldGraphUUID         = big.NewInt(1 << 3)
-	episodeFieldMetadata          = big.NewInt(1 << 4)
-	episodeFieldProcessed         = big.NewInt(1 << 5)
-	episodeFieldRelevance         = big.NewInt(1 << 6)
-	episodeFieldRole              = big.NewInt(1 << 7)
-	episodeFieldRoleName          = big.NewInt(1 << 8)
-	episodeFieldScore             = big.NewInt(1 << 9)
-	episodeFieldSource            = big.NewInt(1 << 10)
-	episodeFieldSourceDescription = big.NewInt(1 << 11)
-	episodeFieldThreadUUID        = big.NewInt(1 << 12)
-	episodeFieldUUID              = big.NewInt(1 << 13)
-	episodeFieldValidAt           = big.NewInt(1 << 14)
+	episodeFieldContentPolicy     = big.NewInt(1 << 1)
+	episodeFieldCreatedAt         = big.NewInt(1 << 2)
+	episodeFieldDocumentID        = big.NewInt(1 << 3)
+	episodeFieldGraphUUID         = big.NewInt(1 << 4)
+	episodeFieldMetadata          = big.NewInt(1 << 5)
+	episodeFieldProcessed         = big.NewInt(1 << 6)
+	episodeFieldRelevance         = big.NewInt(1 << 7)
+	episodeFieldRole              = big.NewInt(1 << 8)
+	episodeFieldRoleName          = big.NewInt(1 << 9)
+	episodeFieldScore             = big.NewInt(1 << 10)
+	episodeFieldSource            = big.NewInt(1 << 11)
+	episodeFieldSourceDescription = big.NewInt(1 << 12)
+	episodeFieldThreadUUID        = big.NewInt(1 << 13)
+	episodeFieldUUID              = big.NewInt(1 << 14)
+	episodeFieldValidAt           = big.NewInt(1 << 15)
 )
 
 type Episode struct {
 	// The raw content of the episode.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The content policy state of the episode, present only on a graph with a
+	// bound content policy rule.
+	ContentPolicy *EpisodeContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
 	// The time the episode was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The developer-assigned identifier of the document this episode belongs to,
@@ -2811,6 +15602,13 @@ func (e *Episode) GetContent() *string {
 		return nil
 	}
 	return e.Content
+}
+
+func (e *Episode) GetContentPolicy() *EpisodeContentPolicy {
+	if e == nil {
+		return nil
+	}
+	return e.ContentPolicy
 }
 
 func (e *Episode) GetCreatedAt() *string {
@@ -2919,10 +15717,12 @@ func (e *Episode) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *Episode) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetContent sets the Content field and marks it as non-optional;
@@ -2930,6 +15730,13 @@ func (e *Episode) require(field *big.Int) {
 func (e *Episode) SetContent(content *string) {
 	e.Content = content
 	e.require(episodeFieldContent)
+}
+
+// SetContentPolicy sets the ContentPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetContentPolicy(contentPolicy *EpisodeContentPolicy) {
+	e.ContentPolicy = contentPolicy
+	e.require(episodeFieldContentPolicy)
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -3073,18 +15880,30 @@ func (e *Episode) String() string {
 }
 
 var (
-	episodeMetadataFilterFieldComparisonOperator = big.NewInt(1 << 0)
-	episodeMetadataFilterFieldPropertyName       = big.NewInt(1 << 1)
-	episodeMetadataFilterFieldPropertyValue      = big.NewInt(1 << 2)
+	episodeContentPolicyFieldCategoryKeys  = big.NewInt(1 << 0)
+	episodeContentPolicyFieldDroppedCount  = big.NewInt(1 << 1)
+	episodeContentPolicyFieldRetainedCount = big.NewInt(1 << 2)
+	episodeContentPolicyFieldRevision      = big.NewInt(1 << 3)
+	episodeContentPolicyFieldStatus        = big.NewInt(1 << 4)
+	episodeContentPolicyFieldViolated      = big.NewInt(1 << 5)
 )
 
-type EpisodeMetadataFilter struct {
-	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Metadata key to filter on
-	PropertyName string `json:"property_name" url:"property_name"`
-	// Value to compare against. Not required for IS NULL / IS NOT NULL operators.
-	PropertyValue any `json:"property_value,omitempty" url:"property_value,omitempty"`
+type EpisodeContentPolicy struct {
+	// The keys of the categories with a matched rule.
+	CategoryKeys []string `json:"category_keys,omitempty" url:"category_keys,omitempty"`
+	// The number of derived candidates that were dropped.
+	DroppedCount *int `json:"dropped_count,omitempty" url:"dropped_count,omitempty"`
+	// The number of derived candidates that were published to the graph.
+	RetainedCount *int `json:"retained_count,omitempty" url:"retained_count,omitempty"`
+	// The project revision number of the policy the graph bound.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The evaluation status. pending means the evaluation has not finished,
+	// complete means every candidate was evaluated and the graph batch was
+	// written, and failed means ingestion retries were exhausted.
+	Status *EpisodeContentPolicyStatus `json:"status,omitempty" url:"status,omitempty"`
+	// Whether at least one derived candidate matched a rule. Once true, it
+	// stays true.
+	Violated *bool `json:"violated,omitempty" url:"violated,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3093,69 +15912,113 @@ type EpisodeMetadataFilter struct {
 	rawJSON         json.RawMessage
 }
 
-func (e *EpisodeMetadataFilter) GetComparisonOperator() ComparisonOperator {
-	if e == nil {
-		return ""
-	}
-	return e.ComparisonOperator
-}
-
-func (e *EpisodeMetadataFilter) GetPropertyName() string {
-	if e == nil {
-		return ""
-	}
-	return e.PropertyName
-}
-
-func (e *EpisodeMetadataFilter) GetPropertyValue() any {
+func (e *EpisodeContentPolicy) GetCategoryKeys() []string {
 	if e == nil {
 		return nil
 	}
-	return e.PropertyValue
+	return e.CategoryKeys
 }
 
-func (e *EpisodeMetadataFilter) GetExtraProperties() map[string]interface{} {
+func (e *EpisodeContentPolicy) GetDroppedCount() *int {
+	if e == nil {
+		return nil
+	}
+	return e.DroppedCount
+}
+
+func (e *EpisodeContentPolicy) GetRetainedCount() *int {
+	if e == nil {
+		return nil
+	}
+	return e.RetainedCount
+}
+
+func (e *EpisodeContentPolicy) GetRevision() *int {
+	if e == nil {
+		return nil
+	}
+	return e.Revision
+}
+
+func (e *EpisodeContentPolicy) GetStatus() *EpisodeContentPolicyStatus {
+	if e == nil {
+		return nil
+	}
+	return e.Status
+}
+
+func (e *EpisodeContentPolicy) GetViolated() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.Violated
+}
+
+func (e *EpisodeContentPolicy) GetExtraProperties() map[string]interface{} {
 	if e == nil {
 		return nil
 	}
 	return e.extraProperties
 }
 
-func (e *EpisodeMetadataFilter) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+func (e *EpisodeContentPolicy) require(field *big.Int) {
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
-// SetComparisonOperator sets the ComparisonOperator field and marks it as non-optional;
+// SetCategoryKeys sets the CategoryKeys field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EpisodeMetadataFilter) SetComparisonOperator(comparisonOperator ComparisonOperator) {
-	e.ComparisonOperator = comparisonOperator
-	e.require(episodeMetadataFilterFieldComparisonOperator)
+func (e *EpisodeContentPolicy) SetCategoryKeys(categoryKeys []string) {
+	e.CategoryKeys = categoryKeys
+	e.require(episodeContentPolicyFieldCategoryKeys)
 }
 
-// SetPropertyName sets the PropertyName field and marks it as non-optional;
+// SetDroppedCount sets the DroppedCount field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EpisodeMetadataFilter) SetPropertyName(propertyName string) {
-	e.PropertyName = propertyName
-	e.require(episodeMetadataFilterFieldPropertyName)
+func (e *EpisodeContentPolicy) SetDroppedCount(droppedCount *int) {
+	e.DroppedCount = droppedCount
+	e.require(episodeContentPolicyFieldDroppedCount)
 }
 
-// SetPropertyValue sets the PropertyValue field and marks it as non-optional;
+// SetRetainedCount sets the RetainedCount field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EpisodeMetadataFilter) SetPropertyValue(propertyValue any) {
-	e.PropertyValue = propertyValue
-	e.require(episodeMetadataFilterFieldPropertyValue)
+func (e *EpisodeContentPolicy) SetRetainedCount(retainedCount *int) {
+	e.RetainedCount = retainedCount
+	e.require(episodeContentPolicyFieldRetainedCount)
 }
 
-func (e *EpisodeMetadataFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler EpisodeMetadataFilter
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeContentPolicy) SetRevision(revision *int) {
+	e.Revision = revision
+	e.require(episodeContentPolicyFieldRevision)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeContentPolicy) SetStatus(status *EpisodeContentPolicyStatus) {
+	e.Status = status
+	e.require(episodeContentPolicyFieldStatus)
+}
+
+// SetViolated sets the Violated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeContentPolicy) SetViolated(violated *bool) {
+	e.Violated = violated
+	e.require(episodeContentPolicyFieldViolated)
+}
+
+func (e *EpisodeContentPolicy) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeContentPolicy
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*e = EpisodeMetadataFilter(value)
+	*e = EpisodeContentPolicy(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *e)
 	if err != nil {
 		return err
@@ -3165,8 +16028,8 @@ func (e *EpisodeMetadataFilter) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (e *EpisodeMetadataFilter) MarshalJSON() ([]byte, error) {
-	type embed EpisodeMetadataFilter
+func (e *EpisodeContentPolicy) MarshalJSON() ([]byte, error) {
+	type embed EpisodeContentPolicy
 	var marshaler = struct {
 		embed
 	}{
@@ -3176,7 +16039,190 @@ func (e *EpisodeMetadataFilter) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (e *EpisodeMetadataFilter) String() string {
+func (e *EpisodeContentPolicy) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+// The evaluation status. pending means the evaluation has not finished,
+// complete means every candidate was evaluated and the graph batch was
+// written, and failed means ingestion retries were exhausted.
+type EpisodeContentPolicyStatus string
+
+const (
+	EpisodeContentPolicyStatusPending  EpisodeContentPolicyStatus = "pending"
+	EpisodeContentPolicyStatusComplete EpisodeContentPolicyStatus = "complete"
+	EpisodeContentPolicyStatusFailed   EpisodeContentPolicyStatus = "failed"
+)
+
+func NewEpisodeContentPolicyStatusFromString(s string) (EpisodeContentPolicyStatus, error) {
+	switch s {
+	case "pending":
+		return EpisodeContentPolicyStatusPending, nil
+	case "complete":
+		return EpisodeContentPolicyStatusComplete, nil
+	case "failed":
+		return EpisodeContentPolicyStatusFailed, nil
+	}
+	var t EpisodeContentPolicyStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EpisodeContentPolicyStatus) Ptr() *EpisodeContentPolicyStatus {
+	return &e
+}
+
+var (
+	episodeDebugLogFieldCompletedAt = big.NewInt(1 << 0)
+	episodeDebugLogFieldEntries     = big.NewInt(1 << 1)
+	episodeDebugLogFieldError       = big.NewInt(1 << 2)
+	episodeDebugLogFieldStartedAt   = big.NewInt(1 << 3)
+	episodeDebugLogFieldStatus      = big.NewInt(1 << 4)
+)
+
+type EpisodeDebugLog struct {
+	// The time the ingestion workflow completed, present only after completion.
+	CompletedAt *string `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	// The log entries, oldest first.
+	Entries []*DebugLogEntry `json:"entries,omitempty" url:"entries,omitempty"`
+	// The error message, present only when the status is error.
+	Error *string `json:"error,omitempty" url:"error,omitempty"`
+	// The time the ingestion workflow started.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// The state of the ingestion workflow.
+	Status *DebugLogStatus `json:"status,omitempty" url:"status,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeDebugLog) GetCompletedAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.CompletedAt
+}
+
+func (e *EpisodeDebugLog) GetEntries() []*DebugLogEntry {
+	if e == nil {
+		return nil
+	}
+	return e.Entries
+}
+
+func (e *EpisodeDebugLog) GetError() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Error
+}
+
+func (e *EpisodeDebugLog) GetStartedAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.StartedAt
+}
+
+func (e *EpisodeDebugLog) GetStatus() *DebugLogStatus {
+	if e == nil {
+		return nil
+	}
+	return e.Status
+}
+
+func (e *EpisodeDebugLog) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EpisodeDebugLog) require(field *big.Int) {
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
+	}
+	next.Or(next, field)
+	e.explicitFields = next
+}
+
+// SetCompletedAt sets the CompletedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeDebugLog) SetCompletedAt(completedAt *string) {
+	e.CompletedAt = completedAt
+	e.require(episodeDebugLogFieldCompletedAt)
+}
+
+// SetEntries sets the Entries field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeDebugLog) SetEntries(entries []*DebugLogEntry) {
+	e.Entries = entries
+	e.require(episodeDebugLogFieldEntries)
+}
+
+// SetError sets the Error field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeDebugLog) SetError(error_ *string) {
+	e.Error = error_
+	e.require(episodeDebugLogFieldError)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeDebugLog) SetStartedAt(startedAt *string) {
+	e.StartedAt = startedAt
+	e.require(episodeDebugLogFieldStartedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeDebugLog) SetStatus(status *DebugLogStatus) {
+	e.Status = status
+	e.require(episodeDebugLogFieldStatus)
+}
+
+func (e *EpisodeDebugLog) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeDebugLog
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeDebugLog(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeDebugLog) MarshalJSON() ([]byte, error) {
+	type embed EpisodeDebugLog
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EpisodeDebugLog) String() string {
 	if e == nil {
 		return "<nil>"
 	}
@@ -3243,10 +16289,12 @@ func (e *EpisodePage) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *EpisodePage) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -3377,10 +16425,12 @@ func (e *ErrorBody) GetExtraProperties() map[string]interface{} {
 }
 
 func (e *ErrorBody) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetCode sets the Code field and marks it as non-optional;
@@ -3460,6 +16510,130 @@ func (e *ErrorBody) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+var (
+	graphContentPolicyRequestFieldCategories      = big.NewInt(1 << 0)
+	graphContentPolicyRequestFieldProjectRevision = big.NewInt(1 << 1)
+	graphContentPolicyRequestFieldRules           = big.NewInt(1 << 2)
+)
+
+type GraphContentPolicyRequest struct {
+	// Categories to add for this graph. A key that the project policy already
+	// has is ignored.
+	Categories []*ContentPolicyCategoryRequest `json:"categories,omitempty" url:"categories,omitempty"`
+	// When set, the create fails with content_policy_revision_stale unless this
+	// is the current project revision.
+	ProjectRevision *int `json:"project_revision,omitempty" url:"project_revision,omitempty"`
+	// Rules to add for this graph. A rule that the project policy already has,
+	// with the same category key and description, is ignored.
+	Rules []*ContentPolicyRuleRequest `json:"rules,omitempty" url:"rules,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphContentPolicyRequest) GetCategories() []*ContentPolicyCategoryRequest {
+	if g == nil {
+		return nil
+	}
+	return g.Categories
+}
+
+func (g *GraphContentPolicyRequest) GetProjectRevision() *int {
+	if g == nil {
+		return nil
+	}
+	return g.ProjectRevision
+}
+
+func (g *GraphContentPolicyRequest) GetRules() []*ContentPolicyRuleRequest {
+	if g == nil {
+		return nil
+	}
+	return g.Rules
+}
+
+func (g *GraphContentPolicyRequest) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphContentPolicyRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetCategories sets the Categories field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicyRequest) SetCategories(categories []*ContentPolicyCategoryRequest) {
+	g.Categories = categories
+	g.require(graphContentPolicyRequestFieldCategories)
+}
+
+// SetProjectRevision sets the ProjectRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicyRequest) SetProjectRevision(projectRevision *int) {
+	g.ProjectRevision = projectRevision
+	g.require(graphContentPolicyRequestFieldProjectRevision)
+}
+
+// SetRules sets the Rules field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicyRequest) SetRules(rules []*ContentPolicyRuleRequest) {
+	g.Rules = rules
+	g.require(graphContentPolicyRequestFieldRules)
+}
+
+func (g *GraphContentPolicyRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphContentPolicyRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphContentPolicyRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphContentPolicyRequest) MarshalJSON() ([]byte, error) {
+	type embed GraphContentPolicyRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphContentPolicyRequest) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type GraphDataType string
 
 const (
@@ -3488,27 +16662,2743 @@ func (g GraphDataType) Ptr() *GraphDataType {
 	return &g
 }
 
-// Logical operator: "and" or "or"
-type GraphitiMetadataFilterGroupType string
-
-const (
-	GraphitiMetadataFilterGroupTypeAnd GraphitiMetadataFilterGroupType = "and"
-	GraphitiMetadataFilterGroupTypeOr  GraphitiMetadataFilterGroupType = "or"
+var (
+	hyperedgeFieldCreatedAt = big.NewInt(1 << 0)
+	hyperedgeFieldEdges     = big.NewInt(1 << 1)
+	hyperedgeFieldExpiredAt = big.NewInt(1 << 2)
+	hyperedgeFieldFact      = big.NewInt(1 << 3)
+	hyperedgeFieldGraphUUID = big.NewInt(1 << 4)
+	hyperedgeFieldInvalidAt = big.NewInt(1 << 5)
+	hyperedgeFieldUUID      = big.NewInt(1 << 6)
+	hyperedgeFieldValidAt   = big.NewInt(1 << 7)
 )
 
-func NewGraphitiMetadataFilterGroupTypeFromString(s string) (GraphitiMetadataFilterGroupType, error) {
-	switch s {
-	case "and":
-		return GraphitiMetadataFilterGroupTypeAnd, nil
-	case "or":
-		return GraphitiMetadataFilterGroupTypeOr, nil
+type Hyperedge struct {
+	// The time the hyperedge was created. Every member edge shares this value.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The member edges, ordered by uuid. Each carries only its own identity and
+	// endpoints; the shared fact and timestamps are on the hyperedge.
+	Edges []*HyperedgeEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	// The time the fact was superseded or removed.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// The natural-language fact this hyperedge represents. Every member edge
+	// carries the same fact.
+	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	// The unique identifier of the graph this hyperedge belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// The unique identifier of the hyperedge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time from which the fact is considered true.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (h *Hyperedge) GetCreatedAt() *string {
+	if h == nil {
+		return nil
 	}
-	var t GraphitiMetadataFilterGroupType
+	return h.CreatedAt
+}
+
+func (h *Hyperedge) GetEdges() []*HyperedgeEdge {
+	if h == nil {
+		return nil
+	}
+	return h.Edges
+}
+
+func (h *Hyperedge) GetExpiredAt() *string {
+	if h == nil {
+		return nil
+	}
+	return h.ExpiredAt
+}
+
+func (h *Hyperedge) GetFact() *string {
+	if h == nil {
+		return nil
+	}
+	return h.Fact
+}
+
+func (h *Hyperedge) GetGraphUUID() *string {
+	if h == nil {
+		return nil
+	}
+	return h.GraphUUID
+}
+
+func (h *Hyperedge) GetInvalidAt() *string {
+	if h == nil {
+		return nil
+	}
+	return h.InvalidAt
+}
+
+func (h *Hyperedge) GetUUID() *string {
+	if h == nil {
+		return nil
+	}
+	return h.UUID
+}
+
+func (h *Hyperedge) GetValidAt() *string {
+	if h == nil {
+		return nil
+	}
+	return h.ValidAt
+}
+
+func (h *Hyperedge) GetExtraProperties() map[string]interface{} {
+	if h == nil {
+		return nil
+	}
+	return h.extraProperties
+}
+
+func (h *Hyperedge) require(field *big.Int) {
+	next := new(big.Int)
+	if h.explicitFields != nil {
+		next.Set(h.explicitFields)
+	}
+	next.Or(next, field)
+	h.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetCreatedAt(createdAt *string) {
+	h.CreatedAt = createdAt
+	h.require(hyperedgeFieldCreatedAt)
+}
+
+// SetEdges sets the Edges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetEdges(edges []*HyperedgeEdge) {
+	h.Edges = edges
+	h.require(hyperedgeFieldEdges)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetExpiredAt(expiredAt *string) {
+	h.ExpiredAt = expiredAt
+	h.require(hyperedgeFieldExpiredAt)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetFact(fact *string) {
+	h.Fact = fact
+	h.require(hyperedgeFieldFact)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetGraphUUID(graphUUID *string) {
+	h.GraphUUID = graphUUID
+	h.require(hyperedgeFieldGraphUUID)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetInvalidAt(invalidAt *string) {
+	h.InvalidAt = invalidAt
+	h.require(hyperedgeFieldInvalidAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetUUID(uuid *string) {
+	h.UUID = uuid
+	h.require(hyperedgeFieldUUID)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetValidAt(validAt *string) {
+	h.ValidAt = validAt
+	h.require(hyperedgeFieldValidAt)
+}
+
+func (h *Hyperedge) UnmarshalJSON(data []byte) error {
+	type unmarshaler Hyperedge
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*h = Hyperedge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *h)
+	if err != nil {
+		return err
+	}
+	h.extraProperties = extraProperties
+	h.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (h *Hyperedge) MarshalJSON() ([]byte, error) {
+	type embed Hyperedge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*h),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, h.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (h *Hyperedge) String() string {
+	if h == nil {
+		return "<nil>"
+	}
+	if len(h.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(h.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(h); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", h)
+}
+
+var (
+	hyperedgeEdgeFieldName           = big.NewInt(1 << 0)
+	hyperedgeEdgeFieldSourceNodeUUID = big.NewInt(1 << 1)
+	hyperedgeEdgeFieldTargetNodeUUID = big.NewInt(1 << 2)
+	hyperedgeEdgeFieldUUID           = big.NewInt(1 << 3)
+)
+
+type HyperedgeEdge struct {
+	// The name of the member edge, in upper snake case, for example FOUNDED.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The unique identifier of the member edge's source node.
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// The unique identifier of the member edge's target node.
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	// The unique identifier of the member edge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (h *HyperedgeEdge) GetName() *string {
+	if h == nil {
+		return nil
+	}
+	return h.Name
+}
+
+func (h *HyperedgeEdge) GetSourceNodeUUID() *string {
+	if h == nil {
+		return nil
+	}
+	return h.SourceNodeUUID
+}
+
+func (h *HyperedgeEdge) GetTargetNodeUUID() *string {
+	if h == nil {
+		return nil
+	}
+	return h.TargetNodeUUID
+}
+
+func (h *HyperedgeEdge) GetUUID() *string {
+	if h == nil {
+		return nil
+	}
+	return h.UUID
+}
+
+func (h *HyperedgeEdge) GetExtraProperties() map[string]interface{} {
+	if h == nil {
+		return nil
+	}
+	return h.extraProperties
+}
+
+func (h *HyperedgeEdge) require(field *big.Int) {
+	next := new(big.Int)
+	if h.explicitFields != nil {
+		next.Set(h.explicitFields)
+	}
+	next.Or(next, field)
+	h.explicitFields = next
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeEdge) SetName(name *string) {
+	h.Name = name
+	h.require(hyperedgeEdgeFieldName)
+}
+
+// SetSourceNodeUUID sets the SourceNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeEdge) SetSourceNodeUUID(sourceNodeUUID *string) {
+	h.SourceNodeUUID = sourceNodeUUID
+	h.require(hyperedgeEdgeFieldSourceNodeUUID)
+}
+
+// SetTargetNodeUUID sets the TargetNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeEdge) SetTargetNodeUUID(targetNodeUUID *string) {
+	h.TargetNodeUUID = targetNodeUUID
+	h.require(hyperedgeEdgeFieldTargetNodeUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeEdge) SetUUID(uuid *string) {
+	h.UUID = uuid
+	h.require(hyperedgeEdgeFieldUUID)
+}
+
+func (h *HyperedgeEdge) UnmarshalJSON(data []byte) error {
+	type unmarshaler HyperedgeEdge
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*h = HyperedgeEdge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *h)
+	if err != nil {
+		return err
+	}
+	h.extraProperties = extraProperties
+	h.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (h *HyperedgeEdge) MarshalJSON() ([]byte, error) {
+	type embed HyperedgeEdge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*h),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, h.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (h *HyperedgeEdge) String() string {
+	if h == nil {
+		return "<nil>"
+	}
+	if len(h.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(h.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(h); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", h)
+}
+
+var (
+	hyperedgeInputFieldName       = big.NewInt(1 << 0)
+	hyperedgeInputFieldSourceNode = big.NewInt(1 << 1)
+	hyperedgeInputFieldTargetNode = big.NewInt(1 << 2)
+)
+
+type HyperedgeInput struct {
+	// The name of the member edge, in upper snake case, for example FOUNDED.
+	Name string `json:"name" url:"name"`
+	// The source node of this member, referenced by uuid or created or matched
+	// by name.
+	SourceNode *EdgeNodeRef `json:"source_node" url:"source_node"`
+	// The target node of this member, referenced by uuid or created or matched
+	// by name.
+	TargetNode *EdgeNodeRef `json:"target_node" url:"target_node"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (h *HyperedgeInput) GetName() string {
+	if h == nil {
+		return ""
+	}
+	return h.Name
+}
+
+func (h *HyperedgeInput) GetSourceNode() *EdgeNodeRef {
+	if h == nil {
+		return nil
+	}
+	return h.SourceNode
+}
+
+func (h *HyperedgeInput) GetTargetNode() *EdgeNodeRef {
+	if h == nil {
+		return nil
+	}
+	return h.TargetNode
+}
+
+func (h *HyperedgeInput) GetExtraProperties() map[string]interface{} {
+	if h == nil {
+		return nil
+	}
+	return h.extraProperties
+}
+
+func (h *HyperedgeInput) require(field *big.Int) {
+	next := new(big.Int)
+	if h.explicitFields != nil {
+		next.Set(h.explicitFields)
+	}
+	next.Or(next, field)
+	h.explicitFields = next
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeInput) SetName(name string) {
+	h.Name = name
+	h.require(hyperedgeInputFieldName)
+}
+
+// SetSourceNode sets the SourceNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeInput) SetSourceNode(sourceNode *EdgeNodeRef) {
+	h.SourceNode = sourceNode
+	h.require(hyperedgeInputFieldSourceNode)
+}
+
+// SetTargetNode sets the TargetNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeInput) SetTargetNode(targetNode *EdgeNodeRef) {
+	h.TargetNode = targetNode
+	h.require(hyperedgeInputFieldTargetNode)
+}
+
+func (h *HyperedgeInput) UnmarshalJSON(data []byte) error {
+	type unmarshaler HyperedgeInput
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*h = HyperedgeInput(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *h)
+	if err != nil {
+		return err
+	}
+	h.extraProperties = extraProperties
+	h.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (h *HyperedgeInput) MarshalJSON() ([]byte, error) {
+	type embed HyperedgeInput
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*h),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, h.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (h *HyperedgeInput) String() string {
+	if h == nil {
+		return "<nil>"
+	}
+	if len(h.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(h.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(h); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", h)
+}
+
+var (
+	hyperedgePageFieldItems      = big.NewInt(1 << 0)
+	hyperedgePageFieldNextCursor = big.NewInt(1 << 1)
+)
+
+type HyperedgePage struct {
+	Items      []*Hyperedge `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string      `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (h *HyperedgePage) GetItems() []*Hyperedge {
+	if h == nil {
+		return nil
+	}
+	return h.Items
+}
+
+func (h *HyperedgePage) GetNextCursor() *string {
+	if h == nil {
+		return nil
+	}
+	return h.NextCursor
+}
+
+func (h *HyperedgePage) GetExtraProperties() map[string]interface{} {
+	if h == nil {
+		return nil
+	}
+	return h.extraProperties
+}
+
+func (h *HyperedgePage) require(field *big.Int) {
+	next := new(big.Int)
+	if h.explicitFields != nil {
+		next.Set(h.explicitFields)
+	}
+	next.Or(next, field)
+	h.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgePage) SetItems(items []*Hyperedge) {
+	h.Items = items
+	h.require(hyperedgePageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgePage) SetNextCursor(nextCursor *string) {
+	h.NextCursor = nextCursor
+	h.require(hyperedgePageFieldNextCursor)
+}
+
+func (h *HyperedgePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler HyperedgePage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*h = HyperedgePage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *h)
+	if err != nil {
+		return err
+	}
+	h.extraProperties = extraProperties
+	h.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (h *HyperedgePage) MarshalJSON() ([]byte, error) {
+	type embed HyperedgePage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*h),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, h.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (h *HyperedgePage) String() string {
+	if h == nil {
+		return "<nil>"
+	}
+	if len(h.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(h.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(h); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", h)
+}
+
+var (
+	importedTrajectoryReferenceFieldAgentUUID      = big.NewInt(1 << 0)
+	importedTrajectoryReferenceFieldImportUUID     = big.NewInt(1 << 1)
+	importedTrajectoryReferenceFieldTrajectoryUUID = big.NewInt(1 << 2)
+)
+
+type ImportedTrajectoryReference struct {
+	// AgentUUID is the visible Agent identifier.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// ImportUUID is the active import owner identifier.
+	ImportUUID *string `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
+	// TrajectoryUUID is the imported Trajectory identifier.
+	TrajectoryUUID *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *ImportedTrajectoryReference) GetAgentUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.AgentUUID
+}
+
+func (i *ImportedTrajectoryReference) GetImportUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ImportUUID
+}
+
+func (i *ImportedTrajectoryReference) GetTrajectoryUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.TrajectoryUUID
+}
+
+func (i *ImportedTrajectoryReference) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *ImportedTrajectoryReference) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *ImportedTrajectoryReference) SetAgentUUID(agentUUID *string) {
+	i.AgentUUID = agentUUID
+	i.require(importedTrajectoryReferenceFieldAgentUUID)
+}
+
+// SetImportUUID sets the ImportUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *ImportedTrajectoryReference) SetImportUUID(importUUID *string) {
+	i.ImportUUID = importUUID
+	i.require(importedTrajectoryReferenceFieldImportUUID)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *ImportedTrajectoryReference) SetTrajectoryUUID(trajectoryUUID *string) {
+	i.TrajectoryUUID = trajectoryUUID
+	i.require(importedTrajectoryReferenceFieldTrajectoryUUID)
+}
+
+func (i *ImportedTrajectoryReference) UnmarshalJSON(data []byte) error {
+	type unmarshaler ImportedTrajectoryReference
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = ImportedTrajectoryReference(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *ImportedTrajectoryReference) MarshalJSON() ([]byte, error) {
+	type embed ImportedTrajectoryReference
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *ImportedTrajectoryReference) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceFieldCreatedAt = big.NewInt(1 << 0)
+	ingestionTraceFieldError     = big.NewInt(1 << 1)
+	ingestionTraceFieldInput     = big.NewInt(1 << 2)
+	ingestionTraceFieldOutput    = big.NewInt(1 << 3)
+	ingestionTraceFieldStatus    = big.NewInt(1 << 4)
+	ingestionTraceFieldStep      = big.NewInt(1 << 5)
+	ingestionTraceFieldUUID      = big.NewInt(1 << 6)
+)
+
+type IngestionTrace struct {
+	// The time the trace was recorded.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The error message, present only when the status is failed.
+	Error *string `json:"error,omitempty" url:"error,omitempty"`
+	// The input of the step.
+	Input *IngestionTraceInput `json:"input,omitempty" url:"input,omitempty"`
+	// The output of the step, with an explanation on each entry that has one.
+	Output *IngestionTraceOutput `json:"output,omitempty" url:"output,omitempty"`
+	// Tells if the explanations of the step were recorded.
+	Status *IngestionTraceStatus `json:"status,omitempty" url:"status,omitempty"`
+	// The ingestion step that the trace records.
+	Step *IngestionTraceStep `json:"step,omitempty" url:"step,omitempty"`
+	// The unique identifier of the trace.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTrace) GetCreatedAt() *string {
+	if i == nil {
+		return nil
+	}
+	return i.CreatedAt
+}
+
+func (i *IngestionTrace) GetError() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Error
+}
+
+func (i *IngestionTrace) GetInput() *IngestionTraceInput {
+	if i == nil {
+		return nil
+	}
+	return i.Input
+}
+
+func (i *IngestionTrace) GetOutput() *IngestionTraceOutput {
+	if i == nil {
+		return nil
+	}
+	return i.Output
+}
+
+func (i *IngestionTrace) GetStatus() *IngestionTraceStatus {
+	if i == nil {
+		return nil
+	}
+	return i.Status
+}
+
+func (i *IngestionTrace) GetStep() *IngestionTraceStep {
+	if i == nil {
+		return nil
+	}
+	return i.Step
+}
+
+func (i *IngestionTrace) GetUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.UUID
+}
+
+func (i *IngestionTrace) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTrace) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTrace) SetCreatedAt(createdAt *string) {
+	i.CreatedAt = createdAt
+	i.require(ingestionTraceFieldCreatedAt)
+}
+
+// SetError sets the Error field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTrace) SetError(error_ *string) {
+	i.Error = error_
+	i.require(ingestionTraceFieldError)
+}
+
+// SetInput sets the Input field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTrace) SetInput(input *IngestionTraceInput) {
+	i.Input = input
+	i.require(ingestionTraceFieldInput)
+}
+
+// SetOutput sets the Output field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTrace) SetOutput(output *IngestionTraceOutput) {
+	i.Output = output
+	i.require(ingestionTraceFieldOutput)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTrace) SetStatus(status *IngestionTraceStatus) {
+	i.Status = status
+	i.require(ingestionTraceFieldStatus)
+}
+
+// SetStep sets the Step field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTrace) SetStep(step *IngestionTraceStep) {
+	i.Step = step
+	i.require(ingestionTraceFieldStep)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTrace) SetUUID(uuid *string) {
+	i.UUID = uuid
+	i.require(ingestionTraceFieldUUID)
+}
+
+func (i *IngestionTrace) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTrace
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTrace(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTrace) MarshalJSON() ([]byte, error) {
+	type embed IngestionTrace
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTrace) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceEdgeFieldAttributes     = big.NewInt(1 << 0)
+	ingestionTraceEdgeFieldCreatedAt      = big.NewInt(1 << 1)
+	ingestionTraceEdgeFieldEpisodeUUIDs   = big.NewInt(1 << 2)
+	ingestionTraceEdgeFieldExpiredAt      = big.NewInt(1 << 3)
+	ingestionTraceEdgeFieldExplanation    = big.NewInt(1 << 4)
+	ingestionTraceEdgeFieldFact           = big.NewInt(1 << 5)
+	ingestionTraceEdgeFieldInvalidAt      = big.NewInt(1 << 6)
+	ingestionTraceEdgeFieldName           = big.NewInt(1 << 7)
+	ingestionTraceEdgeFieldSourceNodeUUID = big.NewInt(1 << 8)
+	ingestionTraceEdgeFieldTargetNodeUUID = big.NewInt(1 << 9)
+	ingestionTraceEdgeFieldUUID           = big.NewInt(1 << 10)
+	ingestionTraceEdgeFieldValidAt        = big.NewInt(1 << 11)
+)
+
+type IngestionTraceEdge struct {
+	// Additional attributes of the edge, as defined by its edge type.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the edge was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The episodes that the edge was derived from.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// The time the edge was superseded.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// The explanation of the decision of the step for this edge. Present only
+	// on output entries that have an explanation.
+	Explanation *string `json:"explanation,omitempty" url:"explanation,omitempty"`
+	// The natural-language fact that the edge represents.
+	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// The name of the edge, in upper snake case.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The unique identifier of the source node of the edge.
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// The unique identifier of the target node of the edge.
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	// The unique identifier of the edge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time from which the fact is true.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceEdge) GetAttributes() map[string]any {
+	if i == nil {
+		return nil
+	}
+	return i.Attributes
+}
+
+func (i *IngestionTraceEdge) GetCreatedAt() *string {
+	if i == nil {
+		return nil
+	}
+	return i.CreatedAt
+}
+
+func (i *IngestionTraceEdge) GetEpisodeUUIDs() []string {
+	if i == nil {
+		return nil
+	}
+	return i.EpisodeUUIDs
+}
+
+func (i *IngestionTraceEdge) GetExpiredAt() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ExpiredAt
+}
+
+func (i *IngestionTraceEdge) GetExplanation() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Explanation
+}
+
+func (i *IngestionTraceEdge) GetFact() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Fact
+}
+
+func (i *IngestionTraceEdge) GetInvalidAt() *string {
+	if i == nil {
+		return nil
+	}
+	return i.InvalidAt
+}
+
+func (i *IngestionTraceEdge) GetName() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Name
+}
+
+func (i *IngestionTraceEdge) GetSourceNodeUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.SourceNodeUUID
+}
+
+func (i *IngestionTraceEdge) GetTargetNodeUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.TargetNodeUUID
+}
+
+func (i *IngestionTraceEdge) GetUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.UUID
+}
+
+func (i *IngestionTraceEdge) GetValidAt() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ValidAt
+}
+
+func (i *IngestionTraceEdge) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceEdge) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetAttributes(attributes map[string]any) {
+	i.Attributes = attributes
+	i.require(ingestionTraceEdgeFieldAttributes)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetCreatedAt(createdAt *string) {
+	i.CreatedAt = createdAt
+	i.require(ingestionTraceEdgeFieldCreatedAt)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetEpisodeUUIDs(episodeUUIDs []string) {
+	i.EpisodeUUIDs = episodeUUIDs
+	i.require(ingestionTraceEdgeFieldEpisodeUUIDs)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetExpiredAt(expiredAt *string) {
+	i.ExpiredAt = expiredAt
+	i.require(ingestionTraceEdgeFieldExpiredAt)
+}
+
+// SetExplanation sets the Explanation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetExplanation(explanation *string) {
+	i.Explanation = explanation
+	i.require(ingestionTraceEdgeFieldExplanation)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetFact(fact *string) {
+	i.Fact = fact
+	i.require(ingestionTraceEdgeFieldFact)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetInvalidAt(invalidAt *string) {
+	i.InvalidAt = invalidAt
+	i.require(ingestionTraceEdgeFieldInvalidAt)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetName(name *string) {
+	i.Name = name
+	i.require(ingestionTraceEdgeFieldName)
+}
+
+// SetSourceNodeUUID sets the SourceNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetSourceNodeUUID(sourceNodeUUID *string) {
+	i.SourceNodeUUID = sourceNodeUUID
+	i.require(ingestionTraceEdgeFieldSourceNodeUUID)
+}
+
+// SetTargetNodeUUID sets the TargetNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetTargetNodeUUID(targetNodeUUID *string) {
+	i.TargetNodeUUID = targetNodeUUID
+	i.require(ingestionTraceEdgeFieldTargetNodeUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetUUID(uuid *string) {
+	i.UUID = uuid
+	i.require(ingestionTraceEdgeFieldUUID)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdge) SetValidAt(validAt *string) {
+	i.ValidAt = validAt
+	i.require(ingestionTraceEdgeFieldValidAt)
+}
+
+func (i *IngestionTraceEdge) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceEdge
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceEdge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceEdge) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceEdge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceEdge) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceEdgeInvalidationFieldInvalidatedEdgeUUID = big.NewInt(1 << 0)
+	ingestionTraceEdgeInvalidationFieldInvalidatingEdges   = big.NewInt(1 << 1)
+)
+
+type IngestionTraceEdgeInvalidation struct {
+	// The unique identifier of the invalidated edge.
+	InvalidatedEdgeUUID *string `json:"invalidated_edge_uuid,omitempty" url:"invalidated_edge_uuid,omitempty"`
+	// The resolved edges that invalidated the edge.
+	InvalidatingEdges []*IngestionTraceEdgeReference `json:"invalidating_edges,omitempty" url:"invalidating_edges,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceEdgeInvalidation) GetInvalidatedEdgeUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.InvalidatedEdgeUUID
+}
+
+func (i *IngestionTraceEdgeInvalidation) GetInvalidatingEdges() []*IngestionTraceEdgeReference {
+	if i == nil {
+		return nil
+	}
+	return i.InvalidatingEdges
+}
+
+func (i *IngestionTraceEdgeInvalidation) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceEdgeInvalidation) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetInvalidatedEdgeUUID sets the InvalidatedEdgeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdgeInvalidation) SetInvalidatedEdgeUUID(invalidatedEdgeUUID *string) {
+	i.InvalidatedEdgeUUID = invalidatedEdgeUUID
+	i.require(ingestionTraceEdgeInvalidationFieldInvalidatedEdgeUUID)
+}
+
+// SetInvalidatingEdges sets the InvalidatingEdges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdgeInvalidation) SetInvalidatingEdges(invalidatingEdges []*IngestionTraceEdgeReference) {
+	i.InvalidatingEdges = invalidatingEdges
+	i.require(ingestionTraceEdgeInvalidationFieldInvalidatingEdges)
+}
+
+func (i *IngestionTraceEdgeInvalidation) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceEdgeInvalidation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceEdgeInvalidation(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceEdgeInvalidation) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceEdgeInvalidation
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceEdgeInvalidation) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceEdgeReferenceFieldExplanation = big.NewInt(1 << 0)
+	ingestionTraceEdgeReferenceFieldUUID        = big.NewInt(1 << 1)
+)
+
+type IngestionTraceEdgeReference struct {
+	// The explanation of the decision, when the step recorded one.
+	Explanation *string `json:"explanation,omitempty" url:"explanation,omitempty"`
+	// The unique identifier of the edge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceEdgeReference) GetExplanation() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Explanation
+}
+
+func (i *IngestionTraceEdgeReference) GetUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.UUID
+}
+
+func (i *IngestionTraceEdgeReference) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceEdgeReference) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetExplanation sets the Explanation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdgeReference) SetExplanation(explanation *string) {
+	i.Explanation = explanation
+	i.require(ingestionTraceEdgeReferenceFieldExplanation)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEdgeReference) SetUUID(uuid *string) {
+	i.UUID = uuid
+	i.require(ingestionTraceEdgeReferenceFieldUUID)
+}
+
+func (i *IngestionTraceEdgeReference) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceEdgeReference
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceEdgeReference(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceEdgeReference) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceEdgeReference
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceEdgeReference) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceEntityTypeFieldDescription        = big.NewInt(1 << 0)
+	ingestionTraceEntityTypeFieldIdentityProperties = big.NewInt(1 << 1)
+	ingestionTraceEntityTypeFieldName               = big.NewInt(1 << 2)
+	ingestionTraceEntityTypeFieldParent             = big.NewInt(1 << 3)
+	ingestionTraceEntityTypeFieldProperties         = big.NewInt(1 << 4)
+)
+
+type IngestionTraceEntityType struct {
+	// A description of the entity type, used to guide extraction.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The property names that determine whether two nodes of this type are the
+	// same entity.
+	IdentityProperties []string `json:"identity_properties,omitempty" url:"identity_properties,omitempty"`
+	// The name of the entity type.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The name of the parent entity type. Absent for a top-level type.
+	Parent *string `json:"parent,omitempty" url:"parent,omitempty"`
+	// The custom properties defined on nodes of this type.
+	Properties []*EntityProperty `json:"properties,omitempty" url:"properties,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceEntityType) GetDescription() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Description
+}
+
+func (i *IngestionTraceEntityType) GetIdentityProperties() []string {
+	if i == nil {
+		return nil
+	}
+	return i.IdentityProperties
+}
+
+func (i *IngestionTraceEntityType) GetName() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Name
+}
+
+func (i *IngestionTraceEntityType) GetParent() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Parent
+}
+
+func (i *IngestionTraceEntityType) GetProperties() []*EntityProperty {
+	if i == nil {
+		return nil
+	}
+	return i.Properties
+}
+
+func (i *IngestionTraceEntityType) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceEntityType) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEntityType) SetDescription(description *string) {
+	i.Description = description
+	i.require(ingestionTraceEntityTypeFieldDescription)
+}
+
+// SetIdentityProperties sets the IdentityProperties field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEntityType) SetIdentityProperties(identityProperties []string) {
+	i.IdentityProperties = identityProperties
+	i.require(ingestionTraceEntityTypeFieldIdentityProperties)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEntityType) SetName(name *string) {
+	i.Name = name
+	i.require(ingestionTraceEntityTypeFieldName)
+}
+
+// SetParent sets the Parent field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEntityType) SetParent(parent *string) {
+	i.Parent = parent
+	i.require(ingestionTraceEntityTypeFieldParent)
+}
+
+// SetProperties sets the Properties field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEntityType) SetProperties(properties []*EntityProperty) {
+	i.Properties = properties
+	i.require(ingestionTraceEntityTypeFieldProperties)
+}
+
+func (i *IngestionTraceEntityType) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceEntityType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceEntityType(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceEntityType) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceEntityType
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceEntityType) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceEpisodeFieldContent = big.NewInt(1 << 0)
+	ingestionTraceEpisodeFieldSource  = big.NewInt(1 << 1)
+	ingestionTraceEpisodeFieldUUID    = big.NewInt(1 << 2)
+	ingestionTraceEpisodeFieldValidAt = big.NewInt(1 << 3)
+)
+
+type IngestionTraceEpisode struct {
+	// The content of the episode.
+	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The source type of the episode, for example message, text, or json.
+	Source *string `json:"source,omitempty" url:"source,omitempty"`
+	// The unique identifier of the episode.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time at which the episode occurred.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceEpisode) GetContent() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Content
+}
+
+func (i *IngestionTraceEpisode) GetSource() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Source
+}
+
+func (i *IngestionTraceEpisode) GetUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.UUID
+}
+
+func (i *IngestionTraceEpisode) GetValidAt() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ValidAt
+}
+
+func (i *IngestionTraceEpisode) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceEpisode) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetContent sets the Content field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEpisode) SetContent(content *string) {
+	i.Content = content
+	i.require(ingestionTraceEpisodeFieldContent)
+}
+
+// SetSource sets the Source field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEpisode) SetSource(source *string) {
+	i.Source = source
+	i.require(ingestionTraceEpisodeFieldSource)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEpisode) SetUUID(uuid *string) {
+	i.UUID = uuid
+	i.require(ingestionTraceEpisodeFieldUUID)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceEpisode) SetValidAt(validAt *string) {
+	i.ValidAt = validAt
+	i.require(ingestionTraceEpisodeFieldValidAt)
+}
+
+func (i *IngestionTraceEpisode) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceEpisode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceEpisode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceEpisode) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceEpisode
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceEpisode) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceInputFieldCandidateEdges        = big.NewInt(1 << 0)
+	ingestionTraceInputFieldCandidateNodes        = big.NewInt(1 << 1)
+	ingestionTraceInputFieldCustomInstructions    = big.NewInt(1 << 2)
+	ingestionTraceInputFieldEdgeTypes             = big.NewInt(1 << 3)
+	ingestionTraceInputFieldEntityTypes           = big.NewInt(1 << 4)
+	ingestionTraceInputFieldEpisodeContent        = big.NewInt(1 << 5)
+	ingestionTraceInputFieldEpisodes              = big.NewInt(1 << 6)
+	ingestionTraceInputFieldExtractedEdges        = big.NewInt(1 << 7)
+	ingestionTraceInputFieldExtractedNodes        = big.NewInt(1 << 8)
+	ingestionTraceInputFieldIgnoreDefaultOntology = big.NewInt(1 << 9)
+	ingestionTraceInputFieldPreviousEpisodes      = big.NewInt(1 << 10)
+	ingestionTraceInputFieldResolvedNodes         = big.NewInt(1 << 11)
+)
+
+type IngestionTraceInput struct {
+	// The existing edges that the step compared with the extracted edges.
+	// Present for resolve_edges and empty for
+	// the other steps.
+	CandidateEdges []*IngestionTraceEdge `json:"candidate_edges,omitempty" url:"candidate_edges,omitempty"`
+	// The existing nodes that the step compared with the extracted nodes.
+	// Present for resolve_nodes and empty for
+	// the other steps.
+	CandidateNodes []*IngestionTraceNode `json:"candidate_nodes,omitempty" url:"candidate_nodes,omitempty"`
+	// The custom extraction instructions in effect for the episode.
+	CustomInstructions []string `json:"custom_instructions,omitempty" url:"custom_instructions,omitempty"`
+	// The custom edge types in effect for the episode.
+	EdgeTypes []*EdgeType `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// The custom entity types in effect for the episode.
+	EntityTypes []*IngestionTraceEntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
+	// The content of the episode that the step processed.
+	EpisodeContent *string `json:"episode_content,omitempty" url:"episode_content,omitempty"`
+	// The episodes that the step processed together.
+	Episodes []*IngestionTraceEpisode `json:"episodes,omitempty" url:"episodes,omitempty"`
+	// The extracted edges that the step resolved. Present for resolve_edges and empty for
+	// the other steps.
+	ExtractedEdges []*IngestionTraceEdge `json:"extracted_edges,omitempty" url:"extracted_edges,omitempty"`
+	// The extracted nodes that the step resolved. Present for resolve_nodes and empty for
+	// the other steps.
+	ExtractedNodes []*IngestionTraceNode `json:"extracted_nodes,omitempty" url:"extracted_nodes,omitempty"`
+	// Tells if the default ontology was ignored.
+	IgnoreDefaultOntology *bool `json:"ignore_default_ontology,omitempty" url:"ignore_default_ontology,omitempty"`
+	// The previous episodes that the step used as context.
+	PreviousEpisodes []*IngestionTraceEpisode `json:"previous_episodes,omitempty" url:"previous_episodes,omitempty"`
+	// The resolved nodes that the extracted edges connect. Present for resolve_edges and empty for
+	// the other steps.
+	ResolvedNodes []*IngestionTraceNode `json:"resolved_nodes,omitempty" url:"resolved_nodes,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceInput) GetCandidateEdges() []*IngestionTraceEdge {
+	if i == nil {
+		return nil
+	}
+	return i.CandidateEdges
+}
+
+func (i *IngestionTraceInput) GetCandidateNodes() []*IngestionTraceNode {
+	if i == nil {
+		return nil
+	}
+	return i.CandidateNodes
+}
+
+func (i *IngestionTraceInput) GetCustomInstructions() []string {
+	if i == nil {
+		return nil
+	}
+	return i.CustomInstructions
+}
+
+func (i *IngestionTraceInput) GetEdgeTypes() []*EdgeType {
+	if i == nil {
+		return nil
+	}
+	return i.EdgeTypes
+}
+
+func (i *IngestionTraceInput) GetEntityTypes() []*IngestionTraceEntityType {
+	if i == nil {
+		return nil
+	}
+	return i.EntityTypes
+}
+
+func (i *IngestionTraceInput) GetEpisodeContent() *string {
+	if i == nil {
+		return nil
+	}
+	return i.EpisodeContent
+}
+
+func (i *IngestionTraceInput) GetEpisodes() []*IngestionTraceEpisode {
+	if i == nil {
+		return nil
+	}
+	return i.Episodes
+}
+
+func (i *IngestionTraceInput) GetExtractedEdges() []*IngestionTraceEdge {
+	if i == nil {
+		return nil
+	}
+	return i.ExtractedEdges
+}
+
+func (i *IngestionTraceInput) GetExtractedNodes() []*IngestionTraceNode {
+	if i == nil {
+		return nil
+	}
+	return i.ExtractedNodes
+}
+
+func (i *IngestionTraceInput) GetIgnoreDefaultOntology() *bool {
+	if i == nil {
+		return nil
+	}
+	return i.IgnoreDefaultOntology
+}
+
+func (i *IngestionTraceInput) GetPreviousEpisodes() []*IngestionTraceEpisode {
+	if i == nil {
+		return nil
+	}
+	return i.PreviousEpisodes
+}
+
+func (i *IngestionTraceInput) GetResolvedNodes() []*IngestionTraceNode {
+	if i == nil {
+		return nil
+	}
+	return i.ResolvedNodes
+}
+
+func (i *IngestionTraceInput) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceInput) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetCandidateEdges sets the CandidateEdges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetCandidateEdges(candidateEdges []*IngestionTraceEdge) {
+	i.CandidateEdges = candidateEdges
+	i.require(ingestionTraceInputFieldCandidateEdges)
+}
+
+// SetCandidateNodes sets the CandidateNodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetCandidateNodes(candidateNodes []*IngestionTraceNode) {
+	i.CandidateNodes = candidateNodes
+	i.require(ingestionTraceInputFieldCandidateNodes)
+}
+
+// SetCustomInstructions sets the CustomInstructions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetCustomInstructions(customInstructions []string) {
+	i.CustomInstructions = customInstructions
+	i.require(ingestionTraceInputFieldCustomInstructions)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetEdgeTypes(edgeTypes []*EdgeType) {
+	i.EdgeTypes = edgeTypes
+	i.require(ingestionTraceInputFieldEdgeTypes)
+}
+
+// SetEntityTypes sets the EntityTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetEntityTypes(entityTypes []*IngestionTraceEntityType) {
+	i.EntityTypes = entityTypes
+	i.require(ingestionTraceInputFieldEntityTypes)
+}
+
+// SetEpisodeContent sets the EpisodeContent field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetEpisodeContent(episodeContent *string) {
+	i.EpisodeContent = episodeContent
+	i.require(ingestionTraceInputFieldEpisodeContent)
+}
+
+// SetEpisodes sets the Episodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetEpisodes(episodes []*IngestionTraceEpisode) {
+	i.Episodes = episodes
+	i.require(ingestionTraceInputFieldEpisodes)
+}
+
+// SetExtractedEdges sets the ExtractedEdges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetExtractedEdges(extractedEdges []*IngestionTraceEdge) {
+	i.ExtractedEdges = extractedEdges
+	i.require(ingestionTraceInputFieldExtractedEdges)
+}
+
+// SetExtractedNodes sets the ExtractedNodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetExtractedNodes(extractedNodes []*IngestionTraceNode) {
+	i.ExtractedNodes = extractedNodes
+	i.require(ingestionTraceInputFieldExtractedNodes)
+}
+
+// SetIgnoreDefaultOntology sets the IgnoreDefaultOntology field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetIgnoreDefaultOntology(ignoreDefaultOntology *bool) {
+	i.IgnoreDefaultOntology = ignoreDefaultOntology
+	i.require(ingestionTraceInputFieldIgnoreDefaultOntology)
+}
+
+// SetPreviousEpisodes sets the PreviousEpisodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetPreviousEpisodes(previousEpisodes []*IngestionTraceEpisode) {
+	i.PreviousEpisodes = previousEpisodes
+	i.require(ingestionTraceInputFieldPreviousEpisodes)
+}
+
+// SetResolvedNodes sets the ResolvedNodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetResolvedNodes(resolvedNodes []*IngestionTraceNode) {
+	i.ResolvedNodes = resolvedNodes
+	i.require(ingestionTraceInputFieldResolvedNodes)
+}
+
+func (i *IngestionTraceInput) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceInput
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceInput(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceInput) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceInput
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceInput) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceNodeFieldAttributes     = big.NewInt(1 << 0)
+	ingestionTraceNodeFieldCreatedAt      = big.NewInt(1 << 1)
+	ingestionTraceNodeFieldEpisodeIndexes = big.NewInt(1 << 2)
+	ingestionTraceNodeFieldExplanation    = big.NewInt(1 << 3)
+	ingestionTraceNodeFieldLabels         = big.NewInt(1 << 4)
+	ingestionTraceNodeFieldName           = big.NewInt(1 << 5)
+	ingestionTraceNodeFieldSummary        = big.NewInt(1 << 6)
+	ingestionTraceNodeFieldUUID           = big.NewInt(1 << 7)
+)
+
+type IngestionTraceNode struct {
+	// Additional attributes of the node, as defined by its entity type.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the node was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The positions in the input episodes of the episodes that the node was
+	// extracted from. Present on the extracted nodes of combined_extraction.
+	EpisodeIndexes []int `json:"episode_indexes,omitempty" url:"episode_indexes,omitempty"`
+	// The explanation of the decision of the step for this node. Present only
+	// on output entries that have an explanation.
+	Explanation *string `json:"explanation,omitempty" url:"explanation,omitempty"`
+	// The entity type labels of the node.
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// The name of the entity that the node represents.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The summary of the entity that the node represents.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the node.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceNode) GetAttributes() map[string]any {
+	if i == nil {
+		return nil
+	}
+	return i.Attributes
+}
+
+func (i *IngestionTraceNode) GetCreatedAt() *string {
+	if i == nil {
+		return nil
+	}
+	return i.CreatedAt
+}
+
+func (i *IngestionTraceNode) GetEpisodeIndexes() []int {
+	if i == nil {
+		return nil
+	}
+	return i.EpisodeIndexes
+}
+
+func (i *IngestionTraceNode) GetExplanation() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Explanation
+}
+
+func (i *IngestionTraceNode) GetLabels() []string {
+	if i == nil {
+		return nil
+	}
+	return i.Labels
+}
+
+func (i *IngestionTraceNode) GetName() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Name
+}
+
+func (i *IngestionTraceNode) GetSummary() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Summary
+}
+
+func (i *IngestionTraceNode) GetUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.UUID
+}
+
+func (i *IngestionTraceNode) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceNode) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNode) SetAttributes(attributes map[string]any) {
+	i.Attributes = attributes
+	i.require(ingestionTraceNodeFieldAttributes)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNode) SetCreatedAt(createdAt *string) {
+	i.CreatedAt = createdAt
+	i.require(ingestionTraceNodeFieldCreatedAt)
+}
+
+// SetEpisodeIndexes sets the EpisodeIndexes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNode) SetEpisodeIndexes(episodeIndexes []int) {
+	i.EpisodeIndexes = episodeIndexes
+	i.require(ingestionTraceNodeFieldEpisodeIndexes)
+}
+
+// SetExplanation sets the Explanation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNode) SetExplanation(explanation *string) {
+	i.Explanation = explanation
+	i.require(ingestionTraceNodeFieldExplanation)
+}
+
+// SetLabels sets the Labels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNode) SetLabels(labels []string) {
+	i.Labels = labels
+	i.require(ingestionTraceNodeFieldLabels)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNode) SetName(name *string) {
+	i.Name = name
+	i.require(ingestionTraceNodeFieldName)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNode) SetSummary(summary *string) {
+	i.Summary = summary
+	i.require(ingestionTraceNodeFieldSummary)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNode) SetUUID(uuid *string) {
+	i.UUID = uuid
+	i.require(ingestionTraceNodeFieldUUID)
+}
+
+func (i *IngestionTraceNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceNode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceNode) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceNode
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceNode) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceNodeDuplicateFieldExistingNode  = big.NewInt(1 << 0)
+	ingestionTraceNodeDuplicateFieldExtractedNode = big.NewInt(1 << 1)
+)
+
+type IngestionTraceNodeDuplicate struct {
+	// The existing node that the extracted node duplicates.
+	ExistingNode *IngestionTraceNode `json:"existing_node,omitempty" url:"existing_node,omitempty"`
+	// The extracted node.
+	ExtractedNode *IngestionTraceNode `json:"extracted_node,omitempty" url:"extracted_node,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceNodeDuplicate) GetExistingNode() *IngestionTraceNode {
+	if i == nil {
+		return nil
+	}
+	return i.ExistingNode
+}
+
+func (i *IngestionTraceNodeDuplicate) GetExtractedNode() *IngestionTraceNode {
+	if i == nil {
+		return nil
+	}
+	return i.ExtractedNode
+}
+
+func (i *IngestionTraceNodeDuplicate) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceNodeDuplicate) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetExistingNode sets the ExistingNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNodeDuplicate) SetExistingNode(existingNode *IngestionTraceNode) {
+	i.ExistingNode = existingNode
+	i.require(ingestionTraceNodeDuplicateFieldExistingNode)
+}
+
+// SetExtractedNode sets the ExtractedNode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNodeDuplicate) SetExtractedNode(extractedNode *IngestionTraceNode) {
+	i.ExtractedNode = extractedNode
+	i.require(ingestionTraceNodeDuplicateFieldExtractedNode)
+}
+
+func (i *IngestionTraceNodeDuplicate) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceNodeDuplicate
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceNodeDuplicate(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceNodeDuplicate) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceNodeDuplicate
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceNodeDuplicate) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceNodeResolutionFieldExplanation       = big.NewInt(1 << 0)
+	ingestionTraceNodeResolutionFieldExtractedNodeUUID = big.NewInt(1 << 1)
+	ingestionTraceNodeResolutionFieldResolvedNodeUUID  = big.NewInt(1 << 2)
+)
+
+type IngestionTraceNodeResolution struct {
+	// The explanation of the decision, when the step recorded one.
+	Explanation *string `json:"explanation,omitempty" url:"explanation,omitempty"`
+	// The unique identifier of the extracted node.
+	ExtractedNodeUUID *string `json:"extracted_node_uuid,omitempty" url:"extracted_node_uuid,omitempty"`
+	// The unique identifier of the resolved node.
+	ResolvedNodeUUID *string `json:"resolved_node_uuid,omitempty" url:"resolved_node_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceNodeResolution) GetExplanation() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Explanation
+}
+
+func (i *IngestionTraceNodeResolution) GetExtractedNodeUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ExtractedNodeUUID
+}
+
+func (i *IngestionTraceNodeResolution) GetResolvedNodeUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ResolvedNodeUUID
+}
+
+func (i *IngestionTraceNodeResolution) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceNodeResolution) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetExplanation sets the Explanation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNodeResolution) SetExplanation(explanation *string) {
+	i.Explanation = explanation
+	i.require(ingestionTraceNodeResolutionFieldExplanation)
+}
+
+// SetExtractedNodeUUID sets the ExtractedNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNodeResolution) SetExtractedNodeUUID(extractedNodeUUID *string) {
+	i.ExtractedNodeUUID = extractedNodeUUID
+	i.require(ingestionTraceNodeResolutionFieldExtractedNodeUUID)
+}
+
+// SetResolvedNodeUUID sets the ResolvedNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceNodeResolution) SetResolvedNodeUUID(resolvedNodeUUID *string) {
+	i.ResolvedNodeUUID = resolvedNodeUUID
+	i.require(ingestionTraceNodeResolutionFieldResolvedNodeUUID)
+}
+
+func (i *IngestionTraceNodeResolution) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceNodeResolution
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceNodeResolution(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceNodeResolution) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceNodeResolution
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceNodeResolution) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceOutputFieldEdgeInvalidations = big.NewInt(1 << 0)
+	ingestionTraceOutputFieldEdges             = big.NewInt(1 << 1)
+	ingestionTraceOutputFieldExtractedEdges    = big.NewInt(1 << 2)
+	ingestionTraceOutputFieldExtractedNodes    = big.NewInt(1 << 3)
+	ingestionTraceOutputFieldNewEdges          = big.NewInt(1 << 4)
+	ingestionTraceOutputFieldNodeDuplicates    = big.NewInt(1 << 5)
+	ingestionTraceOutputFieldNodeResolutions   = big.NewInt(1 << 6)
+	ingestionTraceOutputFieldNodes             = big.NewInt(1 << 7)
+)
+
+type IngestionTraceOutput struct {
+	// The existing edges that the resolved edges invalidated. Present for resolve_edges and empty for
+	// the other steps.
+	EdgeInvalidations []*IngestionTraceEdgeInvalidation `json:"edge_invalidations,omitempty" url:"edge_invalidations,omitempty"`
+	// The resolved edges. Present for resolve_edges and empty for
+	// the other steps.
+	Edges []*IngestionTraceEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	// The edges that the step extracted. Present for combined_extraction and
+	// empty for the other steps.
+	ExtractedEdges []*IngestionTraceEdge `json:"extracted_edges,omitempty" url:"extracted_edges,omitempty"`
+	// The nodes that the step extracted. Present for combined_extraction and
+	// empty for the other steps.
+	ExtractedNodes []*IngestionTraceNode `json:"extracted_nodes,omitempty" url:"extracted_nodes,omitempty"`
+	// The resolved edges that are new to the graph. Present for resolve_edges and empty for
+	// the other steps.
+	NewEdges []*IngestionTraceEdge `json:"new_edges,omitempty" url:"new_edges,omitempty"`
+	// The extracted nodes that the step found to be duplicates of existing
+	// nodes. Present for resolve_nodes and empty for
+	// the other steps.
+	NodeDuplicates []*IngestionTraceNodeDuplicate `json:"node_duplicates,omitempty" url:"node_duplicates,omitempty"`
+	// The resolved node of each extracted node. Present for resolve_nodes and empty for
+	// the other steps.
+	NodeResolutions []*IngestionTraceNodeResolution `json:"node_resolutions,omitempty" url:"node_resolutions,omitempty"`
+	// The resolved nodes. Present for resolve_nodes and empty for
+	// the other steps.
+	Nodes []*IngestionTraceNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceOutput) GetEdgeInvalidations() []*IngestionTraceEdgeInvalidation {
+	if i == nil {
+		return nil
+	}
+	return i.EdgeInvalidations
+}
+
+func (i *IngestionTraceOutput) GetEdges() []*IngestionTraceEdge {
+	if i == nil {
+		return nil
+	}
+	return i.Edges
+}
+
+func (i *IngestionTraceOutput) GetExtractedEdges() []*IngestionTraceEdge {
+	if i == nil {
+		return nil
+	}
+	return i.ExtractedEdges
+}
+
+func (i *IngestionTraceOutput) GetExtractedNodes() []*IngestionTraceNode {
+	if i == nil {
+		return nil
+	}
+	return i.ExtractedNodes
+}
+
+func (i *IngestionTraceOutput) GetNewEdges() []*IngestionTraceEdge {
+	if i == nil {
+		return nil
+	}
+	return i.NewEdges
+}
+
+func (i *IngestionTraceOutput) GetNodeDuplicates() []*IngestionTraceNodeDuplicate {
+	if i == nil {
+		return nil
+	}
+	return i.NodeDuplicates
+}
+
+func (i *IngestionTraceOutput) GetNodeResolutions() []*IngestionTraceNodeResolution {
+	if i == nil {
+		return nil
+	}
+	return i.NodeResolutions
+}
+
+func (i *IngestionTraceOutput) GetNodes() []*IngestionTraceNode {
+	if i == nil {
+		return nil
+	}
+	return i.Nodes
+}
+
+func (i *IngestionTraceOutput) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceOutput) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetEdgeInvalidations sets the EdgeInvalidations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetEdgeInvalidations(edgeInvalidations []*IngestionTraceEdgeInvalidation) {
+	i.EdgeInvalidations = edgeInvalidations
+	i.require(ingestionTraceOutputFieldEdgeInvalidations)
+}
+
+// SetEdges sets the Edges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetEdges(edges []*IngestionTraceEdge) {
+	i.Edges = edges
+	i.require(ingestionTraceOutputFieldEdges)
+}
+
+// SetExtractedEdges sets the ExtractedEdges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetExtractedEdges(extractedEdges []*IngestionTraceEdge) {
+	i.ExtractedEdges = extractedEdges
+	i.require(ingestionTraceOutputFieldExtractedEdges)
+}
+
+// SetExtractedNodes sets the ExtractedNodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetExtractedNodes(extractedNodes []*IngestionTraceNode) {
+	i.ExtractedNodes = extractedNodes
+	i.require(ingestionTraceOutputFieldExtractedNodes)
+}
+
+// SetNewEdges sets the NewEdges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetNewEdges(newEdges []*IngestionTraceEdge) {
+	i.NewEdges = newEdges
+	i.require(ingestionTraceOutputFieldNewEdges)
+}
+
+// SetNodeDuplicates sets the NodeDuplicates field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetNodeDuplicates(nodeDuplicates []*IngestionTraceNodeDuplicate) {
+	i.NodeDuplicates = nodeDuplicates
+	i.require(ingestionTraceOutputFieldNodeDuplicates)
+}
+
+// SetNodeResolutions sets the NodeResolutions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetNodeResolutions(nodeResolutions []*IngestionTraceNodeResolution) {
+	i.NodeResolutions = nodeResolutions
+	i.require(ingestionTraceOutputFieldNodeResolutions)
+}
+
+// SetNodes sets the Nodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetNodes(nodes []*IngestionTraceNode) {
+	i.Nodes = nodes
+	i.require(ingestionTraceOutputFieldNodes)
+}
+
+func (i *IngestionTraceOutput) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceOutput
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceOutput(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceOutput) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceOutput
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceOutput) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTracePageFieldItems      = big.NewInt(1 << 0)
+	ingestionTracePageFieldNextCursor = big.NewInt(1 << 1)
+)
+
+type IngestionTracePage struct {
+	// The ingestion traces on this page.
+	Items []*IngestionTrace `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTracePage) GetItems() []*IngestionTrace {
+	if i == nil {
+		return nil
+	}
+	return i.Items
+}
+
+func (i *IngestionTracePage) GetNextCursor() *string {
+	if i == nil {
+		return nil
+	}
+	return i.NextCursor
+}
+
+func (i *IngestionTracePage) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTracePage) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTracePage) SetItems(items []*IngestionTrace) {
+	i.Items = items
+	i.require(ingestionTracePageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTracePage) SetNextCursor(nextCursor *string) {
+	i.NextCursor = nextCursor
+	i.require(ingestionTracePageFieldNextCursor)
+}
+
+func (i *IngestionTracePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTracePage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTracePage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTracePage) MarshalJSON() ([]byte, error) {
+	type embed IngestionTracePage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTracePage) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type IngestionTraceStatus string
+
+const (
+	IngestionTraceStatusRecorded IngestionTraceStatus = "recorded"
+	IngestionTraceStatusFailed   IngestionTraceStatus = "failed"
+)
+
+func NewIngestionTraceStatusFromString(s string) (IngestionTraceStatus, error) {
+	switch s {
+	case "recorded":
+		return IngestionTraceStatusRecorded, nil
+	case "failed":
+		return IngestionTraceStatusFailed, nil
+	}
+	var t IngestionTraceStatus
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (g GraphitiMetadataFilterGroupType) Ptr() *GraphitiMetadataFilterGroupType {
-	return &g
+func (i IngestionTraceStatus) Ptr() *IngestionTraceStatus {
+	return &i
+}
+
+type IngestionTraceStep string
+
+const (
+	IngestionTraceStepCombinedExtraction IngestionTraceStep = "combined_extraction"
+	IngestionTraceStepResolveNodes       IngestionTraceStep = "resolve_nodes"
+	IngestionTraceStepResolveEdges       IngestionTraceStep = "resolve_edges"
+)
+
+func NewIngestionTraceStepFromString(s string) (IngestionTraceStep, error) {
+	switch s {
+	case "combined_extraction":
+		return IngestionTraceStepCombinedExtraction, nil
+	case "resolve_nodes":
+		return IngestionTraceStepResolveNodes, nil
+	case "resolve_edges":
+		return IngestionTraceStepResolveEdges, nil
+	}
+	var t IngestionTraceStep
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (i IngestionTraceStep) Ptr() *IngestionTraceStep {
+	return &i
 }
 
 var (
@@ -3553,10 +19443,12 @@ func (i *Instructions) GetExtraProperties() map[string]interface{} {
 }
 
 func (i *Instructions) require(field *big.Int) {
-	if i.explicitFields == nil {
-		i.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
 	}
-	i.explicitFields.Or(i.explicitFields, field)
+	next.Or(next, field)
+	i.explicitFields = next
 }
 
 // SetInherited sets the Inherited field and marks it as non-optional;
@@ -3668,10 +19560,12 @@ func (l *LookupRequest) GetExtraProperties() map[string]interface{} {
 }
 
 func (l *LookupRequest) require(field *big.Int) {
-	if l.explicitFields == nil {
-		l.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if l.explicitFields != nil {
+		next.Set(l.explicitFields)
 	}
-	l.explicitFields.Or(l.explicitFields, field)
+	next.Or(next, field)
+	l.explicitFields = next
 }
 
 // SetGraphID sets the GraphID field and marks it as non-optional;
@@ -3839,10 +19733,12 @@ func (m *Message) GetExtraProperties() map[string]interface{} {
 }
 
 func (m *Message) require(field *big.Int) {
-	if m.explicitFields == nil {
-		m.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if m.explicitFields != nil {
+		next.Set(m.explicitFields)
 	}
-	m.explicitFields.Or(m.explicitFields, field)
+	next.Or(next, field)
+	m.explicitFields = next
 }
 
 // SetContent sets the Content field and marks it as non-optional;
@@ -3944,18 +19840,18 @@ func (m *Message) String() string {
 }
 
 var (
-	metadataFilterGroupFieldFilters = big.NewInt(1 << 0)
-	metadataFilterGroupFieldGroups  = big.NewInt(1 << 1)
-	metadataFilterGroupFieldType    = big.NewInt(1 << 2)
+	metadataFilterFieldOperator     = big.NewInt(1 << 0)
+	metadataFilterFieldPropertyName = big.NewInt(1 << 1)
+	metadataFilterFieldValue        = big.NewInt(1 << 2)
 )
 
-type MetadataFilterGroup struct {
-	// Leaf filters (predicates on metadata key-value pairs)
-	Filters []*EpisodeMetadataFilter `json:"filters,omitempty" url:"filters,omitempty"`
-	// Nested sub-groups for composing complex boolean expressions
-	Groups []*MetadataFilterGroup `json:"groups,omitempty" url:"groups,omitempty"`
-	// Logical operator: "and" or "or"
-	Type GraphitiMetadataFilterGroupType `json:"type" url:"type"`
+type MetadataFilter struct {
+	// The lowercase comparison operator.
+	Operator *MetadataFilterOperator `json:"operator,omitempty" url:"operator,omitempty"`
+	// The metadata property name to compare.
+	PropertyName *string `json:"property_name,omitempty" url:"property_name,omitempty"`
+	// The comparison value. Use an array for in, a non-empty string for contains, and omit the field for null operators.
+	Value *MetadataFilterValue `json:"value,omitempty" url:"value,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3964,7 +19860,128 @@ type MetadataFilterGroup struct {
 	rawJSON         json.RawMessage
 }
 
-func (m *MetadataFilterGroup) GetFilters() []*EpisodeMetadataFilter {
+func (m *MetadataFilter) GetOperator() *MetadataFilterOperator {
+	if m == nil {
+		return nil
+	}
+	return m.Operator
+}
+
+func (m *MetadataFilter) GetPropertyName() *string {
+	if m == nil {
+		return nil
+	}
+	return m.PropertyName
+}
+
+func (m *MetadataFilter) GetValue() *MetadataFilterValue {
+	if m == nil {
+		return nil
+	}
+	return m.Value
+}
+
+func (m *MetadataFilter) GetExtraProperties() map[string]interface{} {
+	if m == nil {
+		return nil
+	}
+	return m.extraProperties
+}
+
+func (m *MetadataFilter) require(field *big.Int) {
+	next := new(big.Int)
+	if m.explicitFields != nil {
+		next.Set(m.explicitFields)
+	}
+	next.Or(next, field)
+	m.explicitFields = next
+}
+
+// SetOperator sets the Operator field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MetadataFilter) SetOperator(operator *MetadataFilterOperator) {
+	m.Operator = operator
+	m.require(metadataFilterFieldOperator)
+}
+
+// SetPropertyName sets the PropertyName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MetadataFilter) SetPropertyName(propertyName *string) {
+	m.PropertyName = propertyName
+	m.require(metadataFilterFieldPropertyName)
+}
+
+// SetValue sets the Value field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *MetadataFilter) SetValue(value *MetadataFilterValue) {
+	m.Value = value
+	m.require(metadataFilterFieldValue)
+}
+
+func (m *MetadataFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler MetadataFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MetadataFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+	m.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MetadataFilter) MarshalJSON() ([]byte, error) {
+	type embed MetadataFilter
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*m),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, m.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (m *MetadataFilter) String() string {
+	if m == nil {
+		return "<nil>"
+	}
+	if len(m.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(m.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+var (
+	metadataFilterGroupFieldFilters = big.NewInt(1 << 0)
+	metadataFilterGroupFieldGroups  = big.NewInt(1 << 1)
+	metadataFilterGroupFieldType    = big.NewInt(1 << 2)
+)
+
+type MetadataFilterGroup struct {
+	// The metadata predicates in this group.
+	Filters []*MetadataFilter `json:"filters,omitempty" url:"filters,omitempty"`
+	// The nested metadata groups in this group.
+	Groups []*MetadataFilterGroup `json:"groups,omitempty" url:"groups,omitempty"`
+	// The logical operator for this group.
+	Type *MetadataFilterGroupType `json:"type,omitempty" url:"type,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (m *MetadataFilterGroup) GetFilters() []*MetadataFilter {
 	if m == nil {
 		return nil
 	}
@@ -3978,9 +19995,9 @@ func (m *MetadataFilterGroup) GetGroups() []*MetadataFilterGroup {
 	return m.Groups
 }
 
-func (m *MetadataFilterGroup) GetType() GraphitiMetadataFilterGroupType {
+func (m *MetadataFilterGroup) GetType() *MetadataFilterGroupType {
 	if m == nil {
-		return ""
+		return nil
 	}
 	return m.Type
 }
@@ -3993,15 +20010,17 @@ func (m *MetadataFilterGroup) GetExtraProperties() map[string]interface{} {
 }
 
 func (m *MetadataFilterGroup) require(field *big.Int) {
-	if m.explicitFields == nil {
-		m.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if m.explicitFields != nil {
+		next.Set(m.explicitFields)
 	}
-	m.explicitFields.Or(m.explicitFields, field)
+	next.Or(next, field)
+	m.explicitFields = next
 }
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (m *MetadataFilterGroup) SetFilters(filters []*EpisodeMetadataFilter) {
+func (m *MetadataFilterGroup) SetFilters(filters []*MetadataFilter) {
 	m.Filters = filters
 	m.require(metadataFilterGroupFieldFilters)
 }
@@ -4015,7 +20034,7 @@ func (m *MetadataFilterGroup) SetGroups(groups []*MetadataFilterGroup) {
 
 // SetType sets the Type field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (m *MetadataFilterGroup) SetType(type_ GraphitiMetadataFilterGroupType) {
+func (m *MetadataFilterGroup) SetType(type_ *MetadataFilterGroupType) {
 	m.Type = type_
 	m.require(metadataFilterGroupFieldType)
 }
@@ -4062,6 +20081,264 @@ func (m *MetadataFilterGroup) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+// The logical operator for this group.
+type MetadataFilterGroupType string
+
+const (
+	MetadataFilterGroupTypeAnd MetadataFilterGroupType = "and"
+	MetadataFilterGroupTypeOr  MetadataFilterGroupType = "or"
+)
+
+func NewMetadataFilterGroupTypeFromString(s string) (MetadataFilterGroupType, error) {
+	switch s {
+	case "and":
+		return MetadataFilterGroupTypeAnd, nil
+	case "or":
+		return MetadataFilterGroupTypeOr, nil
+	}
+	var t MetadataFilterGroupType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (m MetadataFilterGroupType) Ptr() *MetadataFilterGroupType {
+	return &m
+}
+
+// The lowercase comparison operator.
+type MetadataFilterOperator string
+
+const (
+	MetadataFilterOperatorEq        MetadataFilterOperator = "eq"
+	MetadataFilterOperatorNe        MetadataFilterOperator = "ne"
+	MetadataFilterOperatorGt        MetadataFilterOperator = "gt"
+	MetadataFilterOperatorLt        MetadataFilterOperator = "lt"
+	MetadataFilterOperatorGte       MetadataFilterOperator = "gte"
+	MetadataFilterOperatorLte       MetadataFilterOperator = "lte"
+	MetadataFilterOperatorIn        MetadataFilterOperator = "in"
+	MetadataFilterOperatorContains  MetadataFilterOperator = "contains"
+	MetadataFilterOperatorIsNull    MetadataFilterOperator = "is_null"
+	MetadataFilterOperatorIsNotNull MetadataFilterOperator = "is_not_null"
+)
+
+func NewMetadataFilterOperatorFromString(s string) (MetadataFilterOperator, error) {
+	switch s {
+	case "eq":
+		return MetadataFilterOperatorEq, nil
+	case "ne":
+		return MetadataFilterOperatorNe, nil
+	case "gt":
+		return MetadataFilterOperatorGt, nil
+	case "lt":
+		return MetadataFilterOperatorLt, nil
+	case "gte":
+		return MetadataFilterOperatorGte, nil
+	case "lte":
+		return MetadataFilterOperatorLte, nil
+	case "in":
+		return MetadataFilterOperatorIn, nil
+	case "contains":
+		return MetadataFilterOperatorContains, nil
+	case "is_null":
+		return MetadataFilterOperatorIsNull, nil
+	case "is_not_null":
+		return MetadataFilterOperatorIsNotNull, nil
+	}
+	var t MetadataFilterOperator
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (m MetadataFilterOperator) Ptr() *MetadataFilterOperator {
+	return &m
+}
+
+// The comparison value. Use an array for in, a non-empty string for contains, and omit the field for null operators.
+type MetadataFilterValue struct {
+	String                           string
+	Double                           float64
+	Boolean                          bool
+	MetadataFilterValueThreeItemList []*MetadataFilterValueThreeItem
+
+	typ string
+}
+
+func (m *MetadataFilterValue) GetString() string {
+	if m == nil {
+		return ""
+	}
+	return m.String
+}
+
+func (m *MetadataFilterValue) GetDouble() float64 {
+	if m == nil {
+		return 0
+	}
+	return m.Double
+}
+
+func (m *MetadataFilterValue) GetBoolean() bool {
+	if m == nil {
+		return false
+	}
+	return m.Boolean
+}
+
+func (m *MetadataFilterValue) GetMetadataFilterValueThreeItemList() []*MetadataFilterValueThreeItem {
+	if m == nil {
+		return nil
+	}
+	return m.MetadataFilterValueThreeItemList
+}
+
+func (m *MetadataFilterValue) UnmarshalJSON(data []byte) error {
+	var valueString string
+	if err := json.Unmarshal(data, &valueString); err == nil {
+		m.typ = "String"
+		m.String = valueString
+		return nil
+	}
+	var valueDouble float64
+	if err := json.Unmarshal(data, &valueDouble); err == nil {
+		m.typ = "Double"
+		m.Double = valueDouble
+		return nil
+	}
+	var valueBoolean bool
+	if err := json.Unmarshal(data, &valueBoolean); err == nil {
+		m.typ = "Boolean"
+		m.Boolean = valueBoolean
+		return nil
+	}
+	var valueMetadataFilterValueThreeItemList []*MetadataFilterValueThreeItem
+	if err := json.Unmarshal(data, &valueMetadataFilterValueThreeItemList); err == nil {
+		m.typ = "MetadataFilterValueThreeItemList"
+		m.MetadataFilterValueThreeItemList = valueMetadataFilterValueThreeItemList
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, m)
+}
+
+func (m MetadataFilterValue) MarshalJSON() ([]byte, error) {
+	if m.typ == "String" || m.String != "" {
+		return json.Marshal(m.String)
+	}
+	if m.typ == "Double" || m.Double != 0 {
+		return json.Marshal(m.Double)
+	}
+	if m.typ == "Boolean" || m.Boolean != false {
+		return json.Marshal(m.Boolean)
+	}
+	if m.typ == "MetadataFilterValueThreeItemList" || m.MetadataFilterValueThreeItemList != nil {
+		return json.Marshal(m.MetadataFilterValueThreeItemList)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", m)
+}
+
+type MetadataFilterValueVisitor interface {
+	VisitString(string) error
+	VisitDouble(float64) error
+	VisitBoolean(bool) error
+	VisitMetadataFilterValueThreeItemList([]*MetadataFilterValueThreeItem) error
+}
+
+func (m *MetadataFilterValue) Accept(visitor MetadataFilterValueVisitor) error {
+	if m.typ == "String" || m.String != "" {
+		return visitor.VisitString(m.String)
+	}
+	if m.typ == "Double" || m.Double != 0 {
+		return visitor.VisitDouble(m.Double)
+	}
+	if m.typ == "Boolean" || m.Boolean != false {
+		return visitor.VisitBoolean(m.Boolean)
+	}
+	if m.typ == "MetadataFilterValueThreeItemList" || m.MetadataFilterValueThreeItemList != nil {
+		return visitor.VisitMetadataFilterValueThreeItemList(m.MetadataFilterValueThreeItemList)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", m)
+}
+
+type MetadataFilterValueThreeItem struct {
+	String  string
+	Double  float64
+	Boolean bool
+
+	typ string
+}
+
+func (m *MetadataFilterValueThreeItem) GetString() string {
+	if m == nil {
+		return ""
+	}
+	return m.String
+}
+
+func (m *MetadataFilterValueThreeItem) GetDouble() float64 {
+	if m == nil {
+		return 0
+	}
+	return m.Double
+}
+
+func (m *MetadataFilterValueThreeItem) GetBoolean() bool {
+	if m == nil {
+		return false
+	}
+	return m.Boolean
+}
+
+func (m *MetadataFilterValueThreeItem) UnmarshalJSON(data []byte) error {
+	var valueString string
+	if err := json.Unmarshal(data, &valueString); err == nil {
+		m.typ = "String"
+		m.String = valueString
+		return nil
+	}
+	var valueDouble float64
+	if err := json.Unmarshal(data, &valueDouble); err == nil {
+		m.typ = "Double"
+		m.Double = valueDouble
+		return nil
+	}
+	var valueBoolean bool
+	if err := json.Unmarshal(data, &valueBoolean); err == nil {
+		m.typ = "Boolean"
+		m.Boolean = valueBoolean
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, m)
+}
+
+func (m MetadataFilterValueThreeItem) MarshalJSON() ([]byte, error) {
+	if m.typ == "String" || m.String != "" {
+		return json.Marshal(m.String)
+	}
+	if m.typ == "Double" || m.Double != 0 {
+		return json.Marshal(m.Double)
+	}
+	if m.typ == "Boolean" || m.Boolean != false {
+		return json.Marshal(m.Boolean)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", m)
+}
+
+type MetadataFilterValueThreeItemVisitor interface {
+	VisitString(string) error
+	VisitDouble(float64) error
+	VisitBoolean(bool) error
+}
+
+func (m *MetadataFilterValueThreeItem) Accept(visitor MetadataFilterValueThreeItemVisitor) error {
+	if m.typ == "String" || m.String != "" {
+		return visitor.VisitString(m.String)
+	}
+	if m.typ == "Double" || m.Double != 0 {
+		return visitor.VisitDouble(m.Double)
+	}
+	if m.typ == "Boolean" || m.Boolean != false {
+		return visitor.VisitBoolean(m.Boolean)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", m)
+}
+
 var (
 	neighborEntryFieldEdges = big.NewInt(1 << 0)
 	neighborEntryFieldNode  = big.NewInt(1 << 1)
@@ -4102,10 +20379,12 @@ func (n *NeighborEntry) GetExtraProperties() map[string]interface{} {
 }
 
 func (n *NeighborEntry) require(field *big.Int) {
-	if n.explicitFields == nil {
-		n.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if n.explicitFields != nil {
+		next.Set(n.explicitFields)
 	}
-	n.explicitFields.Or(n.explicitFields, field)
+	next.Or(next, field)
+	n.explicitFields = next
 }
 
 // SetEdges sets the Edges field and marks it as non-optional;
@@ -4216,10 +20495,12 @@ func (n *NeighborPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (n *NeighborPage) require(field *big.Int) {
-	if n.explicitFields == nil {
-		n.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if n.explicitFields != nil {
+		next.Set(n.explicitFields)
 	}
-	n.explicitFields.Or(n.explicitFields, field)
+	next.Or(next, field)
+	n.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -4286,15 +20567,18 @@ func (n *NeighborPage) String() string {
 }
 
 var (
-	nodeFieldAttributes = big.NewInt(1 << 0)
-	nodeFieldCreatedAt  = big.NewInt(1 << 1)
-	nodeFieldGraphUUID  = big.NewInt(1 << 2)
-	nodeFieldLabels     = big.NewInt(1 << 3)
-	nodeFieldName       = big.NewInt(1 << 4)
-	nodeFieldRelevance  = big.NewInt(1 << 5)
-	nodeFieldScore      = big.NewInt(1 << 6)
-	nodeFieldSummary    = big.NewInt(1 << 7)
-	nodeFieldUUID       = big.NewInt(1 << 8)
+	nodeFieldAttributes            = big.NewInt(1 << 0)
+	nodeFieldCreatedAt             = big.NewInt(1 << 1)
+	nodeFieldDegree                = big.NewInt(1 << 2)
+	nodeFieldEpisodeUUIDs          = big.NewInt(1 << 3)
+	nodeFieldEpisodeUUIDsTruncated = big.NewInt(1 << 4)
+	nodeFieldGraphUUID             = big.NewInt(1 << 5)
+	nodeFieldLabels                = big.NewInt(1 << 6)
+	nodeFieldName                  = big.NewInt(1 << 7)
+	nodeFieldRelevance             = big.NewInt(1 << 8)
+	nodeFieldScore                 = big.NewInt(1 << 9)
+	nodeFieldSummary               = big.NewInt(1 << 10)
+	nodeFieldUUID                  = big.NewInt(1 << 11)
 )
 
 type Node struct {
@@ -4302,6 +20586,18 @@ type Node struct {
 	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// The time the node was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The count of live entity edges that touch this node, in both directions.
+	// Present only when the list request orders by `degree`.
+	Degree *int `json:"degree,omitempty" url:"degree,omitempty"`
+	// The UUIDs of the live episodes that mention this node, newest first. The
+	// list is complete when `episode_uuids_truncated` is false. The list holds
+	// the newest 100 when the node has more than 100 source episodes; list
+	// episodes with the `mentioned_node_uuids` filter to read them all.
+	EpisodeUUIDs []string `json:"episode_uuids" url:"episode_uuids"`
+	// True when the node has more than 100 source episodes, so `episode_uuids`
+	// holds only the newest 100, or when provenance is unavailable. False means
+	// `episode_uuids` is the complete set.
+	EpisodeUUIDsTruncated bool `json:"episode_uuids_truncated" url:"episode_uuids_truncated"`
 	// The unique identifier of the graph this node belongs to.
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	// The entity type labels assigned to the node.
@@ -4339,6 +20635,27 @@ func (n *Node) GetCreatedAt() *string {
 		return nil
 	}
 	return n.CreatedAt
+}
+
+func (n *Node) GetDegree() *int {
+	if n == nil {
+		return nil
+	}
+	return n.Degree
+}
+
+func (n *Node) GetEpisodeUUIDs() []string {
+	if n == nil {
+		return nil
+	}
+	return n.EpisodeUUIDs
+}
+
+func (n *Node) GetEpisodeUUIDsTruncated() bool {
+	if n == nil {
+		return false
+	}
+	return n.EpisodeUUIDsTruncated
 }
 
 func (n *Node) GetGraphUUID() *string {
@@ -4398,10 +20715,12 @@ func (n *Node) GetExtraProperties() map[string]interface{} {
 }
 
 func (n *Node) require(field *big.Int) {
-	if n.explicitFields == nil {
-		n.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if n.explicitFields != nil {
+		next.Set(n.explicitFields)
 	}
-	n.explicitFields.Or(n.explicitFields, field)
+	next.Or(next, field)
+	n.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -4416,6 +20735,27 @@ func (n *Node) SetAttributes(attributes map[string]any) {
 func (n *Node) SetCreatedAt(createdAt *string) {
 	n.CreatedAt = createdAt
 	n.require(nodeFieldCreatedAt)
+}
+
+// SetDegree sets the Degree field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetDegree(degree *int) {
+	n.Degree = degree
+	n.require(nodeFieldDegree)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetEpisodeUUIDs(episodeUUIDs []string) {
+	n.EpisodeUUIDs = episodeUUIDs
+	n.require(nodeFieldEpisodeUUIDs)
+}
+
+// SetEpisodeUUIDsTruncated sets the EpisodeUUIDsTruncated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetEpisodeUUIDsTruncated(episodeUUIDsTruncated bool) {
+	n.EpisodeUUIDsTruncated = episodeUUIDsTruncated
+	n.require(nodeFieldEpisodeUUIDsTruncated)
 }
 
 // SetGraphUUID sets the GraphUUID field and marks it as non-optional;
@@ -4579,10 +20919,12 @@ func (n *NodeInput) GetExtraProperties() map[string]interface{} {
 }
 
 func (n *NodeInput) require(field *big.Int) {
-	if n.explicitFields == nil {
-		n.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if n.explicitFields != nil {
+		next.Set(n.explicitFields)
 	}
-	n.explicitFields.Or(n.explicitFields, field)
+	next.Or(next, field)
+	n.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -4714,10 +21056,12 @@ func (n *NodePage) GetExtraProperties() map[string]interface{} {
 }
 
 func (n *NodePage) require(field *big.Int) {
-	if n.explicitFields == nil {
-		n.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if n.explicitFields != nil {
+		next.Set(n.explicitFields)
 	}
-	n.explicitFields.Or(n.explicitFields, field)
+	next.Or(next, field)
+	n.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -4781,6 +21125,136 @@ func (n *NodePage) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", n)
+}
+
+var (
+	objectiveMappingRuleFieldKey    = big.NewInt(1 << 0)
+	objectiveMappingRuleFieldSource = big.NewInt(1 << 1)
+)
+
+type ObjectiveMappingRule struct {
+	// Key is the root metadata key to read.
+	Key *string `json:"key,omitempty" url:"key,omitempty"`
+	// Source selects the objective source.
+	Source *ObjectiveMappingRuleSource `json:"source,omitempty" url:"source,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *ObjectiveMappingRule) GetKey() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Key
+}
+
+func (o *ObjectiveMappingRule) GetSource() *ObjectiveMappingRuleSource {
+	if o == nil {
+		return nil
+	}
+	return o.Source
+}
+
+func (o *ObjectiveMappingRule) GetExtraProperties() map[string]interface{} {
+	if o == nil {
+		return nil
+	}
+	return o.extraProperties
+}
+
+func (o *ObjectiveMappingRule) require(field *big.Int) {
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
+	}
+	next.Or(next, field)
+	o.explicitFields = next
+}
+
+// SetKey sets the Key field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObjectiveMappingRule) SetKey(key *string) {
+	o.Key = key
+	o.require(objectiveMappingRuleFieldKey)
+}
+
+// SetSource sets the Source field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObjectiveMappingRule) SetSource(source *ObjectiveMappingRuleSource) {
+	o.Source = source
+	o.require(objectiveMappingRuleFieldSource)
+}
+
+func (o *ObjectiveMappingRule) UnmarshalJSON(data []byte) error {
+	type unmarshaler ObjectiveMappingRule
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = ObjectiveMappingRule(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *ObjectiveMappingRule) MarshalJSON() ([]byte, error) {
+	type embed ObjectiveMappingRule
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (o *ObjectiveMappingRule) String() string {
+	if o == nil {
+		return "<nil>"
+	}
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+// Source selects the objective source.
+type ObjectiveMappingRuleSource string
+
+const (
+	ObjectiveMappingRuleSourceFirstUserMessage ObjectiveMappingRuleSource = "first_user_message"
+	ObjectiveMappingRuleSourceRootInput        ObjectiveMappingRuleSource = "root_input"
+	ObjectiveMappingRuleSourceMetadata         ObjectiveMappingRuleSource = "metadata"
+)
+
+func NewObjectiveMappingRuleSourceFromString(s string) (ObjectiveMappingRuleSource, error) {
+	switch s {
+	case "first_user_message":
+		return ObjectiveMappingRuleSourceFirstUserMessage, nil
+	case "root_input":
+		return ObjectiveMappingRuleSourceRootInput, nil
+	case "metadata":
+		return ObjectiveMappingRuleSourceMetadata, nil
+	}
+	var t ObjectiveMappingRuleSource
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (o ObjectiveMappingRuleSource) Ptr() *ObjectiveMappingRuleSource {
+	return &o
 }
 
 var (
@@ -4906,10 +21380,12 @@ func (o *Observation) GetExtraProperties() map[string]interface{} {
 }
 
 func (o *Observation) require(field *big.Int) {
-	if o.explicitFields == nil {
-		o.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
 	}
-	o.explicitFields.Or(o.explicitFields, field)
+	next.Or(next, field)
+	o.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -5076,10 +21552,12 @@ func (o *ObservationPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (o *ObservationPage) require(field *big.Int) {
-	if o.explicitFields == nil {
-		o.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
 	}
-	o.explicitFields.Or(o.explicitFields, field)
+	next.Or(next, field)
+	o.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -5198,10 +21676,12 @@ func (o *ObservationSteering) GetExtraProperties() map[string]interface{} {
 }
 
 func (o *ObservationSteering) require(field *big.Int) {
-	if o.explicitFields == nil {
-		o.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
 	}
-	o.explicitFields.Or(o.explicitFields, field)
+	next.Or(next, field)
+	o.explicitFields = next
 }
 
 // SetInherited sets the Inherited field and marks it as non-optional;
@@ -5305,10 +21785,12 @@ func (o *ObservationType) GetExtraProperties() map[string]interface{} {
 }
 
 func (o *ObservationType) require(field *big.Int) {
-	if o.explicitFields == nil {
-		o.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
 	}
-	o.explicitFields.Or(o.explicitFields, field)
+	next.Or(next, field)
+	o.explicitFields = next
 }
 
 // SetDescription sets the Description field and marks it as non-optional;
@@ -5368,14 +21850,17 @@ func (o *ObservationType) String() string {
 }
 
 var (
-	ontologyFieldEdgeTypes   = big.NewInt(1 << 0)
-	ontologyFieldEntityTypes = big.NewInt(1 << 1)
-	ontologyFieldInherited   = big.NewInt(1 << 2)
+	ontologyFieldEdgeTypes           = big.NewInt(1 << 0)
+	ontologyFieldEntityTypeHierarchy = big.NewInt(1 << 1)
+	ontologyFieldEntityTypes         = big.NewInt(1 << 2)
+	ontologyFieldInherited           = big.NewInt(1 << 3)
 )
 
 type Ontology struct {
 	// The edge types defined in the ontology in effect at this scope.
 	EdgeTypes []*EdgeType `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// The entity type hierarchy (spec ontology-1). Omitted when the ontology is flat.
+	EntityTypeHierarchy map[string]any `json:"entity_type_hierarchy,omitempty" url:"entity_type_hierarchy,omitempty"`
 	// The entity types defined in the ontology in effect at this scope.
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
 	// Whether this is the project's default value rather than an override set on
@@ -5394,6 +21879,13 @@ func (o *Ontology) GetEdgeTypes() []*EdgeType {
 		return nil
 	}
 	return o.EdgeTypes
+}
+
+func (o *Ontology) GetEntityTypeHierarchy() map[string]any {
+	if o == nil {
+		return nil
+	}
+	return o.EntityTypeHierarchy
 }
 
 func (o *Ontology) GetEntityTypes() []*EntityType {
@@ -5418,10 +21910,12 @@ func (o *Ontology) GetExtraProperties() map[string]interface{} {
 }
 
 func (o *Ontology) require(field *big.Int) {
-	if o.explicitFields == nil {
-		o.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
 	}
-	o.explicitFields.Or(o.explicitFields, field)
+	next.Or(next, field)
+	o.explicitFields = next
 }
 
 // SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
@@ -5429,6 +21923,13 @@ func (o *Ontology) require(field *big.Int) {
 func (o *Ontology) SetEdgeTypes(edgeTypes []*EdgeType) {
 	o.EdgeTypes = edgeTypes
 	o.require(ontologyFieldEdgeTypes)
+}
+
+// SetEntityTypeHierarchy sets the EntityTypeHierarchy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Ontology) SetEntityTypeHierarchy(entityTypeHierarchy map[string]any) {
+	o.EntityTypeHierarchy = entityTypeHierarchy
+	o.require(ontologyFieldEntityTypeHierarchy)
 }
 
 // SetEntityTypes sets the EntityTypes field and marks it as non-optional;
@@ -5488,20 +21989,27 @@ func (o *Ontology) String() string {
 }
 
 var (
-	propertyFilterFieldComparisonOperator = big.NewInt(1 << 0)
-	propertyFilterFieldPropertyName       = big.NewInt(1 << 1)
-	propertyFilterFieldPropertyValue      = big.NewInt(1 << 2)
+	outcomeMappingRuleFieldFailedBelow        = big.NewInt(1 << 0)
+	outcomeMappingRuleFieldKey                = big.NewInt(1 << 1)
+	outcomeMappingRuleFieldName               = big.NewInt(1 << 2)
+	outcomeMappingRuleFieldRule               = big.NewInt(1 << 3)
+	outcomeMappingRuleFieldSucceededAtOrAbove = big.NewInt(1 << 4)
+	outcomeMappingRuleFieldValues             = big.NewInt(1 << 5)
 )
 
-type PropertyFilter struct {
-	// Comparison operator for property filter
-	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
-	// Property name to filter on
-	PropertyName string `json:"property_name" url:"property_name"`
-	// Property value to match on. Accepted types: string, int, float64, bool, or nil.
-	// Invalid types (e.g., arrays, objects) will be rejected by validation.
-	// Must be non-nil for non-null operators (`=`, `<>`, `>`, `<`, `>=`, `<=`).
-	PropertyValue any `json:"property_value,omitempty" url:"property_value,omitempty"`
+type OutcomeMappingRule struct {
+	// FailedBelow is the optional score threshold for failure.
+	FailedBelow *float64 `json:"failed_below,omitempty" url:"failed_below,omitempty"`
+	// Key is the metadata key for a metadata rule.
+	Key *string `json:"key,omitempty" url:"key,omitempty"`
+	// Name is the score name for a score rule.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Rule is the outcome mapping rule type.
+	Rule *OutcomeMappingRuleRule `json:"rule,omitempty" url:"rule,omitempty"`
+	// SucceededAtOrAbove is the score threshold for success.
+	SucceededAtOrAbove *float64 `json:"succeeded_at_or_above,omitempty" url:"succeeded_at_or_above,omitempty"`
+	// Values maps metadata strings to Trajectory outcomes.
+	Values map[string]string `json:"values,omitempty" url:"values,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5510,25 +22018,1040 @@ type PropertyFilter struct {
 	rawJSON         json.RawMessage
 }
 
-func (p *PropertyFilter) GetComparisonOperator() ComparisonOperator {
-	if p == nil {
-		return ""
+func (o *OutcomeMappingRule) GetFailedBelow() *float64 {
+	if o == nil {
+		return nil
 	}
-	return p.ComparisonOperator
+	return o.FailedBelow
 }
 
-func (p *PropertyFilter) GetPropertyName() string {
+func (o *OutcomeMappingRule) GetKey() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Key
+}
+
+func (o *OutcomeMappingRule) GetName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Name
+}
+
+func (o *OutcomeMappingRule) GetRule() *OutcomeMappingRuleRule {
+	if o == nil {
+		return nil
+	}
+	return o.Rule
+}
+
+func (o *OutcomeMappingRule) GetSucceededAtOrAbove() *float64 {
+	if o == nil {
+		return nil
+	}
+	return o.SucceededAtOrAbove
+}
+
+func (o *OutcomeMappingRule) GetValues() map[string]string {
+	if o == nil {
+		return nil
+	}
+	return o.Values
+}
+
+func (o *OutcomeMappingRule) GetExtraProperties() map[string]interface{} {
+	if o == nil {
+		return nil
+	}
+	return o.extraProperties
+}
+
+func (o *OutcomeMappingRule) require(field *big.Int) {
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
+	}
+	next.Or(next, field)
+	o.explicitFields = next
+}
+
+// SetFailedBelow sets the FailedBelow field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *OutcomeMappingRule) SetFailedBelow(failedBelow *float64) {
+	o.FailedBelow = failedBelow
+	o.require(outcomeMappingRuleFieldFailedBelow)
+}
+
+// SetKey sets the Key field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *OutcomeMappingRule) SetKey(key *string) {
+	o.Key = key
+	o.require(outcomeMappingRuleFieldKey)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *OutcomeMappingRule) SetName(name *string) {
+	o.Name = name
+	o.require(outcomeMappingRuleFieldName)
+}
+
+// SetRule sets the Rule field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *OutcomeMappingRule) SetRule(rule *OutcomeMappingRuleRule) {
+	o.Rule = rule
+	o.require(outcomeMappingRuleFieldRule)
+}
+
+// SetSucceededAtOrAbove sets the SucceededAtOrAbove field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *OutcomeMappingRule) SetSucceededAtOrAbove(succeededAtOrAbove *float64) {
+	o.SucceededAtOrAbove = succeededAtOrAbove
+	o.require(outcomeMappingRuleFieldSucceededAtOrAbove)
+}
+
+// SetValues sets the Values field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *OutcomeMappingRule) SetValues(values map[string]string) {
+	o.Values = values
+	o.require(outcomeMappingRuleFieldValues)
+}
+
+func (o *OutcomeMappingRule) UnmarshalJSON(data []byte) error {
+	type unmarshaler OutcomeMappingRule
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = OutcomeMappingRule(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *OutcomeMappingRule) MarshalJSON() ([]byte, error) {
+	type embed OutcomeMappingRule
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (o *OutcomeMappingRule) String() string {
+	if o == nil {
+		return "<nil>"
+	}
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+// Rule is the outcome mapping rule type.
+type OutcomeMappingRuleRule string
+
+const (
+	OutcomeMappingRuleRuleScore    OutcomeMappingRuleRule = "score"
+	OutcomeMappingRuleRuleMetadata OutcomeMappingRuleRule = "metadata"
+	OutcomeMappingRuleRuleError    OutcomeMappingRuleRule = "error"
+)
+
+func NewOutcomeMappingRuleRuleFromString(s string) (OutcomeMappingRuleRule, error) {
+	switch s {
+	case "score":
+		return OutcomeMappingRuleRuleScore, nil
+	case "metadata":
+		return OutcomeMappingRuleRuleMetadata, nil
+	case "error":
+		return OutcomeMappingRuleRuleError, nil
+	}
+	var t OutcomeMappingRuleRule
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (o OutcomeMappingRuleRule) Ptr() *OutcomeMappingRuleRule {
+	return &o
+}
+
+var (
+	pagev4AgentSkillCandidateReviewSummaryFieldItems      = big.NewInt(1 << 0)
+	pagev4AgentSkillCandidateReviewSummaryFieldNextCursor = big.NewInt(1 << 1)
+	pagev4AgentSkillCandidateReviewSummaryFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type Pagev4AgentSkillCandidateReviewSummary struct {
+	Items      []*AgentSkillCandidateReviewSummary `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string                             `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                                `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *Pagev4AgentSkillCandidateReviewSummary) GetItems() []*AgentSkillCandidateReviewSummary {
 	if p == nil {
-		return ""
+		return nil
+	}
+	return p.Items
+}
+
+func (p *Pagev4AgentSkillCandidateReviewSummary) GetNextCursor() *string {
+	if p == nil {
+		return nil
+	}
+	return p.NextCursor
+}
+
+func (p *Pagev4AgentSkillCandidateReviewSummary) GetTotalSize() *int {
+	if p == nil {
+		return nil
+	}
+	return p.TotalSize
+}
+
+func (p *Pagev4AgentSkillCandidateReviewSummary) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *Pagev4AgentSkillCandidateReviewSummary) require(field *big.Int) {
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
+	}
+	next.Or(next, field)
+	p.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillCandidateReviewSummary) SetItems(items []*AgentSkillCandidateReviewSummary) {
+	p.Items = items
+	p.require(pagev4AgentSkillCandidateReviewSummaryFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillCandidateReviewSummary) SetNextCursor(nextCursor *string) {
+	p.NextCursor = nextCursor
+	p.require(pagev4AgentSkillCandidateReviewSummaryFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillCandidateReviewSummary) SetTotalSize(totalSize *int) {
+	p.TotalSize = totalSize
+	p.require(pagev4AgentSkillCandidateReviewSummaryFieldTotalSize)
+}
+
+func (p *Pagev4AgentSkillCandidateReviewSummary) UnmarshalJSON(data []byte) error {
+	type unmarshaler Pagev4AgentSkillCandidateReviewSummary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Pagev4AgentSkillCandidateReviewSummary(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Pagev4AgentSkillCandidateReviewSummary) MarshalJSON() ([]byte, error) {
+	type embed Pagev4AgentSkillCandidateReviewSummary
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *Pagev4AgentSkillCandidateReviewSummary) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+var (
+	pagev4AgentSkillCompilationOutcomeFieldItems      = big.NewInt(1 << 0)
+	pagev4AgentSkillCompilationOutcomeFieldNextCursor = big.NewInt(1 << 1)
+	pagev4AgentSkillCompilationOutcomeFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type Pagev4AgentSkillCompilationOutcome struct {
+	Items      []*AgentSkillCompilationOutcome `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string                         `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                            `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *Pagev4AgentSkillCompilationOutcome) GetItems() []*AgentSkillCompilationOutcome {
+	if p == nil {
+		return nil
+	}
+	return p.Items
+}
+
+func (p *Pagev4AgentSkillCompilationOutcome) GetNextCursor() *string {
+	if p == nil {
+		return nil
+	}
+	return p.NextCursor
+}
+
+func (p *Pagev4AgentSkillCompilationOutcome) GetTotalSize() *int {
+	if p == nil {
+		return nil
+	}
+	return p.TotalSize
+}
+
+func (p *Pagev4AgentSkillCompilationOutcome) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *Pagev4AgentSkillCompilationOutcome) require(field *big.Int) {
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
+	}
+	next.Or(next, field)
+	p.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillCompilationOutcome) SetItems(items []*AgentSkillCompilationOutcome) {
+	p.Items = items
+	p.require(pagev4AgentSkillCompilationOutcomeFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillCompilationOutcome) SetNextCursor(nextCursor *string) {
+	p.NextCursor = nextCursor
+	p.require(pagev4AgentSkillCompilationOutcomeFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillCompilationOutcome) SetTotalSize(totalSize *int) {
+	p.TotalSize = totalSize
+	p.require(pagev4AgentSkillCompilationOutcomeFieldTotalSize)
+}
+
+func (p *Pagev4AgentSkillCompilationOutcome) UnmarshalJSON(data []byte) error {
+	type unmarshaler Pagev4AgentSkillCompilationOutcome
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Pagev4AgentSkillCompilationOutcome(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Pagev4AgentSkillCompilationOutcome) MarshalJSON() ([]byte, error) {
+	type embed Pagev4AgentSkillCompilationOutcome
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *Pagev4AgentSkillCompilationOutcome) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+var (
+	pagev4AgentSkillEvidenceFieldItems      = big.NewInt(1 << 0)
+	pagev4AgentSkillEvidenceFieldNextCursor = big.NewInt(1 << 1)
+	pagev4AgentSkillEvidenceFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type Pagev4AgentSkillEvidence struct {
+	Items      []*AgentSkillEvidence `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string               `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                  `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *Pagev4AgentSkillEvidence) GetItems() []*AgentSkillEvidence {
+	if p == nil {
+		return nil
+	}
+	return p.Items
+}
+
+func (p *Pagev4AgentSkillEvidence) GetNextCursor() *string {
+	if p == nil {
+		return nil
+	}
+	return p.NextCursor
+}
+
+func (p *Pagev4AgentSkillEvidence) GetTotalSize() *int {
+	if p == nil {
+		return nil
+	}
+	return p.TotalSize
+}
+
+func (p *Pagev4AgentSkillEvidence) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *Pagev4AgentSkillEvidence) require(field *big.Int) {
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
+	}
+	next.Or(next, field)
+	p.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillEvidence) SetItems(items []*AgentSkillEvidence) {
+	p.Items = items
+	p.require(pagev4AgentSkillEvidenceFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillEvidence) SetNextCursor(nextCursor *string) {
+	p.NextCursor = nextCursor
+	p.require(pagev4AgentSkillEvidenceFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillEvidence) SetTotalSize(totalSize *int) {
+	p.TotalSize = totalSize
+	p.require(pagev4AgentSkillEvidenceFieldTotalSize)
+}
+
+func (p *Pagev4AgentSkillEvidence) UnmarshalJSON(data []byte) error {
+	type unmarshaler Pagev4AgentSkillEvidence
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Pagev4AgentSkillEvidence(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Pagev4AgentSkillEvidence) MarshalJSON() ([]byte, error) {
+	type embed Pagev4AgentSkillEvidence
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *Pagev4AgentSkillEvidence) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+var (
+	pagev4AgentSkillRelationshipFieldItems      = big.NewInt(1 << 0)
+	pagev4AgentSkillRelationshipFieldNextCursor = big.NewInt(1 << 1)
+	pagev4AgentSkillRelationshipFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type Pagev4AgentSkillRelationship struct {
+	Items      []*AgentSkillRelationship `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string                   `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                      `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *Pagev4AgentSkillRelationship) GetItems() []*AgentSkillRelationship {
+	if p == nil {
+		return nil
+	}
+	return p.Items
+}
+
+func (p *Pagev4AgentSkillRelationship) GetNextCursor() *string {
+	if p == nil {
+		return nil
+	}
+	return p.NextCursor
+}
+
+func (p *Pagev4AgentSkillRelationship) GetTotalSize() *int {
+	if p == nil {
+		return nil
+	}
+	return p.TotalSize
+}
+
+func (p *Pagev4AgentSkillRelationship) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *Pagev4AgentSkillRelationship) require(field *big.Int) {
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
+	}
+	next.Or(next, field)
+	p.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillRelationship) SetItems(items []*AgentSkillRelationship) {
+	p.Items = items
+	p.require(pagev4AgentSkillRelationshipFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillRelationship) SetNextCursor(nextCursor *string) {
+	p.NextCursor = nextCursor
+	p.require(pagev4AgentSkillRelationshipFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillRelationship) SetTotalSize(totalSize *int) {
+	p.TotalSize = totalSize
+	p.require(pagev4AgentSkillRelationshipFieldTotalSize)
+}
+
+func (p *Pagev4AgentSkillRelationship) UnmarshalJSON(data []byte) error {
+	type unmarshaler Pagev4AgentSkillRelationship
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Pagev4AgentSkillRelationship(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Pagev4AgentSkillRelationship) MarshalJSON() ([]byte, error) {
+	type embed Pagev4AgentSkillRelationship
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *Pagev4AgentSkillRelationship) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+var (
+	pagev4AgentSkillSearchHitFieldItems      = big.NewInt(1 << 0)
+	pagev4AgentSkillSearchHitFieldNextCursor = big.NewInt(1 << 1)
+	pagev4AgentSkillSearchHitFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type Pagev4AgentSkillSearchHit struct {
+	Items      []*AgentSkillSearchHit `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string                `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                   `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *Pagev4AgentSkillSearchHit) GetItems() []*AgentSkillSearchHit {
+	if p == nil {
+		return nil
+	}
+	return p.Items
+}
+
+func (p *Pagev4AgentSkillSearchHit) GetNextCursor() *string {
+	if p == nil {
+		return nil
+	}
+	return p.NextCursor
+}
+
+func (p *Pagev4AgentSkillSearchHit) GetTotalSize() *int {
+	if p == nil {
+		return nil
+	}
+	return p.TotalSize
+}
+
+func (p *Pagev4AgentSkillSearchHit) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *Pagev4AgentSkillSearchHit) require(field *big.Int) {
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
+	}
+	next.Or(next, field)
+	p.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillSearchHit) SetItems(items []*AgentSkillSearchHit) {
+	p.Items = items
+	p.require(pagev4AgentSkillSearchHitFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillSearchHit) SetNextCursor(nextCursor *string) {
+	p.NextCursor = nextCursor
+	p.require(pagev4AgentSkillSearchHitFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillSearchHit) SetTotalSize(totalSize *int) {
+	p.TotalSize = totalSize
+	p.require(pagev4AgentSkillSearchHitFieldTotalSize)
+}
+
+func (p *Pagev4AgentSkillSearchHit) UnmarshalJSON(data []byte) error {
+	type unmarshaler Pagev4AgentSkillSearchHit
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Pagev4AgentSkillSearchHit(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Pagev4AgentSkillSearchHit) MarshalJSON() ([]byte, error) {
+	type embed Pagev4AgentSkillSearchHit
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *Pagev4AgentSkillSearchHit) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+var (
+	pagev4AgentSkillVersionFieldItems      = big.NewInt(1 << 0)
+	pagev4AgentSkillVersionFieldNextCursor = big.NewInt(1 << 1)
+	pagev4AgentSkillVersionFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type Pagev4AgentSkillVersion struct {
+	Items      []*AgentSkillVersion `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string              `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                 `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *Pagev4AgentSkillVersion) GetItems() []*AgentSkillVersion {
+	if p == nil {
+		return nil
+	}
+	return p.Items
+}
+
+func (p *Pagev4AgentSkillVersion) GetNextCursor() *string {
+	if p == nil {
+		return nil
+	}
+	return p.NextCursor
+}
+
+func (p *Pagev4AgentSkillVersion) GetTotalSize() *int {
+	if p == nil {
+		return nil
+	}
+	return p.TotalSize
+}
+
+func (p *Pagev4AgentSkillVersion) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *Pagev4AgentSkillVersion) require(field *big.Int) {
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
+	}
+	next.Or(next, field)
+	p.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillVersion) SetItems(items []*AgentSkillVersion) {
+	p.Items = items
+	p.require(pagev4AgentSkillVersionFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillVersion) SetNextCursor(nextCursor *string) {
+	p.NextCursor = nextCursor
+	p.require(pagev4AgentSkillVersionFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentSkillVersion) SetTotalSize(totalSize *int) {
+	p.TotalSize = totalSize
+	p.require(pagev4AgentSkillVersionFieldTotalSize)
+}
+
+func (p *Pagev4AgentSkillVersion) UnmarshalJSON(data []byte) error {
+	type unmarshaler Pagev4AgentSkillVersion
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Pagev4AgentSkillVersion(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Pagev4AgentSkillVersion) MarshalJSON() ([]byte, error) {
+	type embed Pagev4AgentSkillVersion
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *Pagev4AgentSkillVersion) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+var (
+	pagev4AgentVerifierFieldItems      = big.NewInt(1 << 0)
+	pagev4AgentVerifierFieldNextCursor = big.NewInt(1 << 1)
+	pagev4AgentVerifierFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type Pagev4AgentVerifier struct {
+	Items      []*AgentVerifier `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string          `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int             `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *Pagev4AgentVerifier) GetItems() []*AgentVerifier {
+	if p == nil {
+		return nil
+	}
+	return p.Items
+}
+
+func (p *Pagev4AgentVerifier) GetNextCursor() *string {
+	if p == nil {
+		return nil
+	}
+	return p.NextCursor
+}
+
+func (p *Pagev4AgentVerifier) GetTotalSize() *int {
+	if p == nil {
+		return nil
+	}
+	return p.TotalSize
+}
+
+func (p *Pagev4AgentVerifier) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.extraProperties
+}
+
+func (p *Pagev4AgentVerifier) require(field *big.Int) {
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
+	}
+	next.Or(next, field)
+	p.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentVerifier) SetItems(items []*AgentVerifier) {
+	p.Items = items
+	p.require(pagev4AgentVerifierFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentVerifier) SetNextCursor(nextCursor *string) {
+	p.NextCursor = nextCursor
+	p.require(pagev4AgentVerifierFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Pagev4AgentVerifier) SetTotalSize(totalSize *int) {
+	p.TotalSize = totalSize
+	p.require(pagev4AgentVerifierFieldTotalSize)
+}
+
+func (p *Pagev4AgentVerifier) UnmarshalJSON(data []byte) error {
+	type unmarshaler Pagev4AgentVerifier
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Pagev4AgentVerifier(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Pagev4AgentVerifier) MarshalJSON() ([]byte, error) {
+	type embed Pagev4AgentVerifier
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (p *Pagev4AgentVerifier) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+var (
+	propertyFilterFieldOperator     = big.NewInt(1 << 0)
+	propertyFilterFieldPropertyName = big.NewInt(1 << 1)
+	propertyFilterFieldValue        = big.NewInt(1 << 2)
+)
+
+type PropertyFilter struct {
+	// The lowercase comparison operator.
+	Operator *PropertyFilterOperator `json:"operator,omitempty" url:"operator,omitempty"`
+	// The property name to compare.
+	PropertyName *string `json:"property_name,omitempty" url:"property_name,omitempty"`
+	// The comparison value. Use an array for in. Its string members must be non-empty, contain no comma, and have no surrounding whitespace.
+	Value *PropertyFilterValue `json:"value,omitempty" url:"value,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (p *PropertyFilter) GetOperator() *PropertyFilterOperator {
+	if p == nil {
+		return nil
+	}
+	return p.Operator
+}
+
+func (p *PropertyFilter) GetPropertyName() *string {
+	if p == nil {
+		return nil
 	}
 	return p.PropertyName
 }
 
-func (p *PropertyFilter) GetPropertyValue() any {
+func (p *PropertyFilter) GetValue() *PropertyFilterValue {
 	if p == nil {
 		return nil
 	}
-	return p.PropertyValue
+	return p.Value
 }
 
 func (p *PropertyFilter) GetExtraProperties() map[string]interface{} {
@@ -5539,31 +23062,33 @@ func (p *PropertyFilter) GetExtraProperties() map[string]interface{} {
 }
 
 func (p *PropertyFilter) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
-// SetComparisonOperator sets the ComparisonOperator field and marks it as non-optional;
+// SetOperator sets the Operator field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (p *PropertyFilter) SetComparisonOperator(comparisonOperator ComparisonOperator) {
-	p.ComparisonOperator = comparisonOperator
-	p.require(propertyFilterFieldComparisonOperator)
+func (p *PropertyFilter) SetOperator(operator *PropertyFilterOperator) {
+	p.Operator = operator
+	p.require(propertyFilterFieldOperator)
 }
 
 // SetPropertyName sets the PropertyName field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (p *PropertyFilter) SetPropertyName(propertyName string) {
+func (p *PropertyFilter) SetPropertyName(propertyName *string) {
 	p.PropertyName = propertyName
 	p.require(propertyFilterFieldPropertyName)
 }
 
-// SetPropertyValue sets the PropertyValue field and marks it as non-optional;
+// SetValue sets the Value field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (p *PropertyFilter) SetPropertyValue(propertyValue any) {
-	p.PropertyValue = propertyValue
-	p.require(propertyFilterFieldPropertyValue)
+func (p *PropertyFilter) SetValue(value *PropertyFilterValue) {
+	p.Value = value
+	p.require(propertyFilterFieldValue)
 }
 
 func (p *PropertyFilter) UnmarshalJSON(data []byte) error {
@@ -5608,6 +23133,238 @@ func (p *PropertyFilter) String() string {
 	return fmt.Sprintf("%#v", p)
 }
 
+// The lowercase comparison operator.
+type PropertyFilterOperator string
+
+const (
+	PropertyFilterOperatorEq        PropertyFilterOperator = "eq"
+	PropertyFilterOperatorNe        PropertyFilterOperator = "ne"
+	PropertyFilterOperatorGt        PropertyFilterOperator = "gt"
+	PropertyFilterOperatorLt        PropertyFilterOperator = "lt"
+	PropertyFilterOperatorGte       PropertyFilterOperator = "gte"
+	PropertyFilterOperatorLte       PropertyFilterOperator = "lte"
+	PropertyFilterOperatorIn        PropertyFilterOperator = "in"
+	PropertyFilterOperatorIsNull    PropertyFilterOperator = "is_null"
+	PropertyFilterOperatorIsNotNull PropertyFilterOperator = "is_not_null"
+)
+
+func NewPropertyFilterOperatorFromString(s string) (PropertyFilterOperator, error) {
+	switch s {
+	case "eq":
+		return PropertyFilterOperatorEq, nil
+	case "ne":
+		return PropertyFilterOperatorNe, nil
+	case "gt":
+		return PropertyFilterOperatorGt, nil
+	case "lt":
+		return PropertyFilterOperatorLt, nil
+	case "gte":
+		return PropertyFilterOperatorGte, nil
+	case "lte":
+		return PropertyFilterOperatorLte, nil
+	case "in":
+		return PropertyFilterOperatorIn, nil
+	case "is_null":
+		return PropertyFilterOperatorIsNull, nil
+	case "is_not_null":
+		return PropertyFilterOperatorIsNotNull, nil
+	}
+	var t PropertyFilterOperator
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (p PropertyFilterOperator) Ptr() *PropertyFilterOperator {
+	return &p
+}
+
+// The comparison value. Use an array for in. Its string members must be non-empty, contain no comma, and have no surrounding whitespace.
+type PropertyFilterValue struct {
+	String                           string
+	Double                           float64
+	Boolean                          bool
+	PropertyFilterValueThreeItemList []*PropertyFilterValueThreeItem
+
+	typ string
+}
+
+func (p *PropertyFilterValue) GetString() string {
+	if p == nil {
+		return ""
+	}
+	return p.String
+}
+
+func (p *PropertyFilterValue) GetDouble() float64 {
+	if p == nil {
+		return 0
+	}
+	return p.Double
+}
+
+func (p *PropertyFilterValue) GetBoolean() bool {
+	if p == nil {
+		return false
+	}
+	return p.Boolean
+}
+
+func (p *PropertyFilterValue) GetPropertyFilterValueThreeItemList() []*PropertyFilterValueThreeItem {
+	if p == nil {
+		return nil
+	}
+	return p.PropertyFilterValueThreeItemList
+}
+
+func (p *PropertyFilterValue) UnmarshalJSON(data []byte) error {
+	var valueString string
+	if err := json.Unmarshal(data, &valueString); err == nil {
+		p.typ = "String"
+		p.String = valueString
+		return nil
+	}
+	var valueDouble float64
+	if err := json.Unmarshal(data, &valueDouble); err == nil {
+		p.typ = "Double"
+		p.Double = valueDouble
+		return nil
+	}
+	var valueBoolean bool
+	if err := json.Unmarshal(data, &valueBoolean); err == nil {
+		p.typ = "Boolean"
+		p.Boolean = valueBoolean
+		return nil
+	}
+	var valuePropertyFilterValueThreeItemList []*PropertyFilterValueThreeItem
+	if err := json.Unmarshal(data, &valuePropertyFilterValueThreeItemList); err == nil {
+		p.typ = "PropertyFilterValueThreeItemList"
+		p.PropertyFilterValueThreeItemList = valuePropertyFilterValueThreeItemList
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, p)
+}
+
+func (p PropertyFilterValue) MarshalJSON() ([]byte, error) {
+	if p.typ == "String" || p.String != "" {
+		return json.Marshal(p.String)
+	}
+	if p.typ == "Double" || p.Double != 0 {
+		return json.Marshal(p.Double)
+	}
+	if p.typ == "Boolean" || p.Boolean != false {
+		return json.Marshal(p.Boolean)
+	}
+	if p.typ == "PropertyFilterValueThreeItemList" || p.PropertyFilterValueThreeItemList != nil {
+		return json.Marshal(p.PropertyFilterValueThreeItemList)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", p)
+}
+
+type PropertyFilterValueVisitor interface {
+	VisitString(string) error
+	VisitDouble(float64) error
+	VisitBoolean(bool) error
+	VisitPropertyFilterValueThreeItemList([]*PropertyFilterValueThreeItem) error
+}
+
+func (p *PropertyFilterValue) Accept(visitor PropertyFilterValueVisitor) error {
+	if p.typ == "String" || p.String != "" {
+		return visitor.VisitString(p.String)
+	}
+	if p.typ == "Double" || p.Double != 0 {
+		return visitor.VisitDouble(p.Double)
+	}
+	if p.typ == "Boolean" || p.Boolean != false {
+		return visitor.VisitBoolean(p.Boolean)
+	}
+	if p.typ == "PropertyFilterValueThreeItemList" || p.PropertyFilterValueThreeItemList != nil {
+		return visitor.VisitPropertyFilterValueThreeItemList(p.PropertyFilterValueThreeItemList)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", p)
+}
+
+type PropertyFilterValueThreeItem struct {
+	String  string
+	Double  float64
+	Boolean bool
+
+	typ string
+}
+
+func (p *PropertyFilterValueThreeItem) GetString() string {
+	if p == nil {
+		return ""
+	}
+	return p.String
+}
+
+func (p *PropertyFilterValueThreeItem) GetDouble() float64 {
+	if p == nil {
+		return 0
+	}
+	return p.Double
+}
+
+func (p *PropertyFilterValueThreeItem) GetBoolean() bool {
+	if p == nil {
+		return false
+	}
+	return p.Boolean
+}
+
+func (p *PropertyFilterValueThreeItem) UnmarshalJSON(data []byte) error {
+	var valueString string
+	if err := json.Unmarshal(data, &valueString); err == nil {
+		p.typ = "String"
+		p.String = valueString
+		return nil
+	}
+	var valueDouble float64
+	if err := json.Unmarshal(data, &valueDouble); err == nil {
+		p.typ = "Double"
+		p.Double = valueDouble
+		return nil
+	}
+	var valueBoolean bool
+	if err := json.Unmarshal(data, &valueBoolean); err == nil {
+		p.typ = "Boolean"
+		p.Boolean = valueBoolean
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, p)
+}
+
+func (p PropertyFilterValueThreeItem) MarshalJSON() ([]byte, error) {
+	if p.typ == "String" || p.String != "" {
+		return json.Marshal(p.String)
+	}
+	if p.typ == "Double" || p.Double != 0 {
+		return json.Marshal(p.Double)
+	}
+	if p.typ == "Boolean" || p.Boolean != false {
+		return json.Marshal(p.Boolean)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", p)
+}
+
+type PropertyFilterValueThreeItemVisitor interface {
+	VisitString(string) error
+	VisitDouble(float64) error
+	VisitBoolean(bool) error
+}
+
+func (p *PropertyFilterValueThreeItem) Accept(visitor PropertyFilterValueThreeItemVisitor) error {
+	if p.typ == "String" || p.String != "" {
+		return visitor.VisitString(p.String)
+	}
+	if p.typ == "Double" || p.Double != 0 {
+		return visitor.VisitDouble(p.Double)
+	}
+	if p.typ == "Boolean" || p.Boolean != false {
+		return visitor.VisitBoolean(p.Boolean)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", p)
+}
+
 type RoleType string
 
 const (
@@ -5640,80 +23397,48 @@ func (r RoleType) Ptr() *RoleType {
 }
 
 var (
-	searchFiltersFieldConnectedNodeUUIDs     = big.NewInt(1 << 0)
-	searchFiltersFieldCreatedAt              = big.NewInt(1 << 1)
-	searchFiltersFieldEdgeTypes              = big.NewInt(1 << 2)
-	searchFiltersFieldEdgeUUIDs              = big.NewInt(1 << 3)
-	searchFiltersFieldEpisodeMetadataFilters = big.NewInt(1 << 4)
-	searchFiltersFieldEpisodeUUIDs           = big.NewInt(1 << 5)
-	searchFiltersFieldExcludeEdgeTypes       = big.NewInt(1 << 6)
-	searchFiltersFieldExcludeNodeLabels      = big.NewInt(1 << 7)
-	searchFiltersFieldExpiredAt              = big.NewInt(1 << 8)
-	searchFiltersFieldInvalidAt              = big.NewInt(1 << 9)
-	searchFiltersFieldNodeLabels             = big.NewInt(1 << 10)
-	searchFiltersFieldPropertyFilters        = big.NewInt(1 << 11)
-	searchFiltersFieldSourceNodeUUIDs        = big.NewInt(1 << 12)
-	searchFiltersFieldTargetNodeUUIDs        = big.NewInt(1 << 13)
-	searchFiltersFieldValidAt                = big.NewInt(1 << 14)
+	searchFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
+	searchFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
+	searchFiltersFieldDateFilters           = big.NewInt(1 << 2)
+	searchFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
+	searchFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
+	searchFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
+	searchFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
+	searchFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
+	searchFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
+	searchFiltersFieldNodeLabels            = big.NewInt(1 << 9)
+	searchFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
+	searchFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
+	searchFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
 )
 
 type SearchFilters struct {
-	// List of node UUIDs to filter edges on: an edge matches if its source OR
-	// target node UUID is in this list. Applies to edges only; rejected on
-	// requests whose result type contains no edges. Max 256 entries.
+	// Include edges connected to any of these node UUIDs.
 	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// 2D array of date filters for the created_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
-	// This translates to: `(created_at > date1 AND created_at < date2) OR (created_at = date3)`
-	CreatedAt [][]*DateFilter `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// List of edge types to filter on
+	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Filter results by temporal values.
+	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
+	// Include results with any of these edge types.
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// List of edge UUIDs to filter on. Max 256 to align with graph-service filter limits.
+	// Include results with any of these edge UUIDs.
 	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
-	// [Experimental] Episode metadata filter. Restricts results to edges/nodes derived from episodes
-	// matching the metadata predicates. Uses explicit AND/OR groups. This feature is experimental and may change in future releases.
-	EpisodeMetadataFilters *MetadataFilterGroup `json:"episode_metadata_filters,omitempty" url:"episode_metadata_filters,omitempty"`
-	// List of episode UUIDs to filter on. An edge matches if it was derived
-	// from any listed episode; a node matches if it is mentioned by any
-	// listed episode. Valid for both edge and node result types. Max 256
-	// entries.
+	// Include results derived from any of these episode UUIDs.
 	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	// List of edge types to exclude from results
+	// Exclude results with any of these edge types.
 	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
-	// List of node labels to exclude from results
+	// Exclude results with any of these node labels.
 	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
-	// 2D array of date filters for the expired_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
-	// This translates to: `(expired_at > date1 AND expired_at < date2) OR (expired_at = date3)`
-	ExpiredAt [][]*DateFilter `json:"expired_at,omitempty" url:"expired_at,omitempty"`
-	// 2D array of date filters for the invalid_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
-	// This translates to: `(invalid_at > date1 AND invalid_at < date2) OR (invalid_at = date3)`
-	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
-	// List of node labels to filter on
+	// Filter results by episode metadata.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+	// Include results with any of these node labels.
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
-	// List of property filters to apply to nodes and edges
+	// Filter results by node or edge properties.
 	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
-	// List of node UUIDs to filter edges on: an edge matches if its source
-	// node UUID is in this list. Applies to edges only; rejected on requests
-	// whose result type contains no edges. Max 256 entries.
+	// Include edges that start at any of these node UUIDs.
 	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
-	// List of node UUIDs to filter edges on: an edge matches if its target
-	// node UUID is in this list. Applies to edges only; rejected on requests
-	// whose result type contains no edges. Max 256 entries.
+	// Include edges that end at any of these node UUIDs.
 	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
-	// 2D array of date filters for the valid_at field.
-	// The outer array elements are combined with OR logic.
-	// The inner array elements are combined with AND logic.
-	// Example: `[[{">", date1}, {"<", date2}], [{"=", date3}]]`
-	// This translates to: `(valid_at > date1 AND valid_at < date2) OR (valid_at = date3)`
-	ValidAt [][]*DateFilter `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5729,11 +23454,18 @@ func (s *SearchFilters) GetConnectedNodeUUIDs() []string {
 	return s.ConnectedNodeUUIDs
 }
 
-func (s *SearchFilters) GetCreatedAt() [][]*DateFilter {
+func (s *SearchFilters) GetContentPolicyViolated() *bool {
 	if s == nil {
 		return nil
 	}
-	return s.CreatedAt
+	return s.ContentPolicyViolated
+}
+
+func (s *SearchFilters) GetDateFilters() *DateFilters {
+	if s == nil {
+		return nil
+	}
+	return s.DateFilters
 }
 
 func (s *SearchFilters) GetEdgeTypes() []string {
@@ -5748,13 +23480,6 @@ func (s *SearchFilters) GetEdgeUUIDs() []string {
 		return nil
 	}
 	return s.EdgeUUIDs
-}
-
-func (s *SearchFilters) GetEpisodeMetadataFilters() *MetadataFilterGroup {
-	if s == nil {
-		return nil
-	}
-	return s.EpisodeMetadataFilters
 }
 
 func (s *SearchFilters) GetEpisodeUUIDs() []string {
@@ -5778,18 +23503,11 @@ func (s *SearchFilters) GetExcludeNodeLabels() []string {
 	return s.ExcludeNodeLabels
 }
 
-func (s *SearchFilters) GetExpiredAt() [][]*DateFilter {
+func (s *SearchFilters) GetMetadataFilters() *MetadataFilterGroup {
 	if s == nil {
 		return nil
 	}
-	return s.ExpiredAt
-}
-
-func (s *SearchFilters) GetInvalidAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.InvalidAt
+	return s.MetadataFilters
 }
 
 func (s *SearchFilters) GetNodeLabels() []string {
@@ -5820,13 +23538,6 @@ func (s *SearchFilters) GetTargetNodeUUIDs() []string {
 	return s.TargetNodeUUIDs
 }
 
-func (s *SearchFilters) GetValidAt() [][]*DateFilter {
-	if s == nil {
-		return nil
-	}
-	return s.ValidAt
-}
-
 func (s *SearchFilters) GetExtraProperties() map[string]interface{} {
 	if s == nil {
 		return nil
@@ -5835,10 +23546,12 @@ func (s *SearchFilters) GetExtraProperties() map[string]interface{} {
 }
 
 func (s *SearchFilters) require(field *big.Int) {
-	if s.explicitFields == nil {
-		s.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
 	}
-	s.explicitFields.Or(s.explicitFields, field)
+	next.Or(next, field)
+	s.explicitFields = next
 }
 
 // SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
@@ -5848,11 +23561,18 @@ func (s *SearchFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
 	s.require(searchFiltersFieldConnectedNodeUUIDs)
 }
 
-// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchFilters) SetCreatedAt(createdAt [][]*DateFilter) {
-	s.CreatedAt = createdAt
-	s.require(searchFiltersFieldCreatedAt)
+func (s *SearchFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
+	s.ContentPolicyViolated = contentPolicyViolated
+	s.require(searchFiltersFieldContentPolicyViolated)
+}
+
+// SetDateFilters sets the DateFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchFilters) SetDateFilters(dateFilters *DateFilters) {
+	s.DateFilters = dateFilters
+	s.require(searchFiltersFieldDateFilters)
 }
 
 // SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
@@ -5867,13 +23587,6 @@ func (s *SearchFilters) SetEdgeTypes(edgeTypes []string) {
 func (s *SearchFilters) SetEdgeUUIDs(edgeUUIDs []string) {
 	s.EdgeUUIDs = edgeUUIDs
 	s.require(searchFiltersFieldEdgeUUIDs)
-}
-
-// SetEpisodeMetadataFilters sets the EpisodeMetadataFilters field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchFilters) SetEpisodeMetadataFilters(episodeMetadataFilters *MetadataFilterGroup) {
-	s.EpisodeMetadataFilters = episodeMetadataFilters
-	s.require(searchFiltersFieldEpisodeMetadataFilters)
 }
 
 // SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
@@ -5897,18 +23610,11 @@ func (s *SearchFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
 	s.require(searchFiltersFieldExcludeNodeLabels)
 }
 
-// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchFilters) SetExpiredAt(expiredAt [][]*DateFilter) {
-	s.ExpiredAt = expiredAt
-	s.require(searchFiltersFieldExpiredAt)
-}
-
-// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchFilters) SetInvalidAt(invalidAt [][]*DateFilter) {
-	s.InvalidAt = invalidAt
-	s.require(searchFiltersFieldInvalidAt)
+func (s *SearchFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	s.MetadataFilters = metadataFilters
+	s.require(searchFiltersFieldMetadataFilters)
 }
 
 // SetNodeLabels sets the NodeLabels field and marks it as non-optional;
@@ -5939,13 +23645,6 @@ func (s *SearchFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
 	s.require(searchFiltersFieldTargetNodeUUIDs)
 }
 
-// SetValidAt sets the ValidAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchFilters) SetValidAt(validAt [][]*DateFilter) {
-	s.ValidAt = validAt
-	s.require(searchFiltersFieldValidAt)
-}
-
 func (s *SearchFilters) UnmarshalJSON(data []byte) error {
 	type unmarshaler SearchFilters
 	var value unmarshaler
@@ -5974,6 +23673,2086 @@ func (s *SearchFilters) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SearchFilters) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	skillDefinitionFieldAgentVersions = big.NewInt(1 << 0)
+	skillDefinitionFieldAliases       = big.NewInt(1 << 1)
+	skillDefinitionFieldDescription   = big.NewInt(1 << 2)
+	skillDefinitionFieldDoNotUseWhen  = big.NewInt(1 << 3)
+	skillDefinitionFieldDoneWhen      = big.NewInt(1 << 4)
+	skillDefinitionFieldEnvironments  = big.NewInt(1 << 5)
+	skillDefinitionFieldFailures      = big.NewInt(1 << 6)
+	skillDefinitionFieldKind          = big.NewInt(1 << 7)
+	skillDefinitionFieldName          = big.NewInt(1 << 8)
+	skillDefinitionFieldOutputs       = big.NewInt(1 << 9)
+	skillDefinitionFieldPackageName   = big.NewInt(1 << 10)
+	skillDefinitionFieldPreconditions = big.NewInt(1 << 11)
+	skillDefinitionFieldProcedure     = big.NewInt(1 << 12)
+	skillDefinitionFieldRelatedSkills = big.NewInt(1 << 13)
+	skillDefinitionFieldSections      = big.NewInt(1 << 14)
+	skillDefinitionFieldStopWhen      = big.NewInt(1 << 15)
+	skillDefinitionFieldTaskFamily    = big.NewInt(1 << 16)
+	skillDefinitionFieldTools         = big.NewInt(1 << 17)
+	skillDefinitionFieldUseWhen       = big.NewInt(1 << 18)
+)
+
+type SkillDefinition struct {
+	AgentVersions []string                  `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	Aliases       []string                  `json:"aliases,omitempty" url:"aliases,omitempty"`
+	Description   *string                   `json:"description,omitempty" url:"description,omitempty"`
+	DoNotUseWhen  []string                  `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
+	DoneWhen      []string                  `json:"done_when,omitempty" url:"done_when,omitempty"`
+	Environments  []*SkillResource          `json:"environments,omitempty" url:"environments,omitempty"`
+	Failures      []*SkillFailure           `json:"failures,omitempty" url:"failures,omitempty"`
+	Kind          *string                   `json:"kind,omitempty" url:"kind,omitempty"`
+	Name          *string                   `json:"name,omitempty" url:"name,omitempty"`
+	Outputs       []string                  `json:"outputs,omitempty" url:"outputs,omitempty"`
+	PackageName   *string                   `json:"package_name,omitempty" url:"package_name,omitempty"`
+	Preconditions []string                  `json:"preconditions,omitempty" url:"preconditions,omitempty"`
+	Procedure     []*SkillProcedureStep     `json:"procedure,omitempty" url:"procedure,omitempty"`
+	RelatedSkills []*SkillRelation          `json:"related_skills,omitempty" url:"related_skills,omitempty"`
+	Sections      []*SkillDefinitionSection `json:"sections,omitempty" url:"sections,omitempty"`
+	StopWhen      []string                  `json:"stop_when,omitempty" url:"stop_when,omitempty"`
+	TaskFamily    *string                   `json:"task_family,omitempty" url:"task_family,omitempty"`
+	Tools         []*SkillResource          `json:"tools,omitempty" url:"tools,omitempty"`
+	UseWhen       []string                  `json:"use_when,omitempty" url:"use_when,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SkillDefinition) GetAgentVersions() []string {
+	if s == nil {
+		return nil
+	}
+	return s.AgentVersions
+}
+
+func (s *SkillDefinition) GetAliases() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Aliases
+}
+
+func (s *SkillDefinition) GetDescription() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Description
+}
+
+func (s *SkillDefinition) GetDoNotUseWhen() []string {
+	if s == nil {
+		return nil
+	}
+	return s.DoNotUseWhen
+}
+
+func (s *SkillDefinition) GetDoneWhen() []string {
+	if s == nil {
+		return nil
+	}
+	return s.DoneWhen
+}
+
+func (s *SkillDefinition) GetEnvironments() []*SkillResource {
+	if s == nil {
+		return nil
+	}
+	return s.Environments
+}
+
+func (s *SkillDefinition) GetFailures() []*SkillFailure {
+	if s == nil {
+		return nil
+	}
+	return s.Failures
+}
+
+func (s *SkillDefinition) GetKind() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Kind
+}
+
+func (s *SkillDefinition) GetName() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Name
+}
+
+func (s *SkillDefinition) GetOutputs() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Outputs
+}
+
+func (s *SkillDefinition) GetPackageName() *string {
+	if s == nil {
+		return nil
+	}
+	return s.PackageName
+}
+
+func (s *SkillDefinition) GetPreconditions() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Preconditions
+}
+
+func (s *SkillDefinition) GetProcedure() []*SkillProcedureStep {
+	if s == nil {
+		return nil
+	}
+	return s.Procedure
+}
+
+func (s *SkillDefinition) GetRelatedSkills() []*SkillRelation {
+	if s == nil {
+		return nil
+	}
+	return s.RelatedSkills
+}
+
+func (s *SkillDefinition) GetSections() []*SkillDefinitionSection {
+	if s == nil {
+		return nil
+	}
+	return s.Sections
+}
+
+func (s *SkillDefinition) GetStopWhen() []string {
+	if s == nil {
+		return nil
+	}
+	return s.StopWhen
+}
+
+func (s *SkillDefinition) GetTaskFamily() *string {
+	if s == nil {
+		return nil
+	}
+	return s.TaskFamily
+}
+
+func (s *SkillDefinition) GetTools() []*SkillResource {
+	if s == nil {
+		return nil
+	}
+	return s.Tools
+}
+
+func (s *SkillDefinition) GetUseWhen() []string {
+	if s == nil {
+		return nil
+	}
+	return s.UseWhen
+}
+
+func (s *SkillDefinition) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SkillDefinition) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetAgentVersions sets the AgentVersions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetAgentVersions(agentVersions []string) {
+	s.AgentVersions = agentVersions
+	s.require(skillDefinitionFieldAgentVersions)
+}
+
+// SetAliases sets the Aliases field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetAliases(aliases []string) {
+	s.Aliases = aliases
+	s.require(skillDefinitionFieldAliases)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetDescription(description *string) {
+	s.Description = description
+	s.require(skillDefinitionFieldDescription)
+}
+
+// SetDoNotUseWhen sets the DoNotUseWhen field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetDoNotUseWhen(doNotUseWhen []string) {
+	s.DoNotUseWhen = doNotUseWhen
+	s.require(skillDefinitionFieldDoNotUseWhen)
+}
+
+// SetDoneWhen sets the DoneWhen field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetDoneWhen(doneWhen []string) {
+	s.DoneWhen = doneWhen
+	s.require(skillDefinitionFieldDoneWhen)
+}
+
+// SetEnvironments sets the Environments field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetEnvironments(environments []*SkillResource) {
+	s.Environments = environments
+	s.require(skillDefinitionFieldEnvironments)
+}
+
+// SetFailures sets the Failures field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetFailures(failures []*SkillFailure) {
+	s.Failures = failures
+	s.require(skillDefinitionFieldFailures)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetKind(kind *string) {
+	s.Kind = kind
+	s.require(skillDefinitionFieldKind)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetName(name *string) {
+	s.Name = name
+	s.require(skillDefinitionFieldName)
+}
+
+// SetOutputs sets the Outputs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetOutputs(outputs []string) {
+	s.Outputs = outputs
+	s.require(skillDefinitionFieldOutputs)
+}
+
+// SetPackageName sets the PackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetPackageName(packageName *string) {
+	s.PackageName = packageName
+	s.require(skillDefinitionFieldPackageName)
+}
+
+// SetPreconditions sets the Preconditions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetPreconditions(preconditions []string) {
+	s.Preconditions = preconditions
+	s.require(skillDefinitionFieldPreconditions)
+}
+
+// SetProcedure sets the Procedure field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetProcedure(procedure []*SkillProcedureStep) {
+	s.Procedure = procedure
+	s.require(skillDefinitionFieldProcedure)
+}
+
+// SetRelatedSkills sets the RelatedSkills field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetRelatedSkills(relatedSkills []*SkillRelation) {
+	s.RelatedSkills = relatedSkills
+	s.require(skillDefinitionFieldRelatedSkills)
+}
+
+// SetSections sets the Sections field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetSections(sections []*SkillDefinitionSection) {
+	s.Sections = sections
+	s.require(skillDefinitionFieldSections)
+}
+
+// SetStopWhen sets the StopWhen field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetStopWhen(stopWhen []string) {
+	s.StopWhen = stopWhen
+	s.require(skillDefinitionFieldStopWhen)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetTaskFamily(taskFamily *string) {
+	s.TaskFamily = taskFamily
+	s.require(skillDefinitionFieldTaskFamily)
+}
+
+// SetTools sets the Tools field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetTools(tools []*SkillResource) {
+	s.Tools = tools
+	s.require(skillDefinitionFieldTools)
+}
+
+// SetUseWhen sets the UseWhen field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinition) SetUseWhen(useWhen []string) {
+	s.UseWhen = useWhen
+	s.require(skillDefinitionFieldUseWhen)
+}
+
+func (s *SkillDefinition) UnmarshalJSON(data []byte) error {
+	type unmarshaler SkillDefinition
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SkillDefinition(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SkillDefinition) MarshalJSON() ([]byte, error) {
+	type embed SkillDefinition
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SkillDefinition) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	skillDefinitionSectionFieldHeading  = big.NewInt(1 << 0)
+	skillDefinitionSectionFieldID       = big.NewInt(1 << 1)
+	skillDefinitionSectionFieldMarkdown = big.NewInt(1 << 2)
+)
+
+type SkillDefinitionSection struct {
+	Heading  *string `json:"heading,omitempty" url:"heading,omitempty"`
+	ID       *string `json:"id,omitempty" url:"id,omitempty"`
+	Markdown *string `json:"markdown,omitempty" url:"markdown,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SkillDefinitionSection) GetHeading() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Heading
+}
+
+func (s *SkillDefinitionSection) GetID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.ID
+}
+
+func (s *SkillDefinitionSection) GetMarkdown() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Markdown
+}
+
+func (s *SkillDefinitionSection) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SkillDefinitionSection) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetHeading sets the Heading field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinitionSection) SetHeading(heading *string) {
+	s.Heading = heading
+	s.require(skillDefinitionSectionFieldHeading)
+}
+
+// SetID sets the ID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinitionSection) SetID(id *string) {
+	s.ID = id
+	s.require(skillDefinitionSectionFieldID)
+}
+
+// SetMarkdown sets the Markdown field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillDefinitionSection) SetMarkdown(markdown *string) {
+	s.Markdown = markdown
+	s.require(skillDefinitionSectionFieldMarkdown)
+}
+
+func (s *SkillDefinitionSection) UnmarshalJSON(data []byte) error {
+	type unmarshaler SkillDefinitionSection
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SkillDefinitionSection(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SkillDefinitionSection) MarshalJSON() ([]byte, error) {
+	type embed SkillDefinitionSection
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SkillDefinitionSection) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	skillFailureFieldRecover = big.NewInt(1 << 0)
+	skillFailureFieldWhen    = big.NewInt(1 << 1)
+)
+
+type SkillFailure struct {
+	Recover []string `json:"recover,omitempty" url:"recover,omitempty"`
+	When    *string  `json:"when,omitempty" url:"when,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SkillFailure) GetRecover() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Recover
+}
+
+func (s *SkillFailure) GetWhen() *string {
+	if s == nil {
+		return nil
+	}
+	return s.When
+}
+
+func (s *SkillFailure) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SkillFailure) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetRecover sets the Recover field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillFailure) SetRecover(recover []string) {
+	s.Recover = recover
+	s.require(skillFailureFieldRecover)
+}
+
+// SetWhen sets the When field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillFailure) SetWhen(when *string) {
+	s.When = when
+	s.require(skillFailureFieldWhen)
+}
+
+func (s *SkillFailure) UnmarshalJSON(data []byte) error {
+	type unmarshaler SkillFailure
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SkillFailure(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SkillFailure) MarshalJSON() ([]byte, error) {
+	type embed SkillFailure
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SkillFailure) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	skillProcedureStepFieldDecision    = big.NewInt(1 << 0)
+	skillProcedureStepFieldExpect      = big.NewInt(1 << 1)
+	skillProcedureStepFieldInstruction = big.NewInt(1 << 2)
+)
+
+type SkillProcedureStep struct {
+	Decision    *string  `json:"decision,omitempty" url:"decision,omitempty"`
+	Expect      []string `json:"expect,omitempty" url:"expect,omitempty"`
+	Instruction *string  `json:"instruction,omitempty" url:"instruction,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SkillProcedureStep) GetDecision() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Decision
+}
+
+func (s *SkillProcedureStep) GetExpect() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Expect
+}
+
+func (s *SkillProcedureStep) GetInstruction() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Instruction
+}
+
+func (s *SkillProcedureStep) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SkillProcedureStep) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetDecision sets the Decision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillProcedureStep) SetDecision(decision *string) {
+	s.Decision = decision
+	s.require(skillProcedureStepFieldDecision)
+}
+
+// SetExpect sets the Expect field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillProcedureStep) SetExpect(expect []string) {
+	s.Expect = expect
+	s.require(skillProcedureStepFieldExpect)
+}
+
+// SetInstruction sets the Instruction field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillProcedureStep) SetInstruction(instruction *string) {
+	s.Instruction = instruction
+	s.require(skillProcedureStepFieldInstruction)
+}
+
+func (s *SkillProcedureStep) UnmarshalJSON(data []byte) error {
+	type unmarshaler SkillProcedureStep
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SkillProcedureStep(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SkillProcedureStep) MarshalJSON() ([]byte, error) {
+	type embed SkillProcedureStep
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SkillProcedureStep) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	skillRelationFieldRelation = big.NewInt(1 << 0)
+	skillRelationFieldSkill    = big.NewInt(1 << 1)
+	skillRelationFieldVersion  = big.NewInt(1 << 2)
+)
+
+type SkillRelation struct {
+	Relation *string `json:"relation,omitempty" url:"relation,omitempty"`
+	Skill    *string `json:"skill,omitempty" url:"skill,omitempty"`
+	Version  *string `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SkillRelation) GetRelation() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Relation
+}
+
+func (s *SkillRelation) GetSkill() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Skill
+}
+
+func (s *SkillRelation) GetVersion() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Version
+}
+
+func (s *SkillRelation) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SkillRelation) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetRelation sets the Relation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillRelation) SetRelation(relation *string) {
+	s.Relation = relation
+	s.require(skillRelationFieldRelation)
+}
+
+// SetSkill sets the Skill field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillRelation) SetSkill(skill *string) {
+	s.Skill = skill
+	s.require(skillRelationFieldSkill)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillRelation) SetVersion(version *string) {
+	s.Version = version
+	s.require(skillRelationFieldVersion)
+}
+
+func (s *SkillRelation) UnmarshalJSON(data []byte) error {
+	type unmarshaler SkillRelation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SkillRelation(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SkillRelation) MarshalJSON() ([]byte, error) {
+	type embed SkillRelation
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SkillRelation) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	skillResourceFieldAliases = big.NewInt(1 << 0)
+	skillResourceFieldName    = big.NewInt(1 << 1)
+	skillResourceFieldVersion = big.NewInt(1 << 2)
+)
+
+type SkillResource struct {
+	Aliases []string `json:"aliases,omitempty" url:"aliases,omitempty"`
+	Name    *string  `json:"name,omitempty" url:"name,omitempty"`
+	Version *string  `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SkillResource) GetAliases() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Aliases
+}
+
+func (s *SkillResource) GetName() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Name
+}
+
+func (s *SkillResource) GetVersion() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Version
+}
+
+func (s *SkillResource) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SkillResource) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetAliases sets the Aliases field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillResource) SetAliases(aliases []string) {
+	s.Aliases = aliases
+	s.require(skillResourceFieldAliases)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillResource) SetName(name *string) {
+	s.Name = name
+	s.require(skillResourceFieldName)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SkillResource) SetVersion(version *string) {
+	s.Version = version
+	s.require(skillResourceFieldVersion)
+}
+
+func (s *SkillResource) UnmarshalJSON(data []byte) error {
+	type unmarshaler SkillResource
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SkillResource(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SkillResource) MarshalJSON() ([]byte, error) {
+	type embed SkillResource
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SkillResource) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	sourceSpanFieldCreatedAt    = big.NewInt(1 << 0)
+	sourceSpanFieldEndedAt      = big.NewInt(1 << 1)
+	sourceSpanFieldError        = big.NewInt(1 << 2)
+	sourceSpanFieldInput        = big.NewInt(1 << 3)
+	sourceSpanFieldKind         = big.NewInt(1 << 4)
+	sourceSpanFieldMetadata     = big.NewInt(1 << 5)
+	sourceSpanFieldModel        = big.NewInt(1 << 6)
+	sourceSpanFieldName         = big.NewInt(1 << 7)
+	sourceSpanFieldOutput       = big.NewInt(1 << 8)
+	sourceSpanFieldParentSpanID = big.NewInt(1 << 9)
+	sourceSpanFieldSpanID       = big.NewInt(1 << 10)
+	sourceSpanFieldStartedAt    = big.NewInt(1 << 11)
+	sourceSpanFieldToolName     = big.NewInt(1 << 12)
+)
+
+type SourceSpan struct {
+	// CreatedAt is the span creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// EndedAt is the span end time, when present.
+	EndedAt *string `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	// Error is the span error text, when present.
+	Error *string `json:"error,omitempty" url:"error,omitempty"`
+	// Input is the provider span input. Example: {"messages":[]}.
+	Input map[string]any `json:"input,omitempty" url:"input,omitempty"`
+	// Kind is the normalized span kind.
+	Kind *string `json:"kind,omitempty" url:"kind,omitempty"`
+	// Metadata contains provider span metadata. Example: {"team":"support"}.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Model is the model identifier, when present.
+	Model *string `json:"model,omitempty" url:"model,omitempty"`
+	// Name is the provider span name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Output is the provider span output. Example: {"text":"Hello"}.
+	Output map[string]any `json:"output,omitempty" url:"output,omitempty"`
+	// ParentSpanID is the parent span identifier, when present.
+	ParentSpanID *string `json:"parent_span_id,omitempty" url:"parent_span_id,omitempty"`
+	// SpanID is the provider span identifier.
+	SpanID *string `json:"span_id,omitempty" url:"span_id,omitempty"`
+	// StartedAt is the span start time, when present.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// ToolName is the tool name, when present.
+	ToolName *string `json:"tool_name,omitempty" url:"tool_name,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SourceSpan) GetCreatedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.CreatedAt
+}
+
+func (s *SourceSpan) GetEndedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.EndedAt
+}
+
+func (s *SourceSpan) GetError() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Error
+}
+
+func (s *SourceSpan) GetInput() map[string]any {
+	if s == nil {
+		return nil
+	}
+	return s.Input
+}
+
+func (s *SourceSpan) GetKind() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Kind
+}
+
+func (s *SourceSpan) GetMetadata() map[string]any {
+	if s == nil {
+		return nil
+	}
+	return s.Metadata
+}
+
+func (s *SourceSpan) GetModel() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Model
+}
+
+func (s *SourceSpan) GetName() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Name
+}
+
+func (s *SourceSpan) GetOutput() map[string]any {
+	if s == nil {
+		return nil
+	}
+	return s.Output
+}
+
+func (s *SourceSpan) GetParentSpanID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.ParentSpanID
+}
+
+func (s *SourceSpan) GetSpanID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.SpanID
+}
+
+func (s *SourceSpan) GetStartedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.StartedAt
+}
+
+func (s *SourceSpan) GetToolName() *string {
+	if s == nil {
+		return nil
+	}
+	return s.ToolName
+}
+
+func (s *SourceSpan) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SourceSpan) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetCreatedAt(createdAt *string) {
+	s.CreatedAt = createdAt
+	s.require(sourceSpanFieldCreatedAt)
+}
+
+// SetEndedAt sets the EndedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetEndedAt(endedAt *string) {
+	s.EndedAt = endedAt
+	s.require(sourceSpanFieldEndedAt)
+}
+
+// SetError sets the Error field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetError(error_ *string) {
+	s.Error = error_
+	s.require(sourceSpanFieldError)
+}
+
+// SetInput sets the Input field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetInput(input map[string]any) {
+	s.Input = input
+	s.require(sourceSpanFieldInput)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetKind(kind *string) {
+	s.Kind = kind
+	s.require(sourceSpanFieldKind)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetMetadata(metadata map[string]any) {
+	s.Metadata = metadata
+	s.require(sourceSpanFieldMetadata)
+}
+
+// SetModel sets the Model field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetModel(model *string) {
+	s.Model = model
+	s.require(sourceSpanFieldModel)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetName(name *string) {
+	s.Name = name
+	s.require(sourceSpanFieldName)
+}
+
+// SetOutput sets the Output field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetOutput(output map[string]any) {
+	s.Output = output
+	s.require(sourceSpanFieldOutput)
+}
+
+// SetParentSpanID sets the ParentSpanID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetParentSpanID(parentSpanID *string) {
+	s.ParentSpanID = parentSpanID
+	s.require(sourceSpanFieldParentSpanID)
+}
+
+// SetSpanID sets the SpanID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetSpanID(spanID *string) {
+	s.SpanID = spanID
+	s.require(sourceSpanFieldSpanID)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetStartedAt(startedAt *string) {
+	s.StartedAt = startedAt
+	s.require(sourceSpanFieldStartedAt)
+}
+
+// SetToolName sets the ToolName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceSpan) SetToolName(toolName *string) {
+	s.ToolName = toolName
+	s.require(sourceSpanFieldToolName)
+}
+
+func (s *SourceSpan) UnmarshalJSON(data []byte) error {
+	type unmarshaler SourceSpan
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SourceSpan(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SourceSpan) MarshalJSON() ([]byte, error) {
+	type embed SourceSpan
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SourceSpan) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	sourceTraceFieldClosed               = big.NewInt(1 << 0)
+	sourceTraceFieldEndedAt              = big.NewInt(1 << 1)
+	sourceTraceFieldHasError             = big.NewInt(1 << 2)
+	sourceTraceFieldImportedTrajectories = big.NewInt(1 << 3)
+	sourceTraceFieldLastActivityAt       = big.NewInt(1 << 4)
+	sourceTraceFieldMetadata             = big.NewInt(1 << 5)
+	sourceTraceFieldName                 = big.NewInt(1 << 6)
+	sourceTraceFieldScores               = big.NewInt(1 << 7)
+	sourceTraceFieldSourceRevision       = big.NewInt(1 << 8)
+	sourceTraceFieldSourceURL            = big.NewInt(1 << 9)
+	sourceTraceFieldSpanCount            = big.NewInt(1 << 10)
+	sourceTraceFieldSpans                = big.NewInt(1 << 11)
+	sourceTraceFieldStartedAt            = big.NewInt(1 << 12)
+	sourceTraceFieldTags                 = big.NewInt(1 << 13)
+	sourceTraceFieldTraceID              = big.NewInt(1 << 14)
+)
+
+type SourceTrace struct {
+	// Closed reports whether the root span has ended.
+	Closed *bool `json:"closed,omitempty" url:"closed,omitempty"`
+	// EndedAt is the trace end time, when present.
+	EndedAt *string `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	// HasError reports whether the trace contains an error.
+	HasError *bool `json:"has_error,omitempty" url:"has_error,omitempty"`
+	// ImportedTrajectories contains visible Zep Trajectories imported from this trace. Example: [{"agent_uuid":"f8b28f94-4f5a-4b3a-b782-87aa8464ac04","trajectory_uuid":"6a906e70-50ca-4e43-a874-5fcae02a71fa","import_uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa"}].
+	ImportedTrajectories []*ImportedTrajectoryReference `json:"imported_trajectories,omitempty" url:"imported_trajectories,omitempty"`
+	// LastActivityAt is the most recent activity time across spans.
+	LastActivityAt *string `json:"last_activity_at,omitempty" url:"last_activity_at,omitempty"`
+	// Metadata contains the root span metadata summary. Example: {"team":"support"}.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Name is the trace name, when present.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Scores contains the trace score values.
+	Scores map[string]float64 `json:"scores,omitempty" url:"scores,omitempty"`
+	// SourceRevision is the provider revision for the trace.
+	SourceRevision *string `json:"source_revision,omitempty" url:"source_revision,omitempty"`
+	// SourceURL is the provider link, when available.
+	SourceURL *string `json:"source_url,omitempty" url:"source_url,omitempty"`
+	// SpanCount is the number of spans in the trace.
+	SpanCount *int `json:"span_count,omitempty" url:"span_count,omitempty"`
+	// Spans contains the trace spans. Example: [{"span_id":"span_123","kind":"llm","name":"assistant_response"}].
+	Spans []*SourceSpan `json:"spans,omitempty" url:"spans,omitempty"`
+	// StartedAt is the trace start time, when present.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// Tags contains the trace tags.
+	Tags []string `json:"tags,omitempty" url:"tags,omitempty"`
+	// TraceID is the provider trace identifier.
+	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SourceTrace) GetClosed() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.Closed
+}
+
+func (s *SourceTrace) GetEndedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.EndedAt
+}
+
+func (s *SourceTrace) GetHasError() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.HasError
+}
+
+func (s *SourceTrace) GetImportedTrajectories() []*ImportedTrajectoryReference {
+	if s == nil {
+		return nil
+	}
+	return s.ImportedTrajectories
+}
+
+func (s *SourceTrace) GetLastActivityAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.LastActivityAt
+}
+
+func (s *SourceTrace) GetMetadata() map[string]any {
+	if s == nil {
+		return nil
+	}
+	return s.Metadata
+}
+
+func (s *SourceTrace) GetName() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Name
+}
+
+func (s *SourceTrace) GetScores() map[string]float64 {
+	if s == nil {
+		return nil
+	}
+	return s.Scores
+}
+
+func (s *SourceTrace) GetSourceRevision() *string {
+	if s == nil {
+		return nil
+	}
+	return s.SourceRevision
+}
+
+func (s *SourceTrace) GetSourceURL() *string {
+	if s == nil {
+		return nil
+	}
+	return s.SourceURL
+}
+
+func (s *SourceTrace) GetSpanCount() *int {
+	if s == nil {
+		return nil
+	}
+	return s.SpanCount
+}
+
+func (s *SourceTrace) GetSpans() []*SourceSpan {
+	if s == nil {
+		return nil
+	}
+	return s.Spans
+}
+
+func (s *SourceTrace) GetStartedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.StartedAt
+}
+
+func (s *SourceTrace) GetTags() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Tags
+}
+
+func (s *SourceTrace) GetTraceID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.TraceID
+}
+
+func (s *SourceTrace) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SourceTrace) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetClosed sets the Closed field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetClosed(closed *bool) {
+	s.Closed = closed
+	s.require(sourceTraceFieldClosed)
+}
+
+// SetEndedAt sets the EndedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetEndedAt(endedAt *string) {
+	s.EndedAt = endedAt
+	s.require(sourceTraceFieldEndedAt)
+}
+
+// SetHasError sets the HasError field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetHasError(hasError *bool) {
+	s.HasError = hasError
+	s.require(sourceTraceFieldHasError)
+}
+
+// SetImportedTrajectories sets the ImportedTrajectories field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetImportedTrajectories(importedTrajectories []*ImportedTrajectoryReference) {
+	s.ImportedTrajectories = importedTrajectories
+	s.require(sourceTraceFieldImportedTrajectories)
+}
+
+// SetLastActivityAt sets the LastActivityAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetLastActivityAt(lastActivityAt *string) {
+	s.LastActivityAt = lastActivityAt
+	s.require(sourceTraceFieldLastActivityAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetMetadata(metadata map[string]any) {
+	s.Metadata = metadata
+	s.require(sourceTraceFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetName(name *string) {
+	s.Name = name
+	s.require(sourceTraceFieldName)
+}
+
+// SetScores sets the Scores field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetScores(scores map[string]float64) {
+	s.Scores = scores
+	s.require(sourceTraceFieldScores)
+}
+
+// SetSourceRevision sets the SourceRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetSourceRevision(sourceRevision *string) {
+	s.SourceRevision = sourceRevision
+	s.require(sourceTraceFieldSourceRevision)
+}
+
+// SetSourceURL sets the SourceURL field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetSourceURL(sourceURL *string) {
+	s.SourceURL = sourceURL
+	s.require(sourceTraceFieldSourceURL)
+}
+
+// SetSpanCount sets the SpanCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetSpanCount(spanCount *int) {
+	s.SpanCount = spanCount
+	s.require(sourceTraceFieldSpanCount)
+}
+
+// SetSpans sets the Spans field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetSpans(spans []*SourceSpan) {
+	s.Spans = spans
+	s.require(sourceTraceFieldSpans)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetStartedAt(startedAt *string) {
+	s.StartedAt = startedAt
+	s.require(sourceTraceFieldStartedAt)
+}
+
+// SetTags sets the Tags field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetTags(tags []string) {
+	s.Tags = tags
+	s.require(sourceTraceFieldTags)
+}
+
+// SetTraceID sets the TraceID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTrace) SetTraceID(traceID *string) {
+	s.TraceID = traceID
+	s.require(sourceTraceFieldTraceID)
+}
+
+func (s *SourceTrace) UnmarshalJSON(data []byte) error {
+	type unmarshaler SourceTrace
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SourceTrace(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SourceTrace) MarshalJSON() ([]byte, error) {
+	type embed SourceTrace
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SourceTrace) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	sourceTracePageFieldItems      = big.NewInt(1 << 0)
+	sourceTracePageFieldNextCursor = big.NewInt(1 << 1)
+)
+
+type SourceTracePage struct {
+	// Items contains the source trace summaries on this page. Example: [{"trace_id":"trace_123","name":"Support trace"}].
+	Items []*SourceTraceSummary `json:"items,omitempty" url:"items,omitempty"`
+	// NextCursor is the cursor for the next provider page.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SourceTracePage) GetItems() []*SourceTraceSummary {
+	if s == nil {
+		return nil
+	}
+	return s.Items
+}
+
+func (s *SourceTracePage) GetNextCursor() *string {
+	if s == nil {
+		return nil
+	}
+	return s.NextCursor
+}
+
+func (s *SourceTracePage) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SourceTracePage) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTracePage) SetItems(items []*SourceTraceSummary) {
+	s.Items = items
+	s.require(sourceTracePageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTracePage) SetNextCursor(nextCursor *string) {
+	s.NextCursor = nextCursor
+	s.require(sourceTracePageFieldNextCursor)
+}
+
+func (s *SourceTracePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler SourceTracePage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SourceTracePage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SourceTracePage) MarshalJSON() ([]byte, error) {
+	type embed SourceTracePage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SourceTracePage) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	sourceTraceResponseFieldPreview = big.NewInt(1 << 0)
+	sourceTraceResponseFieldTrace   = big.NewInt(1 << 1)
+)
+
+type SourceTraceResponse struct {
+	// Preview contains the optional mapping preview. Example: {"event_count":4}.
+	Preview *TracePreview `json:"preview,omitempty" url:"preview,omitempty"`
+	// Trace is the requested provider trace. Example: {"trace_id":"trace_123","spans":[]}.
+	Trace *SourceTrace `json:"trace,omitempty" url:"trace,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SourceTraceResponse) GetPreview() *TracePreview {
+	if s == nil {
+		return nil
+	}
+	return s.Preview
+}
+
+func (s *SourceTraceResponse) GetTrace() *SourceTrace {
+	if s == nil {
+		return nil
+	}
+	return s.Trace
+}
+
+func (s *SourceTraceResponse) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SourceTraceResponse) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetPreview sets the Preview field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceResponse) SetPreview(preview *TracePreview) {
+	s.Preview = preview
+	s.require(sourceTraceResponseFieldPreview)
+}
+
+// SetTrace sets the Trace field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceResponse) SetTrace(trace *SourceTrace) {
+	s.Trace = trace
+	s.require(sourceTraceResponseFieldTrace)
+}
+
+func (s *SourceTraceResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SourceTraceResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SourceTraceResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SourceTraceResponse) MarshalJSON() ([]byte, error) {
+	type embed SourceTraceResponse
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SourceTraceResponse) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	sourceTraceSummaryFieldClosed               = big.NewInt(1 << 0)
+	sourceTraceSummaryFieldEndedAt              = big.NewInt(1 << 1)
+	sourceTraceSummaryFieldHasError             = big.NewInt(1 << 2)
+	sourceTraceSummaryFieldImportedTrajectories = big.NewInt(1 << 3)
+	sourceTraceSummaryFieldLastActivityAt       = big.NewInt(1 << 4)
+	sourceTraceSummaryFieldMetadata             = big.NewInt(1 << 5)
+	sourceTraceSummaryFieldName                 = big.NewInt(1 << 6)
+	sourceTraceSummaryFieldScores               = big.NewInt(1 << 7)
+	sourceTraceSummaryFieldSourceRevision       = big.NewInt(1 << 8)
+	sourceTraceSummaryFieldSourceURL            = big.NewInt(1 << 9)
+	sourceTraceSummaryFieldSpanCount            = big.NewInt(1 << 10)
+	sourceTraceSummaryFieldStartedAt            = big.NewInt(1 << 11)
+	sourceTraceSummaryFieldTags                 = big.NewInt(1 << 12)
+	sourceTraceSummaryFieldTraceID              = big.NewInt(1 << 13)
+)
+
+type SourceTraceSummary struct {
+	// Closed reports whether the root span has ended.
+	Closed *bool `json:"closed,omitempty" url:"closed,omitempty"`
+	// EndedAt is the trace end time, when present.
+	EndedAt *string `json:"ended_at,omitempty" url:"ended_at,omitempty"`
+	// HasError reports whether the trace contains an error.
+	HasError *bool `json:"has_error,omitempty" url:"has_error,omitempty"`
+	// ImportedTrajectories contains visible Zep Trajectories imported from this trace. Example: [{"agent_uuid":"f8b28f94-4f5a-4b3a-b782-87aa8464ac04","trajectory_uuid":"6a906e70-50ca-4e43-a874-5fcae02a71fa","import_uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa"}].
+	ImportedTrajectories []*ImportedTrajectoryReference `json:"imported_trajectories,omitempty" url:"imported_trajectories,omitempty"`
+	// LastActivityAt is the most recent activity time across spans.
+	LastActivityAt *string `json:"last_activity_at,omitempty" url:"last_activity_at,omitempty"`
+	// Metadata contains the root span metadata summary. Example: {"team":"support"}.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Name is the trace name, when present.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Scores contains the trace score values.
+	Scores map[string]float64 `json:"scores,omitempty" url:"scores,omitempty"`
+	// SourceRevision is the provider revision for the trace.
+	SourceRevision *string `json:"source_revision,omitempty" url:"source_revision,omitempty"`
+	// SourceURL is the provider link, when available.
+	SourceURL *string `json:"source_url,omitempty" url:"source_url,omitempty"`
+	// SpanCount is the number of spans in the trace.
+	SpanCount *int `json:"span_count,omitempty" url:"span_count,omitempty"`
+	// StartedAt is the trace start time, when present.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// Tags contains the trace tags.
+	Tags []string `json:"tags,omitempty" url:"tags,omitempty"`
+	// TraceID is the provider trace identifier.
+	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SourceTraceSummary) GetClosed() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.Closed
+}
+
+func (s *SourceTraceSummary) GetEndedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.EndedAt
+}
+
+func (s *SourceTraceSummary) GetHasError() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.HasError
+}
+
+func (s *SourceTraceSummary) GetImportedTrajectories() []*ImportedTrajectoryReference {
+	if s == nil {
+		return nil
+	}
+	return s.ImportedTrajectories
+}
+
+func (s *SourceTraceSummary) GetLastActivityAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.LastActivityAt
+}
+
+func (s *SourceTraceSummary) GetMetadata() map[string]any {
+	if s == nil {
+		return nil
+	}
+	return s.Metadata
+}
+
+func (s *SourceTraceSummary) GetName() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Name
+}
+
+func (s *SourceTraceSummary) GetScores() map[string]float64 {
+	if s == nil {
+		return nil
+	}
+	return s.Scores
+}
+
+func (s *SourceTraceSummary) GetSourceRevision() *string {
+	if s == nil {
+		return nil
+	}
+	return s.SourceRevision
+}
+
+func (s *SourceTraceSummary) GetSourceURL() *string {
+	if s == nil {
+		return nil
+	}
+	return s.SourceURL
+}
+
+func (s *SourceTraceSummary) GetSpanCount() *int {
+	if s == nil {
+		return nil
+	}
+	return s.SpanCount
+}
+
+func (s *SourceTraceSummary) GetStartedAt() *string {
+	if s == nil {
+		return nil
+	}
+	return s.StartedAt
+}
+
+func (s *SourceTraceSummary) GetTags() []string {
+	if s == nil {
+		return nil
+	}
+	return s.Tags
+}
+
+func (s *SourceTraceSummary) GetTraceID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.TraceID
+}
+
+func (s *SourceTraceSummary) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SourceTraceSummary) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetClosed sets the Closed field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetClosed(closed *bool) {
+	s.Closed = closed
+	s.require(sourceTraceSummaryFieldClosed)
+}
+
+// SetEndedAt sets the EndedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetEndedAt(endedAt *string) {
+	s.EndedAt = endedAt
+	s.require(sourceTraceSummaryFieldEndedAt)
+}
+
+// SetHasError sets the HasError field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetHasError(hasError *bool) {
+	s.HasError = hasError
+	s.require(sourceTraceSummaryFieldHasError)
+}
+
+// SetImportedTrajectories sets the ImportedTrajectories field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetImportedTrajectories(importedTrajectories []*ImportedTrajectoryReference) {
+	s.ImportedTrajectories = importedTrajectories
+	s.require(sourceTraceSummaryFieldImportedTrajectories)
+}
+
+// SetLastActivityAt sets the LastActivityAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetLastActivityAt(lastActivityAt *string) {
+	s.LastActivityAt = lastActivityAt
+	s.require(sourceTraceSummaryFieldLastActivityAt)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetMetadata(metadata map[string]any) {
+	s.Metadata = metadata
+	s.require(sourceTraceSummaryFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetName(name *string) {
+	s.Name = name
+	s.require(sourceTraceSummaryFieldName)
+}
+
+// SetScores sets the Scores field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetScores(scores map[string]float64) {
+	s.Scores = scores
+	s.require(sourceTraceSummaryFieldScores)
+}
+
+// SetSourceRevision sets the SourceRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetSourceRevision(sourceRevision *string) {
+	s.SourceRevision = sourceRevision
+	s.require(sourceTraceSummaryFieldSourceRevision)
+}
+
+// SetSourceURL sets the SourceURL field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetSourceURL(sourceURL *string) {
+	s.SourceURL = sourceURL
+	s.require(sourceTraceSummaryFieldSourceURL)
+}
+
+// SetSpanCount sets the SpanCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetSpanCount(spanCount *int) {
+	s.SpanCount = spanCount
+	s.require(sourceTraceSummaryFieldSpanCount)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetStartedAt(startedAt *string) {
+	s.StartedAt = startedAt
+	s.require(sourceTraceSummaryFieldStartedAt)
+}
+
+// SetTags sets the Tags field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetTags(tags []string) {
+	s.Tags = tags
+	s.require(sourceTraceSummaryFieldTags)
+}
+
+// SetTraceID sets the TraceID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SourceTraceSummary) SetTraceID(traceID *string) {
+	s.TraceID = traceID
+	s.require(sourceTraceSummaryFieldTraceID)
+}
+
+func (s *SourceTraceSummary) UnmarshalJSON(data []byte) error {
+	type unmarshaler SourceTraceSummary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SourceTraceSummary(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SourceTraceSummary) MarshalJSON() ([]byte, error) {
+	type embed SourceTraceSummary
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SourceTraceSummary) String() string {
 	if s == nil {
 		return "<nil>"
 	}
@@ -6114,10 +25893,12 @@ func (t *Task) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *Task) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetCompletedAt sets the CompletedAt field and marks it as non-optional;
@@ -6233,6 +26014,190 @@ func (t *Task) String() string {
 }
 
 var (
+	taskFamilyMappingRuleFieldFallback = big.NewInt(1 << 0)
+	taskFamilyMappingRuleFieldKey      = big.NewInt(1 << 1)
+	taskFamilyMappingRuleFieldPrefix   = big.NewInt(1 << 2)
+	taskFamilyMappingRuleFieldSource   = big.NewInt(1 << 3)
+	taskFamilyMappingRuleFieldValue    = big.NewInt(1 << 4)
+)
+
+type TaskFamilyMappingRule struct {
+	// Fallback is used when the selected source has no value.
+	Fallback *string `json:"fallback,omitempty" url:"fallback,omitempty"`
+	// Key is the metadata key for metadata mapping.
+	Key *string `json:"key,omitempty" url:"key,omitempty"`
+	// Prefix is the tag prefix for tag mapping.
+	Prefix *string `json:"prefix,omitempty" url:"prefix,omitempty"`
+	// Source selects the task family source.
+	Source *TaskFamilyMappingRuleSource `json:"source,omitempty" url:"source,omitempty"`
+	// Value is the fixed task family value.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TaskFamilyMappingRule) GetFallback() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Fallback
+}
+
+func (t *TaskFamilyMappingRule) GetKey() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Key
+}
+
+func (t *TaskFamilyMappingRule) GetPrefix() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Prefix
+}
+
+func (t *TaskFamilyMappingRule) GetSource() *TaskFamilyMappingRuleSource {
+	if t == nil {
+		return nil
+	}
+	return t.Source
+}
+
+func (t *TaskFamilyMappingRule) GetValue() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Value
+}
+
+func (t *TaskFamilyMappingRule) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TaskFamilyMappingRule) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetFallback sets the Fallback field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskFamilyMappingRule) SetFallback(fallback *string) {
+	t.Fallback = fallback
+	t.require(taskFamilyMappingRuleFieldFallback)
+}
+
+// SetKey sets the Key field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskFamilyMappingRule) SetKey(key *string) {
+	t.Key = key
+	t.require(taskFamilyMappingRuleFieldKey)
+}
+
+// SetPrefix sets the Prefix field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskFamilyMappingRule) SetPrefix(prefix *string) {
+	t.Prefix = prefix
+	t.require(taskFamilyMappingRuleFieldPrefix)
+}
+
+// SetSource sets the Source field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskFamilyMappingRule) SetSource(source *TaskFamilyMappingRuleSource) {
+	t.Source = source
+	t.require(taskFamilyMappingRuleFieldSource)
+}
+
+// SetValue sets the Value field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskFamilyMappingRule) SetValue(value *string) {
+	t.Value = value
+	t.require(taskFamilyMappingRuleFieldValue)
+}
+
+func (t *TaskFamilyMappingRule) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskFamilyMappingRule
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TaskFamilyMappingRule(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TaskFamilyMappingRule) MarshalJSON() ([]byte, error) {
+	type embed TaskFamilyMappingRule
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TaskFamilyMappingRule) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// Source selects the task family source.
+type TaskFamilyMappingRuleSource string
+
+const (
+	TaskFamilyMappingRuleSourceFixed     TaskFamilyMappingRuleSource = "fixed"
+	TaskFamilyMappingRuleSourceMetadata  TaskFamilyMappingRuleSource = "metadata"
+	TaskFamilyMappingRuleSourceTagPrefix TaskFamilyMappingRuleSource = "tag_prefix"
+	TaskFamilyMappingRuleSourceName      TaskFamilyMappingRuleSource = "name"
+)
+
+func NewTaskFamilyMappingRuleSourceFromString(s string) (TaskFamilyMappingRuleSource, error) {
+	switch s {
+	case "fixed":
+		return TaskFamilyMappingRuleSourceFixed, nil
+	case "metadata":
+		return TaskFamilyMappingRuleSourceMetadata, nil
+	case "tag_prefix":
+		return TaskFamilyMappingRuleSourceTagPrefix, nil
+	case "name":
+		return TaskFamilyMappingRuleSourceName, nil
+	}
+	var t TaskFamilyMappingRuleSource
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TaskFamilyMappingRuleSource) Ptr() *TaskFamilyMappingRuleSource {
+	return &t
+}
+
+var (
 	taskProgressFieldStage = big.NewInt(1 << 0)
 )
 
@@ -6262,10 +26227,12 @@ func (t *TaskProgress) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *TaskProgress) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetStage sets the Stage field and marks it as non-optional;
@@ -6421,10 +26388,12 @@ func (t *ThreadSummary) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *ThreadSummary) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -6577,10 +26546,12 @@ func (t *ThreadSummaryPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (t *ThreadSummaryPage) require(field *big.Int) {
-	if t.explicitFields == nil {
-		t.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
 	}
-	t.explicitFields.Or(t.explicitFields, field)
+	next.Or(next, field)
+	t.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -6644,6 +26615,2986 @@ func (t *ThreadSummaryPage) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceFilterFieldHasError      = big.NewInt(1 << 0)
+	traceFilterFieldMetadata      = big.NewInt(1 << 1)
+	traceFilterFieldName          = big.NewInt(1 << 2)
+	traceFilterFieldScores        = big.NewInt(1 << 3)
+	traceFilterFieldStartedAfter  = big.NewInt(1 << 4)
+	traceFilterFieldStartedBefore = big.NewInt(1 << 5)
+	traceFilterFieldTagsAll       = big.NewInt(1 << 6)
+	traceFilterFieldTagsAny       = big.NewInt(1 << 7)
+)
+
+type TraceFilter struct {
+	// HasError filters traces by their error state.
+	HasError *bool `json:"has_error,omitempty" url:"has_error,omitempty"`
+	// Metadata contains exact-match root metadata filters. Example: {"team":"support"}.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Name is the exact trace name filter.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Scores contains score name and range filters. Example: [{"name":"quality","min":0.5}].
+	Scores []*TraceScoreRange `json:"scores,omitempty" url:"scores,omitempty"`
+	// StartedAfter is the inclusive trace start-time lower bound.
+	StartedAfter *string `json:"started_after,omitempty" url:"started_after,omitempty"`
+	// StartedBefore is the exclusive trace start-time upper bound.
+	StartedBefore *string `json:"started_before,omitempty" url:"started_before,omitempty"`
+	// TagsAll contains tags that every result must include.
+	TagsAll []string `json:"tags_all,omitempty" url:"tags_all,omitempty"`
+	// TagsAny contains tags that at least one result must include.
+	TagsAny []string `json:"tags_any,omitempty" url:"tags_any,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceFilter) GetHasError() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.HasError
+}
+
+func (t *TraceFilter) GetMetadata() map[string]any {
+	if t == nil {
+		return nil
+	}
+	return t.Metadata
+}
+
+func (t *TraceFilter) GetName() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Name
+}
+
+func (t *TraceFilter) GetScores() []*TraceScoreRange {
+	if t == nil {
+		return nil
+	}
+	return t.Scores
+}
+
+func (t *TraceFilter) GetStartedAfter() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartedAfter
+}
+
+func (t *TraceFilter) GetStartedBefore() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartedBefore
+}
+
+func (t *TraceFilter) GetTagsAll() []string {
+	if t == nil {
+		return nil
+	}
+	return t.TagsAll
+}
+
+func (t *TraceFilter) GetTagsAny() []string {
+	if t == nil {
+		return nil
+	}
+	return t.TagsAny
+}
+
+func (t *TraceFilter) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceFilter) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetHasError sets the HasError field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceFilter) SetHasError(hasError *bool) {
+	t.HasError = hasError
+	t.require(traceFilterFieldHasError)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceFilter) SetMetadata(metadata map[string]any) {
+	t.Metadata = metadata
+	t.require(traceFilterFieldMetadata)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceFilter) SetName(name *string) {
+	t.Name = name
+	t.require(traceFilterFieldName)
+}
+
+// SetScores sets the Scores field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceFilter) SetScores(scores []*TraceScoreRange) {
+	t.Scores = scores
+	t.require(traceFilterFieldScores)
+}
+
+// SetStartedAfter sets the StartedAfter field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceFilter) SetStartedAfter(startedAfter *string) {
+	t.StartedAfter = startedAfter
+	t.require(traceFilterFieldStartedAfter)
+}
+
+// SetStartedBefore sets the StartedBefore field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceFilter) SetStartedBefore(startedBefore *string) {
+	t.StartedBefore = startedBefore
+	t.require(traceFilterFieldStartedBefore)
+}
+
+// SetTagsAll sets the TagsAll field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceFilter) SetTagsAll(tagsAll []string) {
+	t.TagsAll = tagsAll
+	t.require(traceFilterFieldTagsAll)
+}
+
+// SetTagsAny sets the TagsAny field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceFilter) SetTagsAny(tagsAny []string) {
+	t.TagsAny = tagsAny
+	t.require(traceFilterFieldTagsAny)
+}
+
+func (t *TraceFilter) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceFilter
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceFilter(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceFilter) MarshalJSON() ([]byte, error) {
+	type embed TraceFilter
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceFilter) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	tracePreviewFieldEventCount    = big.NewInt(1 << 0)
+	tracePreviewFieldMappingResult = big.NewInt(1 << 1)
+	tracePreviewFieldSkipReason    = big.NewInt(1 << 2)
+)
+
+type TracePreview struct {
+	// EventCount is the number of mapped events.
+	EventCount *int `json:"event_count,omitempty" url:"event_count,omitempty"`
+	// MappingResult contains the resolved Trajectory fields. Example: {"task_family":"support","objective":"Help the customer"}.
+	MappingResult *TrajectoryMappingResult `json:"mapping_result,omitempty" url:"mapping_result,omitempty"`
+	// SkipReason is the reason the trace cannot be imported, when present.
+	SkipReason *string `json:"skip_reason,omitempty" url:"skip_reason,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TracePreview) GetEventCount() *int {
+	if t == nil {
+		return nil
+	}
+	return t.EventCount
+}
+
+func (t *TracePreview) GetMappingResult() *TrajectoryMappingResult {
+	if t == nil {
+		return nil
+	}
+	return t.MappingResult
+}
+
+func (t *TracePreview) GetSkipReason() *string {
+	if t == nil {
+		return nil
+	}
+	return t.SkipReason
+}
+
+func (t *TracePreview) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TracePreview) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetEventCount sets the EventCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TracePreview) SetEventCount(eventCount *int) {
+	t.EventCount = eventCount
+	t.require(tracePreviewFieldEventCount)
+}
+
+// SetMappingResult sets the MappingResult field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TracePreview) SetMappingResult(mappingResult *TrajectoryMappingResult) {
+	t.MappingResult = mappingResult
+	t.require(tracePreviewFieldMappingResult)
+}
+
+// SetSkipReason sets the SkipReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TracePreview) SetSkipReason(skipReason *string) {
+	t.SkipReason = skipReason
+	t.require(tracePreviewFieldSkipReason)
+}
+
+func (t *TracePreview) UnmarshalJSON(data []byte) error {
+	type unmarshaler TracePreview
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TracePreview(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TracePreview) MarshalJSON() ([]byte, error) {
+	type embed TracePreview
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TracePreview) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceProviderProjectFieldCreatedAt = big.NewInt(1 << 0)
+	traceProviderProjectFieldID        = big.NewInt(1 << 1)
+	traceProviderProjectFieldName      = big.NewInt(1 << 2)
+)
+
+type TraceProviderProject struct {
+	// CreatedAt is the project creation time, when the provider returns it.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// ID is the provider project identifier.
+	ID *string `json:"id,omitempty" url:"id,omitempty"`
+	// Name is the provider project name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceProviderProject) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *TraceProviderProject) GetID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ID
+}
+
+func (t *TraceProviderProject) GetName() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Name
+}
+
+func (t *TraceProviderProject) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceProviderProject) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceProviderProject) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(traceProviderProjectFieldCreatedAt)
+}
+
+// SetID sets the ID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceProviderProject) SetID(id *string) {
+	t.ID = id
+	t.require(traceProviderProjectFieldID)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceProviderProject) SetName(name *string) {
+	t.Name = name
+	t.require(traceProviderProjectFieldName)
+}
+
+func (t *TraceProviderProject) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceProviderProject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceProviderProject(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceProviderProject) MarshalJSON() ([]byte, error) {
+	type embed TraceProviderProject
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceProviderProject) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceProviderProjectPageFieldItems      = big.NewInt(1 << 0)
+	traceProviderProjectPageFieldNextCursor = big.NewInt(1 << 1)
+)
+
+type TraceProviderProjectPage struct {
+	// Items contains the provider projects on this page. Example: [{"id":"project_123","name":"Support"}].
+	Items []*TraceProviderProject `json:"items,omitempty" url:"items,omitempty"`
+	// NextCursor is the provider cursor for the next page.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceProviderProjectPage) GetItems() []*TraceProviderProject {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *TraceProviderProjectPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *TraceProviderProjectPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceProviderProjectPage) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceProviderProjectPage) SetItems(items []*TraceProviderProject) {
+	t.Items = items
+	t.require(traceProviderProjectPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceProviderProjectPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(traceProviderProjectPageFieldNextCursor)
+}
+
+func (t *TraceProviderProjectPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceProviderProjectPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceProviderProjectPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceProviderProjectPage) MarshalJSON() ([]byte, error) {
+	type embed TraceProviderProjectPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceProviderProjectPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceScoreRangeFieldMax  = big.NewInt(1 << 0)
+	traceScoreRangeFieldMin  = big.NewInt(1 << 1)
+	traceScoreRangeFieldName = big.NewInt(1 << 2)
+)
+
+type TraceScoreRange struct {
+	// Max is the inclusive score upper bound.
+	Max *float64 `json:"max,omitempty" url:"max,omitempty"`
+	// Min is the inclusive score lower bound.
+	Min *float64 `json:"min,omitempty" url:"min,omitempty"`
+	// Name is the provider score name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceScoreRange) GetMax() *float64 {
+	if t == nil {
+		return nil
+	}
+	return t.Max
+}
+
+func (t *TraceScoreRange) GetMin() *float64 {
+	if t == nil {
+		return nil
+	}
+	return t.Min
+}
+
+func (t *TraceScoreRange) GetName() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Name
+}
+
+func (t *TraceScoreRange) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceScoreRange) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetMax sets the Max field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceScoreRange) SetMax(max *float64) {
+	t.Max = max
+	t.require(traceScoreRangeFieldMax)
+}
+
+// SetMin sets the Min field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceScoreRange) SetMin(min *float64) {
+	t.Min = min
+	t.require(traceScoreRangeFieldMin)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceScoreRange) SetName(name *string) {
+	t.Name = name
+	t.require(traceScoreRangeFieldName)
+}
+
+func (t *TraceScoreRange) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceScoreRange
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceScoreRange(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceScoreRange) MarshalJSON() ([]byte, error) {
+	type embed TraceScoreRange
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceScoreRange) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryContentMappingFieldIncludeSystemMessages = big.NewInt(1 << 0)
+	trajectoryContentMappingFieldMetadataKeys          = big.NewInt(1 << 1)
+)
+
+type TrajectoryContentMapping struct {
+	// IncludeSystemMessages controls whether system messages become events.
+	IncludeSystemMessages *bool `json:"include_system_messages,omitempty" url:"include_system_messages,omitempty"`
+	// MetadataKeys contains root metadata keys copied to the Trajectory.
+	MetadataKeys []string `json:"metadata_keys,omitempty" url:"metadata_keys,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryContentMapping) GetIncludeSystemMessages() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.IncludeSystemMessages
+}
+
+func (t *TrajectoryContentMapping) GetMetadataKeys() []string {
+	if t == nil {
+		return nil
+	}
+	return t.MetadataKeys
+}
+
+func (t *TrajectoryContentMapping) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryContentMapping) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetIncludeSystemMessages sets the IncludeSystemMessages field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryContentMapping) SetIncludeSystemMessages(includeSystemMessages *bool) {
+	t.IncludeSystemMessages = includeSystemMessages
+	t.require(trajectoryContentMappingFieldIncludeSystemMessages)
+}
+
+// SetMetadataKeys sets the MetadataKeys field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryContentMapping) SetMetadataKeys(metadataKeys []string) {
+	t.MetadataKeys = metadataKeys
+	t.require(trajectoryContentMappingFieldMetadataKeys)
+}
+
+func (t *TrajectoryContentMapping) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryContentMapping
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryContentMapping(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryContentMapping) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryContentMapping
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryContentMapping) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryImportFieldAgentUUID               = big.NewInt(1 << 0)
+	trajectoryImportFieldConnectionUUID          = big.NewInt(1 << 1)
+	trajectoryImportFieldCreatedAt               = big.NewInt(1 << 2)
+	trajectoryImportFieldImportedTrajectoryCount = big.NewInt(1 << 3)
+	trajectoryImportFieldLastRun                 = big.NewInt(1 << 4)
+	trajectoryImportFieldLearnFrom               = big.NewInt(1 << 5)
+	trajectoryImportFieldMapping                 = big.NewInt(1 << 6)
+	trajectoryImportFieldName                    = big.NewInt(1 << 7)
+	trajectoryImportFieldNextRunAt               = big.NewInt(1 << 8)
+	trajectoryImportFieldOnSourceChange          = big.NewInt(1 << 9)
+	trajectoryImportFieldPauseReason             = big.NewInt(1 << 10)
+	trajectoryImportFieldProvider                = big.NewInt(1 << 11)
+	trajectoryImportFieldProviderOrganizationID  = big.NewInt(1 << 12)
+	trajectoryImportFieldProviderProjectID       = big.NewInt(1 << 13)
+	trajectoryImportFieldRequireReview           = big.NewInt(1 << 14)
+	trajectoryImportFieldRevision                = big.NewInt(1 << 15)
+	trajectoryImportFieldSchedule                = big.NewInt(1 << 16)
+	trajectoryImportFieldSelection               = big.NewInt(1 << 17)
+	trajectoryImportFieldSourceCursorUpdatedAt   = big.NewInt(1 << 18)
+	trajectoryImportFieldStatus                  = big.NewInt(1 << 19)
+	trajectoryImportFieldUpdatedAt               = big.NewInt(1 << 20)
+	trajectoryImportFieldUUID                    = big.NewInt(1 << 21)
+)
+
+type TrajectoryImport struct {
+	// AgentUUID is the owning Agent identifier.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// ConnectionUUID is the trace connection identifier.
+	ConnectionUUID *string `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
+	// CreatedAt is the resource creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// ImportedTrajectoryCount is the number of Trajectories currently owned by this import.
+	ImportedTrajectoryCount *int `json:"imported_trajectory_count,omitempty" url:"imported_trajectory_count,omitempty"`
+	// LastRun is the latest run for this import, when one exists.
+	LastRun *TrajectoryImportRunReference `json:"last_run,omitempty" url:"last_run,omitempty"`
+	// LearnFrom reports whether imported evidence can support Skills.
+	LearnFrom *bool `json:"learn_from,omitempty" url:"learn_from,omitempty"`
+	// Mapping defines how traces become Trajectories. Example: {"task_family":{"source":"fixed","value":"support"}}.
+	Mapping *TrajectoryMapping `json:"mapping,omitempty" url:"mapping,omitempty"`
+	// Name is the import display name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// NextRunAt is the next scheduled run time.
+	NextRunAt *string `json:"next_run_at,omitempty" url:"next_run_at,omitempty"`
+	// OnSourceChange defines how changed source traces are handled.
+	OnSourceChange *string `json:"on_source_change,omitempty" url:"on_source_change,omitempty"`
+	// PauseReason is the reason for a paused import, when present.
+	PauseReason *TrajectoryImportPauseReason `json:"pause_reason,omitempty" url:"pause_reason,omitempty"`
+	// Provider is the observability provider.
+	Provider *string `json:"provider,omitempty" url:"provider,omitempty"`
+	// ProviderOrganizationID is the provider organization identifier.
+	ProviderOrganizationID *string `json:"provider_organization_id,omitempty" url:"provider_organization_id,omitempty"`
+	// ProviderProjectID is the source project identifier.
+	ProviderProjectID *string `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
+	// RequireReview reports whether candidate review is required.
+	RequireReview *bool `json:"require_review,omitempty" url:"require_review,omitempty"`
+	// Revision is the import update revision.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// Schedule contains recurring import settings, when enabled. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+	Schedule *TrajectoryImportSchedule `json:"schedule,omitempty" url:"schedule,omitempty"`
+	// Selection defines the source traces to import. Example: {"trace_ids":["trace_123"]}.
+	Selection *TrajectoryImportSelection `json:"selection,omitempty" url:"selection,omitempty"`
+	// SourceCursorUpdatedAt is the last source cursor update time.
+	SourceCursorUpdatedAt *string `json:"source_cursor_updated_at,omitempty" url:"source_cursor_updated_at,omitempty"`
+	// Status is the import status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// UpdatedAt is the last resource update time.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// UUID is the trajectory import identifier.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImport) GetAgentUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.AgentUUID
+}
+
+func (t *TrajectoryImport) GetConnectionUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ConnectionUUID
+}
+
+func (t *TrajectoryImport) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *TrajectoryImport) GetImportedTrajectoryCount() *int {
+	if t == nil {
+		return nil
+	}
+	return t.ImportedTrajectoryCount
+}
+
+func (t *TrajectoryImport) GetLastRun() *TrajectoryImportRunReference {
+	if t == nil {
+		return nil
+	}
+	return t.LastRun
+}
+
+func (t *TrajectoryImport) GetLearnFrom() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.LearnFrom
+}
+
+func (t *TrajectoryImport) GetMapping() *TrajectoryMapping {
+	if t == nil {
+		return nil
+	}
+	return t.Mapping
+}
+
+func (t *TrajectoryImport) GetName() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Name
+}
+
+func (t *TrajectoryImport) GetNextRunAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextRunAt
+}
+
+func (t *TrajectoryImport) GetOnSourceChange() *string {
+	if t == nil {
+		return nil
+	}
+	return t.OnSourceChange
+}
+
+func (t *TrajectoryImport) GetPauseReason() *TrajectoryImportPauseReason {
+	if t == nil {
+		return nil
+	}
+	return t.PauseReason
+}
+
+func (t *TrajectoryImport) GetProvider() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Provider
+}
+
+func (t *TrajectoryImport) GetProviderOrganizationID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ProviderOrganizationID
+}
+
+func (t *TrajectoryImport) GetProviderProjectID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ProviderProjectID
+}
+
+func (t *TrajectoryImport) GetRequireReview() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.RequireReview
+}
+
+func (t *TrajectoryImport) GetRevision() *int {
+	if t == nil {
+		return nil
+	}
+	return t.Revision
+}
+
+func (t *TrajectoryImport) GetSchedule() *TrajectoryImportSchedule {
+	if t == nil {
+		return nil
+	}
+	return t.Schedule
+}
+
+func (t *TrajectoryImport) GetSelection() *TrajectoryImportSelection {
+	if t == nil {
+		return nil
+	}
+	return t.Selection
+}
+
+func (t *TrajectoryImport) GetSourceCursorUpdatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.SourceCursorUpdatedAt
+}
+
+func (t *TrajectoryImport) GetStatus() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TrajectoryImport) GetUpdatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UpdatedAt
+}
+
+func (t *TrajectoryImport) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *TrajectoryImport) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImport) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetAgentUUID(agentUUID *string) {
+	t.AgentUUID = agentUUID
+	t.require(trajectoryImportFieldAgentUUID)
+}
+
+// SetConnectionUUID sets the ConnectionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetConnectionUUID(connectionUUID *string) {
+	t.ConnectionUUID = connectionUUID
+	t.require(trajectoryImportFieldConnectionUUID)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(trajectoryImportFieldCreatedAt)
+}
+
+// SetImportedTrajectoryCount sets the ImportedTrajectoryCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetImportedTrajectoryCount(importedTrajectoryCount *int) {
+	t.ImportedTrajectoryCount = importedTrajectoryCount
+	t.require(trajectoryImportFieldImportedTrajectoryCount)
+}
+
+// SetLastRun sets the LastRun field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetLastRun(lastRun *TrajectoryImportRunReference) {
+	t.LastRun = lastRun
+	t.require(trajectoryImportFieldLastRun)
+}
+
+// SetLearnFrom sets the LearnFrom field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetLearnFrom(learnFrom *bool) {
+	t.LearnFrom = learnFrom
+	t.require(trajectoryImportFieldLearnFrom)
+}
+
+// SetMapping sets the Mapping field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetMapping(mapping *TrajectoryMapping) {
+	t.Mapping = mapping
+	t.require(trajectoryImportFieldMapping)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetName(name *string) {
+	t.Name = name
+	t.require(trajectoryImportFieldName)
+}
+
+// SetNextRunAt sets the NextRunAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetNextRunAt(nextRunAt *string) {
+	t.NextRunAt = nextRunAt
+	t.require(trajectoryImportFieldNextRunAt)
+}
+
+// SetOnSourceChange sets the OnSourceChange field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetOnSourceChange(onSourceChange *string) {
+	t.OnSourceChange = onSourceChange
+	t.require(trajectoryImportFieldOnSourceChange)
+}
+
+// SetPauseReason sets the PauseReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetPauseReason(pauseReason *TrajectoryImportPauseReason) {
+	t.PauseReason = pauseReason
+	t.require(trajectoryImportFieldPauseReason)
+}
+
+// SetProvider sets the Provider field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetProvider(provider *string) {
+	t.Provider = provider
+	t.require(trajectoryImportFieldProvider)
+}
+
+// SetProviderOrganizationID sets the ProviderOrganizationID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetProviderOrganizationID(providerOrganizationID *string) {
+	t.ProviderOrganizationID = providerOrganizationID
+	t.require(trajectoryImportFieldProviderOrganizationID)
+}
+
+// SetProviderProjectID sets the ProviderProjectID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetProviderProjectID(providerProjectID *string) {
+	t.ProviderProjectID = providerProjectID
+	t.require(trajectoryImportFieldProviderProjectID)
+}
+
+// SetRequireReview sets the RequireReview field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetRequireReview(requireReview *bool) {
+	t.RequireReview = requireReview
+	t.require(trajectoryImportFieldRequireReview)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetRevision(revision *int) {
+	t.Revision = revision
+	t.require(trajectoryImportFieldRevision)
+}
+
+// SetSchedule sets the Schedule field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetSchedule(schedule *TrajectoryImportSchedule) {
+	t.Schedule = schedule
+	t.require(trajectoryImportFieldSchedule)
+}
+
+// SetSelection sets the Selection field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetSelection(selection *TrajectoryImportSelection) {
+	t.Selection = selection
+	t.require(trajectoryImportFieldSelection)
+}
+
+// SetSourceCursorUpdatedAt sets the SourceCursorUpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetSourceCursorUpdatedAt(sourceCursorUpdatedAt *string) {
+	t.SourceCursorUpdatedAt = sourceCursorUpdatedAt
+	t.require(trajectoryImportFieldSourceCursorUpdatedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetStatus(status *string) {
+	t.Status = status
+	t.require(trajectoryImportFieldStatus)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetUpdatedAt(updatedAt *string) {
+	t.UpdatedAt = updatedAt
+	t.require(trajectoryImportFieldUpdatedAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImport) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(trajectoryImportFieldUUID)
+}
+
+func (t *TrajectoryImport) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImport
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImport(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImport) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImport
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImport) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryImportPageFieldItems      = big.NewInt(1 << 0)
+	trajectoryImportPageFieldNextCursor = big.NewInt(1 << 1)
+	trajectoryImportPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type TrajectoryImportPage struct {
+	// Items contains trajectory imports on this page. Example: [{"uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa","name":"Support traces"}].
+	Items []*TrajectoryImport `json:"items,omitempty" url:"items,omitempty"`
+	// NextCursor is the cursor for the next page.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// TotalSize is the number of matching imports.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImportPage) GetItems() []*TrajectoryImport {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *TrajectoryImportPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *TrajectoryImportPage) GetTotalSize() *int {
+	if t == nil {
+		return nil
+	}
+	return t.TotalSize
+}
+
+func (t *TrajectoryImportPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImportPage) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportPage) SetItems(items []*TrajectoryImport) {
+	t.Items = items
+	t.require(trajectoryImportPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(trajectoryImportPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(trajectoryImportPageFieldTotalSize)
+}
+
+func (t *TrajectoryImportPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImportPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImportPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImportPage) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImportPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImportPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type TrajectoryImportPauseReason string
+
+const (
+	TrajectoryImportPauseReasonUser                    TrajectoryImportPauseReason = "user"
+	TrajectoryImportPauseReasonCredentialRejected      TrajectoryImportPauseReason = "credential_rejected"
+	TrajectoryImportPauseReasonProviderProjectNotFound TrajectoryImportPauseReason = "provider_project_not_found"
+)
+
+func NewTrajectoryImportPauseReasonFromString(s string) (TrajectoryImportPauseReason, error) {
+	switch s {
+	case "user":
+		return TrajectoryImportPauseReasonUser, nil
+	case "credential_rejected":
+		return TrajectoryImportPauseReasonCredentialRejected, nil
+	case "provider_project_not_found":
+		return TrajectoryImportPauseReasonProviderProjectNotFound, nil
+	}
+	var t TrajectoryImportPauseReason
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TrajectoryImportPauseReason) Ptr() *TrajectoryImportPauseReason {
+	return &t
+}
+
+var (
+	trajectoryImportRunFieldCompletedAt   = big.NewInt(1 << 0)
+	trajectoryImportRunFieldCounts        = big.NewInt(1 << 1)
+	trajectoryImportRunFieldCreatedAt     = big.NewInt(1 << 2)
+	trajectoryImportRunFieldDueAt         = big.NewInt(1 << 3)
+	trajectoryImportRunFieldErrorCode     = big.NewInt(1 << 4)
+	trajectoryImportRunFieldImportUUID    = big.NewInt(1 << 5)
+	trajectoryImportRunFieldMoreAvailable = big.NewInt(1 << 6)
+	trajectoryImportRunFieldSkipReasons   = big.NewInt(1 << 7)
+	trajectoryImportRunFieldStartedAt     = big.NewInt(1 << 8)
+	trajectoryImportRunFieldStatus        = big.NewInt(1 << 9)
+	trajectoryImportRunFieldTaskUUID      = big.NewInt(1 << 10)
+	trajectoryImportRunFieldTrigger       = big.NewInt(1 << 11)
+	trajectoryImportRunFieldUUID          = big.NewInt(1 << 12)
+)
+
+type TrajectoryImportRun struct {
+	// CompletedAt is the run completion time, when present.
+	CompletedAt *string `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	// Counts contains run totals by result type.
+	Counts map[string]int `json:"counts,omitempty" url:"counts,omitempty"`
+	// CreatedAt is the run creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// DueAt is the scheduled run time, when present.
+	DueAt *string `json:"due_at,omitempty" url:"due_at,omitempty"`
+	// ErrorCode is the safe run error code, when present.
+	ErrorCode *string `json:"error_code,omitempty" url:"error_code,omitempty"`
+	// ImportUUID is the owning import identifier.
+	ImportUUID *string `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
+	// MoreAvailable reports whether more matching traces remain.
+	MoreAvailable *bool `json:"more_available,omitempty" url:"more_available,omitempty"`
+	// SkipReasons contains skip totals by reason.
+	SkipReasons map[string]int `json:"skip_reasons,omitempty" url:"skip_reasons,omitempty"`
+	// StartedAt is the run start time, when present.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// Status is the run status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// TaskUUID is the Task identifier.
+	TaskUUID *string `json:"task_uuid,omitempty" url:"task_uuid,omitempty"`
+	// Trigger is the event that created the run.
+	Trigger *string `json:"trigger,omitempty" url:"trigger,omitempty"`
+	// UUID is the run identifier.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImportRun) GetCompletedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CompletedAt
+}
+
+func (t *TrajectoryImportRun) GetCounts() map[string]int {
+	if t == nil {
+		return nil
+	}
+	return t.Counts
+}
+
+func (t *TrajectoryImportRun) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *TrajectoryImportRun) GetDueAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.DueAt
+}
+
+func (t *TrajectoryImportRun) GetErrorCode() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ErrorCode
+}
+
+func (t *TrajectoryImportRun) GetImportUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ImportUUID
+}
+
+func (t *TrajectoryImportRun) GetMoreAvailable() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.MoreAvailable
+}
+
+func (t *TrajectoryImportRun) GetSkipReasons() map[string]int {
+	if t == nil {
+		return nil
+	}
+	return t.SkipReasons
+}
+
+func (t *TrajectoryImportRun) GetStartedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartedAt
+}
+
+func (t *TrajectoryImportRun) GetStatus() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TrajectoryImportRun) GetTaskUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TaskUUID
+}
+
+func (t *TrajectoryImportRun) GetTrigger() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Trigger
+}
+
+func (t *TrajectoryImportRun) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *TrajectoryImportRun) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImportRun) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetCompletedAt sets the CompletedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetCompletedAt(completedAt *string) {
+	t.CompletedAt = completedAt
+	t.require(trajectoryImportRunFieldCompletedAt)
+}
+
+// SetCounts sets the Counts field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetCounts(counts map[string]int) {
+	t.Counts = counts
+	t.require(trajectoryImportRunFieldCounts)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(trajectoryImportRunFieldCreatedAt)
+}
+
+// SetDueAt sets the DueAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetDueAt(dueAt *string) {
+	t.DueAt = dueAt
+	t.require(trajectoryImportRunFieldDueAt)
+}
+
+// SetErrorCode sets the ErrorCode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetErrorCode(errorCode *string) {
+	t.ErrorCode = errorCode
+	t.require(trajectoryImportRunFieldErrorCode)
+}
+
+// SetImportUUID sets the ImportUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetImportUUID(importUUID *string) {
+	t.ImportUUID = importUUID
+	t.require(trajectoryImportRunFieldImportUUID)
+}
+
+// SetMoreAvailable sets the MoreAvailable field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetMoreAvailable(moreAvailable *bool) {
+	t.MoreAvailable = moreAvailable
+	t.require(trajectoryImportRunFieldMoreAvailable)
+}
+
+// SetSkipReasons sets the SkipReasons field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetSkipReasons(skipReasons map[string]int) {
+	t.SkipReasons = skipReasons
+	t.require(trajectoryImportRunFieldSkipReasons)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetStartedAt(startedAt *string) {
+	t.StartedAt = startedAt
+	t.require(trajectoryImportRunFieldStartedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetStatus(status *string) {
+	t.Status = status
+	t.require(trajectoryImportRunFieldStatus)
+}
+
+// SetTaskUUID sets the TaskUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetTaskUUID(taskUUID *string) {
+	t.TaskUUID = taskUUID
+	t.require(trajectoryImportRunFieldTaskUUID)
+}
+
+// SetTrigger sets the Trigger field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetTrigger(trigger *string) {
+	t.Trigger = trigger
+	t.require(trajectoryImportRunFieldTrigger)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRun) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(trajectoryImportRunFieldUUID)
+}
+
+func (t *TrajectoryImportRun) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImportRun
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImportRun(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImportRun) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImportRun
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImportRun) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryImportRunItemFieldCreatedAt      = big.NewInt(1 << 0)
+	trajectoryImportRunItemFieldReason         = big.NewInt(1 << 1)
+	trajectoryImportRunItemFieldSourceRevision = big.NewInt(1 << 2)
+	trajectoryImportRunItemFieldStatus         = big.NewInt(1 << 3)
+	trajectoryImportRunItemFieldTraceID        = big.NewInt(1 << 4)
+	trajectoryImportRunItemFieldTrajectoryUUID = big.NewInt(1 << 5)
+)
+
+type TrajectoryImportRunItem struct {
+	// CreatedAt is the item creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// Reason is the safe skip or failure reason, when present.
+	Reason *string `json:"reason,omitempty" url:"reason,omitempty"`
+	// SourceRevision is the provider revision processed by the run.
+	SourceRevision *string `json:"source_revision,omitempty" url:"source_revision,omitempty"`
+	// Status is the trace result status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// TraceID is the provider trace identifier.
+	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
+	// TrajectoryUUID is the created Trajectory identifier, when present.
+	TrajectoryUUID *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImportRunItem) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *TrajectoryImportRunItem) GetReason() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Reason
+}
+
+func (t *TrajectoryImportRunItem) GetSourceRevision() *string {
+	if t == nil {
+		return nil
+	}
+	return t.SourceRevision
+}
+
+func (t *TrajectoryImportRunItem) GetStatus() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TrajectoryImportRunItem) GetTraceID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TraceID
+}
+
+func (t *TrajectoryImportRunItem) GetTrajectoryUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TrajectoryUUID
+}
+
+func (t *TrajectoryImportRunItem) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImportRunItem) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItem) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(trajectoryImportRunItemFieldCreatedAt)
+}
+
+// SetReason sets the Reason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItem) SetReason(reason *string) {
+	t.Reason = reason
+	t.require(trajectoryImportRunItemFieldReason)
+}
+
+// SetSourceRevision sets the SourceRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItem) SetSourceRevision(sourceRevision *string) {
+	t.SourceRevision = sourceRevision
+	t.require(trajectoryImportRunItemFieldSourceRevision)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItem) SetStatus(status *string) {
+	t.Status = status
+	t.require(trajectoryImportRunItemFieldStatus)
+}
+
+// SetTraceID sets the TraceID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItem) SetTraceID(traceID *string) {
+	t.TraceID = traceID
+	t.require(trajectoryImportRunItemFieldTraceID)
+}
+
+// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItem) SetTrajectoryUUID(trajectoryUUID *string) {
+	t.TrajectoryUUID = trajectoryUUID
+	t.require(trajectoryImportRunItemFieldTrajectoryUUID)
+}
+
+func (t *TrajectoryImportRunItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImportRunItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImportRunItem(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImportRunItem) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImportRunItem
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImportRunItem) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryImportRunItemPageFieldItems      = big.NewInt(1 << 0)
+	trajectoryImportRunItemPageFieldNextCursor = big.NewInt(1 << 1)
+	trajectoryImportRunItemPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type TrajectoryImportRunItemPage struct {
+	// Items contains run items on this page. Example: [{"trace_id":"trace_123","status":"imported"}].
+	Items []*TrajectoryImportRunItem `json:"items,omitempty" url:"items,omitempty"`
+	// NextCursor is the cursor for the next page.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// TotalSize is the number of matching run items.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImportRunItemPage) GetItems() []*TrajectoryImportRunItem {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *TrajectoryImportRunItemPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *TrajectoryImportRunItemPage) GetTotalSize() *int {
+	if t == nil {
+		return nil
+	}
+	return t.TotalSize
+}
+
+func (t *TrajectoryImportRunItemPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImportRunItemPage) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItemPage) SetItems(items []*TrajectoryImportRunItem) {
+	t.Items = items
+	t.require(trajectoryImportRunItemPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItemPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(trajectoryImportRunItemPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunItemPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(trajectoryImportRunItemPageFieldTotalSize)
+}
+
+func (t *TrajectoryImportRunItemPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImportRunItemPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImportRunItemPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImportRunItemPage) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImportRunItemPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImportRunItemPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryImportRunPageFieldItems      = big.NewInt(1 << 0)
+	trajectoryImportRunPageFieldNextCursor = big.NewInt(1 << 1)
+	trajectoryImportRunPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type TrajectoryImportRunPage struct {
+	// Items contains runs on this page. Example: [{"uuid":"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688","status":"pending"}].
+	Items []*TrajectoryImportRun `json:"items,omitempty" url:"items,omitempty"`
+	// NextCursor is the cursor for the next page.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// TotalSize is the number of matching runs.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImportRunPage) GetItems() []*TrajectoryImportRun {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *TrajectoryImportRunPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *TrajectoryImportRunPage) GetTotalSize() *int {
+	if t == nil {
+		return nil
+	}
+	return t.TotalSize
+}
+
+func (t *TrajectoryImportRunPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImportRunPage) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunPage) SetItems(items []*TrajectoryImportRun) {
+	t.Items = items
+	t.require(trajectoryImportRunPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(trajectoryImportRunPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(trajectoryImportRunPageFieldTotalSize)
+}
+
+func (t *TrajectoryImportRunPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImportRunPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImportRunPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImportRunPage) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImportRunPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImportRunPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryImportRunReferenceFieldCompletedAt = big.NewInt(1 << 0)
+	trajectoryImportRunReferenceFieldStartedAt   = big.NewInt(1 << 1)
+	trajectoryImportRunReferenceFieldStatus      = big.NewInt(1 << 2)
+	trajectoryImportRunReferenceFieldTrigger     = big.NewInt(1 << 3)
+	trajectoryImportRunReferenceFieldUUID        = big.NewInt(1 << 4)
+)
+
+type TrajectoryImportRunReference struct {
+	// CompletedAt is the run completion time, when present.
+	CompletedAt *string `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	// StartedAt is the run start time, when present.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// Status is the run status.
+	Status *TrajectoryImportRunReferenceStatus `json:"status,omitempty" url:"status,omitempty"`
+	// Trigger is the event that created the run.
+	Trigger *TrajectoryImportRunReferenceTrigger `json:"trigger,omitempty" url:"trigger,omitempty"`
+	// UUID is the run identifier.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImportRunReference) GetCompletedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CompletedAt
+}
+
+func (t *TrajectoryImportRunReference) GetStartedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartedAt
+}
+
+func (t *TrajectoryImportRunReference) GetStatus() *TrajectoryImportRunReferenceStatus {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TrajectoryImportRunReference) GetTrigger() *TrajectoryImportRunReferenceTrigger {
+	if t == nil {
+		return nil
+	}
+	return t.Trigger
+}
+
+func (t *TrajectoryImportRunReference) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *TrajectoryImportRunReference) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImportRunReference) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetCompletedAt sets the CompletedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunReference) SetCompletedAt(completedAt *string) {
+	t.CompletedAt = completedAt
+	t.require(trajectoryImportRunReferenceFieldCompletedAt)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunReference) SetStartedAt(startedAt *string) {
+	t.StartedAt = startedAt
+	t.require(trajectoryImportRunReferenceFieldStartedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunReference) SetStatus(status *TrajectoryImportRunReferenceStatus) {
+	t.Status = status
+	t.require(trajectoryImportRunReferenceFieldStatus)
+}
+
+// SetTrigger sets the Trigger field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunReference) SetTrigger(trigger *TrajectoryImportRunReferenceTrigger) {
+	t.Trigger = trigger
+	t.require(trajectoryImportRunReferenceFieldTrigger)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportRunReference) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(trajectoryImportRunReferenceFieldUUID)
+}
+
+func (t *TrajectoryImportRunReference) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImportRunReference
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImportRunReference(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImportRunReference) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImportRunReference
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImportRunReference) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// Status is the run status.
+type TrajectoryImportRunReferenceStatus string
+
+const (
+	TrajectoryImportRunReferenceStatusPending   TrajectoryImportRunReferenceStatus = "pending"
+	TrajectoryImportRunReferenceStatusRunning   TrajectoryImportRunReferenceStatus = "running"
+	TrajectoryImportRunReferenceStatusSucceeded TrajectoryImportRunReferenceStatus = "succeeded"
+	TrajectoryImportRunReferenceStatusPartial   TrajectoryImportRunReferenceStatus = "partial"
+	TrajectoryImportRunReferenceStatusFailed    TrajectoryImportRunReferenceStatus = "failed"
+	TrajectoryImportRunReferenceStatusCanceled  TrajectoryImportRunReferenceStatus = "canceled"
+)
+
+func NewTrajectoryImportRunReferenceStatusFromString(s string) (TrajectoryImportRunReferenceStatus, error) {
+	switch s {
+	case "pending":
+		return TrajectoryImportRunReferenceStatusPending, nil
+	case "running":
+		return TrajectoryImportRunReferenceStatusRunning, nil
+	case "succeeded":
+		return TrajectoryImportRunReferenceStatusSucceeded, nil
+	case "partial":
+		return TrajectoryImportRunReferenceStatusPartial, nil
+	case "failed":
+		return TrajectoryImportRunReferenceStatusFailed, nil
+	case "canceled":
+		return TrajectoryImportRunReferenceStatusCanceled, nil
+	}
+	var t TrajectoryImportRunReferenceStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TrajectoryImportRunReferenceStatus) Ptr() *TrajectoryImportRunReferenceStatus {
+	return &t
+}
+
+// Trigger is the event that created the run.
+type TrajectoryImportRunReferenceTrigger string
+
+const (
+	TrajectoryImportRunReferenceTriggerCreate   TrajectoryImportRunReferenceTrigger = "create"
+	TrajectoryImportRunReferenceTriggerSchedule TrajectoryImportRunReferenceTrigger = "schedule"
+	TrajectoryImportRunReferenceTriggerManual   TrajectoryImportRunReferenceTrigger = "manual"
+)
+
+func NewTrajectoryImportRunReferenceTriggerFromString(s string) (TrajectoryImportRunReferenceTrigger, error) {
+	switch s {
+	case "create":
+		return TrajectoryImportRunReferenceTriggerCreate, nil
+	case "schedule":
+		return TrajectoryImportRunReferenceTriggerSchedule, nil
+	case "manual":
+		return TrajectoryImportRunReferenceTriggerManual, nil
+	}
+	var t TrajectoryImportRunReferenceTrigger
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TrajectoryImportRunReferenceTrigger) Ptr() *TrajectoryImportRunReferenceTrigger {
+	return &t
+}
+
+var (
+	trajectoryImportScheduleFieldIntervalHours = big.NewInt(1 << 0)
+	trajectoryImportScheduleFieldMaxOpenHours  = big.NewInt(1 << 1)
+	trajectoryImportScheduleFieldSettleMinutes = big.NewInt(1 << 2)
+	trajectoryImportScheduleFieldStartFrom     = big.NewInt(1 << 3)
+)
+
+type TrajectoryImportSchedule struct {
+	// IntervalHours is the scheduled run interval.
+	IntervalHours *int `json:"interval_hours,omitempty" url:"interval_hours,omitempty"`
+	// MaxOpenHours is the maximum wait for an open trace.
+	MaxOpenHours *int `json:"max_open_hours,omitempty" url:"max_open_hours,omitempty"`
+	// SettleMinutes is the wait time for trace updates.
+	SettleMinutes *int `json:"settle_minutes,omitempty" url:"settle_minutes,omitempty"`
+	// StartFrom selects the initial history window.
+	StartFrom *string `json:"start_from,omitempty" url:"start_from,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImportSchedule) GetIntervalHours() *int {
+	if t == nil {
+		return nil
+	}
+	return t.IntervalHours
+}
+
+func (t *TrajectoryImportSchedule) GetMaxOpenHours() *int {
+	if t == nil {
+		return nil
+	}
+	return t.MaxOpenHours
+}
+
+func (t *TrajectoryImportSchedule) GetSettleMinutes() *int {
+	if t == nil {
+		return nil
+	}
+	return t.SettleMinutes
+}
+
+func (t *TrajectoryImportSchedule) GetStartFrom() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartFrom
+}
+
+func (t *TrajectoryImportSchedule) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImportSchedule) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetIntervalHours sets the IntervalHours field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportSchedule) SetIntervalHours(intervalHours *int) {
+	t.IntervalHours = intervalHours
+	t.require(trajectoryImportScheduleFieldIntervalHours)
+}
+
+// SetMaxOpenHours sets the MaxOpenHours field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportSchedule) SetMaxOpenHours(maxOpenHours *int) {
+	t.MaxOpenHours = maxOpenHours
+	t.require(trajectoryImportScheduleFieldMaxOpenHours)
+}
+
+// SetSettleMinutes sets the SettleMinutes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportSchedule) SetSettleMinutes(settleMinutes *int) {
+	t.SettleMinutes = settleMinutes
+	t.require(trajectoryImportScheduleFieldSettleMinutes)
+}
+
+// SetStartFrom sets the StartFrom field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportSchedule) SetStartFrom(startFrom *string) {
+	t.StartFrom = startFrom
+	t.require(trajectoryImportScheduleFieldStartFrom)
+}
+
+func (t *TrajectoryImportSchedule) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImportSchedule
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImportSchedule(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImportSchedule) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImportSchedule
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImportSchedule) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryImportSelectionFieldFilter   = big.NewInt(1 << 0)
+	trajectoryImportSelectionFieldTraceIDs = big.NewInt(1 << 1)
+)
+
+type TrajectoryImportSelection struct {
+	// Filter selects traces by provider fields. Example: {"started_after":"2026-01-01T00:00:00Z"}.
+	Filter *TraceFilter `json:"filter,omitempty" url:"filter,omitempty"`
+	// TraceIDs contains explicit provider trace identifiers.
+	TraceIDs []string `json:"trace_ids,omitempty" url:"trace_ids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryImportSelection) GetFilter() *TraceFilter {
+	if t == nil {
+		return nil
+	}
+	return t.Filter
+}
+
+func (t *TrajectoryImportSelection) GetTraceIDs() []string {
+	if t == nil {
+		return nil
+	}
+	return t.TraceIDs
+}
+
+func (t *TrajectoryImportSelection) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryImportSelection) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetFilter sets the Filter field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportSelection) SetFilter(filter *TraceFilter) {
+	t.Filter = filter
+	t.require(trajectoryImportSelectionFieldFilter)
+}
+
+// SetTraceIDs sets the TraceIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryImportSelection) SetTraceIDs(traceIDs []string) {
+	t.TraceIDs = traceIDs
+	t.require(trajectoryImportSelectionFieldTraceIDs)
+}
+
+func (t *TrajectoryImportSelection) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryImportSelection
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryImportSelection(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryImportSelection) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryImportSelection
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryImportSelection) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	trajectoryMappingFieldContent         = big.NewInt(1 << 0)
+	trajectoryMappingFieldIncludeOutcomes = big.NewInt(1 << 1)
+	trajectoryMappingFieldObjective       = big.NewInt(1 << 2)
+	trajectoryMappingFieldOutcome         = big.NewInt(1 << 3)
+	trajectoryMappingFieldScoreVerifier   = big.NewInt(1 << 4)
+	trajectoryMappingFieldTaskFamily      = big.NewInt(1 << 5)
+)
+
+type TrajectoryMapping struct {
+	// Content configures copied span content. Example: {"include_system_messages":false}.
+	Content *TrajectoryContentMapping `json:"content,omitempty" url:"content,omitempty"`
+	// IncludeOutcomes lists outcomes that can support a Skill.
+	IncludeOutcomes []TrajectoryMappingIncludeOutcomesItem `json:"include_outcomes,omitempty" url:"include_outcomes,omitempty"`
+	// Objective maps provider data to a Trajectory objective. Example: {"source":"first_user_message"}.
+	Objective *ObjectiveMappingRule `json:"objective,omitempty" url:"objective,omitempty"`
+	// Outcome contains ordered outcome mapping rules. Example: [{"rule":"score","name":"quality","succeeded_at_or_above":0.8}].
+	Outcome []*OutcomeMappingRule `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// ScoreVerifier enables score-based verification.
+	ScoreVerifier *bool `json:"score_verifier,omitempty" url:"score_verifier,omitempty"`
+	// TaskFamily maps provider data to a task family. Example: {"source":"fixed","value":"support"}.
+	TaskFamily *TaskFamilyMappingRule `json:"task_family,omitempty" url:"task_family,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryMapping) GetContent() *TrajectoryContentMapping {
+	if t == nil {
+		return nil
+	}
+	return t.Content
+}
+
+func (t *TrajectoryMapping) GetIncludeOutcomes() []TrajectoryMappingIncludeOutcomesItem {
+	if t == nil {
+		return nil
+	}
+	return t.IncludeOutcomes
+}
+
+func (t *TrajectoryMapping) GetObjective() *ObjectiveMappingRule {
+	if t == nil {
+		return nil
+	}
+	return t.Objective
+}
+
+func (t *TrajectoryMapping) GetOutcome() []*OutcomeMappingRule {
+	if t == nil {
+		return nil
+	}
+	return t.Outcome
+}
+
+func (t *TrajectoryMapping) GetScoreVerifier() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.ScoreVerifier
+}
+
+func (t *TrajectoryMapping) GetTaskFamily() *TaskFamilyMappingRule {
+	if t == nil {
+		return nil
+	}
+	return t.TaskFamily
+}
+
+func (t *TrajectoryMapping) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryMapping) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetContent sets the Content field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMapping) SetContent(content *TrajectoryContentMapping) {
+	t.Content = content
+	t.require(trajectoryMappingFieldContent)
+}
+
+// SetIncludeOutcomes sets the IncludeOutcomes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMapping) SetIncludeOutcomes(includeOutcomes []TrajectoryMappingIncludeOutcomesItem) {
+	t.IncludeOutcomes = includeOutcomes
+	t.require(trajectoryMappingFieldIncludeOutcomes)
+}
+
+// SetObjective sets the Objective field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMapping) SetObjective(objective *ObjectiveMappingRule) {
+	t.Objective = objective
+	t.require(trajectoryMappingFieldObjective)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMapping) SetOutcome(outcome []*OutcomeMappingRule) {
+	t.Outcome = outcome
+	t.require(trajectoryMappingFieldOutcome)
+}
+
+// SetScoreVerifier sets the ScoreVerifier field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMapping) SetScoreVerifier(scoreVerifier *bool) {
+	t.ScoreVerifier = scoreVerifier
+	t.require(trajectoryMappingFieldScoreVerifier)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMapping) SetTaskFamily(taskFamily *TaskFamilyMappingRule) {
+	t.TaskFamily = taskFamily
+	t.require(trajectoryMappingFieldTaskFamily)
+}
+
+func (t *TrajectoryMapping) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryMapping
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryMapping(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryMapping) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryMapping
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryMapping) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type TrajectoryMappingIncludeOutcomesItem string
+
+const (
+	TrajectoryMappingIncludeOutcomesItemSucceeded TrajectoryMappingIncludeOutcomesItem = "succeeded"
+	TrajectoryMappingIncludeOutcomesItemFailed    TrajectoryMappingIncludeOutcomesItem = "failed"
+	TrajectoryMappingIncludeOutcomesItemPartial   TrajectoryMappingIncludeOutcomesItem = "partial"
+	TrajectoryMappingIncludeOutcomesItemAbandoned TrajectoryMappingIncludeOutcomesItem = "abandoned"
+	TrajectoryMappingIncludeOutcomesItemUnknown   TrajectoryMappingIncludeOutcomesItem = "unknown"
+)
+
+func NewTrajectoryMappingIncludeOutcomesItemFromString(s string) (TrajectoryMappingIncludeOutcomesItem, error) {
+	switch s {
+	case "succeeded":
+		return TrajectoryMappingIncludeOutcomesItemSucceeded, nil
+	case "failed":
+		return TrajectoryMappingIncludeOutcomesItemFailed, nil
+	case "partial":
+		return TrajectoryMappingIncludeOutcomesItemPartial, nil
+	case "abandoned":
+		return TrajectoryMappingIncludeOutcomesItemAbandoned, nil
+	case "unknown":
+		return TrajectoryMappingIncludeOutcomesItemUnknown, nil
+	}
+	var t TrajectoryMappingIncludeOutcomesItem
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TrajectoryMappingIncludeOutcomesItem) Ptr() *TrajectoryMappingIncludeOutcomesItem {
+	return &t
+}
+
+var (
+	trajectoryMappingResultFieldMetadata     = big.NewInt(1 << 0)
+	trajectoryMappingResultFieldObjective    = big.NewInt(1 << 1)
+	trajectoryMappingResultFieldOutcome      = big.NewInt(1 << 2)
+	trajectoryMappingResultFieldOutcomeRule  = big.NewInt(1 << 3)
+	trajectoryMappingResultFieldScores       = big.NewInt(1 << 4)
+	trajectoryMappingResultFieldTaskFamily   = big.NewInt(1 << 5)
+	trajectoryMappingResultFieldVerification = big.NewInt(1 << 6)
+)
+
+type TrajectoryMappingResult struct {
+	// Metadata contains mapped source metadata. Example: {"ticket_id":"123"}.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Objective is the resolved objective.
+	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
+	// Outcome is the resolved outcome.
+	Outcome *TrajectoryMappingResultOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// OutcomeRule is the rule that selected the outcome.
+	OutcomeRule *TrajectoryMappingResultOutcomeRule `json:"outcome_rule,omitempty" url:"outcome_rule,omitempty"`
+	// Scores contains provider score values.
+	Scores map[string]float64 `json:"scores,omitempty" url:"scores,omitempty"`
+	// TaskFamily is the resolved task family.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// Verification is the resolved verification state.
+	Verification *string `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TrajectoryMappingResult) GetMetadata() map[string]any {
+	if t == nil {
+		return nil
+	}
+	return t.Metadata
+}
+
+func (t *TrajectoryMappingResult) GetObjective() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Objective
+}
+
+func (t *TrajectoryMappingResult) GetOutcome() *TrajectoryMappingResultOutcome {
+	if t == nil {
+		return nil
+	}
+	return t.Outcome
+}
+
+func (t *TrajectoryMappingResult) GetOutcomeRule() *TrajectoryMappingResultOutcomeRule {
+	if t == nil {
+		return nil
+	}
+	return t.OutcomeRule
+}
+
+func (t *TrajectoryMappingResult) GetScores() map[string]float64 {
+	if t == nil {
+		return nil
+	}
+	return t.Scores
+}
+
+func (t *TrajectoryMappingResult) GetTaskFamily() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TaskFamily
+}
+
+func (t *TrajectoryMappingResult) GetVerification() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Verification
+}
+
+func (t *TrajectoryMappingResult) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TrajectoryMappingResult) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMappingResult) SetMetadata(metadata map[string]any) {
+	t.Metadata = metadata
+	t.require(trajectoryMappingResultFieldMetadata)
+}
+
+// SetObjective sets the Objective field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMappingResult) SetObjective(objective *string) {
+	t.Objective = objective
+	t.require(trajectoryMappingResultFieldObjective)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMappingResult) SetOutcome(outcome *TrajectoryMappingResultOutcome) {
+	t.Outcome = outcome
+	t.require(trajectoryMappingResultFieldOutcome)
+}
+
+// SetOutcomeRule sets the OutcomeRule field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMappingResult) SetOutcomeRule(outcomeRule *TrajectoryMappingResultOutcomeRule) {
+	t.OutcomeRule = outcomeRule
+	t.require(trajectoryMappingResultFieldOutcomeRule)
+}
+
+// SetScores sets the Scores field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMappingResult) SetScores(scores map[string]float64) {
+	t.Scores = scores
+	t.require(trajectoryMappingResultFieldScores)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMappingResult) SetTaskFamily(taskFamily *string) {
+	t.TaskFamily = taskFamily
+	t.require(trajectoryMappingResultFieldTaskFamily)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TrajectoryMappingResult) SetVerification(verification *string) {
+	t.Verification = verification
+	t.require(trajectoryMappingResultFieldVerification)
+}
+
+func (t *TrajectoryMappingResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler TrajectoryMappingResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TrajectoryMappingResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TrajectoryMappingResult) MarshalJSON() ([]byte, error) {
+	type embed TrajectoryMappingResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TrajectoryMappingResult) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// Outcome is the resolved outcome.
+type TrajectoryMappingResultOutcome string
+
+const (
+	TrajectoryMappingResultOutcomeSucceeded TrajectoryMappingResultOutcome = "succeeded"
+	TrajectoryMappingResultOutcomeFailed    TrajectoryMappingResultOutcome = "failed"
+	TrajectoryMappingResultOutcomePartial   TrajectoryMappingResultOutcome = "partial"
+	TrajectoryMappingResultOutcomeAbandoned TrajectoryMappingResultOutcome = "abandoned"
+	TrajectoryMappingResultOutcomeUnknown   TrajectoryMappingResultOutcome = "unknown"
+)
+
+func NewTrajectoryMappingResultOutcomeFromString(s string) (TrajectoryMappingResultOutcome, error) {
+	switch s {
+	case "succeeded":
+		return TrajectoryMappingResultOutcomeSucceeded, nil
+	case "failed":
+		return TrajectoryMappingResultOutcomeFailed, nil
+	case "partial":
+		return TrajectoryMappingResultOutcomePartial, nil
+	case "abandoned":
+		return TrajectoryMappingResultOutcomeAbandoned, nil
+	case "unknown":
+		return TrajectoryMappingResultOutcomeUnknown, nil
+	}
+	var t TrajectoryMappingResultOutcome
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TrajectoryMappingResultOutcome) Ptr() *TrajectoryMappingResultOutcome {
+	return &t
+}
+
+// OutcomeRule is the rule that selected the outcome.
+type TrajectoryMappingResultOutcomeRule string
+
+const (
+	TrajectoryMappingResultOutcomeRuleScore    TrajectoryMappingResultOutcomeRule = "score"
+	TrajectoryMappingResultOutcomeRuleMetadata TrajectoryMappingResultOutcomeRule = "metadata"
+	TrajectoryMappingResultOutcomeRuleError    TrajectoryMappingResultOutcomeRule = "error"
+)
+
+func NewTrajectoryMappingResultOutcomeRuleFromString(s string) (TrajectoryMappingResultOutcomeRule, error) {
+	switch s {
+	case "score":
+		return TrajectoryMappingResultOutcomeRuleScore, nil
+	case "metadata":
+		return TrajectoryMappingResultOutcomeRuleMetadata, nil
+	case "error":
+		return TrajectoryMappingResultOutcomeRuleError, nil
+	}
+	var t TrajectoryMappingResultOutcomeRule
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TrajectoryMappingResultOutcomeRule) Ptr() *TrajectoryMappingResultOutcomeRule {
+	return &t
 }
 
 var (
@@ -6768,10 +29719,12 @@ func (u *User) GetExtraProperties() map[string]interface{} {
 }
 
 func (u *User) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -6926,10 +29879,12 @@ func (u *UserInstruction) GetExtraProperties() map[string]interface{} {
 }
 
 func (u *UserInstruction) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetName sets the Name field and marks it as non-optional;
@@ -7040,10 +29995,12 @@ func (u *UserPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (u *UserPage) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -7151,10 +30108,12 @@ func (u *UserSummaryInstructions) GetExtraProperties() map[string]interface{} {
 }
 
 func (u *UserSummaryInstructions) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetInherited sets the Inherited field and marks it as non-optional;

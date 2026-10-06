@@ -25,10 +25,12 @@ type CreateUserGroupRequest struct {
 }
 
 func (c *CreateUserGroupRequest) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetDescription sets the Description field and marks it as non-optional;
@@ -83,10 +85,12 @@ type UserGroupListRequest struct {
 }
 
 func (u *UserGroupListRequest) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -132,10 +136,12 @@ type UserGroupListForUserRequest struct {
 }
 
 func (u *UserGroupListForUserRequest) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -169,10 +175,12 @@ type UserGroupListMemberCandidatesRequest struct {
 }
 
 func (u *UserGroupListMemberCandidatesRequest) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -219,10 +227,12 @@ type UserGroupListMembersRequest struct {
 }
 
 func (u *UserGroupListMembersRequest) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -303,10 +313,12 @@ func (m *MembershipMutationResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (m *MembershipMutationResult) require(field *big.Int) {
-	if m.explicitFields == nil {
-		m.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if m.explicitFields != nil {
+		next.Set(m.explicitFields)
 	}
-	m.explicitFields.Or(m.explicitFields, field)
+	next.Or(next, field)
+	m.explicitFields = next
 }
 
 // SetAddedCount sets the AddedCount field and marks it as non-optional;
@@ -402,10 +414,12 @@ func (m *MutateMembersRequest) GetExtraProperties() map[string]interface{} {
 }
 
 func (m *MutateMembersRequest) require(field *big.Int) {
-	if m.explicitFields == nil {
-		m.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if m.explicitFields != nil {
+		next.Set(m.explicitFields)
 	}
-	m.explicitFields.Or(m.explicitFields, field)
+	next.Or(next, field)
+	m.explicitFields = next
 }
 
 // SetUserUUIDs sets the UserUUIDs field and marks it as non-optional;
@@ -487,10 +501,12 @@ func (s *SearchListRequest) GetExtraProperties() map[string]interface{} {
 }
 
 func (s *SearchListRequest) require(field *big.Int) {
-	if s.explicitFields == nil {
-		s.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
 	}
-	s.explicitFields.Or(s.explicitFields, field)
+	next.Or(next, field)
+	s.explicitFields = next
 }
 
 // SetSearch sets the Search field and marks it as non-optional;
@@ -622,10 +638,12 @@ func (u *UserGroup) GetExtraProperties() map[string]interface{} {
 }
 
 func (u *UserGroup) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -764,10 +782,12 @@ func (u *UserGroupPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (u *UserGroupPage) require(field *big.Int) {
-	if u.explicitFields == nil {
-		u.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if u.explicitFields != nil {
+		next.Set(u.explicitFields)
 	}
-	u.explicitFields.Or(u.explicitFields, field)
+	next.Or(next, field)
+	u.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -852,10 +872,12 @@ type PatchUserGroupRequest struct {
 }
 
 func (p *PatchUserGroupRequest) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetDescription sets the Description field and marks it as non-optional;
