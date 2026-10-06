@@ -88,17 +88,7 @@ func TestBatchListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.BatchListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-		Status: zep.String(
-			"status",
-		),
-	}
+	request := &zep.BatchListRequest{}
 	_, invocationErr := client.Batch.List(
 		context.TODO(),
 		request,
@@ -108,7 +98,7 @@ func TestBatchListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestBatchListWithWireMock", "GET", "/batches", map[string]interface{}{"limit": "1", "cursor": "cursor", "status": "status"}, 1)
+	VerifyRequestCount(t, "TestBatchListWithWireMock", "GET", "/batches", nil, 1)
 }
 
 func TestBatchCreateWithWireMock(
@@ -192,14 +182,7 @@ func TestBatchListItemsWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.BatchListItemsRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-	}
+	request := &zep.BatchListItemsRequest{}
 	_, invocationErr := client.Batch.ListItems(
 		context.TODO(),
 		"batch_uuid",
@@ -210,7 +193,7 @@ func TestBatchListItemsWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestBatchListItemsWithWireMock", "GET", "/batches/batch_uuid/items", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestBatchListItemsWithWireMock", "GET", "/batches/batch_uuid/items", nil, 1)
 }
 
 func TestBatchAddItemsWithWireMock(
@@ -227,7 +210,7 @@ func TestBatchAddItemsWithWireMock(
 	request := &zep.AddBatchItemsRequest{
 		Items: []*zep.BatchItemInput{
 			&zep.BatchItemInput{
-				Type: zep.V4BatchItemInputTypeGraphEpisode,
+				Type: zep.BatchItemInputTypeGraphEpisode,
 			},
 		},
 	}

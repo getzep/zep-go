@@ -37,9 +37,9 @@ func (r *RawClient) Add(
 	ctx context.Context,
 	// Graph UUID
 	graphUUID string,
-	request *graph.AddEdgeRequest,
+	request *graph.AddEdgesRequest,
 	opts ...option.IdempotentRequestOption,
-) (*core.Response[*zep.AddEdgeResult], error) {
+) (*core.Response[*zep.AddEdgesResult], error) {
 	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -55,7 +55,9 @@ func (r *RawClient) Add(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
-	var response *zep.AddEdgeResult
+	core.SetIdempotencyKeyHeader(headers)
+
+	var response *zep.AddEdgesResult
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -75,7 +77,7 @@ func (r *RawClient) Add(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*zep.AddEdgeResult]{
+	return &core.Response[*zep.AddEdgesResult]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -154,6 +156,8 @@ func (r *RawClient) Delete(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.AsyncResult
 	raw, err := r.caller.Call(
 		ctx,
@@ -205,6 +209,8 @@ func (r *RawClient) Update(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Edge
 	raw, err := r.caller.Call(
 		ctx,

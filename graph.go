@@ -10,64 +10,19 @@ import (
 )
 
 var (
-	cloneGraphRequestFieldTargetGraphID = big.NewInt(1 << 0)
-)
-
-type CloneGraphRequest struct {
-	// An optional name for the cloned graph.
-	TargetGraphID *string `json:"target_graph_id,omitempty" url:"-"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-}
-
-func (c *CloneGraphRequest) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
-	}
-	c.explicitFields.Or(c.explicitFields, field)
-}
-
-// SetTargetGraphID sets the TargetGraphID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CloneGraphRequest) SetTargetGraphID(targetGraphID *string) {
-	c.TargetGraphID = targetGraphID
-	c.require(cloneGraphRequestFieldTargetGraphID)
-}
-
-func (c *CloneGraphRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler CloneGraphRequest
-	var body unmarshaler
-	if err := json.Unmarshal(data, &body); err != nil {
-		return err
-	}
-	*c = CloneGraphRequest(body)
-	return nil
-}
-
-func (c *CloneGraphRequest) MarshalJSON() ([]byte, error) {
-	type embed CloneGraphRequest
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*c),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-var (
-	createGraphRequestFieldDescription = big.NewInt(1 << 0)
-	createGraphRequestFieldGraphID     = big.NewInt(1 << 1)
-	createGraphRequestFieldName        = big.NewInt(1 << 2)
-	createGraphRequestFieldTimeZone    = big.NewInt(1 << 3)
+	createGraphRequestFieldContentPolicy = big.NewInt(1 << 0)
+	createGraphRequestFieldDescription   = big.NewInt(1 << 1)
+	createGraphRequestFieldName          = big.NewInt(1 << 2)
+	createGraphRequestFieldTimeZone      = big.NewInt(1 << 3)
 )
 
 type CreateGraphRequest struct {
+	// Content policy additions for the graph. The graph binds the current
+	// project content policy plus these additions, and the binding does not
+	// change after creation.
+	ContentPolicy *GraphContentPolicyRequest `json:"content_policy,omitempty" url:"-"`
 	// A description of the graph.
 	Description *string `json:"description,omitempty" url:"-"`
-	// An optional developer-assigned identifier for the graph.
-	GraphID *string `json:"graph_id,omitempty" url:"-"`
 	// A display name for the graph.
 	Name *string `json:"name,omitempty" url:"-"`
 	// The graph's IANA time zone.
@@ -78,10 +33,19 @@ type CreateGraphRequest struct {
 }
 
 func (c *CreateGraphRequest) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetContentPolicy sets the ContentPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateGraphRequest) SetContentPolicy(contentPolicy *GraphContentPolicyRequest) {
+	c.ContentPolicy = contentPolicy
+	c.require(createGraphRequestFieldContentPolicy)
 }
 
 // SetDescription sets the Description field and marks it as non-optional;
@@ -89,13 +53,6 @@ func (c *CreateGraphRequest) require(field *big.Int) {
 func (c *CreateGraphRequest) SetDescription(description *string) {
 	c.Description = description
 	c.require(createGraphRequestFieldDescription)
-}
-
-// SetGraphID sets the GraphID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateGraphRequest) SetGraphID(graphID *string) {
-	c.GraphID = graphID
-	c.require(createGraphRequestFieldGraphID)
 }
 
 // SetName sets the Name field and marks it as non-optional;
@@ -153,7 +110,7 @@ type GraphContextRequest struct {
 	// The search query used to assemble the context block.
 	Query string `json:"query" url:"-"`
 	// Adjusts result selection to favor more recent graph data.
-	RecencyBias *V4GraphContextRequestRecencyBias `json:"recency_bias,omitempty" url:"-"`
+	RecencyBias *GraphContextRequestRecencyBias `json:"recency_bias,omitempty" url:"-"`
 	// The UUID of a context template used to render the context block.
 	TemplateUUID *string `json:"template_uuid,omitempty" url:"-"`
 
@@ -162,10 +119,12 @@ type GraphContextRequest struct {
 }
 
 func (g *GraphContextRequest) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetFilters sets the Filters field and marks it as non-optional;
@@ -198,7 +157,7 @@ func (g *GraphContextRequest) SetQuery(query string) {
 
 // SetRecencyBias sets the RecencyBias field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphContextRequest) SetRecencyBias(recencyBias *V4GraphContextRequestRecencyBias) {
+func (g *GraphContextRequest) SetRecencyBias(recencyBias *GraphContextRequestRecencyBias) {
 	g.RecencyBias = recencyBias
 	g.require(graphContextRequestFieldRecencyBias)
 }
@@ -245,7 +204,7 @@ type SubgraphRequest struct {
 	Depth *int `json:"depth,omitempty" url:"-"`
 	// The edge orientation to follow during expansion: in, out, or both.
 	// Defaults to both.
-	Direction *V4SubgraphRequestDirection `json:"direction,omitempty" url:"-"`
+	Direction *SubgraphRequestDirection `json:"direction,omitempty" url:"-"`
 	// Filters constraining the traversed edges and included nodes.
 	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
 	// The maximum number of edges in the response. Defaults to 200.
@@ -260,10 +219,12 @@ type SubgraphRequest struct {
 }
 
 func (s *SubgraphRequest) require(field *big.Int) {
-	if s.explicitFields == nil {
-		s.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
 	}
-	s.explicitFields.Or(s.explicitFields, field)
+	next.Or(next, field)
+	s.explicitFields = next
 }
 
 // SetDepth sets the Depth field and marks it as non-optional;
@@ -275,7 +236,7 @@ func (s *SubgraphRequest) SetDepth(depth *int) {
 
 // SetDirection sets the Direction field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SubgraphRequest) SetDirection(direction *V4SubgraphRequestDirection) {
+func (s *SubgraphRequest) SetDirection(direction *SubgraphRequestDirection) {
 	s.Direction = direction
 	s.require(subgraphRequestFieldDirection)
 }
@@ -343,9 +304,9 @@ type GraphListRequest struct {
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
-	OrderBy *string `json:"-" url:"order_by,omitempty"`
+	OrderBy *GraphListRequestOrderBy `json:"-" url:"order_by,omitempty"`
 	// asc or desc
-	Order *string `json:"-" url:"order,omitempty"`
+	Order *GraphListRequestOrder `json:"-" url:"order,omitempty"`
 	// Filters results to graphs whose name, description, or graph ID contains
 	// this text.
 	Search *string `json:"search,omitempty" url:"-"`
@@ -355,10 +316,12 @@ type GraphListRequest struct {
 }
 
 func (g *GraphListRequest) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -377,14 +340,14 @@ func (g *GraphListRequest) SetCursor(cursor *string) {
 
 // SetOrderBy sets the OrderBy field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphListRequest) SetOrderBy(orderBy *string) {
+func (g *GraphListRequest) SetOrderBy(orderBy *GraphListRequestOrderBy) {
 	g.OrderBy = orderBy
 	g.require(graphListRequestFieldOrderBy)
 }
 
 // SetOrder sets the Order field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphListRequest) SetOrder(order *string) {
+func (g *GraphListRequest) SetOrder(order *GraphListRequestOrder) {
 	g.Order = order
 	g.require(graphListRequestFieldOrder)
 }
@@ -418,6 +381,75 @@ func (g *GraphListRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
+	contentPolicyEventListRequestFieldLimit   = big.NewInt(1 << 0)
+	contentPolicyEventListRequestFieldCursor  = big.NewInt(1 << 1)
+	contentPolicyEventListRequestFieldFilters = big.NewInt(1 << 2)
+)
+
+type ContentPolicyEventListRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Exact-match filters. Supported keys: episode_uuid and drop_reason.
+	Filters map[string]any `json:"filters,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (c *ContentPolicyEventListRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEventListRequest) SetLimit(limit *int) {
+	c.Limit = limit
+	c.require(contentPolicyEventListRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEventListRequest) SetCursor(cursor *string) {
+	c.Cursor = cursor
+	c.require(contentPolicyEventListRequestFieldCursor)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEventListRequest) SetFilters(filters map[string]any) {
+	c.Filters = filters
+	c.require(contentPolicyEventListRequestFieldFilters)
+}
+
+func (c *ContentPolicyEventListRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyEventListRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*c = ContentPolicyEventListRequest(body)
+	return nil
+}
+
+func (c *ContentPolicyEventListRequest) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyEventListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
 	graphSearchEdgesRequestFieldLimit  = big.NewInt(1 << 0)
 	graphSearchEdgesRequestFieldCursor = big.NewInt(1 << 1)
 )
@@ -434,10 +466,12 @@ type GraphSearchEdgesRequest struct {
 }
 
 func (g *GraphSearchEdgesRequest) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -484,10 +518,12 @@ type GraphSearchEpisodesRequest struct {
 }
 
 func (g *GraphSearchEpisodesRequest) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -534,10 +570,12 @@ type GraphSearchNodesRequest struct {
 }
 
 func (g *GraphSearchNodesRequest) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -584,10 +622,12 @@ type GraphSearchObservationsRequest struct {
 }
 
 func (g *GraphSearchObservationsRequest) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -634,10 +674,12 @@ type GraphSearchThreadSummariesRequest struct {
 }
 
 func (g *GraphSearchThreadSummariesRequest) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -666,6 +708,8 @@ func (g *GraphSearchThreadSummariesRequest) UnmarshalJSON(data []byte) error {
 func (g *GraphSearchThreadSummariesRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(g.Body)
 }
+
+type CloneGraphRequest = map[string]any
 
 var (
 	cloneGraphResultFieldGraph = big.NewInt(1 << 0)
@@ -707,10 +751,12 @@ func (c *CloneGraphResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *CloneGraphResult) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetGraph sets the Graph field and marks it as non-optional;
@@ -770,26 +816,429 @@ func (c *CloneGraphResult) String() string {
 }
 
 var (
+	contentPolicyEventFieldArtifactKind = big.NewInt(1 << 0)
+	contentPolicyEventFieldCategoryKeys = big.NewInt(1 << 1)
+	contentPolicyEventFieldDecidedAt    = big.NewInt(1 << 2)
+	contentPolicyEventFieldDropReason   = big.NewInt(1 << 3)
+	contentPolicyEventFieldEpisodeUUID  = big.NewInt(1 << 4)
+	contentPolicyEventFieldID           = big.NewInt(1 << 5)
+	contentPolicyEventFieldRevision     = big.NewInt(1 << 6)
+	contentPolicyEventFieldRuleIDs      = big.NewInt(1 << 7)
+)
+
+type ContentPolicyEvent struct {
+	// The kind of artifact the decision applied to. episode marks the
+	// episode-level record that carries every matched category.
+	ArtifactKind *ContentPolicyEventArtifactKind `json:"artifact_kind,omitempty" url:"artifact_kind,omitempty"`
+	// The keys of the categories with a matched rule.
+	CategoryKeys []string `json:"category_keys,omitempty" url:"category_keys,omitempty"`
+	// The time of the decision.
+	DecidedAt *string `json:"decided_at,omitempty" url:"decided_at,omitempty"`
+	// Why the artifact was dropped: match, indeterminate, oversize, or
+	// dependent.
+	DropReason *ContentPolicyEventDropReason `json:"drop_reason,omitempty" url:"drop_reason,omitempty"`
+	// The episode the decision belongs to.
+	EpisodeUUID *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
+	// The opaque identifier of the event.
+	ID *string `json:"id,omitempty" url:"id,omitempty"`
+	// The project revision number of the policy the graph bound.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The identifiers of the rules that matched.
+	RuleIDs []string `json:"rule_ids,omitempty" url:"rule_ids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ContentPolicyEvent) GetArtifactKind() *ContentPolicyEventArtifactKind {
+	if c == nil {
+		return nil
+	}
+	return c.ArtifactKind
+}
+
+func (c *ContentPolicyEvent) GetCategoryKeys() []string {
+	if c == nil {
+		return nil
+	}
+	return c.CategoryKeys
+}
+
+func (c *ContentPolicyEvent) GetDecidedAt() *string {
+	if c == nil {
+		return nil
+	}
+	return c.DecidedAt
+}
+
+func (c *ContentPolicyEvent) GetDropReason() *ContentPolicyEventDropReason {
+	if c == nil {
+		return nil
+	}
+	return c.DropReason
+}
+
+func (c *ContentPolicyEvent) GetEpisodeUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.EpisodeUUID
+}
+
+func (c *ContentPolicyEvent) GetID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ID
+}
+
+func (c *ContentPolicyEvent) GetRevision() *int {
+	if c == nil {
+		return nil
+	}
+	return c.Revision
+}
+
+func (c *ContentPolicyEvent) GetRuleIDs() []string {
+	if c == nil {
+		return nil
+	}
+	return c.RuleIDs
+}
+
+func (c *ContentPolicyEvent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicyEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetArtifactKind sets the ArtifactKind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetArtifactKind(artifactKind *ContentPolicyEventArtifactKind) {
+	c.ArtifactKind = artifactKind
+	c.require(contentPolicyEventFieldArtifactKind)
+}
+
+// SetCategoryKeys sets the CategoryKeys field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetCategoryKeys(categoryKeys []string) {
+	c.CategoryKeys = categoryKeys
+	c.require(contentPolicyEventFieldCategoryKeys)
+}
+
+// SetDecidedAt sets the DecidedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetDecidedAt(decidedAt *string) {
+	c.DecidedAt = decidedAt
+	c.require(contentPolicyEventFieldDecidedAt)
+}
+
+// SetDropReason sets the DropReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetDropReason(dropReason *ContentPolicyEventDropReason) {
+	c.DropReason = dropReason
+	c.require(contentPolicyEventFieldDropReason)
+}
+
+// SetEpisodeUUID sets the EpisodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetEpisodeUUID(episodeUUID *string) {
+	c.EpisodeUUID = episodeUUID
+	c.require(contentPolicyEventFieldEpisodeUUID)
+}
+
+// SetID sets the ID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetID(id *string) {
+	c.ID = id
+	c.require(contentPolicyEventFieldID)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetRevision(revision *int) {
+	c.Revision = revision
+	c.require(contentPolicyEventFieldRevision)
+}
+
+// SetRuleIDs sets the RuleIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetRuleIDs(ruleIDs []string) {
+	c.RuleIDs = ruleIDs
+	c.require(contentPolicyEventFieldRuleIDs)
+}
+
+func (c *ContentPolicyEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicyEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicyEvent) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicyEvent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// The kind of artifact the decision applied to. episode marks the
+// episode-level record that carries every matched category.
+type ContentPolicyEventArtifactKind string
+
+const (
+	ContentPolicyEventArtifactKindEntity          ContentPolicyEventArtifactKind = "entity"
+	ContentPolicyEventArtifactKindEntityAttribute ContentPolicyEventArtifactKind = "entity_attribute"
+	ContentPolicyEventArtifactKindEntitySummary   ContentPolicyEventArtifactKind = "entity_summary"
+	ContentPolicyEventArtifactKindEdge            ContentPolicyEventArtifactKind = "edge"
+	ContentPolicyEventArtifactKindThreadSummary   ContentPolicyEventArtifactKind = "thread_summary"
+	ContentPolicyEventArtifactKindDocumentSummary ContentPolicyEventArtifactKind = "document_summary"
+	ContentPolicyEventArtifactKindObservation     ContentPolicyEventArtifactKind = "observation"
+	ContentPolicyEventArtifactKindEpisode         ContentPolicyEventArtifactKind = "episode"
+)
+
+func NewContentPolicyEventArtifactKindFromString(s string) (ContentPolicyEventArtifactKind, error) {
+	switch s {
+	case "entity":
+		return ContentPolicyEventArtifactKindEntity, nil
+	case "entity_attribute":
+		return ContentPolicyEventArtifactKindEntityAttribute, nil
+	case "entity_summary":
+		return ContentPolicyEventArtifactKindEntitySummary, nil
+	case "edge":
+		return ContentPolicyEventArtifactKindEdge, nil
+	case "thread_summary":
+		return ContentPolicyEventArtifactKindThreadSummary, nil
+	case "document_summary":
+		return ContentPolicyEventArtifactKindDocumentSummary, nil
+	case "observation":
+		return ContentPolicyEventArtifactKindObservation, nil
+	case "episode":
+		return ContentPolicyEventArtifactKindEpisode, nil
+	}
+	var t ContentPolicyEventArtifactKind
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ContentPolicyEventArtifactKind) Ptr() *ContentPolicyEventArtifactKind {
+	return &c
+}
+
+// Why the artifact was dropped: match, indeterminate, oversize, or
+// dependent.
+type ContentPolicyEventDropReason string
+
+const (
+	ContentPolicyEventDropReasonMatch         ContentPolicyEventDropReason = "match"
+	ContentPolicyEventDropReasonIndeterminate ContentPolicyEventDropReason = "indeterminate"
+	ContentPolicyEventDropReasonOversize      ContentPolicyEventDropReason = "oversize"
+	ContentPolicyEventDropReasonDependent     ContentPolicyEventDropReason = "dependent"
+)
+
+func NewContentPolicyEventDropReasonFromString(s string) (ContentPolicyEventDropReason, error) {
+	switch s {
+	case "match":
+		return ContentPolicyEventDropReasonMatch, nil
+	case "indeterminate":
+		return ContentPolicyEventDropReasonIndeterminate, nil
+	case "oversize":
+		return ContentPolicyEventDropReasonOversize, nil
+	case "dependent":
+		return ContentPolicyEventDropReasonDependent, nil
+	}
+	var t ContentPolicyEventDropReason
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ContentPolicyEventDropReason) Ptr() *ContentPolicyEventDropReason {
+	return &c
+}
+
+var (
+	contentPolicyEventPageFieldItems      = big.NewInt(1 << 0)
+	contentPolicyEventPageFieldNextCursor = big.NewInt(1 << 1)
+	contentPolicyEventPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type ContentPolicyEventPage struct {
+	// The events on this page, newest first.
+	Items []*ContentPolicyEvent `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor to pass as the next request's cursor to fetch the following
+	// page; absent when no further pages remain.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of events that match the filters.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ContentPolicyEventPage) GetItems() []*ContentPolicyEvent {
+	if c == nil {
+		return nil
+	}
+	return c.Items
+}
+
+func (c *ContentPolicyEventPage) GetNextCursor() *string {
+	if c == nil {
+		return nil
+	}
+	return c.NextCursor
+}
+
+func (c *ContentPolicyEventPage) GetTotalSize() *int {
+	if c == nil {
+		return nil
+	}
+	return c.TotalSize
+}
+
+func (c *ContentPolicyEventPage) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicyEventPage) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEventPage) SetItems(items []*ContentPolicyEvent) {
+	c.Items = items
+	c.require(contentPolicyEventPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEventPage) SetNextCursor(nextCursor *string) {
+	c.NextCursor = nextCursor
+	c.require(contentPolicyEventPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEventPage) SetTotalSize(totalSize *int) {
+	c.TotalSize = totalSize
+	c.require(contentPolicyEventPageFieldTotalSize)
+}
+
+func (c *ContentPolicyEventPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyEventPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicyEventPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicyEventPage) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyEventPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicyEventPage) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
 	contextEdgeFieldAttributes       = big.NewInt(1 << 0)
 	contextEdgeFieldCreatedAt        = big.NewInt(1 << 1)
 	contextEdgeFieldEpisodeUUIDs     = big.NewInt(1 << 2)
 	contextEdgeFieldExpiredAt        = big.NewInt(1 << 3)
 	contextEdgeFieldFact             = big.NewInt(1 << 4)
 	contextEdgeFieldGraphUUID        = big.NewInt(1 << 5)
-	contextEdgeFieldInvalidAt        = big.NewInt(1 << 6)
-	contextEdgeFieldName             = big.NewInt(1 << 7)
-	contextEdgeFieldRelevance        = big.NewInt(1 << 8)
-	contextEdgeFieldScope            = big.NewInt(1 << 9)
-	contextEdgeFieldScore            = big.NewInt(1 << 10)
-	contextEdgeFieldSelectionRank    = big.NewInt(1 << 11)
-	contextEdgeFieldSourceNodeLabels = big.NewInt(1 << 12)
-	contextEdgeFieldSourceNodeName   = big.NewInt(1 << 13)
-	contextEdgeFieldSourceNodeUUID   = big.NewInt(1 << 14)
-	contextEdgeFieldTargetNodeLabels = big.NewInt(1 << 15)
-	contextEdgeFieldTargetNodeName   = big.NewInt(1 << 16)
-	contextEdgeFieldTargetNodeUUID   = big.NewInt(1 << 17)
-	contextEdgeFieldUUID             = big.NewInt(1 << 18)
-	contextEdgeFieldValidAt          = big.NewInt(1 << 19)
+	contextEdgeFieldHyperedgeUUID    = big.NewInt(1 << 6)
+	contextEdgeFieldInvalidAt        = big.NewInt(1 << 7)
+	contextEdgeFieldName             = big.NewInt(1 << 8)
+	contextEdgeFieldRelevance        = big.NewInt(1 << 9)
+	contextEdgeFieldScope            = big.NewInt(1 << 10)
+	contextEdgeFieldScore            = big.NewInt(1 << 11)
+	contextEdgeFieldSelectionRank    = big.NewInt(1 << 12)
+	contextEdgeFieldSourceNodeLabels = big.NewInt(1 << 13)
+	contextEdgeFieldSourceNodeName   = big.NewInt(1 << 14)
+	contextEdgeFieldSourceNodeUUID   = big.NewInt(1 << 15)
+	contextEdgeFieldTargetNodeLabels = big.NewInt(1 << 16)
+	contextEdgeFieldTargetNodeName   = big.NewInt(1 << 17)
+	contextEdgeFieldTargetNodeUUID   = big.NewInt(1 << 18)
+	contextEdgeFieldUUID             = big.NewInt(1 << 19)
+	contextEdgeFieldValidAt          = big.NewInt(1 << 20)
 )
 
 type ContextEdge struct {
@@ -805,6 +1254,9 @@ type ContextEdge struct {
 	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
 	// The unique identifier of the graph this edge belongs to.
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The unique identifier of the hyperedge this edge is a member of. Omitted
+	// when the edge is not part of a hyperedge.
+	HyperedgeUUID *string `json:"hyperedge_uuid,omitempty" url:"hyperedge_uuid,omitempty"`
 	// The time at which the fact stopped being true.
 	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// The name of the edge, in upper snake case, for example RELATES_TO.
@@ -893,6 +1345,13 @@ func (c *ContextEdge) GetGraphUUID() *string {
 		return nil
 	}
 	return c.GraphUUID
+}
+
+func (c *ContextEdge) GetHyperedgeUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.HyperedgeUUID
 }
 
 func (c *ContextEdge) GetInvalidAt() *string {
@@ -1001,10 +1460,12 @@ func (c *ContextEdge) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *ContextEdge) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -1047,6 +1508,13 @@ func (c *ContextEdge) SetFact(fact *string) {
 func (c *ContextEdge) SetGraphUUID(graphUUID *string) {
 	c.GraphUUID = graphUUID
 	c.require(contextEdgeFieldGraphUUID)
+}
+
+// SetHyperedgeUUID sets the HyperedgeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextEdge) SetHyperedgeUUID(hyperedgeUUID *string) {
+	c.HyperedgeUUID = hyperedgeUUID
+	c.require(contextEdgeFieldHyperedgeUUID)
 }
 
 // SetInvalidAt sets the InvalidAt field and marks it as non-optional;
@@ -1191,26 +1659,30 @@ func (c *ContextEdge) String() string {
 
 var (
 	contextEpisodeFieldContent           = big.NewInt(1 << 0)
-	contextEpisodeFieldCreatedAt         = big.NewInt(1 << 1)
-	contextEpisodeFieldDocumentID        = big.NewInt(1 << 2)
-	contextEpisodeFieldGraphUUID         = big.NewInt(1 << 3)
-	contextEpisodeFieldMetadata          = big.NewInt(1 << 4)
-	contextEpisodeFieldProcessed         = big.NewInt(1 << 5)
-	contextEpisodeFieldRelevance         = big.NewInt(1 << 6)
-	contextEpisodeFieldRole              = big.NewInt(1 << 7)
-	contextEpisodeFieldRoleName          = big.NewInt(1 << 8)
-	contextEpisodeFieldScore             = big.NewInt(1 << 9)
-	contextEpisodeFieldSelectionRank     = big.NewInt(1 << 10)
-	contextEpisodeFieldSource            = big.NewInt(1 << 11)
-	contextEpisodeFieldSourceDescription = big.NewInt(1 << 12)
-	contextEpisodeFieldThreadUUID        = big.NewInt(1 << 13)
-	contextEpisodeFieldUUID              = big.NewInt(1 << 14)
-	contextEpisodeFieldValidAt           = big.NewInt(1 << 15)
+	contextEpisodeFieldContentPolicy     = big.NewInt(1 << 1)
+	contextEpisodeFieldCreatedAt         = big.NewInt(1 << 2)
+	contextEpisodeFieldDocumentID        = big.NewInt(1 << 3)
+	contextEpisodeFieldGraphUUID         = big.NewInt(1 << 4)
+	contextEpisodeFieldMetadata          = big.NewInt(1 << 5)
+	contextEpisodeFieldProcessed         = big.NewInt(1 << 6)
+	contextEpisodeFieldRelevance         = big.NewInt(1 << 7)
+	contextEpisodeFieldRole              = big.NewInt(1 << 8)
+	contextEpisodeFieldRoleName          = big.NewInt(1 << 9)
+	contextEpisodeFieldScore             = big.NewInt(1 << 10)
+	contextEpisodeFieldSelectionRank     = big.NewInt(1 << 11)
+	contextEpisodeFieldSource            = big.NewInt(1 << 12)
+	contextEpisodeFieldSourceDescription = big.NewInt(1 << 13)
+	contextEpisodeFieldThreadUUID        = big.NewInt(1 << 14)
+	contextEpisodeFieldUUID              = big.NewInt(1 << 15)
+	contextEpisodeFieldValidAt           = big.NewInt(1 << 16)
 )
 
 type ContextEpisode struct {
 	// The raw content of the episode.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
+	// The content policy state of the episode, present only on a graph with a
+	// bound content policy rule.
+	ContentPolicy *EpisodeContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
 	// The time the episode was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The developer-assigned identifier of the document this episode belongs to,
@@ -1263,6 +1735,13 @@ func (c *ContextEpisode) GetContent() *string {
 		return nil
 	}
 	return c.Content
+}
+
+func (c *ContextEpisode) GetContentPolicy() *EpisodeContentPolicy {
+	if c == nil {
+		return nil
+	}
+	return c.ContentPolicy
 }
 
 func (c *ContextEpisode) GetCreatedAt() *string {
@@ -1378,10 +1857,12 @@ func (c *ContextEpisode) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *ContextEpisode) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetContent sets the Content field and marks it as non-optional;
@@ -1389,6 +1870,13 @@ func (c *ContextEpisode) require(field *big.Int) {
 func (c *ContextEpisode) SetContent(content *string) {
 	c.Content = content
 	c.require(contextEpisodeFieldContent)
+}
+
+// SetContentPolicy sets the ContentPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextEpisode) SetContentPolicy(contentPolicy *EpisodeContentPolicy) {
+	c.ContentPolicy = contentPolicy
+	c.require(contextEpisodeFieldContentPolicy)
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -1539,16 +2027,19 @@ func (c *ContextEpisode) String() string {
 }
 
 var (
-	contextNodeFieldAttributes    = big.NewInt(1 << 0)
-	contextNodeFieldCreatedAt     = big.NewInt(1 << 1)
-	contextNodeFieldGraphUUID     = big.NewInt(1 << 2)
-	contextNodeFieldLabels        = big.NewInt(1 << 3)
-	contextNodeFieldName          = big.NewInt(1 << 4)
-	contextNodeFieldRelevance     = big.NewInt(1 << 5)
-	contextNodeFieldScore         = big.NewInt(1 << 6)
-	contextNodeFieldSelectionRank = big.NewInt(1 << 7)
-	contextNodeFieldSummary       = big.NewInt(1 << 8)
-	contextNodeFieldUUID          = big.NewInt(1 << 9)
+	contextNodeFieldAttributes            = big.NewInt(1 << 0)
+	contextNodeFieldCreatedAt             = big.NewInt(1 << 1)
+	contextNodeFieldDegree                = big.NewInt(1 << 2)
+	contextNodeFieldEpisodeUUIDs          = big.NewInt(1 << 3)
+	contextNodeFieldEpisodeUUIDsTruncated = big.NewInt(1 << 4)
+	contextNodeFieldGraphUUID             = big.NewInt(1 << 5)
+	contextNodeFieldLabels                = big.NewInt(1 << 6)
+	contextNodeFieldName                  = big.NewInt(1 << 7)
+	contextNodeFieldRelevance             = big.NewInt(1 << 8)
+	contextNodeFieldScore                 = big.NewInt(1 << 9)
+	contextNodeFieldSelectionRank         = big.NewInt(1 << 10)
+	contextNodeFieldSummary               = big.NewInt(1 << 11)
+	contextNodeFieldUUID                  = big.NewInt(1 << 12)
 )
 
 type ContextNode struct {
@@ -1556,6 +2047,18 @@ type ContextNode struct {
 	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
 	// The time the node was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The count of live entity edges that touch this node, in both directions.
+	// Present only when the list request orders by `degree`.
+	Degree *int `json:"degree,omitempty" url:"degree,omitempty"`
+	// The UUIDs of the live episodes that mention this node, newest first. The
+	// list is complete when `episode_uuids_truncated` is false. The list holds
+	// the newest 100 when the node has more than 100 source episodes; list
+	// episodes with the `mentioned_node_uuids` filter to read them all.
+	EpisodeUUIDs []string `json:"episode_uuids" url:"episode_uuids"`
+	// True when the node has more than 100 source episodes, so `episode_uuids`
+	// holds only the newest 100, or when provenance is unavailable. False means
+	// `episode_uuids` is the complete set.
+	EpisodeUUIDsTruncated bool `json:"episode_uuids_truncated" url:"episode_uuids_truncated"`
 	// The unique identifier of the graph this node belongs to.
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	// The entity type labels assigned to the node.
@@ -1596,6 +2099,27 @@ func (c *ContextNode) GetCreatedAt() *string {
 		return nil
 	}
 	return c.CreatedAt
+}
+
+func (c *ContextNode) GetDegree() *int {
+	if c == nil {
+		return nil
+	}
+	return c.Degree
+}
+
+func (c *ContextNode) GetEpisodeUUIDs() []string {
+	if c == nil {
+		return nil
+	}
+	return c.EpisodeUUIDs
+}
+
+func (c *ContextNode) GetEpisodeUUIDsTruncated() bool {
+	if c == nil {
+		return false
+	}
+	return c.EpisodeUUIDsTruncated
 }
 
 func (c *ContextNode) GetGraphUUID() *string {
@@ -1662,10 +2186,12 @@ func (c *ContextNode) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *ContextNode) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -1680,6 +2206,27 @@ func (c *ContextNode) SetAttributes(attributes map[string]any) {
 func (c *ContextNode) SetCreatedAt(createdAt *string) {
 	c.CreatedAt = createdAt
 	c.require(contextNodeFieldCreatedAt)
+}
+
+// SetDegree sets the Degree field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextNode) SetDegree(degree *int) {
+	c.Degree = degree
+	c.require(contextNodeFieldDegree)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextNode) SetEpisodeUUIDs(episodeUUIDs []string) {
+	c.EpisodeUUIDs = episodeUUIDs
+	c.require(contextNodeFieldEpisodeUUIDs)
+}
+
+// SetEpisodeUUIDsTruncated sets the EpisodeUUIDsTruncated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextNode) SetEpisodeUUIDsTruncated(episodeUUIDsTruncated bool) {
+	c.EpisodeUUIDsTruncated = episodeUUIDsTruncated
+	c.require(contextNodeFieldEpisodeUUIDsTruncated)
 }
 
 // SetGraphUUID sets the GraphUUID field and marks it as non-optional;
@@ -1914,10 +2461,12 @@ func (c *ContextObservation) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *ContextObservation) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;
@@ -2109,10 +2658,12 @@ func (c *ContextResults) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *ContextResults) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetEdges sets the Edges field and marks it as non-optional;
@@ -2307,10 +2858,12 @@ func (c *ContextThreadSummary) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *ContextThreadSummary) require(field *big.Int) {
-	if c.explicitFields == nil {
-		c.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
 	}
-	c.explicitFields.Or(c.explicitFields, field)
+	next.Or(next, field)
+	c.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -2531,10 +3084,12 @@ func (g *Graph) GetExtraProperties() map[string]interface{} {
 }
 
 func (g *Graph) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -2643,17 +3198,209 @@ func (g *Graph) String() string {
 }
 
 var (
+	graphContentPolicyFieldBoundAt         = big.NewInt(1 << 0)
+	graphContentPolicyFieldCategories      = big.NewInt(1 << 1)
+	graphContentPolicyFieldCreatedAt       = big.NewInt(1 << 2)
+	graphContentPolicyFieldProjectRevision = big.NewInt(1 << 3)
+	graphContentPolicyFieldRevision        = big.NewInt(1 << 4)
+	graphContentPolicyFieldRules           = big.NewInt(1 << 5)
+	graphContentPolicyFieldUUID            = big.NewInt(1 << 6)
+)
+
+type GraphContentPolicy struct {
+	// When the graph bound the policy.
+	BoundAt *string `json:"bound_at,omitempty" url:"bound_at,omitempty"`
+	// The categories of the policy.
+	Categories []*ContentPolicyCategory `json:"categories,omitempty" url:"categories,omitempty"`
+	// When this policy set was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The project revision number this graph bound at creation. It always
+	// equals revision.
+	ProjectRevision *int `json:"project_revision,omitempty" url:"project_revision,omitempty"`
+	// The project revision number. 0 is the empty policy of a new project.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The rules of the policy.
+	Rules []*ContentPolicyRule `json:"rules,omitempty" url:"rules,omitempty"`
+	// The identifier of this policy set. A project revision and every graph
+	// that binds it without additions share one uuid.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphContentPolicy) GetBoundAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.BoundAt
+}
+
+func (g *GraphContentPolicy) GetCategories() []*ContentPolicyCategory {
+	if g == nil {
+		return nil
+	}
+	return g.Categories
+}
+
+func (g *GraphContentPolicy) GetCreatedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedAt
+}
+
+func (g *GraphContentPolicy) GetProjectRevision() *int {
+	if g == nil {
+		return nil
+	}
+	return g.ProjectRevision
+}
+
+func (g *GraphContentPolicy) GetRevision() *int {
+	if g == nil {
+		return nil
+	}
+	return g.Revision
+}
+
+func (g *GraphContentPolicy) GetRules() []*ContentPolicyRule {
+	if g == nil {
+		return nil
+	}
+	return g.Rules
+}
+
+func (g *GraphContentPolicy) GetUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUID
+}
+
+func (g *GraphContentPolicy) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphContentPolicy) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetBoundAt sets the BoundAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicy) SetBoundAt(boundAt *string) {
+	g.BoundAt = boundAt
+	g.require(graphContentPolicyFieldBoundAt)
+}
+
+// SetCategories sets the Categories field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicy) SetCategories(categories []*ContentPolicyCategory) {
+	g.Categories = categories
+	g.require(graphContentPolicyFieldCategories)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicy) SetCreatedAt(createdAt *string) {
+	g.CreatedAt = createdAt
+	g.require(graphContentPolicyFieldCreatedAt)
+}
+
+// SetProjectRevision sets the ProjectRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicy) SetProjectRevision(projectRevision *int) {
+	g.ProjectRevision = projectRevision
+	g.require(graphContentPolicyFieldProjectRevision)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicy) SetRevision(revision *int) {
+	g.Revision = revision
+	g.require(graphContentPolicyFieldRevision)
+}
+
+// SetRules sets the Rules field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicy) SetRules(rules []*ContentPolicyRule) {
+	g.Rules = rules
+	g.require(graphContentPolicyFieldRules)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphContentPolicy) SetUUID(uuid *string) {
+	g.UUID = uuid
+	g.require(graphContentPolicyFieldUUID)
+}
+
+func (g *GraphContentPolicy) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphContentPolicy
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphContentPolicy(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphContentPolicy) MarshalJSON() ([]byte, error) {
+	type embed GraphContentPolicy
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphContentPolicy) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
 	graphContextResponseFieldContext   = big.NewInt(1 << 0)
 	graphContextResponseFieldResults   = big.NewInt(1 << 1)
 	graphContextResponseFieldTruncated = big.NewInt(1 << 2)
 )
 
 type GraphContextResponse struct {
-	// The assembled context block of facts, entities, and episodes, ready to
-	// insert into a system prompt.
+	// The assembled context block of facts, entities, observations, and thread
+	// summaries. Pass it through the model provider's untrusted-data channel.
 	Context *string `json:"context,omitempty" url:"context,omitempty"`
 	// The individual edges, nodes, episodes, observations, and thread summaries
-	// selected to build the context. Present only when requested.
+	// selected to build the context. Episodes are always empty because context
+	// assembly does not select episodes. Present only when requested.
 	Results *ContextResults `json:"results,omitempty" url:"results,omitempty"`
 	// Whether the character budget limited the size of the context block.
 	Truncated *bool `json:"truncated,omitempty" url:"truncated,omitempty"`
@@ -2694,10 +3441,12 @@ func (g *GraphContextResponse) GetExtraProperties() map[string]interface{} {
 }
 
 func (g *GraphContextResponse) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetContext sets the Context field and marks it as non-optional;
@@ -2793,10 +3542,12 @@ func (g *GraphDeleteResult) GetExtraProperties() map[string]interface{} {
 }
 
 func (g *GraphDeleteResult) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetTask sets the Task field and marks it as non-optional;
@@ -2899,10 +3650,12 @@ func (g *GraphPage) GetExtraProperties() map[string]interface{} {
 }
 
 func (g *GraphPage) require(field *big.Int) {
-	if g.explicitFields == nil {
-		g.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
 	}
-	g.explicitFields.Or(g.explicitFields, field)
+	next.Or(next, field)
+	g.explicitFields = next
 }
 
 // SetItems sets the Items field and marks it as non-optional;
@@ -2991,7 +3744,7 @@ type SearchRequest struct {
 	// The search query.
 	Query string `json:"query" url:"query"`
 	// The reranking strategy applied to retrieved results. Defaults to rrf.
-	Reranker *V4SearchRequestReranker `json:"reranker,omitempty" url:"reranker,omitempty"`
+	Reranker *SearchRequestReranker `json:"reranker,omitempty" url:"reranker,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3035,7 +3788,7 @@ func (s *SearchRequest) GetQuery() string {
 	return s.Query
 }
 
-func (s *SearchRequest) GetReranker() *V4SearchRequestReranker {
+func (s *SearchRequest) GetReranker() *SearchRequestReranker {
 	if s == nil {
 		return nil
 	}
@@ -3050,10 +3803,12 @@ func (s *SearchRequest) GetExtraProperties() map[string]interface{} {
 }
 
 func (s *SearchRequest) require(field *big.Int) {
-	if s.explicitFields == nil {
-		s.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
 	}
-	s.explicitFields.Or(s.explicitFields, field)
+	next.Or(next, field)
+	s.explicitFields = next
 }
 
 // SetBfsOriginNodeUUIDs sets the BfsOriginNodeUUIDs field and marks it as non-optional;
@@ -3093,7 +3848,7 @@ func (s *SearchRequest) SetQuery(query string) {
 
 // SetReranker sets the Reranker field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetReranker(reranker *V4SearchRequestReranker) {
+func (s *SearchRequest) SetReranker(reranker *SearchRequestReranker) {
 	s.Reranker = reranker
 	s.require(searchRequestFieldReranker)
 }
@@ -3138,6 +3893,38 @@ func (s *SearchRequest) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
+}
+
+// The reranking strategy applied to retrieved results. Defaults to rrf.
+type SearchRequestReranker string
+
+const (
+	SearchRequestRerankerRrf             SearchRequestReranker = "rrf"
+	SearchRequestRerankerMmr             SearchRequestReranker = "mmr"
+	SearchRequestRerankerNodeDistance    SearchRequestReranker = "node_distance"
+	SearchRequestRerankerEpisodeMentions SearchRequestReranker = "episode_mentions"
+	SearchRequestRerankerCrossEncoder    SearchRequestReranker = "cross_encoder"
+)
+
+func NewSearchRequestRerankerFromString(s string) (SearchRequestReranker, error) {
+	switch s {
+	case "rrf":
+		return SearchRequestRerankerRrf, nil
+	case "mmr":
+		return SearchRequestRerankerMmr, nil
+	case "node_distance":
+		return SearchRequestRerankerNodeDistance, nil
+	case "episode_mentions":
+		return SearchRequestRerankerEpisodeMentions, nil
+	case "cross_encoder":
+		return SearchRequestRerankerCrossEncoder, nil
+	}
+	var t SearchRequestReranker
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SearchRequestReranker) Ptr() *SearchRequestReranker {
+	return &s
 }
 
 var (
@@ -3203,10 +3990,12 @@ func (s *SubgraphResponse) GetExtraProperties() map[string]interface{} {
 }
 
 func (s *SubgraphResponse) require(field *big.Int) {
-	if s.explicitFields == nil {
-		s.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
 	}
-	s.explicitFields.Or(s.explicitFields, field)
+	next.Or(next, field)
+	s.explicitFields = next
 }
 
 // SetEdges sets the Edges field and marks it as non-optional;
@@ -3279,89 +4068,104 @@ func (s *SubgraphResponse) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
-// The reranking strategy applied to retrieved results. Defaults to rrf.
-type V4SearchRequestReranker string
-
-const (
-	V4SearchRequestRerankerRrf             V4SearchRequestReranker = "rrf"
-	V4SearchRequestRerankerMmr             V4SearchRequestReranker = "mmr"
-	V4SearchRequestRerankerNodeDistance    V4SearchRequestReranker = "node_distance"
-	V4SearchRequestRerankerEpisodeMentions V4SearchRequestReranker = "episode_mentions"
-	V4SearchRequestRerankerCrossEncoder    V4SearchRequestReranker = "cross_encoder"
-)
-
-func NewV4SearchRequestRerankerFromString(s string) (V4SearchRequestReranker, error) {
-	switch s {
-	case "rrf":
-		return V4SearchRequestRerankerRrf, nil
-	case "mmr":
-		return V4SearchRequestRerankerMmr, nil
-	case "node_distance":
-		return V4SearchRequestRerankerNodeDistance, nil
-	case "episode_mentions":
-		return V4SearchRequestRerankerEpisodeMentions, nil
-	case "cross_encoder":
-		return V4SearchRequestRerankerCrossEncoder, nil
-	}
-	var t V4SearchRequestReranker
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (v V4SearchRequestReranker) Ptr() *V4SearchRequestReranker {
-	return &v
-}
-
 // Adjusts result selection to favor more recent graph data.
-type V4GraphContextRequestRecencyBias string
+type GraphContextRequestRecencyBias string
 
 const (
-	V4GraphContextRequestRecencyBiasOff    V4GraphContextRequestRecencyBias = "off"
-	V4GraphContextRequestRecencyBiasMild   V4GraphContextRequestRecencyBias = "mild"
-	V4GraphContextRequestRecencyBiasStrong V4GraphContextRequestRecencyBias = "strong"
+	GraphContextRequestRecencyBiasOff    GraphContextRequestRecencyBias = "off"
+	GraphContextRequestRecencyBiasMild   GraphContextRequestRecencyBias = "mild"
+	GraphContextRequestRecencyBiasStrong GraphContextRequestRecencyBias = "strong"
 )
 
-func NewV4GraphContextRequestRecencyBiasFromString(s string) (V4GraphContextRequestRecencyBias, error) {
+func NewGraphContextRequestRecencyBiasFromString(s string) (GraphContextRequestRecencyBias, error) {
 	switch s {
 	case "off":
-		return V4GraphContextRequestRecencyBiasOff, nil
+		return GraphContextRequestRecencyBiasOff, nil
 	case "mild":
-		return V4GraphContextRequestRecencyBiasMild, nil
+		return GraphContextRequestRecencyBiasMild, nil
 	case "strong":
-		return V4GraphContextRequestRecencyBiasStrong, nil
+		return GraphContextRequestRecencyBiasStrong, nil
 	}
-	var t V4GraphContextRequestRecencyBias
+	var t GraphContextRequestRecencyBias
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (v V4GraphContextRequestRecencyBias) Ptr() *V4GraphContextRequestRecencyBias {
-	return &v
+func (g GraphContextRequestRecencyBias) Ptr() *GraphContextRequestRecencyBias {
+	return &g
+}
+
+type GraphListRequestOrder string
+
+const (
+	GraphListRequestOrderAsc  GraphListRequestOrder = "asc"
+	GraphListRequestOrderDesc GraphListRequestOrder = "desc"
+)
+
+func NewGraphListRequestOrderFromString(s string) (GraphListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return GraphListRequestOrderAsc, nil
+	case "desc":
+		return GraphListRequestOrderDesc, nil
+	}
+	var t GraphListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphListRequestOrder) Ptr() *GraphListRequestOrder {
+	return &g
+}
+
+type GraphListRequestOrderBy string
+
+const (
+	GraphListRequestOrderByCreatedAt GraphListRequestOrderBy = "created_at"
+	GraphListRequestOrderByName      GraphListRequestOrderBy = "name"
+	GraphListRequestOrderByUUID      GraphListRequestOrderBy = "uuid"
+)
+
+func NewGraphListRequestOrderByFromString(s string) (GraphListRequestOrderBy, error) {
+	switch s {
+	case "created_at":
+		return GraphListRequestOrderByCreatedAt, nil
+	case "name":
+		return GraphListRequestOrderByName, nil
+	case "uuid":
+		return GraphListRequestOrderByUUID, nil
+	}
+	var t GraphListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphListRequestOrderBy) Ptr() *GraphListRequestOrderBy {
+	return &g
 }
 
 // The edge orientation to follow during expansion: in, out, or both.
 // Defaults to both.
-type V4SubgraphRequestDirection string
+type SubgraphRequestDirection string
 
 const (
-	V4SubgraphRequestDirectionIn   V4SubgraphRequestDirection = "in"
-	V4SubgraphRequestDirectionOut  V4SubgraphRequestDirection = "out"
-	V4SubgraphRequestDirectionBoth V4SubgraphRequestDirection = "both"
+	SubgraphRequestDirectionIn   SubgraphRequestDirection = "in"
+	SubgraphRequestDirectionOut  SubgraphRequestDirection = "out"
+	SubgraphRequestDirectionBoth SubgraphRequestDirection = "both"
 )
 
-func NewV4SubgraphRequestDirectionFromString(s string) (V4SubgraphRequestDirection, error) {
+func NewSubgraphRequestDirectionFromString(s string) (SubgraphRequestDirection, error) {
 	switch s {
 	case "in":
-		return V4SubgraphRequestDirectionIn, nil
+		return SubgraphRequestDirectionIn, nil
 	case "out":
-		return V4SubgraphRequestDirectionOut, nil
+		return SubgraphRequestDirectionOut, nil
 	case "both":
-		return V4SubgraphRequestDirectionBoth, nil
+		return SubgraphRequestDirectionBoth, nil
 	}
-	var t V4SubgraphRequestDirection
+	var t SubgraphRequestDirection
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (v V4SubgraphRequestDirection) Ptr() *V4SubgraphRequestDirection {
-	return &v
+func (s SubgraphRequestDirection) Ptr() *SubgraphRequestDirection {
+	return &s
 }
 
 var (
@@ -3383,10 +4187,12 @@ type PatchGraphRequest struct {
 }
 
 func (p *PatchGraphRequest) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetDescription sets the Description field and marks it as non-optional;

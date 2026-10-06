@@ -48,6 +48,8 @@ func (r *RawClient) CreateTemplate(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.ContextTemplate
 	raw, err := r.caller.Call(
 		ctx,
@@ -142,6 +144,8 @@ func (r *RawClient) UpdateTemplate(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.ContextTemplate
 	raw, err := r.caller.Call(
 		ctx,
@@ -189,6 +193,8 @@ func (r *RawClient) DeleteTemplate(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
+	core.SetIdempotencyKeyHeader(headers)
+
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{

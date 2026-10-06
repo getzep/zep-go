@@ -44,23 +44,7 @@ func NewClient(options *core.RequestOptions) *Client {
 
 // Example:
 //
-//	request := &zep.ThreadListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	    OrderBy: zep.String(
-//	        "order_by",
-//	    ),
-//	    Order: zep.String(
-//	        "order",
-//	    ),
-//	    UserUUID: zep.String(
-//	        "user_uuid",
-//	    ),
-//	}
+//	request := &zep.ThreadListRequest{}
 //	client.Thread.List(
 //	    context.TODO(),
 //	    request,
@@ -160,7 +144,7 @@ func (c *Client) Create(
 func (c *Client) Lookup(
 	ctx context.Context,
 	request *zep.LookupRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*zep.Thread, error) {
 	response, err := c.WithRawResponse.Lookup(
 		ctx,
@@ -221,11 +205,7 @@ func (c *Client) Delete(
 
 // Example:
 //
-//	request := &zep.ThreadGetContextRequest{
-//	    TemplateUUID: zep.String(
-//	        "template_uuid",
-//	    ),
-//	}
+//	request := &zep.ThreadGetContextRequest{}
 //	client.Thread.GetContext(
 //	    context.TODO(),
 //	    "thread_uuid",
@@ -252,14 +232,7 @@ func (c *Client) GetContext(
 
 // Example:
 //
-//	request := &zep.ThreadListEpisodesRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &zep.ThreadListEpisodesRequest{}
 //	client.Thread.ListEpisodes(
 //	    context.TODO(),
 //	    "thread_uuid",
@@ -332,14 +305,7 @@ func (c *Client) ListEpisodes(
 
 // Example:
 //
-//	request := &zep.ThreadListMessagesRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	}
+//	request := &zep.ThreadListMessagesRequest{}
 //	client.Thread.ListMessages(
 //	    context.TODO(),
 //	    "thread_uuid",

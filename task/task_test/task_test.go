@@ -88,14 +88,7 @@ func TestTaskListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.TaskListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-	}
+	request := &zep.TaskListRequest{}
 	_, invocationErr := client.Task.List(
 		context.TODO(),
 		request,
@@ -105,7 +98,7 @@ func TestTaskListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestTaskListWithWireMock", "GET", "/tasks", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestTaskListWithWireMock", "GET", "/tasks", nil, 1)
 }
 
 func TestTaskGetWithWireMock(

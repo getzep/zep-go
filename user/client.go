@@ -64,20 +64,7 @@ func (c *Client) Create(
 
 // Example:
 //
-//	request := &zep.UserListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
-//	    OrderBy: zep.String(
-//	        "order_by",
-//	    ),
-//	    Order: zep.String(
-//	        "order",
-//	    ),
-//	}
+//	request := &zep.UserListRequest{}
 //	client.User.List(
 //	    context.TODO(),
 //	    request,
@@ -85,9 +72,9 @@ func (c *Client) Create(
 func (c *Client) List(
 	ctx context.Context,
 	request *zep.UserListRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.User, *zep.UserPage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -103,6 +90,8 @@ func (c *Client) List(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -154,7 +143,7 @@ func (c *Client) List(
 func (c *Client) Lookup(
 	ctx context.Context,
 	request *zep.LookupRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*zep.User, error) {
 	response, err := c.WithRawResponse.Lookup(
 		ctx,

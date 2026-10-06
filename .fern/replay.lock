@@ -36,19 +36,25 @@ generations:
     cli_version: unknown
     generator_versions:
       fernapi/fern-go-sdk: 1.57.8
-current_generation: eff62dc05b8b383a5b12409aab3b68dd4cea9794
+  - commit_sha: a28a67151d8da6d96d02ecdce0b0c3c8a759e11d
+    tree_hash: 9f98abf02253fc4189a83ca35fbf5b9c98834f6f
+    timestamp: 2026-10-06T17:54:57.050Z
+    cli_version: unknown
+    generator_versions:
+      fernapi/fern-go-sdk: 1.65.3
+current_generation: a28a67151d8da6d96d02ecdce0b0c3c8a759e11d
 patches:
   - id: patch-29d0e2e3
-    content_hash: sha256:86b7e2a57d0999d13eed30e932737bb026157eea4ce114bd64e760c7594715b9
+    content_hash: sha256:02d78af0c9f9ba6e859d38651b828338b20d1ff5e9acdeb3a97cc4f34355382c
     original_commit: 29d0e2e335685cf44d3b031da38c8808ff6efc89
     original_message: Reject a misspelled ontology tag, and fix the README
     original_author: paulpaliychuk <pavlo.paliychuk.ca@gmail.com>
-    base_generation: eff62dc05b8b383a5b12409aab3b68dd4cea9794
+    base_generation: a28a67151d8da6d96d02ecdce0b0c3c8a759e11d
     files:
       - README.md
     patch_content: |
       diff --git a/README.md b/README.md
-      index 611cd28..0d86a38 100644
+      index 8376e18..757dd9a 100644
       --- a/README.md
       +++ b/README.md
       @@ -8,8 +8,8 @@ The Zep Go library provides convenient access to the Zep APIs from Go.
@@ -62,7 +68,7 @@ patches:
        - [Optionals](#optionals)
        - [Request Options](#request-options)
        - [Automatic Retries](#automatic-retries)
-      @@ -34,16 +34,16 @@ This module requires Go version >= 1.13.
+      @@ -35,16 +35,16 @@ This module requires Go version >= 1.13.
        Run the following command to use the Zep Go library in your module:
        
        ```sh
@@ -83,7 +89,7 @@ patches:
        )
        
        client := zepclient.NewClient(
-      @@ -52,26 +52,26 @@ client := zepclient.NewClient(
+      @@ -53,26 +53,26 @@ client := zepclient.NewClient(
        )
        ```
        
@@ -119,7 +125,7 @@ patches:
            nil,
        )
        ```
-      @@ -143,7 +143,7 @@ client := zepclient.NewClient(
+      @@ -144,7 +144,7 @@ client := zepclient.NewClient(
        This can be done for an individual request, too:
        
        ```go
@@ -151,6 +157,7 @@ patches:
         - [Pagination](#pagination)
         - [Errors](#errors)
         - [Advanced](#advanced)
+          - [Additional Body Properties](#additional-body-properties)
           - [Response Headers](#response-headers)
           - [Retries](#retries)
           - [Timeouts](#timeouts)
@@ -238,7 +245,7 @@ patches:
         )
 
         // Specify options for an individual request.
-        response, err := client.Batch.Create(
+        response, err := client.Agent.Create(
             ...,
             option.WithAPIKey("<YOUR_API_KEY>"),
         )
@@ -303,8 +310,12 @@ patches:
                     "<value>",
                 ),
             )
-            request := &zep.CreateBatchRequest{}
-            client.Batch.Create(
+            request := &zep.CreateAgentRequest{
+                AgentID: "agent_id",
+                Name: "name",
+                SecurityDomain: "security_domain",
+            }
+            client.Agent.Create(
                 context.TODO(),
                 request,
             )
@@ -337,7 +348,7 @@ patches:
         ```go
         // Loop over the items using the provided iterator.
         ctx := context.TODO()
-        page, err := client.Batch.List(
+        page, err := client.Agent.List(
             ctx,
             ...
         )
@@ -368,7 +379,7 @@ patches:
         }
 
         // Paginated endpoints return a Page with directly accessible headers, status code, and full response
-        page, err = client.Batch.List(
+        page, err = client.Agent.List(
             ctx,
             ...
         )
@@ -393,7 +404,7 @@ patches:
         with the `errors.Is` and `errors.As` APIs, so you can access the error like so:
 
         ```go
-        response, err := client.Batch.Create(...)
+        response, err := client.Agent.Create(...)
         if err != nil {
             var apiError *core.APIError
             if errors.As(err, &apiError) {
@@ -405,6 +416,23 @@ patches:
 
         ## Advanced
 
+        ### Additional Body Properties
+
+        If you need to send a request body property that isn't part of the generated request type (e.g. an
+        undocumented or beta field), use the `option.WithBodyProperties` request option. Keys are sent exactly as
+        provided (use the API's wire-format names), and they override any generated field with the same name. If the
+        endpoint has no request body, a JSON body is created from the given properties. Body properties are applied to
+        JSON and form URL encoded request bodies; they are not applied to multipart file upload or raw byte requests.
+
+        ```go
+        response, err := client.Agent.Create(
+            ...,
+            option.WithBodyProperties(map[string]interface{}{
+                "custom_field": "custom-value",
+            }),
+        )
+        ```
+
         ### Response Headers
 
         You can access the raw HTTP response data by using the `WithRawResponse` field on the client. This is useful
@@ -412,7 +440,7 @@ patches:
         the raw HTTP response data will be included automatically in the Page response object.)
 
         ```go
-        response, err := client.Batch.WithRawResponse.Create(...)
+        response, err := client.Agent.WithRawResponse.Create(...)
         if err != nil {
             return err
         }
@@ -450,7 +478,7 @@ patches:
             option.WithMaxAttempts(1),
         )
 
-        response, err := client.Batch.Create(
+        response, err := client.Agent.Create(
             ...,
             option.WithMaxAttempts(1),
         )
@@ -464,7 +492,7 @@ patches:
         ctx, cancel := context.WithTimeout(ctx, time.Second)
         defer cancel()
 
-        response, err := client.Batch.Create(ctx, ...)
+        response, err := client.Agent.Create(ctx, ...)
         ```
 
         ### Explicit Null
@@ -486,7 +514,7 @@ patches:
         request := &ExampleRequest{}
         request.SetName(nil)
 
-        response, err := client.Batch.Create(ctx, request, ...)
+        response, err := client.Agent.Create(ctx, request, ...)
         ```
 
         ## Contributing
@@ -498,3 +526,4 @@ patches:
         an issue first to discuss with us!
 
         On the other hand, contributions to the README are always very welcome!
+    user_owned: true

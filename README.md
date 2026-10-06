@@ -19,6 +19,7 @@ The Zep Go library provides convenient access to the Zep APIs from Go.
 - [Pagination](#pagination)
 - [Errors](#errors)
 - [Advanced](#advanced)
+  - [Additional Body Properties](#additional-body-properties)
   - [Response Headers](#response-headers)
   - [Retries](#retries)
   - [Timeouts](#timeouts)
@@ -106,7 +107,7 @@ client := client.NewClient(
 )
 
 // Specify options for an individual request.
-response, err := client.Batch.Create(
+response, err := client.Agent.Create(
     ...,
     option.WithAPIKey("<YOUR_API_KEY>"),
 )
@@ -171,8 +172,12 @@ func do() {
             "<value>",
         ),
     )
-    request := &zep.CreateBatchRequest{}
-    client.Batch.Create(
+    request := &zep.CreateAgentRequest{
+        AgentID: "agent_id",
+        Name: "name",
+        SecurityDomain: "security_domain",
+    }
+    client.Agent.Create(
         context.TODO(),
         request,
     )
@@ -205,7 +210,7 @@ is the only attribute you will need for most use cases. But if need be, several 
 ```go
 // Loop over the items using the provided iterator.
 ctx := context.TODO()
-page, err := client.Batch.List(
+page, err := client.Agent.List(
     ctx,
     ...
 )
@@ -236,7 +241,7 @@ for page != nil {
 }
 
 // Paginated endpoints return a Page with directly accessible headers, status code, and full response
-page, err = client.Batch.List(
+page, err = client.Agent.List(
     ctx,
     ...
 )
@@ -261,7 +266,7 @@ Structured error types are returned from API calls that return non-success statu
 with the `errors.Is` and `errors.As` APIs, so you can access the error like so:
 
 ```go
-response, err := client.Batch.Create(...)
+response, err := client.Agent.Create(...)
 if err != nil {
     var apiError *core.APIError
     if errors.As(err, &apiError) {
@@ -273,6 +278,23 @@ if err != nil {
 
 ## Advanced
 
+### Additional Body Properties
+
+If you need to send a request body property that isn't part of the generated request type (e.g. an
+undocumented or beta field), use the `option.WithBodyProperties` request option. Keys are sent exactly as
+provided (use the API's wire-format names), and they override any generated field with the same name. If the
+endpoint has no request body, a JSON body is created from the given properties. Body properties are applied to
+JSON and form URL encoded request bodies; they are not applied to multipart file upload or raw byte requests.
+
+```go
+response, err := client.Agent.Create(
+    ...,
+    option.WithBodyProperties(map[string]interface{}{
+        "custom_field": "custom-value",
+    }),
+)
+```
+
 ### Response Headers
 
 You can access the raw HTTP response data by using the `WithRawResponse` field on the client. This is useful
@@ -280,7 +302,7 @@ when you need to examine the response headers received from the API call. (When 
 the raw HTTP response data will be included automatically in the Page response object.)
 
 ```go
-response, err := client.Batch.WithRawResponse.Create(...)
+response, err := client.Agent.WithRawResponse.Create(...)
 if err != nil {
     return err
 }
@@ -318,7 +340,7 @@ client := client.NewClient(
     option.WithMaxAttempts(1),
 )
 
-response, err := client.Batch.Create(
+response, err := client.Agent.Create(
     ...,
     option.WithMaxAttempts(1),
 )
@@ -332,7 +354,7 @@ Setting a timeout for each individual request is as simple as using the standard
 ctx, cancel := context.WithTimeout(ctx, time.Second)
 defer cancel()
 
-response, err := client.Batch.Create(ctx, ...)
+response, err := client.Agent.Create(ctx, ...)
 ```
 
 ### Explicit Null
@@ -354,7 +376,7 @@ type ExampleRequest struct {
 request := &ExampleRequest{}
 request.SetName(nil)
 
-response, err := client.Batch.Create(ctx, request, ...)
+response, err := client.Agent.Create(ctx, request, ...)
 ```
 
 ## Contributing

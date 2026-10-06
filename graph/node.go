@@ -23,10 +23,12 @@ type AddNodesRequest struct {
 }
 
 func (a *AddNodesRequest) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetNodes sets the Nodes field and marks it as non-optional;
@@ -58,26 +60,34 @@ func (a *AddNodesRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	nodeListRequestFieldLimit  = big.NewInt(1 << 0)
-	nodeListRequestFieldCursor = big.NewInt(1 << 1)
+	nodeListRequestFieldLimit   = big.NewInt(1 << 0)
+	nodeListRequestFieldCursor  = big.NewInt(1 << 1)
+	nodeListRequestFieldOrderBy = big.NewInt(1 << 2)
+	nodeListRequestFieldOrder   = big.NewInt(1 << 3)
 )
 
 type NodeListRequest struct {
 	// Page size
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Opaque page cursor
-	Cursor *string                 `json:"-" url:"cursor,omitempty"`
-	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort key: uuid (default) or degree
+	OrderBy *NodeListRequestOrderBy `json:"-" url:"order_by,omitempty"`
+	// Sort direction: asc or desc (default desc)
+	Order *NodeListRequestOrder   `json:"-" url:"order,omitempty"`
+	Body  *v4.ArtifactListRequest `json:"-" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
 func (n *NodeListRequest) require(field *big.Int) {
-	if n.explicitFields == nil {
-		n.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if n.explicitFields != nil {
+		next.Set(n.explicitFields)
 	}
-	n.explicitFields.Or(n.explicitFields, field)
+	next.Or(next, field)
+	n.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -92,6 +102,20 @@ func (n *NodeListRequest) SetLimit(limit *int) {
 func (n *NodeListRequest) SetCursor(cursor *string) {
 	n.Cursor = cursor
 	n.require(nodeListRequestFieldCursor)
+}
+
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListRequest) SetOrderBy(orderBy *NodeListRequestOrderBy) {
+	n.OrderBy = orderBy
+	n.require(nodeListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListRequest) SetOrder(order *NodeListRequestOrder) {
+	n.Order = order
+	n.require(nodeListRequestFieldOrder)
 }
 
 func (n *NodeListRequest) UnmarshalJSON(data []byte) error {
@@ -110,8 +134,10 @@ func (n *NodeListRequest) MarshalJSON() ([]byte, error) {
 var (
 	neighborsRequestFieldLimit     = big.NewInt(1 << 0)
 	neighborsRequestFieldCursor    = big.NewInt(1 << 1)
-	neighborsRequestFieldDirection = big.NewInt(1 << 2)
-	neighborsRequestFieldFilters   = big.NewInt(1 << 3)
+	neighborsRequestFieldOrderBy   = big.NewInt(1 << 2)
+	neighborsRequestFieldOrder     = big.NewInt(1 << 3)
+	neighborsRequestFieldDirection = big.NewInt(1 << 4)
+	neighborsRequestFieldFilters   = big.NewInt(1 << 5)
 )
 
 type NeighborsRequest struct {
@@ -119,8 +145,12 @@ type NeighborsRequest struct {
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort field
+	OrderBy *NodeListNeighborsRequestOrderBy `json:"-" url:"order_by,omitempty"`
+	// Sort direction: asc or desc
+	Order *NodeListNeighborsRequestOrder `json:"-" url:"order,omitempty"`
 	// The edge orientation to follow from the node: in, out, or both.
-	Direction *V4NeighborsRequestDirection `json:"direction,omitempty" url:"-"`
+	Direction *NeighborsRequestDirection `json:"direction,omitempty" url:"-"`
 	// Filters constraining the connecting edges and the neighbor nodes.
 	Filters *v4.SearchFilters `json:"filters,omitempty" url:"-"`
 
@@ -129,10 +159,12 @@ type NeighborsRequest struct {
 }
 
 func (n *NeighborsRequest) require(field *big.Int) {
-	if n.explicitFields == nil {
-		n.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if n.explicitFields != nil {
+		next.Set(n.explicitFields)
 	}
-	n.explicitFields.Or(n.explicitFields, field)
+	next.Or(next, field)
+	n.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -149,9 +181,23 @@ func (n *NeighborsRequest) SetCursor(cursor *string) {
 	n.require(neighborsRequestFieldCursor)
 }
 
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborsRequest) SetOrderBy(orderBy *NodeListNeighborsRequestOrderBy) {
+	n.OrderBy = orderBy
+	n.require(neighborsRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NeighborsRequest) SetOrder(order *NodeListNeighborsRequestOrder) {
+	n.Order = order
+	n.require(neighborsRequestFieldOrder)
+}
+
 // SetDirection sets the Direction field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (n *NeighborsRequest) SetDirection(direction *V4NeighborsRequestDirection) {
+func (n *NeighborsRequest) SetDirection(direction *NeighborsRequestDirection) {
 	n.Direction = direction
 	n.require(neighborsRequestFieldDirection)
 }
@@ -185,29 +231,117 @@ func (n *NeighborsRequest) MarshalJSON() ([]byte, error) {
 }
 
 // The edge orientation to follow from the node: in, out, or both.
-type V4NeighborsRequestDirection string
+type NeighborsRequestDirection string
 
 const (
-	V4NeighborsRequestDirectionIn   V4NeighborsRequestDirection = "in"
-	V4NeighborsRequestDirectionOut  V4NeighborsRequestDirection = "out"
-	V4NeighborsRequestDirectionBoth V4NeighborsRequestDirection = "both"
+	NeighborsRequestDirectionIn   NeighborsRequestDirection = "in"
+	NeighborsRequestDirectionOut  NeighborsRequestDirection = "out"
+	NeighborsRequestDirectionBoth NeighborsRequestDirection = "both"
 )
 
-func NewV4NeighborsRequestDirectionFromString(s string) (V4NeighborsRequestDirection, error) {
+func NewNeighborsRequestDirectionFromString(s string) (NeighborsRequestDirection, error) {
 	switch s {
 	case "in":
-		return V4NeighborsRequestDirectionIn, nil
+		return NeighborsRequestDirectionIn, nil
 	case "out":
-		return V4NeighborsRequestDirectionOut, nil
+		return NeighborsRequestDirectionOut, nil
 	case "both":
-		return V4NeighborsRequestDirectionBoth, nil
+		return NeighborsRequestDirectionBoth, nil
 	}
-	var t V4NeighborsRequestDirection
+	var t NeighborsRequestDirection
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (v V4NeighborsRequestDirection) Ptr() *V4NeighborsRequestDirection {
-	return &v
+func (n NeighborsRequestDirection) Ptr() *NeighborsRequestDirection {
+	return &n
+}
+
+type NodeListNeighborsRequestOrder string
+
+const (
+	NodeListNeighborsRequestOrderAsc  NodeListNeighborsRequestOrder = "asc"
+	NodeListNeighborsRequestOrderDesc NodeListNeighborsRequestOrder = "desc"
+)
+
+func NewNodeListNeighborsRequestOrderFromString(s string) (NodeListNeighborsRequestOrder, error) {
+	switch s {
+	case "asc":
+		return NodeListNeighborsRequestOrderAsc, nil
+	case "desc":
+		return NodeListNeighborsRequestOrderDesc, nil
+	}
+	var t NodeListNeighborsRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (n NodeListNeighborsRequestOrder) Ptr() *NodeListNeighborsRequestOrder {
+	return &n
+}
+
+type NodeListNeighborsRequestOrderBy string
+
+const (
+	NodeListNeighborsRequestOrderByUUID      NodeListNeighborsRequestOrderBy = "uuid"
+	NodeListNeighborsRequestOrderByCreatedAt NodeListNeighborsRequestOrderBy = "created_at"
+)
+
+func NewNodeListNeighborsRequestOrderByFromString(s string) (NodeListNeighborsRequestOrderBy, error) {
+	switch s {
+	case "uuid":
+		return NodeListNeighborsRequestOrderByUUID, nil
+	case "created_at":
+		return NodeListNeighborsRequestOrderByCreatedAt, nil
+	}
+	var t NodeListNeighborsRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (n NodeListNeighborsRequestOrderBy) Ptr() *NodeListNeighborsRequestOrderBy {
+	return &n
+}
+
+type NodeListRequestOrder string
+
+const (
+	NodeListRequestOrderAsc  NodeListRequestOrder = "asc"
+	NodeListRequestOrderDesc NodeListRequestOrder = "desc"
+)
+
+func NewNodeListRequestOrderFromString(s string) (NodeListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return NodeListRequestOrderAsc, nil
+	case "desc":
+		return NodeListRequestOrderDesc, nil
+	}
+	var t NodeListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (n NodeListRequestOrder) Ptr() *NodeListRequestOrder {
+	return &n
+}
+
+type NodeListRequestOrderBy string
+
+const (
+	NodeListRequestOrderByUUID   NodeListRequestOrderBy = "uuid"
+	NodeListRequestOrderByDegree NodeListRequestOrderBy = "degree"
+)
+
+func NewNodeListRequestOrderByFromString(s string) (NodeListRequestOrderBy, error) {
+	switch s {
+	case "uuid":
+		return NodeListRequestOrderByUUID, nil
+	case "degree":
+		return NodeListRequestOrderByDegree, nil
+	}
+	var t NodeListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (n NodeListRequestOrderBy) Ptr() *NodeListRequestOrderBy {
+	return &n
 }
 
 var (
@@ -230,10 +364,12 @@ type PatchNodeRequest struct {
 }
 
 func (p *PatchNodeRequest) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetAttributes sets the Attributes field and marks it as non-optional;

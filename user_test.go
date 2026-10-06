@@ -10,6 +10,14 @@ import (
 )
 
 func TestSettersCreateUserRequest(t *testing.T) {
+	t.Run("SetContentPolicy", func(t *testing.T) {
+		obj := &CreateUserRequest{}
+		var fernTestValueContentPolicy *GraphContentPolicyRequest
+		obj.SetContentPolicy(fernTestValueContentPolicy)
+		assert.Equal(t, fernTestValueContentPolicy, obj.ContentPolicy)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetDisableDefaultOntology", func(t *testing.T) {
 		obj := &CreateUserRequest{}
 		var fernTestValueDisableDefaultOntology *bool
@@ -58,17 +66,40 @@ func TestSettersCreateUserRequest(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
-	t.Run("SetUserID", func(t *testing.T) {
-		obj := &CreateUserRequest{}
-		var fernTestValueUserID *string
-		obj.SetUserID(fernTestValueUserID)
-		assert.Equal(t, fernTestValueUserID, obj.UserID)
-		assert.NotNil(t, obj.explicitFields)
-	})
-
 }
 
 func TestSettersMarkExplicitCreateUserRequest(t *testing.T) {
+	t.Run("SetContentPolicy_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &CreateUserRequest{}
+		var fernTestValueContentPolicy *GraphContentPolicyRequest
+
+		// Act
+		obj.SetContentPolicy(fernTestValueContentPolicy)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
 	t.Run("SetDisableDefaultOntology_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -255,37 +286,6 @@ func TestSettersMarkExplicitCreateUserRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
-	t.Run("SetUserID_MarksExplicit", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &CreateUserRequest{}
-		var fernTestValueUserID *string
-
-		// Act
-		obj.SetUserID(fernTestValueUserID)
-
-		// Assert - object with explicitly set field can be marshaled/unmarshaled
-		bytes, err := json.Marshal(obj)
-		require.NoError(t, err, "marshaling should succeed for test setup")
-
-		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
-		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
-		if len(bytes) > 0 && bytes[0] == '{' {
-			// JSON object - unmarshal into map
-			var unmarshaled map[string]interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		} else {
-			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
-			var unmarshaled interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		}
-
-		// Note: This does not explicitly assert the presence of a specific JSON field
-		// It verifies that setting a field via setter allows successful JSON round-trip
-	})
-
 }
 
 func TestSettersUserListRequest(t *testing.T) {
@@ -307,7 +307,7 @@ func TestSettersUserListRequest(t *testing.T) {
 
 	t.Run("SetOrderBy", func(t *testing.T) {
 		obj := &UserListRequest{}
-		var fernTestValueOrderBy *string
+		var fernTestValueOrderBy *UserListRequestOrderBy
 		obj.SetOrderBy(fernTestValueOrderBy)
 		assert.Equal(t, fernTestValueOrderBy, obj.OrderBy)
 		assert.NotNil(t, obj.explicitFields)
@@ -315,7 +315,7 @@ func TestSettersUserListRequest(t *testing.T) {
 
 	t.Run("SetOrder", func(t *testing.T) {
 		obj := &UserListRequest{}
-		var fernTestValueOrder *string
+		var fernTestValueOrder *UserListRequestOrder
 		obj.SetOrder(fernTestValueOrder)
 		assert.Equal(t, fernTestValueOrder, obj.Order)
 		assert.NotNil(t, obj.explicitFields)
@@ -398,7 +398,7 @@ func TestSettersMarkExplicitUserListRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &UserListRequest{}
-		var fernTestValueOrderBy *string
+		var fernTestValueOrderBy *UserListRequestOrderBy
 
 		// Act
 		obj.SetOrderBy(fernTestValueOrderBy)
@@ -429,7 +429,7 @@ func TestSettersMarkExplicitUserListRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &UserListRequest{}
-		var fernTestValueOrder *string
+		var fernTestValueOrder *UserListRequestOrder
 
 		// Act
 		obj.SetOrder(fernTestValueOrder)
@@ -856,6 +856,78 @@ func TestStringUserDeleteResult(t *testing.T) {
 		var obj *UserDeleteResult
 		result := obj.String()
 		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
+	})
+}
+
+func TestEnumUserListRequestOrder(t *testing.T) {
+	t.Run("NewFromString_asc", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewUserListRequestOrderFromString("asc")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, UserListRequestOrder("asc"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_desc", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewUserListRequestOrderFromString("desc")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, UserListRequestOrder("desc"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewUserListRequestOrderFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewUserListRequestOrderFromString("asc")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumUserListRequestOrderBy(t *testing.T) {
+	t.Run("NewFromString_created_at", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewUserListRequestOrderByFromString("created_at")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, UserListRequestOrderBy("created_at"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_user_id", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewUserListRequestOrderByFromString("user_id")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, UserListRequestOrderBy("user_id"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_email", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewUserListRequestOrderByFromString("email")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, UserListRequestOrderBy("email"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_uuid", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewUserListRequestOrderByFromString("uuid")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, UserListRequestOrderBy("uuid"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewUserListRequestOrderByFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewUserListRequestOrderByFromString("created_at")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
 	})
 }
 

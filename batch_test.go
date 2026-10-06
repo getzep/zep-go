@@ -196,7 +196,7 @@ func TestSettersBatchListRequest(t *testing.T) {
 
 	t.Run("SetStatus", func(t *testing.T) {
 		obj := &BatchListRequest{}
-		var fernTestValueStatus *string
+		var fernTestValueStatus *BatchListRequestStatus
 		obj.SetStatus(fernTestValueStatus)
 		assert.Equal(t, fernTestValueStatus, obj.Status)
 		assert.NotNil(t, obj.explicitFields)
@@ -271,7 +271,7 @@ func TestSettersMarkExplicitBatchListRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchListRequest{}
-		var fernTestValueStatus *string
+		var fernTestValueStatus *BatchListRequestStatus
 
 		// Act
 		obj.SetStatus(fernTestValueStatus)
@@ -826,6 +826,14 @@ func TestSettersMarkExplicitBatch(t *testing.T) {
 }
 
 func TestSettersBatchItem(t *testing.T) {
+	t.Run("SetContentPolicy", func(t *testing.T) {
+		obj := &BatchItem{}
+		var fernTestValueContentPolicy *EpisodeContentPolicy
+		obj.SetContentPolicy(fernTestValueContentPolicy)
+		assert.Equal(t, fernTestValueContentPolicy, obj.ContentPolicy)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetCreatedAt", func(t *testing.T) {
 		obj := &BatchItem{}
 		var fernTestValueCreatedAt *string
@@ -901,6 +909,39 @@ func TestSettersBatchItem(t *testing.T) {
 }
 
 func TestGettersBatchItem(t *testing.T) {
+	t.Run("GetContentPolicy", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &BatchItem{}
+		var expected *EpisodeContentPolicy
+		obj.ContentPolicy = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetContentPolicy(), "getter should return the property value")
+	})
+
+	t.Run("GetContentPolicy_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &BatchItem{}
+		obj.ContentPolicy = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetContentPolicy(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetContentPolicy_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *BatchItem
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetContentPolicy() // Should return zero value
+	})
+
 	t.Run("GetCreatedAt", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -1201,6 +1242,37 @@ func TestGettersBatchItem(t *testing.T) {
 }
 
 func TestSettersMarkExplicitBatchItem(t *testing.T) {
+	t.Run("SetContentPolicy_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &BatchItem{}
+		var fernTestValueContentPolicy *EpisodeContentPolicy
+
+		// Act
+		obj.SetContentPolicy(fernTestValueContentPolicy)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
 	t.Run("SetCreatedAt_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -1491,6 +1563,14 @@ func TestSettersBatchItemInput(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetCreatedAt", func(t *testing.T) {
+		obj := &BatchItemInput{}
+		var fernTestValueCreatedAt *string
+		obj.SetCreatedAt(fernTestValueCreatedAt)
+		assert.Equal(t, fernTestValueCreatedAt, obj.CreatedAt)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetData", func(t *testing.T) {
 		obj := &BatchItemInput{}
 		var fernTestValueData *string
@@ -1501,7 +1581,7 @@ func TestSettersBatchItemInput(t *testing.T) {
 
 	t.Run("SetDataType", func(t *testing.T) {
 		obj := &BatchItemInput{}
-		var fernTestValueDataType *V4BatchItemInputDataType
+		var fernTestValueDataType *BatchItemInputDataType
 		obj.SetDataType(fernTestValueDataType)
 		assert.Equal(t, fernTestValueDataType, obj.DataType)
 		assert.NotNil(t, obj.explicitFields)
@@ -1541,7 +1621,7 @@ func TestSettersBatchItemInput(t *testing.T) {
 
 	t.Run("SetRole", func(t *testing.T) {
 		obj := &BatchItemInput{}
-		var fernTestValueRole *V4BatchItemInputRole
+		var fernTestValueRole *BatchItemInputRole
 		obj.SetRole(fernTestValueRole)
 		assert.Equal(t, fernTestValueRole, obj.Role)
 		assert.NotNil(t, obj.explicitFields)
@@ -1565,7 +1645,7 @@ func TestSettersBatchItemInput(t *testing.T) {
 
 	t.Run("SetType", func(t *testing.T) {
 		obj := &BatchItemInput{}
-		var fernTestValueType V4BatchItemInputType
+		var fernTestValueType BatchItemInputType
 		obj.SetType(fernTestValueType)
 		assert.Equal(t, fernTestValueType, obj.Type)
 		assert.NotNil(t, obj.explicitFields)
@@ -1615,6 +1695,39 @@ func TestGettersBatchItemInput(t *testing.T) {
 		_ = obj.GetContent() // Should return zero value
 	})
 
+	t.Run("GetCreatedAt", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &BatchItemInput{}
+		var expected *string
+		obj.CreatedAt = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetCreatedAt(), "getter should return the property value")
+	})
+
+	t.Run("GetCreatedAt_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &BatchItemInput{}
+		obj.CreatedAt = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetCreatedAt(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetCreatedAt_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *BatchItemInput
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetCreatedAt() // Should return zero value
+	})
+
 	t.Run("GetData", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -1652,7 +1765,7 @@ func TestGettersBatchItemInput(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItemInput{}
-		var expected *V4BatchItemInputDataType
+		var expected *BatchItemInputDataType
 		obj.DataType = expected
 
 		// Act & Assert
@@ -1817,7 +1930,7 @@ func TestGettersBatchItemInput(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItemInput{}
-		var expected *V4BatchItemInputRole
+		var expected *BatchItemInputRole
 		obj.Role = expected
 
 		// Act & Assert
@@ -1916,7 +2029,7 @@ func TestGettersBatchItemInput(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItemInput{}
-		var expected V4BatchItemInputType
+		var expected BatchItemInputType
 		obj.Type = expected
 
 		// Act & Assert
@@ -2002,6 +2115,37 @@ func TestSettersMarkExplicitBatchItemInput(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
+	t.Run("SetCreatedAt_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &BatchItemInput{}
+		var fernTestValueCreatedAt *string
+
+		// Act
+		obj.SetCreatedAt(fernTestValueCreatedAt)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
 	t.Run("SetData_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -2037,7 +2181,7 @@ func TestSettersMarkExplicitBatchItemInput(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItemInput{}
-		var fernTestValueDataType *V4BatchItemInputDataType
+		var fernTestValueDataType *BatchItemInputDataType
 
 		// Act
 		obj.SetDataType(fernTestValueDataType)
@@ -2192,7 +2336,7 @@ func TestSettersMarkExplicitBatchItemInput(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItemInput{}
-		var fernTestValueRole *V4BatchItemInputRole
+		var fernTestValueRole *BatchItemInputRole
 
 		// Act
 		obj.SetRole(fernTestValueRole)
@@ -2285,7 +2429,7 @@ func TestSettersMarkExplicitBatchItemInput(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &BatchItemInput{}
-		var fernTestValueType V4BatchItemInputType
+		var fernTestValueType BatchItemInputType
 
 		// Act
 		obj.SetType(fernTestValueType)
@@ -3372,6 +3516,121 @@ func TestStringProcessBatchResult(t *testing.T) {
 	})
 }
 
+func TestEnumBatchItemInputDataType(t *testing.T) {
+	t.Run("NewFromString_text", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputDataTypeFromString("text")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputDataType("text"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_json", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputDataTypeFromString("json")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputDataType("json"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_message", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputDataTypeFromString("message")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputDataType("message"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewBatchItemInputDataTypeFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewBatchItemInputDataTypeFromString("text")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumBatchItemInputRole(t *testing.T) {
+	t.Run("NewFromString_system", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputRoleFromString("system")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputRole("system"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_assistant", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputRoleFromString("assistant")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputRole("assistant"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_user", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputRoleFromString("user")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputRole("user"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_function", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputRoleFromString("function")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputRole("function"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_tool", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputRoleFromString("tool")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputRole("tool"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewBatchItemInputRoleFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewBatchItemInputRoleFromString("system")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumBatchItemInputType(t *testing.T) {
+	t.Run("NewFromString_graph_episode", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputTypeFromString("graph_episode")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputType("graph_episode"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_thread_message", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchItemInputTypeFromString("thread_message")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchItemInputType("thread_message"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewBatchItemInputTypeFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewBatchItemInputTypeFromString("graph_episode")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
 func TestEnumBatchItemKind(t *testing.T) {
 	t.Run("NewFromString_graph_episode", func(t *testing.T) {
 		t.Parallel()
@@ -3465,114 +3724,70 @@ func TestEnumBatchItemStatus(t *testing.T) {
 	})
 }
 
-func TestEnumV4BatchItemInputDataType(t *testing.T) {
-	t.Run("NewFromString_text", func(t *testing.T) {
+func TestEnumBatchListRequestStatus(t *testing.T) {
+	t.Run("NewFromString_draft", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewV4BatchItemInputDataTypeFromString("text")
+		val, err := NewBatchListRequestStatusFromString("draft")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputDataType("text"), val, "enum value should match expected wire value")
+		assert.Equal(t, BatchListRequestStatus("draft"), val, "enum value should match expected wire value")
 	})
 
-	t.Run("NewFromString_json", func(t *testing.T) {
+	t.Run("NewFromString_invalid", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewV4BatchItemInputDataTypeFromString("json")
+		val, err := NewBatchListRequestStatusFromString("invalid")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputDataType("json"), val, "enum value should match expected wire value")
+		assert.Equal(t, BatchListRequestStatus("invalid"), val, "enum value should match expected wire value")
 	})
 
-	t.Run("NewFromString_message", func(t *testing.T) {
+	t.Run("NewFromString_queued", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewV4BatchItemInputDataTypeFromString("message")
+		val, err := NewBatchListRequestStatusFromString("queued")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputDataType("message"), val, "enum value should match expected wire value")
+		assert.Equal(t, BatchListRequestStatus("queued"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_processing", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchListRequestStatusFromString("processing")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchListRequestStatus("processing"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_succeeded", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchListRequestStatusFromString("succeeded")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchListRequestStatus("succeeded"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_partial", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchListRequestStatusFromString("partial")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchListRequestStatus("partial"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_failed", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchListRequestStatusFromString("failed")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchListRequestStatus("failed"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_canceled", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewBatchListRequestStatusFromString("canceled")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, BatchListRequestStatus("canceled"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_Invalid", func(t *testing.T) {
-		_, err := NewV4BatchItemInputDataTypeFromString("invalid_value_that_does_not_exist")
+		_, err := NewBatchListRequestStatusFromString("invalid_value_that_does_not_exist")
 		assert.Error(t, err)
 	})
 
 	t.Run("Ptr", func(t *testing.T) {
-		val, err := NewV4BatchItemInputDataTypeFromString("text")
-		assert.NoError(t, err)
-		ptr := val.Ptr()
-		assert.NotNil(t, ptr)
-		assert.Equal(t, val, *ptr)
-	})
-}
-
-func TestEnumV4BatchItemInputRole(t *testing.T) {
-	t.Run("NewFromString_system", func(t *testing.T) {
-		t.Parallel()
-		val, err := NewV4BatchItemInputRoleFromString("system")
-		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputRole("system"), val, "enum value should match expected wire value")
-	})
-
-	t.Run("NewFromString_assistant", func(t *testing.T) {
-		t.Parallel()
-		val, err := NewV4BatchItemInputRoleFromString("assistant")
-		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputRole("assistant"), val, "enum value should match expected wire value")
-	})
-
-	t.Run("NewFromString_user", func(t *testing.T) {
-		t.Parallel()
-		val, err := NewV4BatchItemInputRoleFromString("user")
-		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputRole("user"), val, "enum value should match expected wire value")
-	})
-
-	t.Run("NewFromString_function", func(t *testing.T) {
-		t.Parallel()
-		val, err := NewV4BatchItemInputRoleFromString("function")
-		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputRole("function"), val, "enum value should match expected wire value")
-	})
-
-	t.Run("NewFromString_tool", func(t *testing.T) {
-		t.Parallel()
-		val, err := NewV4BatchItemInputRoleFromString("tool")
-		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputRole("tool"), val, "enum value should match expected wire value")
-	})
-
-	t.Run("NewFromString_Invalid", func(t *testing.T) {
-		_, err := NewV4BatchItemInputRoleFromString("invalid_value_that_does_not_exist")
-		assert.Error(t, err)
-	})
-
-	t.Run("Ptr", func(t *testing.T) {
-		val, err := NewV4BatchItemInputRoleFromString("system")
-		assert.NoError(t, err)
-		ptr := val.Ptr()
-		assert.NotNil(t, ptr)
-		assert.Equal(t, val, *ptr)
-	})
-}
-
-func TestEnumV4BatchItemInputType(t *testing.T) {
-	t.Run("NewFromString_graph_episode", func(t *testing.T) {
-		t.Parallel()
-		val, err := NewV4BatchItemInputTypeFromString("graph_episode")
-		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputType("graph_episode"), val, "enum value should match expected wire value")
-	})
-
-	t.Run("NewFromString_thread_message", func(t *testing.T) {
-		t.Parallel()
-		val, err := NewV4BatchItemInputTypeFromString("thread_message")
-		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, V4BatchItemInputType("thread_message"), val, "enum value should match expected wire value")
-	})
-
-	t.Run("NewFromString_Invalid", func(t *testing.T) {
-		_, err := NewV4BatchItemInputTypeFromString("invalid_value_that_does_not_exist")
-		assert.Error(t, err)
-	})
-
-	t.Run("Ptr", func(t *testing.T) {
-		val, err := NewV4BatchItemInputTypeFromString("graph_episode")
+		val, err := NewBatchListRequestStatusFromString("draft")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)

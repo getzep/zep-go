@@ -115,12 +115,6 @@ func TestUserGroupListWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.UserGroupListRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.SearchListRequest{},
 	}
 	_, invocationErr := client.UserGroup.List(
@@ -132,7 +126,7 @@ func TestUserGroupListWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestUserGroupListWithWireMock", "POST", "/user-groups/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestUserGroupListWithWireMock", "POST", "/user-groups/list", nil, 1)
 }
 
 func TestUserGroupGetWithWireMock(
@@ -218,12 +212,6 @@ func TestUserGroupListMemberCandidatesWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.UserGroupListMemberCandidatesRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.SearchListRequest{},
 	}
 	_, invocationErr := client.UserGroup.ListMemberCandidates(
@@ -236,7 +224,7 @@ func TestUserGroupListMemberCandidatesWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestUserGroupListMemberCandidatesWithWireMock", "POST", "/user-groups/group_uuid/member-candidates/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestUserGroupListMemberCandidatesWithWireMock", "POST", "/user-groups/group_uuid/member-candidates/list", nil, 1)
 }
 
 func TestUserGroupAddMembersWithWireMock(
@@ -280,12 +268,6 @@ func TestUserGroupListMembersWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.UserGroupListMembersRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
 		Body: &zep.SearchListRequest{},
 	}
 	_, invocationErr := client.UserGroup.ListMembers(
@@ -298,7 +280,7 @@ func TestUserGroupListMembersWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestUserGroupListMembersWithWireMock", "POST", "/user-groups/group_uuid/members/list", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestUserGroupListMembersWithWireMock", "POST", "/user-groups/group_uuid/members/list", nil, 1)
 }
 
 func TestUserGroupRemoveMembersWithWireMock(
@@ -365,14 +347,7 @@ func TestUserGroupListForUserWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.UserGroupListForUserRequest{
-		Limit: zep.Int(
-			1,
-		),
-		Cursor: zep.String(
-			"cursor",
-		),
-	}
+	request := &zep.UserGroupListForUserRequest{}
 	_, invocationErr := client.UserGroup.ListForUser(
 		context.TODO(),
 		"user_uuid",
@@ -383,5 +358,5 @@ func TestUserGroupListForUserWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestUserGroupListForUserWithWireMock", "GET", "/users/user_uuid/user-groups", map[string]interface{}{"limit": "1", "cursor": "cursor"}, 1)
+	VerifyRequestCount(t, "TestUserGroupListForUserWithWireMock", "GET", "/users/user_uuid/user-groups", nil, 1)
 }

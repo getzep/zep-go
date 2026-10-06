@@ -18,6 +18,11 @@ var ErrorCodes internal.ErrorCodes = internal.ErrorCodes{
 			APIError: apiError,
 		}
 	},
+	403: func(apiError *core.APIError) error {
+		return &ForbiddenError{
+			APIError: apiError,
+		}
+	},
 	404: func(apiError *core.APIError) error {
 		return &NotFoundError{
 			APIError: apiError,
@@ -28,8 +33,13 @@ var ErrorCodes internal.ErrorCodes = internal.ErrorCodes{
 			APIError: apiError,
 		}
 	},
-	403: func(apiError *core.APIError) error {
-		return &ForbiddenError{
+	503: func(apiError *core.APIError) error {
+		return &ServiceUnavailableError{
+			APIError: apiError,
+		}
+	},
+	422: func(apiError *core.APIError) error {
+		return &UnprocessableEntityError{
 			APIError: apiError,
 		}
 	},

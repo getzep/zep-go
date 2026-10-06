@@ -28,7 +28,7 @@ type AddEpisodeRequest struct {
 	Data string `json:"data" url:"-"`
 	// Groups this episode as a chunk of a document on the graph.
 	DocumentID *string `json:"document_id,omitempty" url:"-"`
-	// Metadata to store on the episode.
+	// Metadata to store on the episode. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
 	// A description of the source of this episode.
 	SourceDescription *string `json:"source_description,omitempty" url:"-"`
@@ -36,17 +36,19 @@ type AddEpisodeRequest struct {
 	// the configured ontology.
 	StrictOntology *bool `json:"strict_ontology,omitempty" url:"-"`
 	// The data format of the episode: text, json, or message. Defaults to text.
-	Type *V4AddEpisodeRequestType `json:"type,omitempty" url:"-"`
+	Type *AddEpisodeRequestType `json:"type,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
 func (a *AddEpisodeRequest) require(field *big.Int) {
-	if a.explicitFields == nil {
-		a.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
 	}
-	a.explicitFields.Or(a.explicitFields, field)
+	next.Or(next, field)
+	a.explicitFields = next
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
@@ -93,7 +95,7 @@ func (a *AddEpisodeRequest) SetStrictOntology(strictOntology *bool) {
 
 // SetType sets the Type field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEpisodeRequest) SetType(type_ *V4AddEpisodeRequestType) {
+func (a *AddEpisodeRequest) SetType(type_ *AddEpisodeRequestType) {
 	a.Type = type_
 	a.require(addEpisodeRequestFieldType)
 }
@@ -120,26 +122,34 @@ func (a *AddEpisodeRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	episodeListRequestFieldLimit  = big.NewInt(1 << 0)
-	episodeListRequestFieldCursor = big.NewInt(1 << 1)
+	episodeListRequestFieldLimit   = big.NewInt(1 << 0)
+	episodeListRequestFieldCursor  = big.NewInt(1 << 1)
+	episodeListRequestFieldOrderBy = big.NewInt(1 << 2)
+	episodeListRequestFieldOrder   = big.NewInt(1 << 3)
 )
 
 type EpisodeListRequest struct {
 	// Page size
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Opaque page cursor
-	Cursor *string                 `json:"-" url:"cursor,omitempty"`
-	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort field
+	OrderBy *EpisodeListRequestOrderBy `json:"-" url:"order_by,omitempty"`
+	// Sort direction: asc or desc
+	Order *EpisodeListRequestOrder `json:"-" url:"order,omitempty"`
+	Body  *v4.ArtifactListRequest  `json:"-" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
 func (e *EpisodeListRequest) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -154,6 +164,20 @@ func (e *EpisodeListRequest) SetLimit(limit *int) {
 func (e *EpisodeListRequest) SetCursor(cursor *string) {
 	e.Cursor = cursor
 	e.require(episodeListRequestFieldCursor)
+}
+
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListRequest) SetOrderBy(orderBy *EpisodeListRequestOrderBy) {
+	e.OrderBy = orderBy
+	e.require(episodeListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListRequest) SetOrder(order *EpisodeListRequestOrder) {
+	e.Order = order
+	e.require(episodeListRequestFieldOrder)
 }
 
 func (e *EpisodeListRequest) UnmarshalJSON(data []byte) error {
@@ -185,10 +209,12 @@ type EpisodeListForDocumentRequest struct {
 }
 
 func (e *EpisodeListForDocumentRequest) require(field *big.Int) {
-	if e.explicitFields == nil {
-		e.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
 	}
-	e.explicitFields.Or(e.explicitFields, field)
+	next.Or(next, field)
+	e.explicitFields = next
 }
 
 // SetLimit sets the Limit field and marks it as non-optional;
@@ -205,30 +231,112 @@ func (e *EpisodeListForDocumentRequest) SetCursor(cursor *string) {
 	e.require(episodeListForDocumentRequestFieldCursor)
 }
 
-// The data format of the episode: text, json, or message. Defaults to text.
-type V4AddEpisodeRequestType string
-
-const (
-	V4AddEpisodeRequestTypeText    V4AddEpisodeRequestType = "text"
-	V4AddEpisodeRequestTypeJSON    V4AddEpisodeRequestType = "json"
-	V4AddEpisodeRequestTypeMessage V4AddEpisodeRequestType = "message"
+var (
+	episodeListIngestionTracesRequestFieldLimit  = big.NewInt(1 << 0)
+	episodeListIngestionTracesRequestFieldCursor = big.NewInt(1 << 1)
 )
 
-func NewV4AddEpisodeRequestTypeFromString(s string) (V4AddEpisodeRequestType, error) {
+type EpisodeListIngestionTracesRequest struct {
+	// Page size
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (e *EpisodeListIngestionTracesRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
+	}
+	next.Or(next, field)
+	e.explicitFields = next
+}
+
+// SetLimit sets the Limit field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListIngestionTracesRequest) SetLimit(limit *int) {
+	e.Limit = limit
+	e.require(episodeListIngestionTracesRequestFieldLimit)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListIngestionTracesRequest) SetCursor(cursor *string) {
+	e.Cursor = cursor
+	e.require(episodeListIngestionTracesRequestFieldCursor)
+}
+
+// The data format of the episode: text, json, or message. Defaults to text.
+type AddEpisodeRequestType string
+
+const (
+	AddEpisodeRequestTypeText    AddEpisodeRequestType = "text"
+	AddEpisodeRequestTypeJSON    AddEpisodeRequestType = "json"
+	AddEpisodeRequestTypeMessage AddEpisodeRequestType = "message"
+)
+
+func NewAddEpisodeRequestTypeFromString(s string) (AddEpisodeRequestType, error) {
 	switch s {
 	case "text":
-		return V4AddEpisodeRequestTypeText, nil
+		return AddEpisodeRequestTypeText, nil
 	case "json":
-		return V4AddEpisodeRequestTypeJSON, nil
+		return AddEpisodeRequestTypeJSON, nil
 	case "message":
-		return V4AddEpisodeRequestTypeMessage, nil
+		return AddEpisodeRequestTypeMessage, nil
 	}
-	var t V4AddEpisodeRequestType
+	var t AddEpisodeRequestType
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (v V4AddEpisodeRequestType) Ptr() *V4AddEpisodeRequestType {
-	return &v
+func (a AddEpisodeRequestType) Ptr() *AddEpisodeRequestType {
+	return &a
+}
+
+type EpisodeListRequestOrder string
+
+const (
+	EpisodeListRequestOrderAsc  EpisodeListRequestOrder = "asc"
+	EpisodeListRequestOrderDesc EpisodeListRequestOrder = "desc"
+)
+
+func NewEpisodeListRequestOrderFromString(s string) (EpisodeListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return EpisodeListRequestOrderAsc, nil
+	case "desc":
+		return EpisodeListRequestOrderDesc, nil
+	}
+	var t EpisodeListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EpisodeListRequestOrder) Ptr() *EpisodeListRequestOrder {
+	return &e
+}
+
+type EpisodeListRequestOrderBy string
+
+const (
+	EpisodeListRequestOrderByCreatedAt EpisodeListRequestOrderBy = "created_at"
+	EpisodeListRequestOrderByUUID      EpisodeListRequestOrderBy = "uuid"
+)
+
+func NewEpisodeListRequestOrderByFromString(s string) (EpisodeListRequestOrderBy, error) {
+	switch s {
+	case "created_at":
+		return EpisodeListRequestOrderByCreatedAt, nil
+	case "uuid":
+		return EpisodeListRequestOrderByUUID, nil
+	}
+	var t EpisodeListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EpisodeListRequestOrderBy) Ptr() *EpisodeListRequestOrderBy {
+	return &e
 }
 
 var (
@@ -236,7 +344,7 @@ var (
 )
 
 type PatchEpisodeRequest struct {
-	// Metadata to merge onto the episode; a key set to null is removed.
+	// Metadata to merge onto the episode; a key set to null is removed. Max 10 keys after the merge. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -244,10 +352,12 @@ type PatchEpisodeRequest struct {
 }
 
 func (p *PatchEpisodeRequest) require(field *big.Int) {
-	if p.explicitFields == nil {
-		p.explicitFields = big.NewInt(0)
+	next := new(big.Int)
+	if p.explicitFields != nil {
+		next.Set(p.explicitFields)
 	}
-	p.explicitFields.Or(p.explicitFields, field)
+	next.Or(next, field)
+	p.explicitFields = next
 }
 
 // SetMetadata sets the Metadata field and marks it as non-optional;

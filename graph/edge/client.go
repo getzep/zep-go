@@ -40,13 +40,20 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// Adds 1 to 100 edges. A name creates a node when deduplicate is false. When deduplicate is true, Zep matches a node by name first.
+// Example: {"edges":[{"fact":"Ada works at Acme Corp","fact_name":"WORKS_AT","source_node":{"uuid":"f47ac10b-58cc-4372-a567-0e02b2c3d479"},"target_node":{"uuid":"f47ac10b-58cc-4372-a567-0e02b2c3d480"}},{"fact":"Ada leads a team","fact_name":"LEADS","source_node":{"name":"Ada Lovelace","labels":["Person"]},"target_node":{"name":"Engineering","labels":["Department"]}}],"deduplicate":false}
+//
 // Example:
 //
-//	request := &graph.AddEdgeRequest{
-//	    Fact: "fact",
-//	    FactName: "fact_name",
-//	    SourceNode: &zep.EdgeNodeRef{},
-//	    TargetNode: &zep.EdgeNodeRef{},
+//	request := &graph.AddEdgesRequest{
+//	    Edges: []*zep.EdgeInput{
+//	        &zep.EdgeInput{
+//	            Fact: "Ada works at Acme Corp",
+//	            FactName: "WORKS_AT",
+//	            SourceNode: &zep.EdgeNodeRef{},
+//	            TargetNode: &zep.EdgeNodeRef{},
+//	        },
+//	    },
 //	}
 //	client.Graph.Edge.Add(
 //	    context.TODO(),
@@ -57,9 +64,9 @@ func (c *Client) Add(
 	ctx context.Context,
 	// Graph UUID
 	graphUUID string,
-	request *graph.AddEdgeRequest,
+	request *graph.AddEdgesRequest,
 	opts ...option.IdempotentRequestOption,
-) (*zep.AddEdgeResult, error) {
+) (*zep.AddEdgesResult, error) {
 	response, err := c.WithRawResponse.Add(
 		ctx,
 		graphUUID,
@@ -75,12 +82,6 @@ func (c *Client) Add(
 // Example:
 //
 //	request := &graph.EdgeListRequest{
-//	    Limit: zep.Int(
-//	        1,
-//	    ),
-//	    Cursor: zep.String(
-//	        "cursor",
-//	    ),
 //	    Body: &zep.ArtifactListRequest{},
 //	}
 //	client.Graph.Edge.List(
@@ -93,9 +94,9 @@ func (c *Client) List(
 	// Graph UUID
 	graphUUID string,
 	request *graph.EdgeListRequest,
-	opts ...option.IdempotentRequestOption,
+	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Edge, *zep.EdgePage], error) {
-	options := core.NewIdempotentRequestOptions(opts...)
+	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
 		c.baseURL,
@@ -114,6 +115,8 @@ func (c *Client) List(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
 		if pageRequest.Cursor != nil {
 			queryParams.Set("cursor", *pageRequest.Cursor)
@@ -209,6 +212,11 @@ func (c *Client) Delete(
 	return response.Body, nil
 }
 
+// Updates one edge. When the edge belongs to a hyperedge, changing fact
+// rewrites it on every member of that hyperedge in one all-or-nothing
+// write, because the members share it. Attribute-only edits touch this
+// edge alone.
+//
 // Example:
 //
 //	request := &graph.PatchEdgeRequest{}

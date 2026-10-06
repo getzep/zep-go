@@ -107,6 +107,8 @@ func (r *RawClient) Update(
 		options.ToHeader(),
 	)
 	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
 	var response *zep.Message
 	raw, err := r.caller.Call(
 		ctx,
