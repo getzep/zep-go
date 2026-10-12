@@ -58,6 +58,8 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
+// Set `hyperedges_enabled` to `true` to enable extraction. A member needs the `project.edit` permission. Project API keys receive `403 permission_denied`.
+//
 // Example:
 //
 //	request := &zep.PatchProjectRequest{}

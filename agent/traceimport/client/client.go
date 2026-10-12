@@ -9,7 +9,7 @@ import (
 
 	zep "github.com/getzep/zep-go/v4"
 	agent "github.com/getzep/zep-go/v4/agent"
-	client "github.com/getzep/zep-go/v4/agent/trajectoryimport/run/client"
+	client "github.com/getzep/zep-go/v4/agent/traceimport/run/client"
 	core "github.com/getzep/zep-go/v4/core"
 	internal "github.com/getzep/zep-go/v4/internal"
 	option "github.com/getzep/zep-go/v4/option"
@@ -43,12 +43,12 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
-// List trajectory imports that belong to this Agent.
+// List trace imports that belong to this Agent.
 //
 // Example:
 //
-//	request := &agent.TrajectoryImportListRequest{}
-//	client.Agent.TrajectoryImport.List(
+//	request := &agent.TraceImportListRequest{}
+//	client.Agent.TraceImport.List(
 //	    context.TODO(),
 //	    "agent_uuid",
 //	    request,
@@ -57,9 +57,9 @@ func (c *Client) List(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	request *agent.TrajectoryImportListRequest,
+	request *agent.TraceImportListRequest,
 	opts ...option.RequestOption,
-) (*core.Page[*string, *zep.TrajectoryImport, *zep.TrajectoryImportPage], error) {
+) (*core.Page[*string, *zep.TraceImport, *zep.TraceImportPage], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -67,7 +67,7 @@ func (c *Client) List(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports",
+		baseURL+"/agents/%v/trace-imports",
 		agentUUID,
 	)
 	queryParams, err := internal.QueryValues(request)
@@ -99,11 +99,11 @@ func (c *Client) List(
 			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
 		}
 	}
-	readPageResponse := func(response *zep.TrajectoryImportPage) *core.PageResponse[*string, *zep.TrajectoryImport, *zep.TrajectoryImportPage] {
+	readPageResponse := func(response *zep.TraceImportPage) *core.PageResponse[*string, *zep.TraceImport, *zep.TraceImportPage] {
 		var zeroValue *string
 		next := response.GetNextCursor()
 		results := response.GetItems()
-		return &core.PageResponse[*string, *zep.TrajectoryImport, *zep.TrajectoryImportPage]{
+		return &core.PageResponse[*string, *zep.TraceImport, *zep.TraceImportPage]{
 			Results:  results,
 			Response: response,
 			Next:     next,
@@ -122,8 +122,8 @@ func (c *Client) List(
 //
 // Example:
 //
-//	request := &agent.CreateTrajectoryImportRequest{}
-//	client.Agent.TrajectoryImport.Create(
+//	request := &agent.CreateTraceImportRequest{}
+//	client.Agent.TraceImport.Create(
 //	    context.TODO(),
 //	    "agent_uuid",
 //	    request,
@@ -132,9 +132,9 @@ func (c *Client) Create(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	request *agent.CreateTrajectoryImportRequest,
+	request *agent.CreateTraceImportRequest,
 	opts ...option.IdempotentRequestOption,
-) (*zep.TrajectoryImport, error) {
+) (*zep.TraceImport, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		agentUUID,
@@ -147,11 +147,11 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Read one trajectory import. The response does not include its source cursor.
+// Read one trace import. The response does not include its source cursor.
 //
 // Example:
 //
-//	client.Agent.TrajectoryImport.Get(
+//	client.Agent.TraceImport.Get(
 //	    context.TODO(),
 //	    "agent_uuid",
 //	    "import_uuid",
@@ -160,10 +160,10 @@ func (c *Client) Get(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	opts ...option.RequestOption,
-) (*zep.TrajectoryImport, error) {
+) (*zep.TraceImport, error) {
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		agentUUID,
@@ -176,12 +176,12 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Set `trajectories=delete` to queue asynchronous Trajectory deletion. The default keeps Trajectories. Example query: `?trajectories=delete`.
+// Set `traces=delete` to queue asynchronous Trace deletion. The default keeps Traces. Example query: `?traces=delete`.
 //
 // Example:
 //
-//	request := &agent.TrajectoryImportDeleteRequest{}
-//	client.Agent.TrajectoryImport.Delete(
+//	request := &agent.TraceImportDeleteRequest{}
+//	client.Agent.TraceImport.Delete(
 //	    context.TODO(),
 //	    "agent_uuid",
 //	    "import_uuid",
@@ -191,9 +191,9 @@ func (c *Client) Delete(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
-	request *agent.TrajectoryImportDeleteRequest,
+	request *agent.TraceImportDeleteRequest,
 	opts ...option.IdempotentRequestOption,
 ) (*zep.Task, error) {
 	response, err := c.WithRawResponse.Delete(
@@ -213,8 +213,8 @@ func (c *Client) Delete(
 //
 // Example:
 //
-//	request := &agent.UpdateTrajectoryImportRequest{}
-//	client.Agent.TrajectoryImport.Update(
+//	request := &agent.UpdateTraceImportRequest{}
+//	client.Agent.TraceImport.Update(
 //	    context.TODO(),
 //	    "agent_uuid",
 //	    "import_uuid",
@@ -224,11 +224,11 @@ func (c *Client) Update(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
-	request *agent.UpdateTrajectoryImportRequest,
+	request *agent.UpdateTraceImportRequest,
 	opts ...option.IdempotentRequestOption,
-) (*zep.TrajectoryImport, error) {
+) (*zep.TraceImport, error) {
 	response, err := c.WithRawResponse.Update(
 		ctx,
 		agentUUID,
@@ -242,11 +242,11 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
-// Pause a scheduled trajectory import. One-time imports cannot be paused.
+// Pause a scheduled trace import. One-time imports cannot be paused.
 //
 // Example:
 //
-//	client.Agent.TrajectoryImport.Pause(
+//	client.Agent.TraceImport.Pause(
 //	    context.TODO(),
 //	    "agent_uuid",
 //	    "import_uuid",
@@ -255,10 +255,10 @@ func (c *Client) Pause(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	opts ...option.IdempotentRequestOption,
-) (*zep.TrajectoryImport, error) {
+) (*zep.TraceImport, error) {
 	response, err := c.WithRawResponse.Pause(
 		ctx,
 		agentUUID,
@@ -271,11 +271,11 @@ func (c *Client) Pause(
 	return response.Body, nil
 }
 
-// Resume a scheduled trajectory import. Zep verifies credentials first when they caused the pause.
+// Resume a scheduled trace import. Zep verifies credentials first when they caused the pause.
 //
 // Example:
 //
-//	client.Agent.TrajectoryImport.Resume(
+//	client.Agent.TraceImport.Resume(
 //	    context.TODO(),
 //	    "agent_uuid",
 //	    "import_uuid",
@@ -284,10 +284,10 @@ func (c *Client) Resume(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	opts ...option.IdempotentRequestOption,
-) (*zep.TrajectoryImport, error) {
+) (*zep.TraceImport, error) {
 	response, err := c.WithRawResponse.Resume(
 		ctx,
 		agentUUID,

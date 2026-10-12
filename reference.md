@@ -96,6 +96,22 @@ client.Agent.List(
 <dl>
 <dd>
 
+**orderBy:** `*zep.AgentListRequestOrderBy` — Sort field
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**order:** `*zep.AgentListRequestOrder` — asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **agentID:** `*string` — Filters to the exact developer-assigned Agent identifier.
     
 </dd>
@@ -113,6 +129,17 @@ client.Agent.List(
 <dd>
 
 **metadata:** `map[string]any` — Filters to Agents whose metadata contains these key-value pairs.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**search:** `*string` 
+
+Filters to Agents whose name, Agent identifier, deployment identifier,
+or deployment version contains this text. Matching is case-insensitive.
     
 </dd>
 </dl>
@@ -305,7 +332,7 @@ client.Agent.Update(
 <dl>
 <dd>
 
-**memorySettings:** `*zep.AgentMemorySettings` — Replacement Agent Memory settings. Set to null to restore defaults.
+**memorySettings:** `*zep.AgentMemorySettings` — Replacement Agent Skills settings. Set to null to restore defaults.
     
 </dd>
 </dl>
@@ -502,7 +529,7 @@ client.Agent.GetContext(
 <dl>
 <dd>
 
-**trajectoryUUID:** `*string` 
+**traceUUID:** `*string` 
     
 </dd>
 </dl>
@@ -2112,6 +2139,20 @@ client.Graph.SetOntology(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Edge search does not support node_labels or exclude_node_labels. An edge has two nodes, so a node label filter is not defined for edge search. To filter edges by node label, use graph.edge.list, graph.node.list_neighbors, or graph.get_subgraph. To search the edges of nodes that have a label, do these two steps. First, call graph.search_nodes with node_labels. Then, call graph.search_edges with connected_node_uuids set to the UUIDs of the returned nodes.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -2121,10 +2162,8 @@ client.Graph.SetOntology(
 <dd>
 
 ```go
-request := &zep.GraphSearchEdgesRequest{
-    Body: &zep.SearchRequest{
-        Query: "query",
-    },
+request := &zep.SearchEdgesRequest{
+    Query: "query",
 }
 client.Graph.SearchEdges(
     context.TODO(),
@@ -2169,7 +2208,53 @@ client.Graph.SearchEdges(
 <dl>
 <dd>
 
-**request:** `*zep.SearchRequest` 
+**bfsOriginNodeUUIDs:** `[]string` — Nodes used as BFS origins for graph-distance-aware retrieval.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**centerNodeUUID:** `*string` 
+
+The node to rank results by distance from. Required when reranker is
+node_distance.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.EdgeSearchFilters` — Filters constraining which items are returned.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**mmrLambda:** `*float64` 
+
+The diversity weighting used for maximal marginal relevance reranking.
+Required when reranker is mmr.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**query:** `string` — The search query.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reranker:** `*zep.SearchEdgesRequestReranker` — The reranking strategy applied to retrieved results. Defaults to rrf.
     
 </dd>
 </dl>
@@ -2258,6 +2343,20 @@ client.Graph.SearchEpisodes(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Node search does not support edge_types, exclude_edge_types, edge_uuids, connected_node_uuids, source_node_uuids, or target_node_uuids. These filters select edges. To get the nodes that an edge connects, use graph.search_edges or graph.node.list_neighbors.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -2267,10 +2366,8 @@ client.Graph.SearchEpisodes(
 <dd>
 
 ```go
-request := &zep.GraphSearchNodesRequest{
-    Body: &zep.SearchRequest{
-        Query: "query",
-    },
+request := &zep.SearchNodesRequest{
+    Query: "query",
 }
 client.Graph.SearchNodes(
     context.TODO(),
@@ -2315,7 +2412,53 @@ client.Graph.SearchNodes(
 <dl>
 <dd>
 
-**request:** `*zep.SearchRequest` 
+**bfsOriginNodeUUIDs:** `[]string` — Nodes used as BFS origins for graph-distance-aware retrieval.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**centerNodeUUID:** `*string` 
+
+The node to rank results by distance from. Required when reranker is
+node_distance.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.NodeSearchFilters` — Filters constraining which items are returned.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**mmrLambda:** `*float64` 
+
+The diversity weighting used for maximal marginal relevance reranking.
+Required when reranker is mmr.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**query:** `string` — The search query.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reranker:** `*zep.SearchNodesRequestReranker` — The reranking strategy applied to retrieved results. Defaults to rrf.
     
 </dd>
 </dl>
@@ -2709,6 +2852,20 @@ client.Project.Get(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Set `hyperedges_enabled` to `true` to enable extraction. A member needs the `project.edit` permission. Project API keys receive `403 permission_denied`.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -2741,6 +2898,17 @@ client.Project.Update(
 
 The project's IANA fallback time zone. Set to null to clear the existing
 value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**hyperedgesEnabled:** `*bool` 
+
+Set to true to enable hyperedge extraction. This setting cannot be disabled.
+A member needs project.edit. Project API keys receive 403 permission_denied.
     
 </dd>
 </dl>
@@ -4032,7 +4200,7 @@ client.TraceConnection.List(
 <dl>
 <dd>
 
-Verify the provider credential before Zep stores it. Example request: `{"name":"Support traces","provider":"braintrust","credential":"secret","requests_per_minute":10}`.
+Verify a provider credential before Zep stores it. Both providers accept 1 to 60 requests per minute and an optional retention window. Example requests: `{"name":"Support traces","provider":"braintrust","credential":"secret","requests_per_minute":60,"retention_days":30}` and `{"name":"Support traces","provider":"langsmith","credential":"secret","requests_per_minute":60,"retention_days":30}`.
 </dd>
 </dl>
 </dd>
@@ -4090,7 +4258,7 @@ client.TraceConnection.Create(
 <dl>
 <dd>
 
-**provider:** `*string` — Provider is the provider name.
+**provider:** `*zep.CreateTraceConnectionRequestProvider` — Provider is the Braintrust or LangSmith provider.
     
 </dd>
 </dl>
@@ -4098,7 +4266,7 @@ client.TraceConnection.Create(
 <dl>
 <dd>
 
-**requestsPerMinute:** `*int` — RequestsPerMinute is the provider request rate limit.
+**requestsPerMinute:** `*int` — RequestsPerMinute is the request rate limit from 1 to 60 per minute.
     
 </dd>
 </dl>
@@ -4106,7 +4274,7 @@ client.TraceConnection.Create(
 <dl>
 <dd>
 
-**retentionDays:** `*int` — RetentionDays is an optional provider retention window.
+**retentionDays:** `*int` — RetentionDays is an optional retention window in days.
     
 </dd>
 </dl>
@@ -4187,7 +4355,7 @@ client.TraceConnection.Get(
 <dl>
 <dd>
 
-Delete a trace connection that no active trajectory import uses.
+Delete a trace connection that no active trace import uses.
 </dd>
 </dl>
 </dd>
@@ -4244,7 +4412,7 @@ client.TraceConnection.Delete(
 <dl>
 <dd>
 
-Verify changed provider settings before Zep stores them. Example request: `{"credential":"new-secret","requests_per_minute":20}`.
+Verify changed settings before Zep stores them. Both providers accept 1 to 60 requests per minute and an optional retention window. Example request: `{"requests_per_minute":60,"retention_days":30}`.
 </dd>
 </dl>
 </dd>
@@ -4311,7 +4479,7 @@ client.TraceConnection.Update(
 <dl>
 <dd>
 
-**requestsPerMinute:** `*int` — RequestsPerMinute is the new provider request rate limit, when supplied.
+**requestsPerMinute:** `*int` — RequestsPerMinute is the new request rate limit, when supplied.
     
 </dd>
 </dl>
@@ -4319,7 +4487,7 @@ client.TraceConnection.Update(
 <dl>
 <dd>
 
-**retentionDays:** `*int` — RetentionDays is the new provider retention window, when supplied.
+**retentionDays:** `*int` — RetentionDays is the new retention window in days, when supplied.
     
 </dd>
 </dl>
@@ -4401,7 +4569,7 @@ client.TraceConnection.Verify(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -4469,7 +4637,7 @@ client.UserGroup.Create(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -4545,7 +4713,7 @@ client.UserGroup.List(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -4602,7 +4770,7 @@ client.UserGroup.Get(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -4659,7 +4827,7 @@ client.UserGroup.Delete(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -4742,7 +4910,7 @@ client.UserGroup.Update(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -4827,7 +4995,7 @@ client.UserGroup.ListMemberCandidates(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -4898,7 +5066,7 @@ client.UserGroup.AddMembers(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -4983,7 +5151,7 @@ client.UserGroup.ListMembers(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -5054,7 +5222,7 @@ client.UserGroup.RemoveMembers(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -5120,7 +5288,7 @@ client.UserGroup.RemoveMember(
 <dl>
 <dd>
 
-Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+Requires attribute-based access control to be enabled for your account.
 </dd>
 </dl>
 </dd>
@@ -6614,8 +6782,8 @@ client.Agent.Split.Plan(
 </dl>
 </details>
 
-## Agent Trajectory
-<details><summary><code>client.Agent.Trajectory.Create(AgentUUID, request) -> *zep.AgentTrajectory</code></summary>
+## Agent TaskFamily
+<details><summary><code>client.Agent.TaskFamily.List(AgentUUID) -> *zep.AgentTaskFamilyDescriptorPage</code></summary>
 <dl>
 <dd>
 
@@ -6628,104 +6796,8 @@ client.Agent.Split.Plan(
 <dd>
 
 ```go
-request := &agent.CreateAgentTrajectoryRequest{
-    Objective: "objective",
-    TaskFamily: "task_family",
-}
-client.Agent.Trajectory.Create(
-    context.TODO(),
-    "agent_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**learnFrom:** `*bool` — Whether eligible evidence may participate in learning. Defaults to true.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**metadata:** `map[string]any` — Developer metadata used to organize and filter Trajectories.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**objective:** `string` — The task-instance objective captured for this attempt.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**parentTrajectoryUUID:** `*string` — The parent Trajectory UUID when this attempt retries an earlier attempt.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**taskFamily:** `string` — The task-family slug.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryID:** `*string` — The optional customer-assigned identifier, unique within the Agent.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.List(AgentUUID, request) -> *zep.AgentTrajectoryPage</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.AgentTrajectoryListRequest{}
-client.Agent.Trajectory.List(
+request := &agent.TaskFamilyListRequest{}
+client.Agent.TaskFamily.List(
     context.TODO(),
     "agent_uuid",
     request,
@@ -6764,70 +6836,6 @@ client.Agent.Trajectory.List(
     
 </dd>
 </dl>
-
-<dl>
-<dd>
-
-**importUUID:** `*string` — Filter by owning Trajectory import UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sourceKind:** `*agent.TrajectoryListRequestSourceKind` — Source kind
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**metadata:** `map[string]any` — Filters to Trajectories whose metadata contains these key-value pairs.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**outcome:** `*zep.AgentTrajectoryOutcome` — Filters to one reported outcome.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**parentTrajectoryUUID:** `*string` — Filters to direct retries of this parent Trajectory.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**status:** `*zep.AgentTrajectoryLifecycle` — Filters to one lifecycle state.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**taskFamily:** `*string` — Filters to an exact task-family slug.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**verification:** `*zep.AgentTrajectoryVerification` — Filters to one verification strength.
-    
-</dd>
-</dl>
 </dd>
 </dl>
 
@@ -6836,7 +6844,7 @@ client.Agent.Trajectory.List(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.Trajectory.Get(AgentUUID, TrajectoryUUID) -> *zep.AgentTrajectory</code></summary>
+<details><summary><code>client.Agent.TaskFamily.Rename(AgentUUID, request) -> *zep.RenameAgentTaskFamilyResponse</code></summary>
 <dl>
 <dd>
 
@@ -6849,65 +6857,13 @@ client.Agent.Trajectory.List(
 <dd>
 
 ```go
-client.Agent.Trajectory.Get(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.Delete(AgentUUID, TrajectoryUUID, request) -> *zep.AgentTrajectorySourceDeletionResult</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &zep.DeleteAgentTrajectoryRequest{
-    ExpectedRevision: 1,
+request := &agent.RenameAgentTaskFamilyRequest{
+    FromSlug: "from_slug",
+    ToSlug: "to_slug",
 }
-client.Agent.Trajectory.Delete(
+client.Agent.TaskFamily.Rename(
     context.TODO(),
     "agent_uuid",
-    "trajectory_uuid",
     request,
 )
 ```
@@ -6932,7 +6888,7 @@ client.Agent.Trajectory.Delete(
 <dl>
 <dd>
 
-**trajectoryUUID:** `string` — Trajectory UUID
+**fromSlug:** `string` — The current slug of the live descriptor.
     
 </dd>
 </dl>
@@ -6940,79 +6896,7 @@ client.Agent.Trajectory.Delete(
 <dl>
 <dd>
 
-**request:** `*zep.DeleteAgentTrajectoryRequest` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.Update(AgentUUID, TrajectoryUUID, request) -> *zep.AgentTrajectory</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.PatchAgentTrajectoryRequest{
-    ExpectedRevision: 1,
-}
-client.Agent.Trajectory.Update(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**expectedRevision:** `int` — The current Trajectory revision used for optimistic concurrency.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**taskFamily:** `*string` — Replacement task-family slug. Set to null to clear it.
+**toSlug:** `string` — The new slug, or the slug of the live descriptor to merge into.
     
 </dd>
 </dl>
@@ -7024,760 +6908,8 @@ client.Agent.Trajectory.Update(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.Trajectory.Abandon(AgentUUID, TrajectoryUUID, request) -> *zep.AgentTrajectoryFinalizationResult</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.AbandonAgentTrajectoryRequest{
-    HighestAcceptedSequence: 1,
-}
-client.Agent.Trajectory.Abandon(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**assertionUUID:** `*string` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**expectedRevision:** `*int` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**highestAcceptedSequence:** `int` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**missingSequenceRanges:** `[]*zep.AgentTrajectorySequenceRange` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**reason:** `*string` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**verification:** `*zep.AgentTrajectoryVerification` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.Close(AgentUUID, TrajectoryUUID, request) -> *zep.AgentTrajectoryFinalizationResult</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.CloseAgentTrajectoryRequest{}
-client.Agent.Trajectory.Close(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**closingSequence:** `*int` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**expectedRevision:** `*int` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**missingSequenceRanges:** `[]*zep.AgentTrajectorySequenceRange` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**outcome:** `*zep.AgentTrajectoryOutcome` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**reason:** `*string` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**verification:** `*zep.AgentTrajectoryVerification` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**verifier:** `*zep.AgentTrajectoryCloseVerifier` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**verifierID:** `*string` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.CorrectTaskFamily(AgentUUID, TrajectoryUUID, request) -> *zep.AgentTrajectoryFinalizationResult</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.CorrectAgentTrajectoryTaskFamilyRequest{
-    ExpectedRevision: 1,
-    Reason: "reason",
-}
-client.Agent.Trajectory.CorrectTaskFamily(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**expectedRevision:** `int` — The current Trajectory revision used for optimistic concurrency.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**reason:** `string` — Why the terminal Trajectory classification is being corrected.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**taskFamily:** `*string` — Replacement task-family slug. Set to null to clear it.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.ListEvents(AgentUUID, TrajectoryUUID) -> *zep.AgentTrajectoryEventPage</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.TrajectoryListEventsRequest{}
-client.Agent.Trajectory.ListEvents(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `*int` — Page size (maximum 100)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cursor:** `*string` — Opaque page cursor
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.AppendEvent(AgentUUID, TrajectoryUUID, request) -> *zep.AgentTrajectoryEvent</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.AppendAgentTrajectoryEventRequest{
-    EventType: zep.AgentTrajectoryEventTypeInputReference,
-}
-client.Agent.Trajectory.AppendEvent(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**content:** `*string` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**context:** `*zep.AgentTrajectoryEventContext` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**eventID:** `*string` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**eventType:** `zep.AgentTrajectoryEventType` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**metadata:** `map[string]any` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**occurredAt:** `*string` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sequence:** `*int` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sources:** `[]*zep.AgentTrajectoryEventSource` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.DeleteEvent(AgentUUID, TrajectoryUUID, EventUUID, request) -> *zep.AgentTrajectorySourceDeletionResult</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &zep.DeleteAgentTrajectoryRequest{
-    ExpectedRevision: 1,
-}
-client.Agent.Trajectory.DeleteEvent(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    "event_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**eventUUID:** `string` — Event UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request:** `*zep.DeleteAgentTrajectoryRequest` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.Reopen(AgentUUID, TrajectoryUUID, request) -> *zep.AgentTrajectory</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.ReopenAgentTrajectoryRequest{
-    ExpectedRevision: 1,
-}
-client.Agent.Trajectory.Reopen(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**expectedRevision:** `int` — The current Trajectory revision used for optimistic concurrency.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.GetSummary(AgentUUID, TrajectoryUUID) -> *zep.AgentTrajectorySummaryVersion</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-client.Agent.Trajectory.GetSummary(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Agent.Trajectory.ListSummaryVersions(AgentUUID, TrajectoryUUID) -> *zep.AgentTrajectorySummaryPage</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &agent.TrajectoryListSummaryVersionsRequest{}
-client.Agent.Trajectory.ListSummaryVersions(
-    context.TODO(),
-    "agent_uuid",
-    "trajectory_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**agentUUID:** `string` — Agent UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trajectoryUUID:** `string` — Trajectory UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `*int` — Page size (maximum 100)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cursor:** `*string` — Opaque page cursor
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Agent TrajectoryImport
-<details><summary><code>client.Agent.TrajectoryImport.List(AgentUUID) -> *zep.TrajectoryImportPage</code></summary>
+## Agent TraceImport
+<details><summary><code>client.Agent.TraceImport.List(AgentUUID) -> *zep.TraceImportPage</code></summary>
 <dl>
 <dd>
 
@@ -7789,7 +6921,7 @@ client.Agent.Trajectory.ListSummaryVersions(
 <dl>
 <dd>
 
-List trajectory imports that belong to this Agent.
+List trace imports that belong to this Agent.
 </dd>
 </dl>
 </dd>
@@ -7804,8 +6936,8 @@ List trajectory imports that belong to this Agent.
 <dd>
 
 ```go
-request := &agent.TrajectoryImportListRequest{}
-client.Agent.TrajectoryImport.List(
+request := &agent.TraceImportListRequest{}
+client.Agent.TraceImport.List(
     context.TODO(),
     "agent_uuid",
     request,
@@ -7852,7 +6984,7 @@ client.Agent.TrajectoryImport.List(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TrajectoryImport.Create(AgentUUID, request) -> *zep.TrajectoryImport</code></summary>
+<details><summary><code>client.Agent.TraceImport.Create(AgentUUID, request) -> *zep.TraceImport</code></summary>
 <dl>
 <dd>
 
@@ -7879,8 +7011,8 @@ Create a scheduled import or queue a one-time import. Example request: `{"connec
 <dd>
 
 ```go
-request := &agent.CreateTrajectoryImportRequest{}
-client.Agent.TrajectoryImport.Create(
+request := &agent.CreateTraceImportRequest{}
+client.Agent.TraceImport.Create(
     context.TODO(),
     "agent_uuid",
     request,
@@ -7923,7 +7055,7 @@ client.Agent.TrajectoryImport.Create(
 <dl>
 <dd>
 
-**mapping:** `*zep.TrajectoryMapping` — Mapping defines how source traces become Trajectories. Example: {"task_family":{"source":"fixed","value":"support"}}.
+**mapping:** `*zep.TraceMapping` — Mapping defines how source traces become Traces. Example: {"task_family":{"source":"fixed","value":"support"}}.
     
 </dd>
 </dl>
@@ -7963,7 +7095,7 @@ client.Agent.TrajectoryImport.Create(
 <dl>
 <dd>
 
-**schedule:** `*zep.TrajectoryImportSchedule` — Schedule enables recurring imports when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+**schedule:** `*zep.TraceImportSchedule` — Schedule enables recurring imports when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
     
 </dd>
 </dl>
@@ -7971,7 +7103,7 @@ client.Agent.TrajectoryImport.Create(
 <dl>
 <dd>
 
-**selection:** `*zep.TrajectoryImportSelection` — Selection defines the traces to import. Example: {"trace_ids":["trace_123"]}.
+**selection:** `*zep.TraceImportSelection` — Selection defines the traces to import. Example: {"trace_ids":["trace_123"]}.
     
 </dd>
 </dl>
@@ -7983,7 +7115,7 @@ client.Agent.TrajectoryImport.Create(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TrajectoryImport.Get(AgentUUID, ImportUUID) -> *zep.TrajectoryImport</code></summary>
+<details><summary><code>client.Agent.TraceImport.Get(AgentUUID, ImportUUID) -> *zep.TraceImport</code></summary>
 <dl>
 <dd>
 
@@ -7995,7 +7127,7 @@ client.Agent.TrajectoryImport.Create(
 <dl>
 <dd>
 
-Read one trajectory import. The response does not include its source cursor.
+Read one trace import. The response does not include its source cursor.
 </dd>
 </dl>
 </dd>
@@ -8010,7 +7142,7 @@ Read one trajectory import. The response does not include its source cursor.
 <dd>
 
 ```go
-client.Agent.TrajectoryImport.Get(
+client.Agent.TraceImport.Get(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -8037,7 +7169,7 @@ client.Agent.TrajectoryImport.Get(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
     
 </dd>
 </dl>
@@ -8049,7 +7181,7 @@ client.Agent.TrajectoryImport.Get(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TrajectoryImport.Delete(AgentUUID, ImportUUID) -> *zep.Task</code></summary>
+<details><summary><code>client.Agent.TraceImport.Delete(AgentUUID, ImportUUID) -> *zep.Task</code></summary>
 <dl>
 <dd>
 
@@ -8061,7 +7193,7 @@ client.Agent.TrajectoryImport.Get(
 <dl>
 <dd>
 
-Set `trajectories=delete` to queue asynchronous Trajectory deletion. The default keeps Trajectories. Example query: `?trajectories=delete`.
+Set `traces=delete` to queue asynchronous Trace deletion. The default keeps Traces. Example query: `?traces=delete`.
 </dd>
 </dl>
 </dd>
@@ -8076,8 +7208,8 @@ Set `trajectories=delete` to queue asynchronous Trajectory deletion. The default
 <dd>
 
 ```go
-request := &agent.TrajectoryImportDeleteRequest{}
-client.Agent.TrajectoryImport.Delete(
+request := &agent.TraceImportDeleteRequest{}
+client.Agent.TraceImport.Delete(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -8105,7 +7237,7 @@ client.Agent.TrajectoryImport.Delete(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
     
 </dd>
 </dl>
@@ -8113,7 +7245,7 @@ client.Agent.TrajectoryImport.Delete(
 <dl>
 <dd>
 
-**trajectories:** `*agent.TrajectoryImportDeleteRequestTrajectories` — Whether to delete imported Trajectories
+**traces:** `*agent.TraceImportDeleteRequestTraces` — Whether to delete imported Traces
     
 </dd>
 </dl>
@@ -8125,7 +7257,7 @@ client.Agent.TrajectoryImport.Delete(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TrajectoryImport.Update(AgentUUID, ImportUUID, request) -> *zep.TrajectoryImport</code></summary>
+<details><summary><code>client.Agent.TraceImport.Update(AgentUUID, ImportUUID, request) -> *zep.TraceImport</code></summary>
 <dl>
 <dd>
 
@@ -8152,8 +7284,8 @@ Use `expected_revision` to reject a stale update. Example request: `{"expected_r
 <dd>
 
 ```go
-request := &agent.UpdateTrajectoryImportRequest{}
-client.Agent.TrajectoryImport.Update(
+request := &agent.UpdateTraceImportRequest{}
+client.Agent.TraceImport.Update(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -8181,7 +7313,7 @@ client.Agent.TrajectoryImport.Update(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
     
 </dd>
 </dl>
@@ -8205,7 +7337,7 @@ client.Agent.TrajectoryImport.Update(
 <dl>
 <dd>
 
-**mapping:** `*zep.TrajectoryMapping` — Mapping is the new mapping, when supplied. Example: {"task_family":{"source":"fixed","value":"support"}}.
+**mapping:** `*zep.TraceMapping` — Mapping is the new mapping, when supplied. Example: {"task_family":{"source":"fixed","value":"support"}}.
     
 </dd>
 </dl>
@@ -8237,7 +7369,7 @@ client.Agent.TrajectoryImport.Update(
 <dl>
 <dd>
 
-**schedule:** `*zep.TrajectoryImportSchedule` — Schedule is the new schedule, when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+**schedule:** `*zep.TraceImportSchedule` — Schedule is the new schedule, when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
     
 </dd>
 </dl>
@@ -8245,7 +7377,7 @@ client.Agent.TrajectoryImport.Update(
 <dl>
 <dd>
 
-**selection:** `*zep.TrajectoryImportSelection` — Selection is the new selection, when supplied. Example: {"trace_ids":["trace_123"]}.
+**selection:** `*zep.TraceImportSelection` — Selection is the new selection, when supplied. Example: {"trace_ids":["trace_123"]}.
     
 </dd>
 </dl>
@@ -8257,7 +7389,7 @@ client.Agent.TrajectoryImport.Update(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TrajectoryImport.Pause(AgentUUID, ImportUUID) -> *zep.TrajectoryImport</code></summary>
+<details><summary><code>client.Agent.TraceImport.Pause(AgentUUID, ImportUUID) -> *zep.TraceImport</code></summary>
 <dl>
 <dd>
 
@@ -8269,7 +7401,7 @@ client.Agent.TrajectoryImport.Update(
 <dl>
 <dd>
 
-Pause a scheduled trajectory import. One-time imports cannot be paused.
+Pause a scheduled trace import. One-time imports cannot be paused.
 </dd>
 </dl>
 </dd>
@@ -8284,7 +7416,7 @@ Pause a scheduled trajectory import. One-time imports cannot be paused.
 <dd>
 
 ```go
-client.Agent.TrajectoryImport.Pause(
+client.Agent.TraceImport.Pause(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -8311,7 +7443,7 @@ client.Agent.TrajectoryImport.Pause(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
     
 </dd>
 </dl>
@@ -8323,7 +7455,7 @@ client.Agent.TrajectoryImport.Pause(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TrajectoryImport.Resume(AgentUUID, ImportUUID) -> *zep.TrajectoryImport</code></summary>
+<details><summary><code>client.Agent.TraceImport.Resume(AgentUUID, ImportUUID) -> *zep.TraceImport</code></summary>
 <dl>
 <dd>
 
@@ -8335,7 +7467,7 @@ client.Agent.TrajectoryImport.Pause(
 <dl>
 <dd>
 
-Resume a scheduled trajectory import. Zep verifies credentials first when they caused the pause.
+Resume a scheduled trace import. Zep verifies credentials first when they caused the pause.
 </dd>
 </dl>
 </dd>
@@ -8350,7 +7482,7 @@ Resume a scheduled trajectory import. Zep verifies credentials first when they c
 <dd>
 
 ```go
-client.Agent.TrajectoryImport.Resume(
+client.Agent.TraceImport.Resume(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -8377,7 +7509,1187 @@ client.Agent.TrajectoryImport.Resume(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Agent Trace
+<details><summary><code>client.Agent.Trace.Create(AgentUUID, request) -> *zep.AgentTrace</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.CreateAgentTraceRequest{
+    Objective: "objective",
+}
+client.Agent.Trace.Create(
+    context.TODO(),
+    "agent_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**learnFrom:** `*bool` — Whether eligible evidence may participate in learning. Defaults to true.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `map[string]any` — Developer metadata used to organize and filter Traces.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**objective:** `string` — The task-instance objective captured for this attempt.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**parentTraceUUID:** `*string` — The parent Trace UUID when this attempt retries an earlier attempt.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**taskFamily:** `*string` 
+
+The task-family slug. Optional when inferred task families are enabled
+for the account: the service assigns one after the Trace closes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceID:** `*string` — The optional customer-assigned identifier, unique within the Agent.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.List(AgentUUID, request) -> *zep.AgentTracePage</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.AgentTraceListRequest{}
+client.Agent.Trace.List(
+    context.TODO(),
+    "agent_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `*int` — Page size (maximum 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `*string` — Opaque page cursor
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**orderBy:** `*agent.TraceListRequestOrderBy` — Sort field
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**order:** `*agent.TraceListRequestOrder` — asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**importUUID:** `*string` — Filter by owning Trace import UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sourceKind:** `*agent.TraceListRequestSourceKind` — Source kind
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `map[string]any` — Filters to Traces whose metadata contains these key-value pairs.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**outcome:** `*zep.AgentTraceOutcome` — Filters to one reported outcome.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**parentTraceUUID:** `*string` — Filters to direct retries of this parent Trace.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `*zep.AgentTraceLifecycle` — Filters to one lifecycle state.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**taskFamily:** `*string` — Filters to an exact task-family slug.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**verification:** `*zep.AgentTraceVerification` — Filters to one verification strength.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.Get(AgentUUID, TraceUUID) -> *zep.AgentTrace</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Agent.Trace.Get(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.Delete(AgentUUID, TraceUUID, request) -> *zep.AgentTraceSourceDeletionResult</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.DeleteAgentTraceRequest{
+    ExpectedRevision: 1,
+}
+client.Agent.Trace.Delete(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.DeleteAgentTraceRequest` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.Update(AgentUUID, TraceUUID, request) -> *zep.AgentTrace</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.PatchAgentTraceRequest{
+    ExpectedRevision: 1,
+}
+client.Agent.Trace.Update(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expectedRevision:** `int` — The current Trace revision used for optimistic concurrency.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**taskFamily:** `*string` — Replacement task-family slug. Set to null to clear it.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.Abandon(AgentUUID, TraceUUID, request) -> *zep.AgentTraceFinalizationResult</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.AbandonAgentTraceRequest{
+    HighestAcceptedSequence: 1,
+}
+client.Agent.Trace.Abandon(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**assertionUUID:** `*string` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expectedRevision:** `*int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**highestAcceptedSequence:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**missingSequenceRanges:** `[]*zep.AgentTraceSequenceRange` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reason:** `*string` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**verification:** `*zep.AgentTraceVerification` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.Close(AgentUUID, TraceUUID, request) -> *zep.AgentTraceFinalizationResult</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.CloseAgentTraceRequest{}
+client.Agent.Trace.Close(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**closingSequence:** `*int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expectedRevision:** `*int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**missingSequenceRanges:** `[]*zep.AgentTraceSequenceRange` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**outcome:** `*zep.AgentTraceOutcome` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reason:** `*string` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**verification:** `*zep.AgentTraceVerification` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**verifier:** `*zep.AgentTraceCloseVerifier` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**verifierID:** `*string` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.CorrectTaskFamily(AgentUUID, TraceUUID, request) -> *zep.AgentTraceFinalizationResult</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.CorrectAgentTraceTaskFamilyRequest{
+    ExpectedRevision: 1,
+    Reason: "reason",
+}
+client.Agent.Trace.CorrectTaskFamily(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expectedRevision:** `int` — The current Trace revision used for optimistic concurrency.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reason:** `string` — Why the terminal Trace classification is being corrected.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**taskFamily:** `*string` — Replacement task-family slug. Set to null to clear it.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.ListEvents(AgentUUID, TraceUUID) -> *zep.AgentTraceEventPage</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.TraceListEventsRequest{}
+client.Agent.Trace.ListEvents(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `*int` — Page size (maximum 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `*string` — Opaque page cursor
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.AppendEvent(AgentUUID, TraceUUID, request) -> *zep.AgentTraceEvent</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.AppendAgentTraceEventRequest{
+    EventType: zep.AgentTraceEventTypeInputReference,
+}
+client.Agent.Trace.AppendEvent(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**content:** `*string` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**context:** `*zep.AgentTraceEventContext` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**eventID:** `*string` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**eventType:** `zep.AgentTraceEventType` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `map[string]any` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**occurredAt:** `*string` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sequence:** `*int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sources:** `[]*zep.AgentTraceEventSource` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.DeleteEvent(AgentUUID, TraceUUID, EventUUID, request) -> *zep.AgentTraceSourceDeletionResult</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.DeleteAgentTraceRequest{
+    ExpectedRevision: 1,
+}
+client.Agent.Trace.DeleteEvent(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    "event_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**eventUUID:** `string` — Event UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.DeleteAgentTraceRequest` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.Reopen(AgentUUID, TraceUUID, request) -> *zep.AgentTrace</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.ReopenAgentTraceRequest{
+    ExpectedRevision: 1,
+}
+client.Agent.Trace.Reopen(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expectedRevision:** `int` — The current Trace revision used for optimistic concurrency.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.GetSummary(AgentUUID, TraceUUID) -> *zep.AgentTraceSummaryVersion</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Agent.Trace.GetSummary(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Agent.Trace.ListSummaryVersions(AgentUUID, TraceUUID) -> *zep.AgentTraceSummaryPage</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &agent.TraceListSummaryVersionsRequest{}
+client.Agent.Trace.ListSummaryVersions(
+    context.TODO(),
+    "agent_uuid",
+    "trace_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agentUUID:** `string` — Agent UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traceUUID:** `string` — Trace UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `*int` — Page size (maximum 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `*string` — Opaque page cursor
     
 </dd>
 </dl>
@@ -9772,7 +10084,7 @@ client.Agent.Skill.Version.Get(
 ```go
 request := &skill.CreateAgentSkillUseRequest{
     SearchID: "search_id",
-    TrajectoryUUID: "trajectory_uuid",
+    TraceUUID: "trace_uuid",
     Usage: skill.CreateAgentSkillUseRequestUsageSelected,
 }
 client.Agent.Skill.Use.Create(
@@ -9835,7 +10147,7 @@ client.Agent.Skill.Use.Create(
 <dl>
 <dd>
 
-**trajectoryUUID:** `string` 
+**traceUUID:** `string` 
     
 </dd>
 </dl>
@@ -10060,8 +10372,8 @@ client.Agent.Skill.Export.Get(
 </dl>
 </details>
 
-## Agent TrajectoryImport Run
-<details><summary><code>client.Agent.TrajectoryImport.Run.List(AgentUUID, ImportUUID) -> *zep.TrajectoryImportRunPage</code></summary>
+## Agent TraceImport Run
+<details><summary><code>client.Agent.TraceImport.Run.List(AgentUUID, ImportUUID) -> *zep.TraceImportRunPage</code></summary>
 <dl>
 <dd>
 
@@ -10073,7 +10385,7 @@ client.Agent.Skill.Export.Get(
 <dl>
 <dd>
 
-List runs that belong to this trajectory import.
+List runs that belong to this trace import.
 </dd>
 </dl>
 </dd>
@@ -10088,8 +10400,8 @@ List runs that belong to this trajectory import.
 <dd>
 
 ```go
-request := &trajectoryimport.RunListRequest{}
-client.Agent.TrajectoryImport.Run.List(
+request := &traceimport.RunListRequest{}
+client.Agent.TraceImport.Run.List(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -10117,7 +10429,7 @@ client.Agent.TrajectoryImport.Run.List(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
     
 </dd>
 </dl>
@@ -10145,7 +10457,7 @@ client.Agent.TrajectoryImport.Run.List(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TrajectoryImport.Run.Create(AgentUUID, ImportUUID) -> *zep.Task</code></summary>
+<details><summary><code>client.Agent.TraceImport.Run.Create(AgentUUID, ImportUUID) -> *zep.Task</code></summary>
 <dl>
 <dd>
 
@@ -10172,7 +10484,7 @@ Create a pending run and its Task. This operation does not start the run.
 <dd>
 
 ```go
-client.Agent.TrajectoryImport.Run.Create(
+client.Agent.TraceImport.Run.Create(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -10199,7 +10511,7 @@ client.Agent.TrajectoryImport.Run.Create(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
     
 </dd>
 </dl>
@@ -10211,7 +10523,7 @@ client.Agent.TrajectoryImport.Run.Create(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TrajectoryImport.Run.Get(AgentUUID, ImportUUID, RunUUID) -> *zep.TrajectoryImportRun</code></summary>
+<details><summary><code>client.Agent.TraceImport.Run.Get(AgentUUID, ImportUUID, RunUUID) -> *zep.TraceImportRun</code></summary>
 <dl>
 <dd>
 
@@ -10223,7 +10535,7 @@ client.Agent.TrajectoryImport.Run.Create(
 <dl>
 <dd>
 
-Read one run that belongs to this trajectory import.
+Read one run that belongs to this trace import.
 </dd>
 </dl>
 </dd>
@@ -10238,7 +10550,7 @@ Read one run that belongs to this trajectory import.
 <dd>
 
 ```go
-client.Agent.TrajectoryImport.Run.Get(
+client.Agent.TraceImport.Run.Get(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -10266,7 +10578,7 @@ client.Agent.TrajectoryImport.Run.Get(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
     
 </dd>
 </dl>
@@ -10286,8 +10598,8 @@ client.Agent.TrajectoryImport.Run.Get(
 </dl>
 </details>
 
-## Agent TrajectoryImport Run Item
-<details><summary><code>client.Agent.TrajectoryImport.Run.Item.List(AgentUUID, ImportUUID, RunUUID) -> *zep.TrajectoryImportRunItemPage</code></summary>
+## Agent TraceImport Run Item
+<details><summary><code>client.Agent.TraceImport.Run.Item.List(AgentUUID, ImportUUID, RunUUID) -> *zep.TraceImportRunItemPage</code></summary>
 <dl>
 <dd>
 
@@ -10315,7 +10627,7 @@ List trace results for this run. Run items do not include source payload.
 
 ```go
 request := &run.ItemListRequest{}
-client.Agent.TrajectoryImport.Run.Item.List(
+client.Agent.TraceImport.Run.Item.List(
     context.TODO(),
     "agent_uuid",
     "import_uuid",
@@ -10344,7 +10656,7 @@ client.Agent.TrajectoryImport.Run.Item.List(
 <dl>
 <dd>
 
-**importUUID:** `string` — Trajectory import UUID
+**importUUID:** `string` — Trace import UUID
     
 </dd>
 </dl>
@@ -10566,17 +10878,6 @@ client.Graph.Episode.Add(
 <dl>
 <dd>
 
-**createdAt:** `*string` 
-
-The episode's reference time, used for temporal reasoning rather than
-ingestion time.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **data:** `string` — The episode content to add to the graph.
     
 </dd>
@@ -10594,6 +10895,17 @@ ingestion time.
 <dd>
 
 **metadata:** `map[string]any` — Metadata to store on the episode. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**referenceTime:** `*string` 
+
+The episode's reference time, used for temporal reasoning rather than
+ingestion time. Defaults to the ingestion time.
     
 </dd>
 </dl>
@@ -12919,7 +13231,7 @@ client.TraceConnection.Trace.Get(
 <dl>
 <dd>
 
-**mapping:** `*zep.TrajectoryMapping` — Mapping is an optional mapping preview configuration. Example: {"task_family":{"source":"fixed","value":"support"}}.
+**mapping:** `*zep.TraceMapping` — Mapping is an optional mapping preview configuration. Example: {"task_family":{"source":"fixed","value":"support"}}.
     
 </dd>
 </dl>

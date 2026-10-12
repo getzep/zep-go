@@ -11,24 +11,24 @@ import (
 )
 
 var (
-	createTrajectoryImportRequestFieldConnectionUUID    = big.NewInt(1 << 0)
-	createTrajectoryImportRequestFieldLearnFrom         = big.NewInt(1 << 1)
-	createTrajectoryImportRequestFieldMapping           = big.NewInt(1 << 2)
-	createTrajectoryImportRequestFieldName              = big.NewInt(1 << 3)
-	createTrajectoryImportRequestFieldOnSourceChange    = big.NewInt(1 << 4)
-	createTrajectoryImportRequestFieldProviderProjectID = big.NewInt(1 << 5)
-	createTrajectoryImportRequestFieldRequireReview     = big.NewInt(1 << 6)
-	createTrajectoryImportRequestFieldSchedule          = big.NewInt(1 << 7)
-	createTrajectoryImportRequestFieldSelection         = big.NewInt(1 << 8)
+	createTraceImportRequestFieldConnectionUUID    = big.NewInt(1 << 0)
+	createTraceImportRequestFieldLearnFrom         = big.NewInt(1 << 1)
+	createTraceImportRequestFieldMapping           = big.NewInt(1 << 2)
+	createTraceImportRequestFieldName              = big.NewInt(1 << 3)
+	createTraceImportRequestFieldOnSourceChange    = big.NewInt(1 << 4)
+	createTraceImportRequestFieldProviderProjectID = big.NewInt(1 << 5)
+	createTraceImportRequestFieldRequireReview     = big.NewInt(1 << 6)
+	createTraceImportRequestFieldSchedule          = big.NewInt(1 << 7)
+	createTraceImportRequestFieldSelection         = big.NewInt(1 << 8)
 )
 
-type CreateTrajectoryImportRequest struct {
+type CreateTraceImportRequest struct {
 	// ConnectionUUID identifies the project trace connection.
 	ConnectionUUID *string `json:"connection_uuid,omitempty" url:"-"`
 	// LearnFrom controls whether imported evidence can support Skills.
 	LearnFrom *bool `json:"learn_from,omitempty" url:"-"`
-	// Mapping defines how source traces become Trajectories. Example: {"task_family":{"source":"fixed","value":"support"}}.
-	Mapping *v4.TrajectoryMapping `json:"mapping,omitempty" url:"-"`
+	// Mapping defines how source traces become Traces. Example: {"task_family":{"source":"fixed","value":"support"}}.
+	Mapping *v4.TraceMapping `json:"mapping,omitempty" url:"-"`
 	// Name is the import display name.
 	Name *string `json:"name,omitempty" url:"-"`
 	// OnSourceChange defines how changed source traces are handled.
@@ -38,15 +38,15 @@ type CreateTrajectoryImportRequest struct {
 	// RequireReview requires review for candidates backed by this import.
 	RequireReview *bool `json:"require_review,omitempty" url:"-"`
 	// Schedule enables recurring imports when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
-	Schedule *v4.TrajectoryImportSchedule `json:"schedule,omitempty" url:"-"`
+	Schedule *v4.TraceImportSchedule `json:"schedule,omitempty" url:"-"`
 	// Selection defines the traces to import. Example: {"trace_ids":["trace_123"]}.
-	Selection *v4.TrajectoryImportSelection `json:"selection,omitempty" url:"-"`
+	Selection *v4.TraceImportSelection `json:"selection,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-func (c *CreateTrajectoryImportRequest) require(field *big.Int) {
+func (c *CreateTraceImportRequest) require(field *big.Int) {
 	next := new(big.Int)
 	if c.explicitFields != nil {
 		next.Set(c.explicitFields)
@@ -57,79 +57,79 @@ func (c *CreateTrajectoryImportRequest) require(field *big.Int) {
 
 // SetConnectionUUID sets the ConnectionUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetConnectionUUID(connectionUUID *string) {
+func (c *CreateTraceImportRequest) SetConnectionUUID(connectionUUID *string) {
 	c.ConnectionUUID = connectionUUID
-	c.require(createTrajectoryImportRequestFieldConnectionUUID)
+	c.require(createTraceImportRequestFieldConnectionUUID)
 }
 
 // SetLearnFrom sets the LearnFrom field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetLearnFrom(learnFrom *bool) {
+func (c *CreateTraceImportRequest) SetLearnFrom(learnFrom *bool) {
 	c.LearnFrom = learnFrom
-	c.require(createTrajectoryImportRequestFieldLearnFrom)
+	c.require(createTraceImportRequestFieldLearnFrom)
 }
 
 // SetMapping sets the Mapping field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetMapping(mapping *v4.TrajectoryMapping) {
+func (c *CreateTraceImportRequest) SetMapping(mapping *v4.TraceMapping) {
 	c.Mapping = mapping
-	c.require(createTrajectoryImportRequestFieldMapping)
+	c.require(createTraceImportRequestFieldMapping)
 }
 
 // SetName sets the Name field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetName(name *string) {
+func (c *CreateTraceImportRequest) SetName(name *string) {
 	c.Name = name
-	c.require(createTrajectoryImportRequestFieldName)
+	c.require(createTraceImportRequestFieldName)
 }
 
 // SetOnSourceChange sets the OnSourceChange field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetOnSourceChange(onSourceChange *string) {
+func (c *CreateTraceImportRequest) SetOnSourceChange(onSourceChange *string) {
 	c.OnSourceChange = onSourceChange
-	c.require(createTrajectoryImportRequestFieldOnSourceChange)
+	c.require(createTraceImportRequestFieldOnSourceChange)
 }
 
 // SetProviderProjectID sets the ProviderProjectID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetProviderProjectID(providerProjectID *string) {
+func (c *CreateTraceImportRequest) SetProviderProjectID(providerProjectID *string) {
 	c.ProviderProjectID = providerProjectID
-	c.require(createTrajectoryImportRequestFieldProviderProjectID)
+	c.require(createTraceImportRequestFieldProviderProjectID)
 }
 
 // SetRequireReview sets the RequireReview field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetRequireReview(requireReview *bool) {
+func (c *CreateTraceImportRequest) SetRequireReview(requireReview *bool) {
 	c.RequireReview = requireReview
-	c.require(createTrajectoryImportRequestFieldRequireReview)
+	c.require(createTraceImportRequestFieldRequireReview)
 }
 
 // SetSchedule sets the Schedule field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetSchedule(schedule *v4.TrajectoryImportSchedule) {
+func (c *CreateTraceImportRequest) SetSchedule(schedule *v4.TraceImportSchedule) {
 	c.Schedule = schedule
-	c.require(createTrajectoryImportRequestFieldSchedule)
+	c.require(createTraceImportRequestFieldSchedule)
 }
 
 // SetSelection sets the Selection field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTrajectoryImportRequest) SetSelection(selection *v4.TrajectoryImportSelection) {
+func (c *CreateTraceImportRequest) SetSelection(selection *v4.TraceImportSelection) {
 	c.Selection = selection
-	c.require(createTrajectoryImportRequestFieldSelection)
+	c.require(createTraceImportRequestFieldSelection)
 }
 
-func (c *CreateTrajectoryImportRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler CreateTrajectoryImportRequest
+func (c *CreateTraceImportRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreateTraceImportRequest
 	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	*c = CreateTrajectoryImportRequest(body)
+	*c = CreateTraceImportRequest(body)
 	return nil
 }
 
-func (c *CreateTrajectoryImportRequest) MarshalJSON() ([]byte, error) {
-	type embed CreateTrajectoryImportRequest
+func (c *CreateTraceImportRequest) MarshalJSON() ([]byte, error) {
+	type embed CreateTraceImportRequest
 	var marshaler = struct {
 		embed
 	}{
@@ -140,18 +140,18 @@ func (c *CreateTrajectoryImportRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	trajectoryImportDeleteRequestFieldTrajectories = big.NewInt(1 << 0)
+	traceImportDeleteRequestFieldTraces = big.NewInt(1 << 0)
 )
 
-type TrajectoryImportDeleteRequest struct {
-	// Whether to delete imported Trajectories
-	Trajectories *TrajectoryImportDeleteRequestTrajectories `json:"-" url:"trajectories,omitempty"`
+type TraceImportDeleteRequest struct {
+	// Whether to delete imported Traces
+	Traces *TraceImportDeleteRequestTraces `json:"-" url:"traces,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-func (t *TrajectoryImportDeleteRequest) require(field *big.Int) {
+func (t *TraceImportDeleteRequest) require(field *big.Int) {
 	next := new(big.Int)
 	if t.explicitFields != nil {
 		next.Set(t.explicitFields)
@@ -160,19 +160,19 @@ func (t *TrajectoryImportDeleteRequest) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetTrajectories sets the Trajectories field and marks it as non-optional;
+// SetTraces sets the Traces field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportDeleteRequest) SetTrajectories(trajectories *TrajectoryImportDeleteRequestTrajectories) {
-	t.Trajectories = trajectories
-	t.require(trajectoryImportDeleteRequestFieldTrajectories)
+func (t *TraceImportDeleteRequest) SetTraces(traces *TraceImportDeleteRequestTraces) {
+	t.Traces = traces
+	t.require(traceImportDeleteRequestFieldTraces)
 }
 
 var (
-	trajectoryImportListRequestFieldLimit  = big.NewInt(1 << 0)
-	trajectoryImportListRequestFieldCursor = big.NewInt(1 << 1)
+	traceImportListRequestFieldLimit  = big.NewInt(1 << 0)
+	traceImportListRequestFieldCursor = big.NewInt(1 << 1)
 )
 
-type TrajectoryImportListRequest struct {
+type TraceImportListRequest struct {
 	// Page size
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Opaque page cursor
@@ -182,7 +182,7 @@ type TrajectoryImportListRequest struct {
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-func (t *TrajectoryImportListRequest) require(field *big.Int) {
+func (t *TraceImportListRequest) require(field *big.Int) {
 	next := new(big.Int)
 	if t.explicitFields != nil {
 		next.Set(t.explicitFields)
@@ -193,58 +193,58 @@ func (t *TrajectoryImportListRequest) require(field *big.Int) {
 
 // SetLimit sets the Limit field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportListRequest) SetLimit(limit *int) {
+func (t *TraceImportListRequest) SetLimit(limit *int) {
 	t.Limit = limit
-	t.require(trajectoryImportListRequestFieldLimit)
+	t.require(traceImportListRequestFieldLimit)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportListRequest) SetCursor(cursor *string) {
+func (t *TraceImportListRequest) SetCursor(cursor *string) {
 	t.Cursor = cursor
-	t.require(trajectoryImportListRequestFieldCursor)
+	t.require(traceImportListRequestFieldCursor)
 }
 
-type TrajectoryImportDeleteRequestTrajectories string
+type TraceImportDeleteRequestTraces string
 
 const (
-	TrajectoryImportDeleteRequestTrajectoriesKeep   TrajectoryImportDeleteRequestTrajectories = "keep"
-	TrajectoryImportDeleteRequestTrajectoriesDelete TrajectoryImportDeleteRequestTrajectories = "delete"
+	TraceImportDeleteRequestTracesKeep   TraceImportDeleteRequestTraces = "keep"
+	TraceImportDeleteRequestTracesDelete TraceImportDeleteRequestTraces = "delete"
 )
 
-func NewTrajectoryImportDeleteRequestTrajectoriesFromString(s string) (TrajectoryImportDeleteRequestTrajectories, error) {
+func NewTraceImportDeleteRequestTracesFromString(s string) (TraceImportDeleteRequestTraces, error) {
 	switch s {
 	case "keep":
-		return TrajectoryImportDeleteRequestTrajectoriesKeep, nil
+		return TraceImportDeleteRequestTracesKeep, nil
 	case "delete":
-		return TrajectoryImportDeleteRequestTrajectoriesDelete, nil
+		return TraceImportDeleteRequestTracesDelete, nil
 	}
-	var t TrajectoryImportDeleteRequestTrajectories
+	var t TraceImportDeleteRequestTraces
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (t TrajectoryImportDeleteRequestTrajectories) Ptr() *TrajectoryImportDeleteRequestTrajectories {
+func (t TraceImportDeleteRequestTraces) Ptr() *TraceImportDeleteRequestTraces {
 	return &t
 }
 
 var (
-	updateTrajectoryImportRequestFieldExpectedRevision = big.NewInt(1 << 0)
-	updateTrajectoryImportRequestFieldLearnFrom        = big.NewInt(1 << 1)
-	updateTrajectoryImportRequestFieldMapping          = big.NewInt(1 << 2)
-	updateTrajectoryImportRequestFieldName             = big.NewInt(1 << 3)
-	updateTrajectoryImportRequestFieldOnSourceChange   = big.NewInt(1 << 4)
-	updateTrajectoryImportRequestFieldRequireReview    = big.NewInt(1 << 5)
-	updateTrajectoryImportRequestFieldSchedule         = big.NewInt(1 << 6)
-	updateTrajectoryImportRequestFieldSelection        = big.NewInt(1 << 7)
+	updateTraceImportRequestFieldExpectedRevision = big.NewInt(1 << 0)
+	updateTraceImportRequestFieldLearnFrom        = big.NewInt(1 << 1)
+	updateTraceImportRequestFieldMapping          = big.NewInt(1 << 2)
+	updateTraceImportRequestFieldName             = big.NewInt(1 << 3)
+	updateTraceImportRequestFieldOnSourceChange   = big.NewInt(1 << 4)
+	updateTraceImportRequestFieldRequireReview    = big.NewInt(1 << 5)
+	updateTraceImportRequestFieldSchedule         = big.NewInt(1 << 6)
+	updateTraceImportRequestFieldSelection        = big.NewInt(1 << 7)
 )
 
-type UpdateTrajectoryImportRequest struct {
+type UpdateTraceImportRequest struct {
 	// ExpectedRevision is the current import revision.
 	ExpectedRevision *int `json:"expected_revision,omitempty" url:"-"`
 	// LearnFrom is the new learning setting, when supplied.
 	LearnFrom *bool `json:"learn_from,omitempty" url:"-"`
 	// Mapping is the new mapping, when supplied. Example: {"task_family":{"source":"fixed","value":"support"}}.
-	Mapping *v4.TrajectoryMapping `json:"mapping,omitempty" url:"-"`
+	Mapping *v4.TraceMapping `json:"mapping,omitempty" url:"-"`
 	// Name is the new import name, when supplied.
 	Name *string `json:"name,omitempty" url:"-"`
 	// OnSourceChange is the new change policy, when supplied.
@@ -252,15 +252,15 @@ type UpdateTrajectoryImportRequest struct {
 	// RequireReview is the new review setting, when supplied.
 	RequireReview *bool `json:"require_review,omitempty" url:"-"`
 	// Schedule is the new schedule, when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
-	Schedule *v4.TrajectoryImportSchedule `json:"schedule,omitempty" url:"-"`
+	Schedule *v4.TraceImportSchedule `json:"schedule,omitempty" url:"-"`
 	// Selection is the new selection, when supplied. Example: {"trace_ids":["trace_123"]}.
-	Selection *v4.TrajectoryImportSelection `json:"selection,omitempty" url:"-"`
+	Selection *v4.TraceImportSelection `json:"selection,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-func (u *UpdateTrajectoryImportRequest) require(field *big.Int) {
+func (u *UpdateTraceImportRequest) require(field *big.Int) {
 	next := new(big.Int)
 	if u.explicitFields != nil {
 		next.Set(u.explicitFields)
@@ -271,72 +271,72 @@ func (u *UpdateTrajectoryImportRequest) require(field *big.Int) {
 
 // SetExpectedRevision sets the ExpectedRevision field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTrajectoryImportRequest) SetExpectedRevision(expectedRevision *int) {
+func (u *UpdateTraceImportRequest) SetExpectedRevision(expectedRevision *int) {
 	u.ExpectedRevision = expectedRevision
-	u.require(updateTrajectoryImportRequestFieldExpectedRevision)
+	u.require(updateTraceImportRequestFieldExpectedRevision)
 }
 
 // SetLearnFrom sets the LearnFrom field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTrajectoryImportRequest) SetLearnFrom(learnFrom *bool) {
+func (u *UpdateTraceImportRequest) SetLearnFrom(learnFrom *bool) {
 	u.LearnFrom = learnFrom
-	u.require(updateTrajectoryImportRequestFieldLearnFrom)
+	u.require(updateTraceImportRequestFieldLearnFrom)
 }
 
 // SetMapping sets the Mapping field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTrajectoryImportRequest) SetMapping(mapping *v4.TrajectoryMapping) {
+func (u *UpdateTraceImportRequest) SetMapping(mapping *v4.TraceMapping) {
 	u.Mapping = mapping
-	u.require(updateTrajectoryImportRequestFieldMapping)
+	u.require(updateTraceImportRequestFieldMapping)
 }
 
 // SetName sets the Name field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTrajectoryImportRequest) SetName(name *string) {
+func (u *UpdateTraceImportRequest) SetName(name *string) {
 	u.Name = name
-	u.require(updateTrajectoryImportRequestFieldName)
+	u.require(updateTraceImportRequestFieldName)
 }
 
 // SetOnSourceChange sets the OnSourceChange field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTrajectoryImportRequest) SetOnSourceChange(onSourceChange *string) {
+func (u *UpdateTraceImportRequest) SetOnSourceChange(onSourceChange *string) {
 	u.OnSourceChange = onSourceChange
-	u.require(updateTrajectoryImportRequestFieldOnSourceChange)
+	u.require(updateTraceImportRequestFieldOnSourceChange)
 }
 
 // SetRequireReview sets the RequireReview field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTrajectoryImportRequest) SetRequireReview(requireReview *bool) {
+func (u *UpdateTraceImportRequest) SetRequireReview(requireReview *bool) {
 	u.RequireReview = requireReview
-	u.require(updateTrajectoryImportRequestFieldRequireReview)
+	u.require(updateTraceImportRequestFieldRequireReview)
 }
 
 // SetSchedule sets the Schedule field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTrajectoryImportRequest) SetSchedule(schedule *v4.TrajectoryImportSchedule) {
+func (u *UpdateTraceImportRequest) SetSchedule(schedule *v4.TraceImportSchedule) {
 	u.Schedule = schedule
-	u.require(updateTrajectoryImportRequestFieldSchedule)
+	u.require(updateTraceImportRequestFieldSchedule)
 }
 
 // SetSelection sets the Selection field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTrajectoryImportRequest) SetSelection(selection *v4.TrajectoryImportSelection) {
+func (u *UpdateTraceImportRequest) SetSelection(selection *v4.TraceImportSelection) {
 	u.Selection = selection
-	u.require(updateTrajectoryImportRequestFieldSelection)
+	u.require(updateTraceImportRequestFieldSelection)
 }
 
-func (u *UpdateTrajectoryImportRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler UpdateTrajectoryImportRequest
+func (u *UpdateTraceImportRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler UpdateTraceImportRequest
 	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	*u = UpdateTrajectoryImportRequest(body)
+	*u = UpdateTraceImportRequest(body)
 	return nil
 }
 
-func (u *UpdateTrajectoryImportRequest) MarshalJSON() ([]byte, error) {
-	type embed UpdateTrajectoryImportRequest
+func (u *UpdateTraceImportRequest) MarshalJSON() ([]byte, error) {
+	type embed UpdateTraceImportRequest
 	var marshaler = struct {
 		embed
 	}{

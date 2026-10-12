@@ -25,11 +25,11 @@ type CreateTraceConnectionRequest struct {
 	Credential *string `json:"credential,omitempty" url:"-"`
 	// Name is the connection name.
 	Name *string `json:"name,omitempty" url:"-"`
-	// Provider is the provider name.
-	Provider *string `json:"provider,omitempty" url:"-"`
-	// RequestsPerMinute is the provider request rate limit.
+	// Provider is the Braintrust or LangSmith provider.
+	Provider *CreateTraceConnectionRequestProvider `json:"provider,omitempty" url:"-"`
+	// RequestsPerMinute is the request rate limit from 1 to 60 per minute.
 	RequestsPerMinute *int `json:"requests_per_minute,omitempty" url:"-"`
-	// RetentionDays is an optional provider retention window.
+	// RetentionDays is an optional retention window in days.
 	RetentionDays *int `json:"retention_days,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -68,7 +68,7 @@ func (c *CreateTraceConnectionRequest) SetName(name *string) {
 
 // SetProvider sets the Provider field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTraceConnectionRequest) SetProvider(provider *string) {
+func (c *CreateTraceConnectionRequest) SetProvider(provider *CreateTraceConnectionRequestProvider) {
 	c.Provider = provider
 	c.require(createTraceConnectionRequestFieldProvider)
 }
@@ -175,8 +175,8 @@ type TraceConnection struct {
 	LastVerifiedAt *string `json:"last_verified_at,omitempty" url:"last_verified_at,omitempty"`
 	// Name is the display name.
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
-	// Provider is the observability provider.
-	Provider *string `json:"provider,omitempty" url:"provider,omitempty"`
+	// Provider is the Braintrust or LangSmith provider.
+	Provider *TraceConnectionProvider `json:"provider,omitempty" url:"provider,omitempty"`
 	// ProviderOrganizationID is the provider organization identifier.
 	ProviderOrganizationID *string `json:"provider_organization_id,omitempty" url:"provider_organization_id,omitempty"`
 	// ProviderOrganizationName is the provider organization name.
@@ -239,7 +239,7 @@ func (t *TraceConnection) GetName() *string {
 	return t.Name
 }
 
-func (t *TraceConnection) GetProvider() *string {
+func (t *TraceConnection) GetProvider() *TraceConnectionProvider {
 	if t == nil {
 		return nil
 	}
@@ -348,7 +348,7 @@ func (t *TraceConnection) SetName(name *string) {
 
 // SetProvider sets the Provider field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TraceConnection) SetProvider(provider *string) {
+func (t *TraceConnection) SetProvider(provider *TraceConnectionProvider) {
 	t.Provider = provider
 	t.require(traceConnectionFieldProvider)
 }
@@ -558,6 +558,29 @@ func (t *TraceConnectionPage) String() string {
 	return fmt.Sprintf("%#v", t)
 }
 
+// Provider is the Braintrust or LangSmith provider.
+type TraceConnectionProvider string
+
+const (
+	TraceConnectionProviderBraintrust TraceConnectionProvider = "braintrust"
+	TraceConnectionProviderLangsmith  TraceConnectionProvider = "langsmith"
+)
+
+func NewTraceConnectionProviderFromString(s string) (TraceConnectionProvider, error) {
+	switch s {
+	case "braintrust":
+		return TraceConnectionProviderBraintrust, nil
+	case "langsmith":
+		return TraceConnectionProviderLangsmith, nil
+	}
+	var t TraceConnectionProvider
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceConnectionProvider) Ptr() *TraceConnectionProvider {
+	return &t
+}
+
 var (
 	traceConnectionSettingsFieldApiUrl            = big.NewInt(1 << 0)
 	traceConnectionSettingsFieldRequestsPerMinute = big.NewInt(1 << 1)
@@ -567,9 +590,9 @@ var (
 type TraceConnectionSettings struct {
 	// APIURL is an optional custom provider endpoint.
 	ApiUrl *string `json:"api_url,omitempty" url:"api_url,omitempty"`
-	// RequestsPerMinute is the maximum provider request rate.
+	// RequestsPerMinute is the request rate limit from 1 to 60 per minute.
 	RequestsPerMinute *int `json:"requests_per_minute,omitempty" url:"requests_per_minute,omitempty"`
-	// RetentionDays is the provider retention window, when known.
+	// RetentionDays is the optional retention window in days.
 	RetentionDays *int `json:"retention_days,omitempty" url:"retention_days,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -679,6 +702,29 @@ func (t *TraceConnectionSettings) String() string {
 	return fmt.Sprintf("%#v", t)
 }
 
+// Provider is the Braintrust or LangSmith provider.
+type CreateTraceConnectionRequestProvider string
+
+const (
+	CreateTraceConnectionRequestProviderBraintrust CreateTraceConnectionRequestProvider = "braintrust"
+	CreateTraceConnectionRequestProviderLangsmith  CreateTraceConnectionRequestProvider = "langsmith"
+)
+
+func NewCreateTraceConnectionRequestProviderFromString(s string) (CreateTraceConnectionRequestProvider, error) {
+	switch s {
+	case "braintrust":
+		return CreateTraceConnectionRequestProviderBraintrust, nil
+	case "langsmith":
+		return CreateTraceConnectionRequestProviderLangsmith, nil
+	}
+	var t CreateTraceConnectionRequestProvider
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CreateTraceConnectionRequestProvider) Ptr() *CreateTraceConnectionRequestProvider {
+	return &c
+}
+
 var (
 	updateTraceConnectionRequestFieldApiUrl            = big.NewInt(1 << 0)
 	updateTraceConnectionRequestFieldCredential        = big.NewInt(1 << 1)
@@ -694,9 +740,9 @@ type UpdateTraceConnectionRequest struct {
 	Credential *string `json:"credential,omitempty" url:"-"`
 	// Name is the new connection name, when supplied.
 	Name *string `json:"name,omitempty" url:"-"`
-	// RequestsPerMinute is the new provider request rate limit, when supplied.
+	// RequestsPerMinute is the new request rate limit, when supplied.
 	RequestsPerMinute *int `json:"requests_per_minute,omitempty" url:"-"`
-	// RetentionDays is the new provider retention window, when supplied.
+	// RetentionDays is the new retention window in days, when supplied.
 	RetentionDays *int `json:"retention_days,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

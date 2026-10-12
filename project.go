@@ -389,9 +389,10 @@ var (
 	projectFieldCreatedAt                      = big.NewInt(1 << 0)
 	projectFieldDefaultTimeZone                = big.NewInt(1 << 1)
 	projectFieldDescription                    = big.NewInt(1 << 2)
-	projectFieldIncludePolicyViolatingEpisodes = big.NewInt(1 << 3)
-	projectFieldName                           = big.NewInt(1 << 4)
-	projectFieldUUID                           = big.NewInt(1 << 5)
+	projectFieldHyperedgesEnabled              = big.NewInt(1 << 3)
+	projectFieldIncludePolicyViolatingEpisodes = big.NewInt(1 << 4)
+	projectFieldName                           = big.NewInt(1 << 5)
+	projectFieldUUID                           = big.NewInt(1 << 6)
 )
 
 type Project struct {
@@ -402,6 +403,8 @@ type Project struct {
 	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"default_time_zone,omitempty"`
 	// A human-readable description of the project.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// True when hyperedge extraction is enabled for this project. This setting is one-way.
+	HyperedgesEnabled *bool `json:"hyperedges_enabled,omitempty" url:"hyperedges_enabled,omitempty"`
 	// When true, episode reads on graphs with a content policy include the
 	// episodes that violated the policy. The default is false.
 	IncludePolicyViolatingEpisodes *bool `json:"include_policy_violating_episodes,omitempty" url:"include_policy_violating_episodes,omitempty"`
@@ -436,6 +439,13 @@ func (p *Project) GetDescription() *string {
 		return nil
 	}
 	return p.Description
+}
+
+func (p *Project) GetHyperedgesEnabled() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.HyperedgesEnabled
 }
 
 func (p *Project) GetIncludePolicyViolatingEpisodes() *bool {
@@ -494,6 +504,13 @@ func (p *Project) SetDefaultTimeZone(defaultTimeZone *string) {
 func (p *Project) SetDescription(description *string) {
 	p.Description = description
 	p.require(projectFieldDescription)
+}
+
+// SetHyperedgesEnabled sets the HyperedgesEnabled field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *Project) SetHyperedgesEnabled(hyperedgesEnabled *bool) {
+	p.HyperedgesEnabled = hyperedgesEnabled
+	p.require(projectFieldHyperedgesEnabled)
 }
 
 // SetIncludePolicyViolatingEpisodes sets the IncludePolicyViolatingEpisodes field and marks it as non-optional;
@@ -561,13 +578,17 @@ func (p *Project) String() string {
 
 var (
 	patchProjectRequestFieldDefaultTimeZone                = big.NewInt(1 << 0)
-	patchProjectRequestFieldIncludePolicyViolatingEpisodes = big.NewInt(1 << 1)
+	patchProjectRequestFieldHyperedgesEnabled              = big.NewInt(1 << 1)
+	patchProjectRequestFieldIncludePolicyViolatingEpisodes = big.NewInt(1 << 2)
 )
 
 type PatchProjectRequest struct {
 	// The project's IANA fallback time zone. Set to null to clear the existing
 	// value.
 	DefaultTimeZone *string `json:"default_time_zone,omitempty" url:"-"`
+	// Set to true to enable hyperedge extraction. This setting cannot be disabled.
+	// A member needs project.edit. Project API keys receive 403 permission_denied.
+	HyperedgesEnabled *bool `json:"hyperedges_enabled,omitempty" url:"-"`
 	// When true, episode reads on graphs with a content policy include the
 	// episodes that violated the policy.
 	IncludePolicyViolatingEpisodes *bool `json:"include_policy_violating_episodes,omitempty" url:"-"`
@@ -590,6 +611,13 @@ func (p *PatchProjectRequest) require(field *big.Int) {
 func (p *PatchProjectRequest) SetDefaultTimeZone(defaultTimeZone *string) {
 	p.DefaultTimeZone = defaultTimeZone
 	p.require(patchProjectRequestFieldDefaultTimeZone)
+}
+
+// SetHyperedgesEnabled sets the HyperedgesEnabled field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PatchProjectRequest) SetHyperedgesEnabled(hyperedgesEnabled *bool) {
+	p.HyperedgesEnabled = hyperedgesEnabled
+	p.require(patchProjectRequestFieldHyperedgesEnabled)
 }
 
 // SetIncludePolicyViolatingEpisodes sets the IncludePolicyViolatingEpisodes field and marks it as non-optional;

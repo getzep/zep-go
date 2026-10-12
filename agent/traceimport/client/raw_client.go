@@ -37,9 +37,9 @@ func (r *RawClient) Create(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	request *agent.CreateTrajectoryImportRequest,
+	request *agent.CreateTraceImportRequest,
 	opts ...option.IdempotentRequestOption,
-) (*core.Response[*zep.TrajectoryImport], error) {
+) (*core.Response[*zep.TraceImport], error) {
 	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -47,7 +47,7 @@ func (r *RawClient) Create(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports",
+		baseURL+"/agents/%v/trace-imports",
 		agentUUID,
 	)
 	headers := internal.MergeHeaders(
@@ -57,7 +57,7 @@ func (r *RawClient) Create(
 	headers.Add("Content-Type", "application/json")
 	core.SetIdempotencyKeyHeader(headers)
 
-	var response *zep.TrajectoryImport
+	var response *zep.TraceImport
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -77,7 +77,7 @@ func (r *RawClient) Create(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*zep.TrajectoryImport]{
+	return &core.Response[*zep.TraceImport]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -88,10 +88,10 @@ func (r *RawClient) Get(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	opts ...option.RequestOption,
-) (*core.Response[*zep.TrajectoryImport], error) {
+) (*core.Response[*zep.TraceImport], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -99,7 +99,7 @@ func (r *RawClient) Get(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports/%v",
+		baseURL+"/agents/%v/trace-imports/%v",
 		agentUUID,
 		importUUID,
 	)
@@ -107,7 +107,7 @@ func (r *RawClient) Get(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	var response *zep.TrajectoryImport
+	var response *zep.TraceImport
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -126,7 +126,7 @@ func (r *RawClient) Get(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*zep.TrajectoryImport]{
+	return &core.Response[*zep.TraceImport]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -137,9 +137,9 @@ func (r *RawClient) Delete(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
-	request *agent.TrajectoryImportDeleteRequest,
+	request *agent.TraceImportDeleteRequest,
 	opts ...option.IdempotentRequestOption,
 ) (*core.Response[*zep.Task], error) {
 	options := core.NewIdempotentRequestOptions(opts...)
@@ -149,7 +149,7 @@ func (r *RawClient) Delete(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports/%v",
+		baseURL+"/agents/%v/trace-imports/%v",
 		agentUUID,
 		importUUID,
 	)
@@ -197,11 +197,11 @@ func (r *RawClient) Update(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
-	request *agent.UpdateTrajectoryImportRequest,
+	request *agent.UpdateTraceImportRequest,
 	opts ...option.IdempotentRequestOption,
-) (*core.Response[*zep.TrajectoryImport], error) {
+) (*core.Response[*zep.TraceImport], error) {
 	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -209,7 +209,7 @@ func (r *RawClient) Update(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports/%v",
+		baseURL+"/agents/%v/trace-imports/%v",
 		agentUUID,
 		importUUID,
 	)
@@ -220,7 +220,7 @@ func (r *RawClient) Update(
 	headers.Add("Content-Type", "application/json")
 	core.SetIdempotencyKeyHeader(headers)
 
-	var response *zep.TrajectoryImport
+	var response *zep.TraceImport
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -240,7 +240,7 @@ func (r *RawClient) Update(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*zep.TrajectoryImport]{
+	return &core.Response[*zep.TraceImport]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -251,10 +251,10 @@ func (r *RawClient) Pause(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	opts ...option.IdempotentRequestOption,
-) (*core.Response[*zep.TrajectoryImport], error) {
+) (*core.Response[*zep.TraceImport], error) {
 	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -262,7 +262,7 @@ func (r *RawClient) Pause(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports/%v/pause",
+		baseURL+"/agents/%v/trace-imports/%v/pause",
 		agentUUID,
 		importUUID,
 	)
@@ -272,7 +272,7 @@ func (r *RawClient) Pause(
 	)
 	core.SetIdempotencyKeyHeader(headers)
 
-	var response *zep.TrajectoryImport
+	var response *zep.TraceImport
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -291,7 +291,7 @@ func (r *RawClient) Pause(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*zep.TrajectoryImport]{
+	return &core.Response[*zep.TraceImport]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
@@ -302,10 +302,10 @@ func (r *RawClient) Resume(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	opts ...option.IdempotentRequestOption,
-) (*core.Response[*zep.TrajectoryImport], error) {
+) (*core.Response[*zep.TraceImport], error) {
 	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -313,7 +313,7 @@ func (r *RawClient) Resume(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports/%v/resume",
+		baseURL+"/agents/%v/trace-imports/%v/resume",
 		agentUUID,
 		importUUID,
 	)
@@ -323,7 +323,7 @@ func (r *RawClient) Resume(
 	)
 	core.SetIdempotencyKeyHeader(headers)
 
-	var response *zep.TrajectoryImport
+	var response *zep.TraceImport
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -342,7 +342,7 @@ func (r *RawClient) Resume(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*zep.TrajectoryImport]{
+	return &core.Response[*zep.TraceImport]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

@@ -13,7 +13,7 @@ import (
 func TestSettersSourceTraceGetRequest(t *testing.T) {
 	t.Run("SetMapping", func(t *testing.T) {
 		obj := &SourceTraceGetRequest{}
-		var fernTestValueMapping *v4.TrajectoryMapping
+		var fernTestValueMapping *v4.TraceMapping
 		obj.SetMapping(fernTestValueMapping)
 		assert.Equal(t, fernTestValueMapping, obj.Mapping)
 		assert.NotNil(t, obj.explicitFields)
@@ -42,7 +42,7 @@ func TestSettersMarkExplicitSourceTraceGetRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SourceTraceGetRequest{}
-		var fernTestValueMapping *v4.TrajectoryMapping
+		var fernTestValueMapping *v4.TraceMapping
 
 		// Act
 		obj.SetMapping(fernTestValueMapping)

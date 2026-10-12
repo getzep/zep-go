@@ -477,10 +477,8 @@ func TestGraphSearchEdgesWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.GraphSearchEdgesRequest{
-		Body: &zep.SearchRequest{
-			Query: "query",
-		},
+	request := &zep.SearchEdgesRequest{
+		Query: "query",
 	}
 	_, invocationErr := client.Graph.SearchEdges(
 		context.TODO(),
@@ -535,10 +533,8 @@ func TestGraphSearchNodesWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &zep.GraphSearchNodesRequest{
-		Body: &zep.SearchRequest{
-			Query: "query",
-		},
+	request := &zep.SearchNodesRequest{
+		Query: "query",
 	}
 	_, invocationErr := client.Graph.SearchNodes(
 		context.TODO(),

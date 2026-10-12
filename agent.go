@@ -116,25 +116,25 @@ func (d *DeleteAgentRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	getAgentContextRequestFieldEnvironments   = big.NewInt(1 << 0)
-	getAgentContextRequestFieldKind           = big.NewInt(1 << 1)
-	getAgentContextRequestFieldMaxCharacters  = big.NewInt(1 << 2)
-	getAgentContextRequestFieldModels         = big.NewInt(1 << 3)
-	getAgentContextRequestFieldObjective      = big.NewInt(1 << 4)
-	getAgentContextRequestFieldTaskFamily     = big.NewInt(1 << 5)
-	getAgentContextRequestFieldTools          = big.NewInt(1 << 6)
-	getAgentContextRequestFieldTrajectoryUUID = big.NewInt(1 << 7)
+	getAgentContextRequestFieldEnvironments  = big.NewInt(1 << 0)
+	getAgentContextRequestFieldKind          = big.NewInt(1 << 1)
+	getAgentContextRequestFieldMaxCharacters = big.NewInt(1 << 2)
+	getAgentContextRequestFieldModels        = big.NewInt(1 << 3)
+	getAgentContextRequestFieldObjective     = big.NewInt(1 << 4)
+	getAgentContextRequestFieldTaskFamily    = big.NewInt(1 << 5)
+	getAgentContextRequestFieldTools         = big.NewInt(1 << 6)
+	getAgentContextRequestFieldTraceUUID     = big.NewInt(1 << 7)
 )
 
 type GetAgentContextRequest struct {
-	Environments   []*AgentContextResource `json:"environments,omitempty" url:"-"`
-	Kind           *string                 `json:"kind,omitempty" url:"-"`
-	MaxCharacters  *int                    `json:"max_characters,omitempty" url:"-"`
-	Models         []*AgentContextResource `json:"models,omitempty" url:"-"`
-	Objective      *string                 `json:"objective,omitempty" url:"-"`
-	TaskFamily     *string                 `json:"task_family,omitempty" url:"-"`
-	Tools          []*AgentContextResource `json:"tools,omitempty" url:"-"`
-	TrajectoryUUID *string                 `json:"trajectory_uuid,omitempty" url:"-"`
+	Environments  []*AgentContextResource `json:"environments,omitempty" url:"-"`
+	Kind          *string                 `json:"kind,omitempty" url:"-"`
+	MaxCharacters *int                    `json:"max_characters,omitempty" url:"-"`
+	Models        []*AgentContextResource `json:"models,omitempty" url:"-"`
+	Objective     *string                 `json:"objective,omitempty" url:"-"`
+	TaskFamily    *string                 `json:"task_family,omitempty" url:"-"`
+	Tools         []*AgentContextResource `json:"tools,omitempty" url:"-"`
+	TraceUUID     *string                 `json:"trace_uuid,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -198,11 +198,11 @@ func (g *GetAgentContextRequest) SetTools(tools []*AgentContextResource) {
 	g.require(getAgentContextRequestFieldTools)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GetAgentContextRequest) SetTrajectoryUUID(trajectoryUUID *string) {
-	g.TrajectoryUUID = trajectoryUUID
-	g.require(getAgentContextRequestFieldTrajectoryUUID)
+func (g *GetAgentContextRequest) SetTraceUUID(traceUUID *string) {
+	g.TraceUUID = traceUUID
+	g.require(getAgentContextRequestFieldTraceUUID)
 }
 
 func (g *GetAgentContextRequest) UnmarshalJSON(data []byte) error {
@@ -229,11 +229,14 @@ func (g *GetAgentContextRequest) MarshalJSON() ([]byte, error) {
 var (
 	agentListRequestFieldLimit        = big.NewInt(1 << 0)
 	agentListRequestFieldCursor       = big.NewInt(1 << 1)
-	agentListRequestFieldAgentID      = big.NewInt(1 << 2)
-	agentListRequestFieldDeploymentID = big.NewInt(1 << 3)
-	agentListRequestFieldMetadata     = big.NewInt(1 << 4)
-	agentListRequestFieldStatus       = big.NewInt(1 << 5)
-	agentListRequestFieldVersion      = big.NewInt(1 << 6)
+	agentListRequestFieldOrderBy      = big.NewInt(1 << 2)
+	agentListRequestFieldOrder        = big.NewInt(1 << 3)
+	agentListRequestFieldAgentID      = big.NewInt(1 << 4)
+	agentListRequestFieldDeploymentID = big.NewInt(1 << 5)
+	agentListRequestFieldMetadata     = big.NewInt(1 << 6)
+	agentListRequestFieldSearch       = big.NewInt(1 << 7)
+	agentListRequestFieldStatus       = big.NewInt(1 << 8)
+	agentListRequestFieldVersion      = big.NewInt(1 << 9)
 )
 
 type AgentListRequest struct {
@@ -241,12 +244,19 @@ type AgentListRequest struct {
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort field
+	OrderBy *AgentListRequestOrderBy `json:"-" url:"order_by,omitempty"`
+	// asc or desc
+	Order *AgentListRequestOrder `json:"-" url:"order,omitempty"`
 	// Filters to the exact developer-assigned Agent identifier.
 	AgentID *string `json:"agent_id,omitempty" url:"-"`
 	// Filters to the exact deployment identifier.
 	DeploymentID *string `json:"deployment_id,omitempty" url:"-"`
 	// Filters to Agents whose metadata contains these key-value pairs.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+	// Filters to Agents whose name, Agent identifier, deployment identifier,
+	// or deployment version contains this text. Matching is case-insensitive.
+	Search *string `json:"search,omitempty" url:"-"`
 	// Filters to lifecycle status. Omit to include every status.
 	Status *AgentStatus `json:"status,omitempty" url:"-"`
 	// Filters to the exact deployment version.
@@ -279,6 +289,20 @@ func (a *AgentListRequest) SetCursor(cursor *string) {
 	a.require(agentListRequestFieldCursor)
 }
 
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentListRequest) SetOrderBy(orderBy *AgentListRequestOrderBy) {
+	a.OrderBy = orderBy
+	a.require(agentListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentListRequest) SetOrder(order *AgentListRequestOrder) {
+	a.Order = order
+	a.require(agentListRequestFieldOrder)
+}
+
 // SetAgentID sets the AgentID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (a *AgentListRequest) SetAgentID(agentID *string) {
@@ -298,6 +322,13 @@ func (a *AgentListRequest) SetDeploymentID(deploymentID *string) {
 func (a *AgentListRequest) SetMetadata(metadata map[string]any) {
 	a.Metadata = metadata
 	a.require(agentListRequestFieldMetadata)
+}
+
+// SetSearch sets the Search field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentListRequest) SetSearch(search *string) {
+	a.Search = search
+	a.require(agentListRequestFieldSearch)
 }
 
 // SetStatus sets the Status field and marks it as non-optional;
@@ -360,7 +391,7 @@ type Agent struct {
 	DeploymentID *string `json:"deployment_id,omitempty" url:"deployment_id,omitempty"`
 	// A human-readable description of the Agent.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	// Agent Memory capture, compilation, and promotion settings.
+	// Agent Skills capture, compilation, and promotion settings.
 	MemorySettings *AgentMemorySettings `json:"memory_settings,omitempty" url:"memory_settings,omitempty"`
 	// Developer metadata used to organize and filter Agents.
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
@@ -785,7 +816,7 @@ var (
 	agentContextFieldSkipped        = big.NewInt(1 << 4)
 	agentContextFieldSnapshot       = big.NewInt(1 << 5)
 	agentContextFieldTaskFamily     = big.NewInt(1 << 6)
-	agentContextFieldTrajectoryUUID = big.NewInt(1 << 7)
+	agentContextFieldTraceUUID      = big.NewInt(1 << 7)
 	agentContextFieldTruncated      = big.NewInt(1 << 8)
 )
 
@@ -797,7 +828,7 @@ type AgentContext struct {
 	Skipped        []*AgentContextSkippedSkill  `json:"skipped,omitempty" url:"skipped,omitempty"`
 	Snapshot       []*AgentContextSkillSnapshot `json:"snapshot,omitempty" url:"snapshot,omitempty"`
 	TaskFamily     *string                      `json:"task_family,omitempty" url:"task_family,omitempty"`
-	TrajectoryUUID *string                      `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	TraceUUID      *string                      `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
 	Truncated      *bool                        `json:"truncated,omitempty" url:"truncated,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -856,11 +887,11 @@ func (a *AgentContext) GetTaskFamily() *string {
 	return a.TaskFamily
 }
 
-func (a *AgentContext) GetTrajectoryUUID() *string {
+func (a *AgentContext) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
 func (a *AgentContext) GetTruncated() *bool {
@@ -935,11 +966,11 @@ func (a *AgentContext) SetTaskFamily(taskFamily *string) {
 	a.require(agentContextFieldTaskFamily)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentContext) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentContextFieldTrajectoryUUID)
+func (a *AgentContext) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentContextFieldTraceUUID)
 }
 
 // SetTruncated sets the Truncated field and marks it as non-optional;
@@ -1847,6 +1878,53 @@ func (a AgentStatus) Ptr() *AgentStatus {
 	return &a
 }
 
+type AgentListRequestOrder string
+
+const (
+	AgentListRequestOrderAsc  AgentListRequestOrder = "asc"
+	AgentListRequestOrderDesc AgentListRequestOrder = "desc"
+)
+
+func NewAgentListRequestOrderFromString(s string) (AgentListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return AgentListRequestOrderAsc, nil
+	case "desc":
+		return AgentListRequestOrderDesc, nil
+	}
+	var t AgentListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentListRequestOrder) Ptr() *AgentListRequestOrder {
+	return &a
+}
+
+type AgentListRequestOrderBy string
+
+const (
+	AgentListRequestOrderByCreatedAt AgentListRequestOrderBy = "created_at"
+	AgentListRequestOrderByUpdatedAt AgentListRequestOrderBy = "updated_at"
+	AgentListRequestOrderByName      AgentListRequestOrderBy = "name"
+)
+
+func NewAgentListRequestOrderByFromString(s string) (AgentListRequestOrderBy, error) {
+	switch s {
+	case "created_at":
+		return AgentListRequestOrderByCreatedAt, nil
+	case "updated_at":
+		return AgentListRequestOrderByUpdatedAt, nil
+	case "name":
+		return AgentListRequestOrderByName, nil
+	}
+	var t AgentListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentListRequestOrderBy) Ptr() *AgentListRequestOrderBy {
+	return &a
+}
+
 var (
 	patchAgentRequestFieldDeploymentID     = big.NewInt(1 << 0)
 	patchAgentRequestFieldDescription      = big.NewInt(1 << 1)
@@ -1864,7 +1942,7 @@ type PatchAgentRequest struct {
 	Description *string `json:"description,omitempty" url:"-"`
 	// The current Agent revision used for optimistic concurrency.
 	ExpectedRevision int `json:"expected_revision" url:"-"`
-	// Replacement Agent Memory settings. Set to null to restore defaults.
+	// Replacement Agent Skills settings. Set to null to restore defaults.
 	MemorySettings *AgentMemorySettings `json:"memory_settings,omitempty" url:"-"`
 	// Replacement developer metadata. Set to null to clear it.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
