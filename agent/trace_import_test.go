@@ -10,9 +10,9 @@ import (
 	testing "testing"
 )
 
-func TestSettersCreateTrajectoryImportRequest(t *testing.T) {
+func TestSettersCreateTraceImportRequest(t *testing.T) {
 	t.Run("SetConnectionUUID", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueConnectionUUID *string
 		obj.SetConnectionUUID(fernTestValueConnectionUUID)
 		assert.Equal(t, fernTestValueConnectionUUID, obj.ConnectionUUID)
@@ -20,7 +20,7 @@ func TestSettersCreateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetLearnFrom", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueLearnFrom *bool
 		obj.SetLearnFrom(fernTestValueLearnFrom)
 		assert.Equal(t, fernTestValueLearnFrom, obj.LearnFrom)
@@ -28,15 +28,15 @@ func TestSettersCreateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetMapping", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
-		var fernTestValueMapping *v4.TrajectoryMapping
+		obj := &CreateTraceImportRequest{}
+		var fernTestValueMapping *v4.TraceMapping
 		obj.SetMapping(fernTestValueMapping)
 		assert.Equal(t, fernTestValueMapping, obj.Mapping)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetName", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueName *string
 		obj.SetName(fernTestValueName)
 		assert.Equal(t, fernTestValueName, obj.Name)
@@ -44,7 +44,7 @@ func TestSettersCreateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetOnSourceChange", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueOnSourceChange *string
 		obj.SetOnSourceChange(fernTestValueOnSourceChange)
 		assert.Equal(t, fernTestValueOnSourceChange, obj.OnSourceChange)
@@ -52,7 +52,7 @@ func TestSettersCreateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetProviderProjectID", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueProviderProjectID *string
 		obj.SetProviderProjectID(fernTestValueProviderProjectID)
 		assert.Equal(t, fernTestValueProviderProjectID, obj.ProviderProjectID)
@@ -60,7 +60,7 @@ func TestSettersCreateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetRequireReview", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueRequireReview *bool
 		obj.SetRequireReview(fernTestValueRequireReview)
 		assert.Equal(t, fernTestValueRequireReview, obj.RequireReview)
@@ -68,16 +68,16 @@ func TestSettersCreateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetSchedule", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
-		var fernTestValueSchedule *v4.TrajectoryImportSchedule
+		obj := &CreateTraceImportRequest{}
+		var fernTestValueSchedule *v4.TraceImportSchedule
 		obj.SetSchedule(fernTestValueSchedule)
 		assert.Equal(t, fernTestValueSchedule, obj.Schedule)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetSelection", func(t *testing.T) {
-		obj := &CreateTrajectoryImportRequest{}
-		var fernTestValueSelection *v4.TrajectoryImportSelection
+		obj := &CreateTraceImportRequest{}
+		var fernTestValueSelection *v4.TraceImportSelection
 		obj.SetSelection(fernTestValueSelection)
 		assert.Equal(t, fernTestValueSelection, obj.Selection)
 		assert.NotNil(t, obj.explicitFields)
@@ -85,11 +85,11 @@ func TestSettersCreateTrajectoryImportRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
+func TestSettersMarkExplicitCreateTraceImportRequest(t *testing.T) {
 	t.Run("SetConnectionUUID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueConnectionUUID *string
 
 		// Act
@@ -120,7 +120,7 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetLearnFrom_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueLearnFrom *bool
 
 		// Act
@@ -151,8 +151,8 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetMapping_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
-		var fernTestValueMapping *v4.TrajectoryMapping
+		obj := &CreateTraceImportRequest{}
+		var fernTestValueMapping *v4.TraceMapping
 
 		// Act
 		obj.SetMapping(fernTestValueMapping)
@@ -182,7 +182,7 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetName_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueName *string
 
 		// Act
@@ -213,7 +213,7 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetOnSourceChange_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueOnSourceChange *string
 
 		// Act
@@ -244,7 +244,7 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetProviderProjectID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueProviderProjectID *string
 
 		// Act
@@ -275,7 +275,7 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetRequireReview_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
+		obj := &CreateTraceImportRequest{}
 		var fernTestValueRequireReview *bool
 
 		// Act
@@ -306,8 +306,8 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetSchedule_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
-		var fernTestValueSchedule *v4.TrajectoryImportSchedule
+		obj := &CreateTraceImportRequest{}
+		var fernTestValueSchedule *v4.TraceImportSchedule
 
 		// Act
 		obj.SetSchedule(fernTestValueSchedule)
@@ -337,8 +337,8 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetSelection_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateTrajectoryImportRequest{}
-		var fernTestValueSelection *v4.TrajectoryImportSelection
+		obj := &CreateTraceImportRequest{}
+		var fernTestValueSelection *v4.TraceImportSelection
 
 		// Act
 		obj.SetSelection(fernTestValueSelection)
@@ -367,26 +367,26 @@ func TestSettersMarkExplicitCreateTrajectoryImportRequest(t *testing.T) {
 
 }
 
-func TestSettersTrajectoryImportDeleteRequest(t *testing.T) {
-	t.Run("SetTrajectories", func(t *testing.T) {
-		obj := &TrajectoryImportDeleteRequest{}
-		var fernTestValueTrajectories *TrajectoryImportDeleteRequestTrajectories
-		obj.SetTrajectories(fernTestValueTrajectories)
-		assert.Equal(t, fernTestValueTrajectories, obj.Trajectories)
+func TestSettersTraceImportDeleteRequest(t *testing.T) {
+	t.Run("SetTraces", func(t *testing.T) {
+		obj := &TraceImportDeleteRequest{}
+		var fernTestValueTraces *TraceImportDeleteRequestTraces
+		obj.SetTraces(fernTestValueTraces)
+		assert.Equal(t, fernTestValueTraces, obj.Traces)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 }
 
-func TestSettersMarkExplicitTrajectoryImportDeleteRequest(t *testing.T) {
-	t.Run("SetTrajectories_MarksExplicit", func(t *testing.T) {
+func TestSettersMarkExplicitTraceImportDeleteRequest(t *testing.T) {
+	t.Run("SetTraces_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &TrajectoryImportDeleteRequest{}
-		var fernTestValueTrajectories *TrajectoryImportDeleteRequestTrajectories
+		obj := &TraceImportDeleteRequest{}
+		var fernTestValueTraces *TraceImportDeleteRequestTraces
 
 		// Act
-		obj.SetTrajectories(fernTestValueTrajectories)
+		obj.SetTraces(fernTestValueTraces)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -412,9 +412,9 @@ func TestSettersMarkExplicitTrajectoryImportDeleteRequest(t *testing.T) {
 
 }
 
-func TestSettersTrajectoryImportListRequest(t *testing.T) {
+func TestSettersTraceImportListRequest(t *testing.T) {
 	t.Run("SetLimit", func(t *testing.T) {
-		obj := &TrajectoryImportListRequest{}
+		obj := &TraceImportListRequest{}
 		var fernTestValueLimit *int
 		obj.SetLimit(fernTestValueLimit)
 		assert.Equal(t, fernTestValueLimit, obj.Limit)
@@ -422,7 +422,7 @@ func TestSettersTrajectoryImportListRequest(t *testing.T) {
 	})
 
 	t.Run("SetCursor", func(t *testing.T) {
-		obj := &TrajectoryImportListRequest{}
+		obj := &TraceImportListRequest{}
 		var fernTestValueCursor *string
 		obj.SetCursor(fernTestValueCursor)
 		assert.Equal(t, fernTestValueCursor, obj.Cursor)
@@ -431,11 +431,11 @@ func TestSettersTrajectoryImportListRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitTrajectoryImportListRequest(t *testing.T) {
+func TestSettersMarkExplicitTraceImportListRequest(t *testing.T) {
 	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &TrajectoryImportListRequest{}
+		obj := &TraceImportListRequest{}
 		var fernTestValueLimit *int
 
 		// Act
@@ -466,7 +466,7 @@ func TestSettersMarkExplicitTrajectoryImportListRequest(t *testing.T) {
 	t.Run("SetCursor_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &TrajectoryImportListRequest{}
+		obj := &TraceImportListRequest{}
 		var fernTestValueCursor *string
 
 		// Act
@@ -496,9 +496,9 @@ func TestSettersMarkExplicitTrajectoryImportListRequest(t *testing.T) {
 
 }
 
-func TestSettersUpdateTrajectoryImportRequest(t *testing.T) {
+func TestSettersUpdateTraceImportRequest(t *testing.T) {
 	t.Run("SetExpectedRevision", func(t *testing.T) {
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueExpectedRevision *int
 		obj.SetExpectedRevision(fernTestValueExpectedRevision)
 		assert.Equal(t, fernTestValueExpectedRevision, obj.ExpectedRevision)
@@ -506,7 +506,7 @@ func TestSettersUpdateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetLearnFrom", func(t *testing.T) {
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueLearnFrom *bool
 		obj.SetLearnFrom(fernTestValueLearnFrom)
 		assert.Equal(t, fernTestValueLearnFrom, obj.LearnFrom)
@@ -514,15 +514,15 @@ func TestSettersUpdateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetMapping", func(t *testing.T) {
-		obj := &UpdateTrajectoryImportRequest{}
-		var fernTestValueMapping *v4.TrajectoryMapping
+		obj := &UpdateTraceImportRequest{}
+		var fernTestValueMapping *v4.TraceMapping
 		obj.SetMapping(fernTestValueMapping)
 		assert.Equal(t, fernTestValueMapping, obj.Mapping)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetName", func(t *testing.T) {
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueName *string
 		obj.SetName(fernTestValueName)
 		assert.Equal(t, fernTestValueName, obj.Name)
@@ -530,7 +530,7 @@ func TestSettersUpdateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetOnSourceChange", func(t *testing.T) {
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueOnSourceChange *string
 		obj.SetOnSourceChange(fernTestValueOnSourceChange)
 		assert.Equal(t, fernTestValueOnSourceChange, obj.OnSourceChange)
@@ -538,7 +538,7 @@ func TestSettersUpdateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetRequireReview", func(t *testing.T) {
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueRequireReview *bool
 		obj.SetRequireReview(fernTestValueRequireReview)
 		assert.Equal(t, fernTestValueRequireReview, obj.RequireReview)
@@ -546,16 +546,16 @@ func TestSettersUpdateTrajectoryImportRequest(t *testing.T) {
 	})
 
 	t.Run("SetSchedule", func(t *testing.T) {
-		obj := &UpdateTrajectoryImportRequest{}
-		var fernTestValueSchedule *v4.TrajectoryImportSchedule
+		obj := &UpdateTraceImportRequest{}
+		var fernTestValueSchedule *v4.TraceImportSchedule
 		obj.SetSchedule(fernTestValueSchedule)
 		assert.Equal(t, fernTestValueSchedule, obj.Schedule)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetSelection", func(t *testing.T) {
-		obj := &UpdateTrajectoryImportRequest{}
-		var fernTestValueSelection *v4.TrajectoryImportSelection
+		obj := &UpdateTraceImportRequest{}
+		var fernTestValueSelection *v4.TraceImportSelection
 		obj.SetSelection(fernTestValueSelection)
 		assert.Equal(t, fernTestValueSelection, obj.Selection)
 		assert.NotNil(t, obj.explicitFields)
@@ -563,11 +563,11 @@ func TestSettersUpdateTrajectoryImportRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
+func TestSettersMarkExplicitUpdateTraceImportRequest(t *testing.T) {
 	t.Run("SetExpectedRevision_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueExpectedRevision *int
 
 		// Act
@@ -598,7 +598,7 @@ func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetLearnFrom_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueLearnFrom *bool
 
 		// Act
@@ -629,8 +629,8 @@ func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetMapping_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &UpdateTrajectoryImportRequest{}
-		var fernTestValueMapping *v4.TrajectoryMapping
+		obj := &UpdateTraceImportRequest{}
+		var fernTestValueMapping *v4.TraceMapping
 
 		// Act
 		obj.SetMapping(fernTestValueMapping)
@@ -660,7 +660,7 @@ func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetName_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueName *string
 
 		// Act
@@ -691,7 +691,7 @@ func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetOnSourceChange_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueOnSourceChange *string
 
 		// Act
@@ -722,7 +722,7 @@ func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetRequireReview_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &UpdateTrajectoryImportRequest{}
+		obj := &UpdateTraceImportRequest{}
 		var fernTestValueRequireReview *bool
 
 		// Act
@@ -753,8 +753,8 @@ func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetSchedule_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &UpdateTrajectoryImportRequest{}
-		var fernTestValueSchedule *v4.TrajectoryImportSchedule
+		obj := &UpdateTraceImportRequest{}
+		var fernTestValueSchedule *v4.TraceImportSchedule
 
 		// Act
 		obj.SetSchedule(fernTestValueSchedule)
@@ -784,8 +784,8 @@ func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
 	t.Run("SetSelection_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &UpdateTrajectoryImportRequest{}
-		var fernTestValueSelection *v4.TrajectoryImportSelection
+		obj := &UpdateTraceImportRequest{}
+		var fernTestValueSelection *v4.TraceImportSelection
 
 		// Act
 		obj.SetSelection(fernTestValueSelection)
@@ -814,28 +814,28 @@ func TestSettersMarkExplicitUpdateTrajectoryImportRequest(t *testing.T) {
 
 }
 
-func TestEnumTrajectoryImportDeleteRequestTrajectories(t *testing.T) {
+func TestEnumTraceImportDeleteRequestTraces(t *testing.T) {
 	t.Run("NewFromString_keep", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewTrajectoryImportDeleteRequestTrajectoriesFromString("keep")
+		val, err := NewTraceImportDeleteRequestTracesFromString("keep")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, TrajectoryImportDeleteRequestTrajectories("keep"), val, "enum value should match expected wire value")
+		assert.Equal(t, TraceImportDeleteRequestTraces("keep"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_delete", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewTrajectoryImportDeleteRequestTrajectoriesFromString("delete")
+		val, err := NewTraceImportDeleteRequestTracesFromString("delete")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, TrajectoryImportDeleteRequestTrajectories("delete"), val, "enum value should match expected wire value")
+		assert.Equal(t, TraceImportDeleteRequestTraces("delete"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_Invalid", func(t *testing.T) {
-		_, err := NewTrajectoryImportDeleteRequestTrajectoriesFromString("invalid_value_that_does_not_exist")
+		_, err := NewTraceImportDeleteRequestTracesFromString("invalid_value_that_does_not_exist")
 		assert.Error(t, err)
 	})
 
 	t.Run("Ptr", func(t *testing.T) {
-		val, err := NewTrajectoryImportDeleteRequestTrajectoriesFromString("keep")
+		val, err := NewTraceImportDeleteRequestTracesFromString("keep")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)

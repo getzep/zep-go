@@ -35,11 +35,11 @@ func TestSettersCreateAgentSkillUseRequest(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
-	t.Run("SetTrajectoryUUID", func(t *testing.T) {
+	t.Run("SetTraceUUID", func(t *testing.T) {
 		obj := &CreateAgentSkillUseRequest{}
-		var fernTestValueTrajectoryUUID string
-		obj.SetTrajectoryUUID(fernTestValueTrajectoryUUID)
-		assert.Equal(t, fernTestValueTrajectoryUUID, obj.TrajectoryUUID)
+		var fernTestValueTraceUUID string
+		obj.SetTraceUUID(fernTestValueTraceUUID)
+		assert.Equal(t, fernTestValueTraceUUID, obj.TraceUUID)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -147,14 +147,14 @@ func TestSettersMarkExplicitCreateAgentSkillUseRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
-	t.Run("SetTrajectoryUUID_MarksExplicit", func(t *testing.T) {
+	t.Run("SetTraceUUID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &CreateAgentSkillUseRequest{}
-		var fernTestValueTrajectoryUUID string
+		var fernTestValueTraceUUID string
 
 		// Act
-		obj.SetTrajectoryUUID(fernTestValueTrajectoryUUID)
+		obj.SetTraceUUID(fernTestValueTraceUUID)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)

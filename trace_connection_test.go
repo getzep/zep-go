@@ -36,7 +36,7 @@ func TestSettersCreateTraceConnectionRequest(t *testing.T) {
 
 	t.Run("SetProvider", func(t *testing.T) {
 		obj := &CreateTraceConnectionRequest{}
-		var fernTestValueProvider *string
+		var fernTestValueProvider *CreateTraceConnectionRequestProvider
 		obj.SetProvider(fernTestValueProvider)
 		assert.Equal(t, fernTestValueProvider, obj.Provider)
 		assert.NotNil(t, obj.explicitFields)
@@ -158,7 +158,7 @@ func TestSettersMarkExplicitCreateTraceConnectionRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &CreateTraceConnectionRequest{}
-		var fernTestValueProvider *string
+		var fernTestValueProvider *CreateTraceConnectionRequestProvider
 
 		// Act
 		obj.SetProvider(fernTestValueProvider)
@@ -384,7 +384,7 @@ func TestSettersTraceConnection(t *testing.T) {
 
 	t.Run("SetProvider", func(t *testing.T) {
 		obj := &TraceConnection{}
-		var fernTestValueProvider *string
+		var fernTestValueProvider *TraceConnectionProvider
 		obj.SetProvider(fernTestValueProvider)
 		assert.Equal(t, fernTestValueProvider, obj.Provider)
 		assert.NotNil(t, obj.explicitFields)
@@ -643,7 +643,7 @@ func TestGettersTraceConnection(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &TraceConnection{}
-		var expected *string
+		var expected *TraceConnectionProvider
 		obj.Provider = expected
 
 		// Act & Assert
@@ -1063,7 +1063,7 @@ func TestSettersMarkExplicitTraceConnection(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &TraceConnection{}
-		var fernTestValueProvider *string
+		var fernTestValueProvider *TraceConnectionProvider
 
 		// Act
 		obj.SetProvider(fernTestValueProvider)
@@ -2073,6 +2073,64 @@ func TestStringTraceConnectionSettings(t *testing.T) {
 		var obj *TraceConnectionSettings
 		result := obj.String()
 		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
+	})
+}
+
+func TestEnumCreateTraceConnectionRequestProvider(t *testing.T) {
+	t.Run("NewFromString_braintrust", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewCreateTraceConnectionRequestProviderFromString("braintrust")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, CreateTraceConnectionRequestProvider("braintrust"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_langsmith", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewCreateTraceConnectionRequestProviderFromString("langsmith")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, CreateTraceConnectionRequestProvider("langsmith"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewCreateTraceConnectionRequestProviderFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewCreateTraceConnectionRequestProviderFromString("braintrust")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumTraceConnectionProvider(t *testing.T) {
+	t.Run("NewFromString_braintrust", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTraceConnectionProviderFromString("braintrust")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TraceConnectionProvider("braintrust"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_langsmith", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTraceConnectionProviderFromString("langsmith")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TraceConnectionProvider("langsmith"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewTraceConnectionProviderFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewTraceConnectionProviderFromString("braintrust")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
 	})
 }
 

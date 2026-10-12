@@ -12,8 +12,9 @@ import (
 	literalpolicy "github.com/getzep/zep-go/v4/agent/literalpolicy"
 	client "github.com/getzep/zep-go/v4/agent/skill/client"
 	split "github.com/getzep/zep-go/v4/agent/split"
-	trajectory "github.com/getzep/zep-go/v4/agent/trajectory"
-	trajectoryimportclient "github.com/getzep/zep-go/v4/agent/trajectoryimport/client"
+	taskfamily "github.com/getzep/zep-go/v4/agent/taskfamily"
+	trace "github.com/getzep/zep-go/v4/agent/trace"
+	traceimportclient "github.com/getzep/zep-go/v4/agent/traceimport/client"
 	verifier "github.com/getzep/zep-go/v4/agent/verifier"
 	core "github.com/getzep/zep-go/v4/core"
 	internal "github.com/getzep/zep-go/v4/internal"
@@ -21,14 +22,15 @@ import (
 )
 
 type Client struct {
-	WithRawResponse  *RawClient
-	Learning         *learning.Client
-	LiteralPolicy    *literalpolicy.Client
-	Skill            *client.Client
-	Split            *split.Client
-	Trajectory       *trajectory.Client
-	TrajectoryImport *trajectoryimportclient.Client
-	Verifier         *verifier.Client
+	WithRawResponse *RawClient
+	Learning        *learning.Client
+	LiteralPolicy   *literalpolicy.Client
+	Skill           *client.Client
+	Split           *split.Client
+	TaskFamily      *taskfamily.Client
+	TraceImport     *traceimportclient.Client
+	Trace           *trace.Client
+	Verifier        *verifier.Client
 
 	options *core.RequestOptions
 	baseURL string
@@ -40,16 +42,17 @@ func NewClient(options *core.RequestOptions) *Client {
 		options.APIKey = os.Getenv("ZEP_API_KEY")
 	}
 	return &Client{
-		Learning:         learning.NewClient(options),
-		LiteralPolicy:    literalpolicy.NewClient(options),
-		Skill:            client.NewClient(options),
-		Split:            split.NewClient(options),
-		Trajectory:       trajectory.NewClient(options),
-		TrajectoryImport: trajectoryimportclient.NewClient(options),
-		Verifier:         verifier.NewClient(options),
-		WithRawResponse:  NewRawClient(options),
-		options:          options,
-		baseURL:          options.BaseURL,
+		Learning:        learning.NewClient(options),
+		LiteralPolicy:   literalpolicy.NewClient(options),
+		Skill:           client.NewClient(options),
+		Split:           split.NewClient(options),
+		TaskFamily:      taskfamily.NewClient(options),
+		TraceImport:     traceimportclient.NewClient(options),
+		Trace:           trace.NewClient(options),
+		Verifier:        verifier.NewClient(options),
+		WithRawResponse: NewRawClient(options),
+		options:         options,
+		baseURL:         options.BaseURL,
 		caller: internal.NewCaller(
 			&internal.CallerParams{
 				Client:         options.HTTPClient,
