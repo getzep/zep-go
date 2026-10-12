@@ -8,7 +8,7 @@ import (
 	os "os"
 
 	zep "github.com/getzep/zep-go/v4"
-	run "github.com/getzep/zep-go/v4/agent/trajectoryimport/run"
+	run "github.com/getzep/zep-go/v4/agent/traceimport/run"
 	core "github.com/getzep/zep-go/v4/core"
 	internal "github.com/getzep/zep-go/v4/internal"
 	option "github.com/getzep/zep-go/v4/option"
@@ -45,7 +45,7 @@ func NewClient(options *core.RequestOptions) *Client {
 // Example:
 //
 //	request := &run.ItemListRequest{}
-//	client.Agent.TrajectoryImport.Run.Item.List(
+//	client.Agent.TraceImport.Run.Item.List(
 //	    context.TODO(),
 //	    "agent_uuid",
 //	    "import_uuid",
@@ -56,13 +56,13 @@ func (c *Client) List(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	// Run UUID
 	runUUID string,
 	request *run.ItemListRequest,
 	opts ...option.RequestOption,
-) (*core.Page[*string, *zep.TrajectoryImportRunItem, *zep.TrajectoryImportRunItemPage], error) {
+) (*core.Page[*string, *zep.TraceImportRunItem, *zep.TraceImportRunItemPage], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -70,7 +70,7 @@ func (c *Client) List(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports/%v/runs/%v/items",
+		baseURL+"/agents/%v/trace-imports/%v/runs/%v/items",
 		agentUUID,
 		importUUID,
 		runUUID,
@@ -104,11 +104,11 @@ func (c *Client) List(
 			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
 		}
 	}
-	readPageResponse := func(response *zep.TrajectoryImportRunItemPage) *core.PageResponse[*string, *zep.TrajectoryImportRunItem, *zep.TrajectoryImportRunItemPage] {
+	readPageResponse := func(response *zep.TraceImportRunItemPage) *core.PageResponse[*string, *zep.TraceImportRunItem, *zep.TraceImportRunItemPage] {
 		var zeroValue *string
 		next := response.GetNextCursor()
 		results := response.GetItems()
-		return &core.PageResponse[*string, *zep.TrajectoryImportRunItem, *zep.TrajectoryImportRunItemPage]{
+		return &core.PageResponse[*string, *zep.TraceImportRunItem, *zep.TraceImportRunItemPage]{
 			Results:  results,
 			Response: response,
 			Next:     next,

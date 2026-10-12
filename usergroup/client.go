@@ -39,7 +39,7 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -66,7 +66,7 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -141,7 +141,7 @@ func (c *Client) List(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -166,7 +166,7 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -191,7 +191,7 @@ func (c *Client) Delete(
 	return nil
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -220,7 +220,7 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -301,7 +301,7 @@ func (c *Client) ListMemberCandidates(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -334,7 +334,7 @@ func (c *Client) AddMembers(
 	return response.Body, nil
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -415,7 +415,7 @@ func (c *Client) ListMembers(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -448,7 +448,7 @@ func (c *Client) RemoveMembers(
 	return response.Body, nil
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //
@@ -477,7 +477,7 @@ func (c *Client) RemoveMember(
 	return nil
 }
 
-// Requires a project API key, or an account-admin bearer token with the X-Zep-Project header. The account must be entitled to attribute-based access control.
+// Requires attribute-based access control to be enabled for your account.
 //
 // Example:
 //

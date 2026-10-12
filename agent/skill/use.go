@@ -11,19 +11,19 @@ import (
 )
 
 var (
-	createAgentSkillUseRequestFieldOutcome        = big.NewInt(1 << 0)
-	createAgentSkillUseRequestFieldReasonCode     = big.NewInt(1 << 1)
-	createAgentSkillUseRequestFieldSearchID       = big.NewInt(1 << 2)
-	createAgentSkillUseRequestFieldTrajectoryUUID = big.NewInt(1 << 3)
-	createAgentSkillUseRequestFieldUsage          = big.NewInt(1 << 4)
+	createAgentSkillUseRequestFieldOutcome    = big.NewInt(1 << 0)
+	createAgentSkillUseRequestFieldReasonCode = big.NewInt(1 << 1)
+	createAgentSkillUseRequestFieldSearchID   = big.NewInt(1 << 2)
+	createAgentSkillUseRequestFieldTraceUUID  = big.NewInt(1 << 3)
+	createAgentSkillUseRequestFieldUsage      = big.NewInt(1 << 4)
 )
 
 type CreateAgentSkillUseRequest struct {
-	Outcome        *v4.AddAgentSkillUseOutcomeRequest `json:"outcome,omitempty" url:"-"`
-	ReasonCode     *string                            `json:"reason_code,omitempty" url:"-"`
-	SearchID       string                             `json:"search_id" url:"-"`
-	TrajectoryUUID string                             `json:"trajectory_uuid" url:"-"`
-	Usage          CreateAgentSkillUseRequestUsage    `json:"usage" url:"-"`
+	Outcome    *v4.AddAgentSkillUseOutcomeRequest `json:"outcome,omitempty" url:"-"`
+	ReasonCode *string                            `json:"reason_code,omitempty" url:"-"`
+	SearchID   string                             `json:"search_id" url:"-"`
+	TraceUUID  string                             `json:"trace_uuid" url:"-"`
+	Usage      CreateAgentSkillUseRequestUsage    `json:"usage" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -59,11 +59,11 @@ func (c *CreateAgentSkillUseRequest) SetSearchID(searchID string) {
 	c.require(createAgentSkillUseRequestFieldSearchID)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateAgentSkillUseRequest) SetTrajectoryUUID(trajectoryUUID string) {
-	c.TrajectoryUUID = trajectoryUUID
-	c.require(createAgentSkillUseRequestFieldTrajectoryUUID)
+func (c *CreateAgentSkillUseRequest) SetTraceUUID(traceUUID string) {
+	c.TraceUUID = traceUUID
+	c.require(createAgentSkillUseRequestFieldTraceUUID)
 }
 
 // SetUsage sets the Usage field and marks it as non-optional;

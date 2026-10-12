@@ -17,7 +17,7 @@ var (
 
 type SourceTraceGetRequest struct {
 	// Mapping is an optional mapping preview configuration. Example: {"task_family":{"source":"fixed","value":"support"}}.
-	Mapping *v4.TrajectoryMapping `json:"mapping,omitempty" url:"-"`
+	Mapping *v4.TraceMapping `json:"mapping,omitempty" url:"-"`
 	// ProviderProjectID is the provider project identifier.
 	ProviderProjectID string `json:"provider_project_id" url:"-"`
 	// TraceID is the provider trace identifier.
@@ -38,7 +38,7 @@ func (s *SourceTraceGetRequest) require(field *big.Int) {
 
 // SetMapping sets the Mapping field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SourceTraceGetRequest) SetMapping(mapping *v4.TrajectoryMapping) {
+func (s *SourceTraceGetRequest) SetMapping(mapping *v4.TraceMapping) {
 	s.Mapping = mapping
 	s.require(sourceTraceGetRequestFieldMapping)
 }

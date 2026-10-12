@@ -1550,14 +1550,14 @@ func (a *AddedNode) String() string {
 }
 
 var (
-	agentLearningStateFieldApproval                = big.NewInt(1 << 0)
-	agentLearningStateFieldCompilationMode         = big.NewInt(1 << 1)
-	agentLearningStateFieldCompilationPending      = big.NewInt(1 << 2)
-	agentLearningStateFieldEligibleTrajectoryCount = big.NewInt(1 << 3)
-	agentLearningStateFieldMinimumAttemptFamilies  = big.NewInt(1 << 4)
-	agentLearningStateFieldNextStep                = big.NewInt(1 << 5)
-	agentLearningStateFieldRequiredEvaluations     = big.NewInt(1 << 6)
-	agentLearningStateFieldTaskFamily              = big.NewInt(1 << 7)
+	agentLearningStateFieldApproval               = big.NewInt(1 << 0)
+	agentLearningStateFieldCompilationMode        = big.NewInt(1 << 1)
+	agentLearningStateFieldCompilationPending     = big.NewInt(1 << 2)
+	agentLearningStateFieldEligibleTraceCount     = big.NewInt(1 << 3)
+	agentLearningStateFieldMinimumAttemptFamilies = big.NewInt(1 << 4)
+	agentLearningStateFieldNextStep               = big.NewInt(1 << 5)
+	agentLearningStateFieldRequiredEvaluations    = big.NewInt(1 << 6)
+	agentLearningStateFieldTaskFamily             = big.NewInt(1 << 7)
 )
 
 type AgentLearningState struct {
@@ -1566,12 +1566,12 @@ type AgentLearningState struct {
 	CompilationMode *string `json:"compilation_mode,omitempty" url:"compilation_mode,omitempty"`
 	// CompilationPending is true while a learning run for the task family
 	// waits to start or runs. Skills from that run are not yet available.
-	CompilationPending      *bool    `json:"compilation_pending,omitempty" url:"compilation_pending,omitempty"`
-	EligibleTrajectoryCount *int     `json:"eligible_trajectory_count,omitempty" url:"eligible_trajectory_count,omitempty"`
-	MinimumAttemptFamilies  *int     `json:"minimum_attempt_families,omitempty" url:"minimum_attempt_families,omitempty"`
-	NextStep                *string  `json:"next_step,omitempty" url:"next_step,omitempty"`
-	RequiredEvaluations     []string `json:"required_evaluations,omitempty" url:"required_evaluations,omitempty"`
-	TaskFamily              *string  `json:"task_family,omitempty" url:"task_family,omitempty"`
+	CompilationPending     *bool    `json:"compilation_pending,omitempty" url:"compilation_pending,omitempty"`
+	EligibleTraceCount     *int     `json:"eligible_trace_count,omitempty" url:"eligible_trace_count,omitempty"`
+	MinimumAttemptFamilies *int     `json:"minimum_attempt_families,omitempty" url:"minimum_attempt_families,omitempty"`
+	NextStep               *string  `json:"next_step,omitempty" url:"next_step,omitempty"`
+	RequiredEvaluations    []string `json:"required_evaluations,omitempty" url:"required_evaluations,omitempty"`
+	TaskFamily             *string  `json:"task_family,omitempty" url:"task_family,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1601,11 +1601,11 @@ func (a *AgentLearningState) GetCompilationPending() *bool {
 	return a.CompilationPending
 }
 
-func (a *AgentLearningState) GetEligibleTrajectoryCount() *int {
+func (a *AgentLearningState) GetEligibleTraceCount() *int {
 	if a == nil {
 		return nil
 	}
-	return a.EligibleTrajectoryCount
+	return a.EligibleTraceCount
 }
 
 func (a *AgentLearningState) GetMinimumAttemptFamilies() *int {
@@ -1673,11 +1673,11 @@ func (a *AgentLearningState) SetCompilationPending(compilationPending *bool) {
 	a.require(agentLearningStateFieldCompilationPending)
 }
 
-// SetEligibleTrajectoryCount sets the EligibleTrajectoryCount field and marks it as non-optional;
+// SetEligibleTraceCount sets the EligibleTraceCount field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentLearningState) SetEligibleTrajectoryCount(eligibleTrajectoryCount *int) {
-	a.EligibleTrajectoryCount = eligibleTrajectoryCount
-	a.require(agentLearningStateFieldEligibleTrajectoryCount)
+func (a *AgentLearningState) SetEligibleTraceCount(eligibleTraceCount *int) {
+	a.EligibleTraceCount = eligibleTraceCount
+	a.require(agentLearningStateFieldEligibleTraceCount)
 }
 
 // SetMinimumAttemptFamilies sets the MinimumAttemptFamilies field and marks it as non-optional;
@@ -3842,18 +3842,18 @@ var (
 	agentSkillCandidateEvidenceFieldOutcome          = big.NewInt(1 << 2)
 	agentSkillCandidateEvidenceFieldPolarity         = big.NewInt(1 << 3)
 	agentSkillCandidateEvidenceFieldSourceKind       = big.NewInt(1 << 4)
-	agentSkillCandidateEvidenceFieldTrajectoryUUID   = big.NewInt(1 << 5)
+	agentSkillCandidateEvidenceFieldTraceUUID        = big.NewInt(1 << 5)
 	agentSkillCandidateEvidenceFieldVerification     = big.NewInt(1 << 6)
 )
 
 type AgentSkillCandidateEvidence struct {
-	// ImportedProvider is the provider of the source import, when this Trajectory was imported.
+	// ImportedProvider is the provider of the source import, when this Trace was imported.
 	ImportedProvider *string `json:"imported_provider,omitempty" url:"imported_provider,omitempty"`
 	OccurredAt       *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
 	Outcome          *string `json:"outcome,omitempty" url:"outcome,omitempty"`
 	Polarity         *string `json:"polarity,omitempty" url:"polarity,omitempty"`
 	SourceKind       *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
-	TrajectoryUUID   *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	TraceUUID        *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
 	Verification     *string `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -3898,11 +3898,11 @@ func (a *AgentSkillCandidateEvidence) GetSourceKind() *string {
 	return a.SourceKind
 }
 
-func (a *AgentSkillCandidateEvidence) GetTrajectoryUUID() *string {
+func (a *AgentSkillCandidateEvidence) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
 func (a *AgentSkillCandidateEvidence) GetVerification() *string {
@@ -3963,11 +3963,11 @@ func (a *AgentSkillCandidateEvidence) SetSourceKind(sourceKind *string) {
 	a.require(agentSkillCandidateEvidenceFieldSourceKind)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillCandidateEvidence) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentSkillCandidateEvidenceFieldTrajectoryUUID)
+func (a *AgentSkillCandidateEvidence) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentSkillCandidateEvidenceFieldTraceUUID)
 }
 
 // SetVerification sets the Verification field and marks it as non-optional;
@@ -4628,7 +4628,7 @@ var (
 	agentSkillCompilationOutcomeFieldRejectionClass        = big.NewInt(1 << 10)
 	agentSkillCompilationOutcomeFieldStage                 = big.NewInt(1 << 11)
 	agentSkillCompilationOutcomeFieldTaskFamily            = big.NewInt(1 << 12)
-	agentSkillCompilationOutcomeFieldTrajectoryCount       = big.NewInt(1 << 13)
+	agentSkillCompilationOutcomeFieldTraceCount            = big.NewInt(1 << 13)
 	agentSkillCompilationOutcomeFieldUUID                  = big.NewInt(1 << 14)
 )
 
@@ -4648,7 +4648,7 @@ type AgentSkillCompilationOutcome struct {
 	RejectionClass   *AgentSkillCompilationOutcomeRejectionClass `json:"rejection_class,omitempty" url:"rejection_class,omitempty"`
 	Stage            *string                                     `json:"stage,omitempty" url:"stage,omitempty"`
 	TaskFamily       *string                                     `json:"task_family,omitempty" url:"task_family,omitempty"`
-	TrajectoryCount  *int                                        `json:"trajectory_count,omitempty" url:"trajectory_count,omitempty"`
+	TraceCount       *int                                        `json:"trace_count,omitempty" url:"trace_count,omitempty"`
 	UUID             *string                                     `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -4749,11 +4749,11 @@ func (a *AgentSkillCompilationOutcome) GetTaskFamily() *string {
 	return a.TaskFamily
 }
 
-func (a *AgentSkillCompilationOutcome) GetTrajectoryCount() *int {
+func (a *AgentSkillCompilationOutcome) GetTraceCount() *int {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryCount
+	return a.TraceCount
 }
 
 func (a *AgentSkillCompilationOutcome) GetUUID() *string {
@@ -4870,11 +4870,11 @@ func (a *AgentSkillCompilationOutcome) SetTaskFamily(taskFamily *string) {
 	a.require(agentSkillCompilationOutcomeFieldTaskFamily)
 }
 
-// SetTrajectoryCount sets the TrajectoryCount field and marks it as non-optional;
+// SetTraceCount sets the TraceCount field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillCompilationOutcome) SetTrajectoryCount(trajectoryCount *int) {
-	a.TrajectoryCount = trajectoryCount
-	a.require(agentSkillCompilationOutcomeFieldTrajectoryCount)
+func (a *AgentSkillCompilationOutcome) SetTraceCount(traceCount *int) {
+	a.TraceCount = traceCount
+	a.require(agentSkillCompilationOutcomeFieldTraceCount)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
@@ -4929,7 +4929,7 @@ func (a *AgentSkillCompilationOutcome) String() string {
 type AgentSkillCompilationOutcomeRejectionClass string
 
 const (
-	AgentSkillCompilationOutcomeRejectionClassNoEligibleTrajectories    AgentSkillCompilationOutcomeRejectionClass = "no_eligible_trajectories"
+	AgentSkillCompilationOutcomeRejectionClassNoEligibleTraces          AgentSkillCompilationOutcomeRejectionClass = "no_eligible_traces"
 	AgentSkillCompilationOutcomeRejectionClassReflectorInvalidOutput    AgentSkillCompilationOutcomeRejectionClass = "reflector_invalid_output"
 	AgentSkillCompilationOutcomeRejectionClassApplicabilityUngrounded   AgentSkillCompilationOutcomeRejectionClass = "applicability_ungrounded"
 	AgentSkillCompilationOutcomeRejectionClassCorroborationInsufficient AgentSkillCompilationOutcomeRejectionClass = "corroboration_insufficient"
@@ -4942,8 +4942,8 @@ const (
 
 func NewAgentSkillCompilationOutcomeRejectionClassFromString(s string) (AgentSkillCompilationOutcomeRejectionClass, error) {
 	switch s {
-	case "no_eligible_trajectories":
-		return AgentSkillCompilationOutcomeRejectionClassNoEligibleTrajectories, nil
+	case "no_eligible_traces":
+		return AgentSkillCompilationOutcomeRejectionClassNoEligibleTraces, nil
 	case "reflector_invalid_output":
 		return AgentSkillCompilationOutcomeRejectionClassReflectorInvalidOutput, nil
 	case "applicability_ungrounded":
@@ -4979,7 +4979,7 @@ var (
 	agentSkillEvaluationFieldMetrics           = big.NewInt(1 << 6)
 	agentSkillEvaluationFieldSkillUUID         = big.NewInt(1 << 7)
 	agentSkillEvaluationFieldSkillVersion      = big.NewInt(1 << 8)
-	agentSkillEvaluationFieldTrajectoryUUID    = big.NewInt(1 << 9)
+	agentSkillEvaluationFieldTraceUUID         = big.NewInt(1 << 9)
 	agentSkillEvaluationFieldUseUUID           = big.NewInt(1 << 10)
 	agentSkillEvaluationFieldUUID              = big.NewInt(1 << 11)
 	agentSkillEvaluationFieldVerdict           = big.NewInt(1 << 12)
@@ -4995,7 +4995,7 @@ type AgentSkillEvaluation struct {
 	Metrics           map[string]float64 `json:"metrics,omitempty" url:"metrics,omitempty"`
 	SkillUUID         *string            `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
 	SkillVersion      *int               `json:"skill_version,omitempty" url:"skill_version,omitempty"`
-	TrajectoryUUID    *string            `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	TraceUUID         *string            `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
 	UseUUID           *string            `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
 	UUID              *string            `json:"uuid,omitempty" url:"uuid,omitempty"`
 	Verdict           *string            `json:"verdict,omitempty" url:"verdict,omitempty"`
@@ -5070,11 +5070,11 @@ func (a *AgentSkillEvaluation) GetSkillVersion() *int {
 	return a.SkillVersion
 }
 
-func (a *AgentSkillEvaluation) GetTrajectoryUUID() *string {
+func (a *AgentSkillEvaluation) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
 func (a *AgentSkillEvaluation) GetUseUUID() *string {
@@ -5177,11 +5177,11 @@ func (a *AgentSkillEvaluation) SetSkillVersion(skillVersion *int) {
 	a.require(agentSkillEvaluationFieldSkillVersion)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillEvaluation) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentSkillEvaluationFieldTrajectoryUUID)
+func (a *AgentSkillEvaluation) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentSkillEvaluationFieldTraceUUID)
 }
 
 // SetUseUUID sets the UseUUID field and marks it as non-optional;
@@ -5248,27 +5248,27 @@ func (a *AgentSkillEvaluation) String() string {
 }
 
 var (
-	agentSkillEvidenceFieldAssertionUUID       = big.NewInt(1 << 0)
-	agentSkillEvidenceFieldCreatedAt           = big.NewInt(1 << 1)
-	agentSkillEvidenceFieldOccurredAt          = big.NewInt(1 << 2)
-	agentSkillEvidenceFieldPolarity            = big.NewInt(1 << 3)
-	agentSkillEvidenceFieldSourceKind          = big.NewInt(1 << 4)
-	agentSkillEvidenceFieldSummaryVersionUUID  = big.NewInt(1 << 5)
-	agentSkillEvidenceFieldTrajectoryEventUUID = big.NewInt(1 << 6)
-	agentSkillEvidenceFieldTrajectoryUUID      = big.NewInt(1 << 7)
-	agentSkillEvidenceFieldVerification        = big.NewInt(1 << 8)
+	agentSkillEvidenceFieldAssertionUUID      = big.NewInt(1 << 0)
+	agentSkillEvidenceFieldCreatedAt          = big.NewInt(1 << 1)
+	agentSkillEvidenceFieldOccurredAt         = big.NewInt(1 << 2)
+	agentSkillEvidenceFieldPolarity           = big.NewInt(1 << 3)
+	agentSkillEvidenceFieldSourceKind         = big.NewInt(1 << 4)
+	agentSkillEvidenceFieldSummaryVersionUUID = big.NewInt(1 << 5)
+	agentSkillEvidenceFieldTraceEventUUID     = big.NewInt(1 << 6)
+	agentSkillEvidenceFieldTraceUUID          = big.NewInt(1 << 7)
+	agentSkillEvidenceFieldVerification       = big.NewInt(1 << 8)
 )
 
 type AgentSkillEvidence struct {
-	AssertionUUID       *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
-	CreatedAt           *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	OccurredAt          *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
-	Polarity            *string `json:"polarity,omitempty" url:"polarity,omitempty"`
-	SourceKind          *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
-	SummaryVersionUUID  *string `json:"summary_version_uuid,omitempty" url:"summary_version_uuid,omitempty"`
-	TrajectoryEventUUID *string `json:"trajectory_event_uuid,omitempty" url:"trajectory_event_uuid,omitempty"`
-	TrajectoryUUID      *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
-	Verification        *string `json:"verification,omitempty" url:"verification,omitempty"`
+	AssertionUUID      *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	CreatedAt          *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	OccurredAt         *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
+	Polarity           *string `json:"polarity,omitempty" url:"polarity,omitempty"`
+	SourceKind         *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
+	SummaryVersionUUID *string `json:"summary_version_uuid,omitempty" url:"summary_version_uuid,omitempty"`
+	TraceEventUUID     *string `json:"trace_event_uuid,omitempty" url:"trace_event_uuid,omitempty"`
+	TraceUUID          *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	Verification       *string `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5319,18 +5319,18 @@ func (a *AgentSkillEvidence) GetSummaryVersionUUID() *string {
 	return a.SummaryVersionUUID
 }
 
-func (a *AgentSkillEvidence) GetTrajectoryEventUUID() *string {
+func (a *AgentSkillEvidence) GetTraceEventUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryEventUUID
+	return a.TraceEventUUID
 }
 
-func (a *AgentSkillEvidence) GetTrajectoryUUID() *string {
+func (a *AgentSkillEvidence) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
 func (a *AgentSkillEvidence) GetVerification() *string {
@@ -5398,18 +5398,18 @@ func (a *AgentSkillEvidence) SetSummaryVersionUUID(summaryVersionUUID *string) {
 	a.require(agentSkillEvidenceFieldSummaryVersionUUID)
 }
 
-// SetTrajectoryEventUUID sets the TrajectoryEventUUID field and marks it as non-optional;
+// SetTraceEventUUID sets the TraceEventUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillEvidence) SetTrajectoryEventUUID(trajectoryEventUUID *string) {
-	a.TrajectoryEventUUID = trajectoryEventUUID
-	a.require(agentSkillEvidenceFieldTrajectoryEventUUID)
+func (a *AgentSkillEvidence) SetTraceEventUUID(traceEventUUID *string) {
+	a.TraceEventUUID = traceEventUUID
+	a.require(agentSkillEvidenceFieldTraceEventUUID)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillEvidence) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentSkillEvidenceFieldTrajectoryUUID)
+func (a *AgentSkillEvidence) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentSkillEvidenceFieldTraceUUID)
 }
 
 // SetVerification sets the Verification field and marks it as non-optional;
@@ -5713,10 +5713,10 @@ var (
 	agentSkillRelationshipFieldRelatedVersionConstraint  = big.NewInt(1 << 8)
 	agentSkillRelationshipFieldResourceName              = big.NewInt(1 << 9)
 	agentSkillRelationshipFieldResourceVersionConstraint = big.NewInt(1 << 10)
-	agentSkillRelationshipFieldTrajectoryOutcome         = big.NewInt(1 << 11)
-	agentSkillRelationshipFieldTrajectoryTaskFamily      = big.NewInt(1 << 12)
-	agentSkillRelationshipFieldTrajectoryUUID            = big.NewInt(1 << 13)
-	agentSkillRelationshipFieldTrajectoryVerification    = big.NewInt(1 << 14)
+	agentSkillRelationshipFieldTraceOutcome              = big.NewInt(1 << 11)
+	agentSkillRelationshipFieldTraceTaskFamily           = big.NewInt(1 << 12)
+	agentSkillRelationshipFieldTraceUUID                 = big.NewInt(1 << 13)
+	agentSkillRelationshipFieldTraceVerification         = big.NewInt(1 << 14)
 )
 
 type AgentSkillRelationship struct {
@@ -5731,10 +5731,10 @@ type AgentSkillRelationship struct {
 	RelatedVersionConstraint  *string `json:"related_version_constraint,omitempty" url:"related_version_constraint,omitempty"`
 	ResourceName              *string `json:"resource_name,omitempty" url:"resource_name,omitempty"`
 	ResourceVersionConstraint *string `json:"resource_version_constraint,omitempty" url:"resource_version_constraint,omitempty"`
-	TrajectoryOutcome         *string `json:"trajectory_outcome,omitempty" url:"trajectory_outcome,omitempty"`
-	TrajectoryTaskFamily      *string `json:"trajectory_task_family,omitempty" url:"trajectory_task_family,omitempty"`
-	TrajectoryUUID            *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
-	TrajectoryVerification    *string `json:"trajectory_verification,omitempty" url:"trajectory_verification,omitempty"`
+	TraceOutcome              *string `json:"trace_outcome,omitempty" url:"trace_outcome,omitempty"`
+	TraceTaskFamily           *string `json:"trace_task_family,omitempty" url:"trace_task_family,omitempty"`
+	TraceUUID                 *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	TraceVerification         *string `json:"trace_verification,omitempty" url:"trace_verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5820,32 +5820,32 @@ func (a *AgentSkillRelationship) GetResourceVersionConstraint() *string {
 	return a.ResourceVersionConstraint
 }
 
-func (a *AgentSkillRelationship) GetTrajectoryOutcome() *string {
+func (a *AgentSkillRelationship) GetTraceOutcome() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryOutcome
+	return a.TraceOutcome
 }
 
-func (a *AgentSkillRelationship) GetTrajectoryTaskFamily() *string {
+func (a *AgentSkillRelationship) GetTraceTaskFamily() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryTaskFamily
+	return a.TraceTaskFamily
 }
 
-func (a *AgentSkillRelationship) GetTrajectoryUUID() *string {
+func (a *AgentSkillRelationship) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
-func (a *AgentSkillRelationship) GetTrajectoryVerification() *string {
+func (a *AgentSkillRelationship) GetTraceVerification() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryVerification
+	return a.TraceVerification
 }
 
 func (a *AgentSkillRelationship) GetExtraProperties() map[string]interface{} {
@@ -5941,32 +5941,32 @@ func (a *AgentSkillRelationship) SetResourceVersionConstraint(resourceVersionCon
 	a.require(agentSkillRelationshipFieldResourceVersionConstraint)
 }
 
-// SetTrajectoryOutcome sets the TrajectoryOutcome field and marks it as non-optional;
+// SetTraceOutcome sets the TraceOutcome field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillRelationship) SetTrajectoryOutcome(trajectoryOutcome *string) {
-	a.TrajectoryOutcome = trajectoryOutcome
-	a.require(agentSkillRelationshipFieldTrajectoryOutcome)
+func (a *AgentSkillRelationship) SetTraceOutcome(traceOutcome *string) {
+	a.TraceOutcome = traceOutcome
+	a.require(agentSkillRelationshipFieldTraceOutcome)
 }
 
-// SetTrajectoryTaskFamily sets the TrajectoryTaskFamily field and marks it as non-optional;
+// SetTraceTaskFamily sets the TraceTaskFamily field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillRelationship) SetTrajectoryTaskFamily(trajectoryTaskFamily *string) {
-	a.TrajectoryTaskFamily = trajectoryTaskFamily
-	a.require(agentSkillRelationshipFieldTrajectoryTaskFamily)
+func (a *AgentSkillRelationship) SetTraceTaskFamily(traceTaskFamily *string) {
+	a.TraceTaskFamily = traceTaskFamily
+	a.require(agentSkillRelationshipFieldTraceTaskFamily)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillRelationship) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentSkillRelationshipFieldTrajectoryUUID)
+func (a *AgentSkillRelationship) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentSkillRelationshipFieldTraceUUID)
 }
 
-// SetTrajectoryVerification sets the TrajectoryVerification field and marks it as non-optional;
+// SetTraceVerification sets the TraceVerification field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillRelationship) SetTrajectoryVerification(trajectoryVerification *string) {
-	a.TrajectoryVerification = trajectoryVerification
-	a.require(agentSkillRelationshipFieldTrajectoryVerification)
+func (a *AgentSkillRelationship) SetTraceVerification(traceVerification *string) {
+	a.TraceVerification = traceVerification
+	a.require(agentSkillRelationshipFieldTraceVerification)
 }
 
 func (a *AgentSkillRelationship) UnmarshalJSON(data []byte) error {
@@ -6513,27 +6513,27 @@ func (a *AgentSkillSearchResponse) String() string {
 }
 
 var (
-	agentSkillUseFieldAgentVersion   = big.NewInt(1 << 0)
-	agentSkillUseFieldCreatedAt      = big.NewInt(1 << 1)
-	agentSkillUseFieldOutcome        = big.NewInt(1 << 2)
-	agentSkillUseFieldReasonCode     = big.NewInt(1 << 3)
-	agentSkillUseFieldSkillUUID      = big.NewInt(1 << 4)
-	agentSkillUseFieldSkillVersion   = big.NewInt(1 << 5)
-	agentSkillUseFieldTrajectoryUUID = big.NewInt(1 << 6)
-	agentSkillUseFieldUsage          = big.NewInt(1 << 7)
-	agentSkillUseFieldUUID           = big.NewInt(1 << 8)
+	agentSkillUseFieldAgentVersion = big.NewInt(1 << 0)
+	agentSkillUseFieldCreatedAt    = big.NewInt(1 << 1)
+	agentSkillUseFieldOutcome      = big.NewInt(1 << 2)
+	agentSkillUseFieldReasonCode   = big.NewInt(1 << 3)
+	agentSkillUseFieldSkillUUID    = big.NewInt(1 << 4)
+	agentSkillUseFieldSkillVersion = big.NewInt(1 << 5)
+	agentSkillUseFieldTraceUUID    = big.NewInt(1 << 6)
+	agentSkillUseFieldUsage        = big.NewInt(1 << 7)
+	agentSkillUseFieldUUID         = big.NewInt(1 << 8)
 )
 
 type AgentSkillUse struct {
-	AgentVersion   *string               `json:"agent_version,omitempty" url:"agent_version,omitempty"`
-	CreatedAt      *string               `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Outcome        *AgentSkillUseOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
-	ReasonCode     *string               `json:"reason_code,omitempty" url:"reason_code,omitempty"`
-	SkillUUID      *string               `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
-	SkillVersion   *int                  `json:"skill_version,omitempty" url:"skill_version,omitempty"`
-	TrajectoryUUID *string               `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
-	Usage          *string               `json:"usage,omitempty" url:"usage,omitempty"`
-	UUID           *string               `json:"uuid,omitempty" url:"uuid,omitempty"`
+	AgentVersion *string               `json:"agent_version,omitempty" url:"agent_version,omitempty"`
+	CreatedAt    *string               `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Outcome      *AgentSkillUseOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	ReasonCode   *string               `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	SkillUUID    *string               `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	SkillVersion *int                  `json:"skill_version,omitempty" url:"skill_version,omitempty"`
+	TraceUUID    *string               `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	Usage        *string               `json:"usage,omitempty" url:"usage,omitempty"`
+	UUID         *string               `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -6584,11 +6584,11 @@ func (a *AgentSkillUse) GetSkillVersion() *int {
 	return a.SkillVersion
 }
 
-func (a *AgentSkillUse) GetTrajectoryUUID() *string {
+func (a *AgentSkillUse) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
 func (a *AgentSkillUse) GetUsage() *string {
@@ -6663,11 +6663,11 @@ func (a *AgentSkillUse) SetSkillVersion(skillVersion *int) {
 	a.require(agentSkillUseFieldSkillVersion)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillUse) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentSkillUseFieldTrajectoryUUID)
+func (a *AgentSkillUse) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentSkillUseFieldTraceUUID)
 }
 
 // SetUsage sets the Usage field and marks it as non-optional;
@@ -6727,23 +6727,23 @@ func (a *AgentSkillUse) String() string {
 }
 
 var (
-	agentSkillUseOutcomeFieldAssertionUUID  = big.NewInt(1 << 0)
-	agentSkillUseOutcomeFieldCreatedAt      = big.NewInt(1 << 1)
-	agentSkillUseOutcomeFieldOutcome        = big.NewInt(1 << 2)
-	agentSkillUseOutcomeFieldTrajectoryUUID = big.NewInt(1 << 3)
-	agentSkillUseOutcomeFieldUseUUID        = big.NewInt(1 << 4)
-	agentSkillUseOutcomeFieldUUID           = big.NewInt(1 << 5)
-	agentSkillUseOutcomeFieldVerification   = big.NewInt(1 << 6)
+	agentSkillUseOutcomeFieldAssertionUUID = big.NewInt(1 << 0)
+	agentSkillUseOutcomeFieldCreatedAt     = big.NewInt(1 << 1)
+	agentSkillUseOutcomeFieldOutcome       = big.NewInt(1 << 2)
+	agentSkillUseOutcomeFieldTraceUUID     = big.NewInt(1 << 3)
+	agentSkillUseOutcomeFieldUseUUID       = big.NewInt(1 << 4)
+	agentSkillUseOutcomeFieldUUID          = big.NewInt(1 << 5)
+	agentSkillUseOutcomeFieldVerification  = big.NewInt(1 << 6)
 )
 
 type AgentSkillUseOutcome struct {
-	AssertionUUID  *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
-	CreatedAt      *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Outcome        *string `json:"outcome,omitempty" url:"outcome,omitempty"`
-	TrajectoryUUID *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
-	UseUUID        *string `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
-	UUID           *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-	Verification   *string `json:"verification,omitempty" url:"verification,omitempty"`
+	AssertionUUID *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Outcome       *string `json:"outcome,omitempty" url:"outcome,omitempty"`
+	TraceUUID     *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	UseUUID       *string `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
+	UUID          *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Verification  *string `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -6773,11 +6773,11 @@ func (a *AgentSkillUseOutcome) GetOutcome() *string {
 	return a.Outcome
 }
 
-func (a *AgentSkillUseOutcome) GetTrajectoryUUID() *string {
+func (a *AgentSkillUseOutcome) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
 func (a *AgentSkillUseOutcome) GetUseUUID() *string {
@@ -6838,11 +6838,11 @@ func (a *AgentSkillUseOutcome) SetOutcome(outcome *string) {
 	a.require(agentSkillUseOutcomeFieldOutcome)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillUseOutcome) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentSkillUseOutcomeFieldTrajectoryUUID)
+func (a *AgentSkillUseOutcome) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentSkillUseOutcomeFieldTraceUUID)
 }
 
 // SetUseUUID sets the UseUUID field and marks it as non-optional;
@@ -7968,69 +7968,39 @@ func (a *AgentSplitPlanSource) String() string {
 }
 
 var (
-	agentTrajectoryFieldAbandonedAt          = big.NewInt(1 << 0)
-	agentTrajectoryFieldAgentUUID            = big.NewInt(1 << 1)
-	agentTrajectoryFieldAttemptFamilyUUID    = big.NewInt(1 << 2)
-	agentTrajectoryFieldClosedAt             = big.NewInt(1 << 3)
-	agentTrajectoryFieldCreatedAt            = big.NewInt(1 << 4)
-	agentTrajectoryFieldInternal             = big.NewInt(1 << 5)
-	agentTrajectoryFieldLearnFrom            = big.NewInt(1 << 6)
-	agentTrajectoryFieldLearnFromReason      = big.NewInt(1 << 7)
-	agentTrajectoryFieldMetadata             = big.NewInt(1 << 8)
-	agentTrajectoryFieldObjective            = big.NewInt(1 << 9)
-	agentTrajectoryFieldOutcome              = big.NewInt(1 << 10)
-	agentTrajectoryFieldParentTrajectoryUUID = big.NewInt(1 << 11)
-	agentTrajectoryFieldRevision             = big.NewInt(1 << 12)
-	agentTrajectoryFieldSource               = big.NewInt(1 << 13)
-	agentTrajectoryFieldStatus               = big.NewInt(1 << 14)
-	agentTrajectoryFieldTaskFamily           = big.NewInt(1 << 15)
-	agentTrajectoryFieldTrajectoryID         = big.NewInt(1 << 16)
-	agentTrajectoryFieldUpdatedAt            = big.NewInt(1 << 17)
-	agentTrajectoryFieldUUID                 = big.NewInt(1 << 18)
-	agentTrajectoryFieldVerification         = big.NewInt(1 << 19)
+	agentTaskFamilyDescriptorFieldAgentUUID           = big.NewInt(1 << 0)
+	agentTaskFamilyDescriptorFieldCreatedAt           = big.NewInt(1 << 1)
+	agentTaskFamilyDescriptorFieldDescription         = big.NewInt(1 << 2)
+	agentTaskFamilyDescriptorFieldDescriptorVersion   = big.NewInt(1 << 3)
+	agentTaskFamilyDescriptorFieldDistinguishingTools = big.NewInt(1 << 4)
+	agentTaskFamilyDescriptorFieldNotFor              = big.NewInt(1 << 5)
+	agentTaskFamilyDescriptorFieldSlug                = big.NewInt(1 << 6)
+	agentTaskFamilyDescriptorFieldUpdatedAt           = big.NewInt(1 << 7)
+	agentTaskFamilyDescriptorFieldUseWhen             = big.NewInt(1 << 8)
+	agentTaskFamilyDescriptorFieldUUID                = big.NewInt(1 << 9)
 )
 
-type AgentTrajectory struct {
-	// The time the Trajectory was abandoned.
-	AbandonedAt *string `json:"abandoned_at,omitempty" url:"abandoned_at,omitempty"`
+type AgentTaskFamilyDescriptor struct {
 	// The owning Agent UUID.
 	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	// The stable retry-family identity shared with declared child attempts.
-	AttemptFamilyUUID *string `json:"attempt_family_uuid,omitempty" url:"attempt_family_uuid,omitempty"`
-	// The time the Trajectory closed.
-	ClosedAt *string `json:"closed_at,omitempty" url:"closed_at,omitempty"`
-	// The time the Trajectory was created.
+	// The time the descriptor was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// Server-owned fields that are not part of the top-level capture contract.
-	Internal *AgentTrajectoryInternal `json:"internal,omitempty" url:"internal,omitempty"`
-	// Whether eligible evidence may participate in learning.
-	LearnFrom *bool `json:"learn_from,omitempty" url:"learn_from,omitempty"`
-	// Why the Trajectory is not eligible for learning.
-	LearnFromReason *string `json:"learn_from_reason,omitempty" url:"learn_from_reason,omitempty"`
-	// Developer metadata used for exact containment filters.
-	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// The task-instance objective captured for this attempt.
-	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
-	// The caller-owned task outcome.
-	Outcome *AgentTrajectoryOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
-	// The parent attempt when this Trajectory is a retry.
-	ParentTrajectoryUUID *string `json:"parent_trajectory_uuid,omitempty" url:"parent_trajectory_uuid,omitempty"`
-	// The revision required by the next update or lifecycle command.
-	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
-	// The source record for an imported Trajectory.
-	Source *AgentTrajectorySource `json:"source,omitempty" url:"source,omitempty"`
-	// The current lifecycle state.
-	Status *AgentTrajectoryLifecycle `json:"status,omitempty" url:"status,omitempty"`
-	// The optional opaque task-family classification slug.
-	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
-	// The optional customer-assigned identifier, unique within the Agent.
-	TrajectoryID *string `json:"trajectory_id,omitempty" url:"trajectory_id,omitempty"`
-	// The time the Trajectory was last updated.
+	// What the family covers.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The descriptor version the classifier ran against.
+	DescriptorVersion *int `json:"descriptor_version,omitempty" url:"descriptor_version,omitempty"`
+	// The tools that distinguish this family from the others.
+	DistinguishingTools []string `json:"distinguishing_tools,omitempty" url:"distinguishing_tools,omitempty"`
+	// The most similar goal that does not belong to the family.
+	NotFor *string `json:"not_for,omitempty" url:"not_for,omitempty"`
+	// The task-family slug members receive.
+	Slug *string `json:"slug,omitempty" url:"slug,omitempty"`
+	// The time the descriptor was last updated.
 	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	// The stable Trajectory UUID.
+	// When a Trace belongs to the family.
+	UseWhen *string `json:"use_when,omitempty" url:"use_when,omitempty"`
+	// The stable descriptor UUID.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-	// The strength of the accepted outcome verification.
-	Verification *AgentTrajectoryVerification `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8039,154 +8009,84 @@ type AgentTrajectory struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectory) GetAbandonedAt() *string {
-	if a == nil {
-		return nil
-	}
-	return a.AbandonedAt
-}
-
-func (a *AgentTrajectory) GetAgentUUID() *string {
+func (a *AgentTaskFamilyDescriptor) GetAgentUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.AgentUUID
 }
 
-func (a *AgentTrajectory) GetAttemptFamilyUUID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.AttemptFamilyUUID
-}
-
-func (a *AgentTrajectory) GetClosedAt() *string {
-	if a == nil {
-		return nil
-	}
-	return a.ClosedAt
-}
-
-func (a *AgentTrajectory) GetCreatedAt() *string {
+func (a *AgentTaskFamilyDescriptor) GetCreatedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.CreatedAt
 }
 
-func (a *AgentTrajectory) GetInternal() *AgentTrajectoryInternal {
+func (a *AgentTaskFamilyDescriptor) GetDescription() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Internal
+	return a.Description
 }
 
-func (a *AgentTrajectory) GetLearnFrom() *bool {
+func (a *AgentTaskFamilyDescriptor) GetDescriptorVersion() *int {
 	if a == nil {
 		return nil
 	}
-	return a.LearnFrom
+	return a.DescriptorVersion
 }
 
-func (a *AgentTrajectory) GetLearnFromReason() *string {
+func (a *AgentTaskFamilyDescriptor) GetDistinguishingTools() []string {
 	if a == nil {
 		return nil
 	}
-	return a.LearnFromReason
+	return a.DistinguishingTools
 }
 
-func (a *AgentTrajectory) GetMetadata() map[string]any {
+func (a *AgentTaskFamilyDescriptor) GetNotFor() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Metadata
+	return a.NotFor
 }
 
-func (a *AgentTrajectory) GetObjective() *string {
+func (a *AgentTaskFamilyDescriptor) GetSlug() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Objective
+	return a.Slug
 }
 
-func (a *AgentTrajectory) GetOutcome() *AgentTrajectoryOutcome {
-	if a == nil {
-		return nil
-	}
-	return a.Outcome
-}
-
-func (a *AgentTrajectory) GetParentTrajectoryUUID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.ParentTrajectoryUUID
-}
-
-func (a *AgentTrajectory) GetRevision() *int {
-	if a == nil {
-		return nil
-	}
-	return a.Revision
-}
-
-func (a *AgentTrajectory) GetSource() *AgentTrajectorySource {
-	if a == nil {
-		return nil
-	}
-	return a.Source
-}
-
-func (a *AgentTrajectory) GetStatus() *AgentTrajectoryLifecycle {
-	if a == nil {
-		return nil
-	}
-	return a.Status
-}
-
-func (a *AgentTrajectory) GetTaskFamily() *string {
-	if a == nil {
-		return nil
-	}
-	return a.TaskFamily
-}
-
-func (a *AgentTrajectory) GetTrajectoryID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.TrajectoryID
-}
-
-func (a *AgentTrajectory) GetUpdatedAt() *string {
+func (a *AgentTaskFamilyDescriptor) GetUpdatedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.UpdatedAt
 }
 
-func (a *AgentTrajectory) GetUUID() *string {
+func (a *AgentTaskFamilyDescriptor) GetUseWhen() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UseWhen
+}
+
+func (a *AgentTaskFamilyDescriptor) GetUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.UUID
 }
 
-func (a *AgentTrajectory) GetVerification() *AgentTrajectoryVerification {
-	if a == nil {
-		return nil
-	}
-	return a.Verification
-}
-
-func (a *AgentTrajectory) GetExtraProperties() map[string]interface{} {
+func (a *AgentTaskFamilyDescriptor) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectory) require(field *big.Int) {
+func (a *AgentTaskFamilyDescriptor) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -8195,153 +8095,83 @@ func (a *AgentTrajectory) require(field *big.Int) {
 	a.explicitFields = next
 }
 
-// SetAbandonedAt sets the AbandonedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetAbandonedAt(abandonedAt *string) {
-	a.AbandonedAt = abandonedAt
-	a.require(agentTrajectoryFieldAbandonedAt)
-}
-
 // SetAgentUUID sets the AgentUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetAgentUUID(agentUUID *string) {
+func (a *AgentTaskFamilyDescriptor) SetAgentUUID(agentUUID *string) {
 	a.AgentUUID = agentUUID
-	a.require(agentTrajectoryFieldAgentUUID)
-}
-
-// SetAttemptFamilyUUID sets the AttemptFamilyUUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetAttemptFamilyUUID(attemptFamilyUUID *string) {
-	a.AttemptFamilyUUID = attemptFamilyUUID
-	a.require(agentTrajectoryFieldAttemptFamilyUUID)
-}
-
-// SetClosedAt sets the ClosedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetClosedAt(closedAt *string) {
-	a.ClosedAt = closedAt
-	a.require(agentTrajectoryFieldClosedAt)
+	a.require(agentTaskFamilyDescriptorFieldAgentUUID)
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetCreatedAt(createdAt *string) {
+func (a *AgentTaskFamilyDescriptor) SetCreatedAt(createdAt *string) {
 	a.CreatedAt = createdAt
-	a.require(agentTrajectoryFieldCreatedAt)
+	a.require(agentTaskFamilyDescriptorFieldCreatedAt)
 }
 
-// SetInternal sets the Internal field and marks it as non-optional;
+// SetDescription sets the Description field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetInternal(internal_ *AgentTrajectoryInternal) {
-	a.Internal = internal_
-	a.require(agentTrajectoryFieldInternal)
+func (a *AgentTaskFamilyDescriptor) SetDescription(description *string) {
+	a.Description = description
+	a.require(agentTaskFamilyDescriptorFieldDescription)
 }
 
-// SetLearnFrom sets the LearnFrom field and marks it as non-optional;
+// SetDescriptorVersion sets the DescriptorVersion field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetLearnFrom(learnFrom *bool) {
-	a.LearnFrom = learnFrom
-	a.require(agentTrajectoryFieldLearnFrom)
+func (a *AgentTaskFamilyDescriptor) SetDescriptorVersion(descriptorVersion *int) {
+	a.DescriptorVersion = descriptorVersion
+	a.require(agentTaskFamilyDescriptorFieldDescriptorVersion)
 }
 
-// SetLearnFromReason sets the LearnFromReason field and marks it as non-optional;
+// SetDistinguishingTools sets the DistinguishingTools field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetLearnFromReason(learnFromReason *string) {
-	a.LearnFromReason = learnFromReason
-	a.require(agentTrajectoryFieldLearnFromReason)
+func (a *AgentTaskFamilyDescriptor) SetDistinguishingTools(distinguishingTools []string) {
+	a.DistinguishingTools = distinguishingTools
+	a.require(agentTaskFamilyDescriptorFieldDistinguishingTools)
 }
 
-// SetMetadata sets the Metadata field and marks it as non-optional;
+// SetNotFor sets the NotFor field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetMetadata(metadata map[string]any) {
-	a.Metadata = metadata
-	a.require(agentTrajectoryFieldMetadata)
+func (a *AgentTaskFamilyDescriptor) SetNotFor(notFor *string) {
+	a.NotFor = notFor
+	a.require(agentTaskFamilyDescriptorFieldNotFor)
 }
 
-// SetObjective sets the Objective field and marks it as non-optional;
+// SetSlug sets the Slug field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetObjective(objective *string) {
-	a.Objective = objective
-	a.require(agentTrajectoryFieldObjective)
-}
-
-// SetOutcome sets the Outcome field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetOutcome(outcome *AgentTrajectoryOutcome) {
-	a.Outcome = outcome
-	a.require(agentTrajectoryFieldOutcome)
-}
-
-// SetParentTrajectoryUUID sets the ParentTrajectoryUUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetParentTrajectoryUUID(parentTrajectoryUUID *string) {
-	a.ParentTrajectoryUUID = parentTrajectoryUUID
-	a.require(agentTrajectoryFieldParentTrajectoryUUID)
-}
-
-// SetRevision sets the Revision field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetRevision(revision *int) {
-	a.Revision = revision
-	a.require(agentTrajectoryFieldRevision)
-}
-
-// SetSource sets the Source field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetSource(source *AgentTrajectorySource) {
-	a.Source = source
-	a.require(agentTrajectoryFieldSource)
-}
-
-// SetStatus sets the Status field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetStatus(status *AgentTrajectoryLifecycle) {
-	a.Status = status
-	a.require(agentTrajectoryFieldStatus)
-}
-
-// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetTaskFamily(taskFamily *string) {
-	a.TaskFamily = taskFamily
-	a.require(agentTrajectoryFieldTaskFamily)
-}
-
-// SetTrajectoryID sets the TrajectoryID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetTrajectoryID(trajectoryID *string) {
-	a.TrajectoryID = trajectoryID
-	a.require(agentTrajectoryFieldTrajectoryID)
+func (a *AgentTaskFamilyDescriptor) SetSlug(slug *string) {
+	a.Slug = slug
+	a.require(agentTaskFamilyDescriptorFieldSlug)
 }
 
 // SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetUpdatedAt(updatedAt *string) {
+func (a *AgentTaskFamilyDescriptor) SetUpdatedAt(updatedAt *string) {
 	a.UpdatedAt = updatedAt
-	a.require(agentTrajectoryFieldUpdatedAt)
+	a.require(agentTaskFamilyDescriptorFieldUpdatedAt)
+}
+
+// SetUseWhen sets the UseWhen field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTaskFamilyDescriptor) SetUseWhen(useWhen *string) {
+	a.UseWhen = useWhen
+	a.require(agentTaskFamilyDescriptorFieldUseWhen)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetUUID(uuid *string) {
+func (a *AgentTaskFamilyDescriptor) SetUUID(uuid *string) {
 	a.UUID = uuid
-	a.require(agentTrajectoryFieldUUID)
+	a.require(agentTaskFamilyDescriptorFieldUUID)
 }
 
-// SetVerification sets the Verification field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectory) SetVerification(verification *AgentTrajectoryVerification) {
-	a.Verification = verification
-	a.require(agentTrajectoryFieldVerification)
-}
-
-func (a *AgentTrajectory) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectory
+func (a *AgentTaskFamilyDescriptor) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTaskFamilyDescriptor
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectory(value)
+	*a = AgentTaskFamilyDescriptor(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -8351,8 +8181,8 @@ func (a *AgentTrajectory) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectory) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectory
+func (a *AgentTaskFamilyDescriptor) MarshalJSON() ([]byte, error) {
+	type embed AgentTaskFamilyDescriptor
 	var marshaler = struct {
 		embed
 	}{
@@ -8362,7 +8192,7 @@ func (a *AgentTrajectory) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectory) String() string {
+func (a *AgentTaskFamilyDescriptor) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -8378,14 +8208,581 @@ func (a *AgentTrajectory) String() string {
 }
 
 var (
-	agentTrajectoryCloseVerifierFieldAssertionID       = big.NewInt(1 << 0)
-	agentTrajectoryCloseVerifierFieldClass             = big.NewInt(1 << 1)
-	agentTrajectoryCloseVerifierFieldEvidenceReference = big.NewInt(1 << 2)
-	agentTrajectoryCloseVerifierFieldOutcome           = big.NewInt(1 << 3)
-	agentTrajectoryCloseVerifierFieldVerifierID        = big.NewInt(1 << 4)
+	agentTaskFamilyDescriptorPageFieldItems      = big.NewInt(1 << 0)
+	agentTaskFamilyDescriptorPageFieldNextCursor = big.NewInt(1 << 1)
+	agentTaskFamilyDescriptorPageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
-type AgentTrajectoryCloseVerifier struct {
+type AgentTaskFamilyDescriptorPage struct {
+	// The discovered task families on this page.
+	Items []*AgentTaskFamilyDescriptor `json:"items,omitempty" url:"items,omitempty"`
+	// Opaque cursor for retrieving the next page, present only when more results are available.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The total number of discovered task families within the owning Agent.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTaskFamilyDescriptorPage) GetItems() []*AgentTaskFamilyDescriptor {
+	if a == nil {
+		return nil
+	}
+	return a.Items
+}
+
+func (a *AgentTaskFamilyDescriptorPage) GetNextCursor() *string {
+	if a == nil {
+		return nil
+	}
+	return a.NextCursor
+}
+
+func (a *AgentTaskFamilyDescriptorPage) GetTotalSize() *int {
+	if a == nil {
+		return nil
+	}
+	return a.TotalSize
+}
+
+func (a *AgentTaskFamilyDescriptorPage) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTaskFamilyDescriptorPage) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTaskFamilyDescriptorPage) SetItems(items []*AgentTaskFamilyDescriptor) {
+	a.Items = items
+	a.require(agentTaskFamilyDescriptorPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTaskFamilyDescriptorPage) SetNextCursor(nextCursor *string) {
+	a.NextCursor = nextCursor
+	a.require(agentTaskFamilyDescriptorPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTaskFamilyDescriptorPage) SetTotalSize(totalSize *int) {
+	a.TotalSize = totalSize
+	a.require(agentTaskFamilyDescriptorPageFieldTotalSize)
+}
+
+func (a *AgentTaskFamilyDescriptorPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTaskFamilyDescriptorPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTaskFamilyDescriptorPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTaskFamilyDescriptorPage) MarshalJSON() ([]byte, error) {
+	type embed AgentTaskFamilyDescriptorPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTaskFamilyDescriptorPage) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTraceFieldAbandonedAt         = big.NewInt(1 << 0)
+	agentTraceFieldAgentUUID           = big.NewInt(1 << 1)
+	agentTraceFieldAttemptFamilyUUID   = big.NewInt(1 << 2)
+	agentTraceFieldClosedAt            = big.NewInt(1 << 3)
+	agentTraceFieldCreatedAt           = big.NewInt(1 << 4)
+	agentTraceFieldInternal            = big.NewInt(1 << 5)
+	agentTraceFieldLearnFrom           = big.NewInt(1 << 6)
+	agentTraceFieldLearnFromReason     = big.NewInt(1 << 7)
+	agentTraceFieldMetadata            = big.NewInt(1 << 8)
+	agentTraceFieldObjective           = big.NewInt(1 << 9)
+	agentTraceFieldOutcome             = big.NewInt(1 << 10)
+	agentTraceFieldParentTraceUUID     = big.NewInt(1 << 11)
+	agentTraceFieldRevision            = big.NewInt(1 << 12)
+	agentTraceFieldSource              = big.NewInt(1 << 13)
+	agentTraceFieldStatus              = big.NewInt(1 << 14)
+	agentTraceFieldTaskFamily          = big.NewInt(1 << 15)
+	agentTraceFieldTaskFamilyInference = big.NewInt(1 << 16)
+	agentTraceFieldTaskFamilySource    = big.NewInt(1 << 17)
+	agentTraceFieldTraceID             = big.NewInt(1 << 18)
+	agentTraceFieldUpdatedAt           = big.NewInt(1 << 19)
+	agentTraceFieldUUID                = big.NewInt(1 << 20)
+	agentTraceFieldVerification        = big.NewInt(1 << 21)
+)
+
+type AgentTrace struct {
+	// The time the Trace was abandoned.
+	AbandonedAt *string `json:"abandoned_at,omitempty" url:"abandoned_at,omitempty"`
+	// The owning Agent UUID.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// The stable retry-family identity shared with declared child attempts.
+	AttemptFamilyUUID *string `json:"attempt_family_uuid,omitempty" url:"attempt_family_uuid,omitempty"`
+	// The time the Trace closed.
+	ClosedAt *string `json:"closed_at,omitempty" url:"closed_at,omitempty"`
+	// The time the Trace was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// Server-owned fields that are not part of the top-level capture contract.
+	Internal *AgentTraceInternal `json:"internal,omitempty" url:"internal,omitempty"`
+	// Whether eligible evidence may participate in learning.
+	LearnFrom *bool `json:"learn_from,omitempty" url:"learn_from,omitempty"`
+	// Why the Trace is not eligible for learning.
+	LearnFromReason *string `json:"learn_from_reason,omitempty" url:"learn_from_reason,omitempty"`
+	// Developer metadata used for exact containment filters.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// The task-instance objective captured for this attempt.
+	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
+	// The caller-owned task outcome.
+	Outcome *AgentTraceOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// The parent attempt when this Trace is a retry.
+	ParentTraceUUID *string `json:"parent_trace_uuid,omitempty" url:"parent_trace_uuid,omitempty"`
+	// The revision required by the next update or lifecycle command.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The source record for an imported Trace.
+	Source *AgentTraceSource `json:"source,omitempty" url:"source,omitempty"`
+	// The current lifecycle state.
+	Status *AgentTraceLifecycle `json:"status,omitempty" url:"status,omitempty"`
+	// The optional opaque task-family classification slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The latest task-family inference outcome. Absent when inference never
+	// ran for this Trace.
+	TaskFamilyInference *AgentTraceTaskFamilyInference `json:"task_family_inference,omitempty" url:"task_family_inference,omitempty"`
+	// Who supplied task_family: the caller (declared), an import rule
+	// (import_rule), or the service classifier (inferred).
+	TaskFamilySource *string `json:"task_family_source,omitempty" url:"task_family_source,omitempty"`
+	// The optional customer-assigned identifier, unique within the Agent.
+	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
+	// The time the Trace was last updated.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The stable Trace UUID.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The strength of the accepted outcome verification.
+	Verification *AgentTraceVerification `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTrace) GetAbandonedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AbandonedAt
+}
+
+func (a *AgentTrace) GetAgentUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentUUID
+}
+
+func (a *AgentTrace) GetAttemptFamilyUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AttemptFamilyUUID
+}
+
+func (a *AgentTrace) GetClosedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ClosedAt
+}
+
+func (a *AgentTrace) GetCreatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CreatedAt
+}
+
+func (a *AgentTrace) GetInternal() *AgentTraceInternal {
+	if a == nil {
+		return nil
+	}
+	return a.Internal
+}
+
+func (a *AgentTrace) GetLearnFrom() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.LearnFrom
+}
+
+func (a *AgentTrace) GetLearnFromReason() *string {
+	if a == nil {
+		return nil
+	}
+	return a.LearnFromReason
+}
+
+func (a *AgentTrace) GetMetadata() map[string]any {
+	if a == nil {
+		return nil
+	}
+	return a.Metadata
+}
+
+func (a *AgentTrace) GetObjective() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Objective
+}
+
+func (a *AgentTrace) GetOutcome() *AgentTraceOutcome {
+	if a == nil {
+		return nil
+	}
+	return a.Outcome
+}
+
+func (a *AgentTrace) GetParentTraceUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ParentTraceUUID
+}
+
+func (a *AgentTrace) GetRevision() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Revision
+}
+
+func (a *AgentTrace) GetSource() *AgentTraceSource {
+	if a == nil {
+		return nil
+	}
+	return a.Source
+}
+
+func (a *AgentTrace) GetStatus() *AgentTraceLifecycle {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AgentTrace) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentTrace) GetTaskFamilyInference() *AgentTraceTaskFamilyInference {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamilyInference
+}
+
+func (a *AgentTrace) GetTaskFamilySource() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamilySource
+}
+
+func (a *AgentTrace) GetTraceID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TraceID
+}
+
+func (a *AgentTrace) GetUpdatedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UpdatedAt
+}
+
+func (a *AgentTrace) GetUUID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UUID
+}
+
+func (a *AgentTrace) GetVerification() *AgentTraceVerification {
+	if a == nil {
+		return nil
+	}
+	return a.Verification
+}
+
+func (a *AgentTrace) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTrace) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAbandonedAt sets the AbandonedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetAbandonedAt(abandonedAt *string) {
+	a.AbandonedAt = abandonedAt
+	a.require(agentTraceFieldAbandonedAt)
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetAgentUUID(agentUUID *string) {
+	a.AgentUUID = agentUUID
+	a.require(agentTraceFieldAgentUUID)
+}
+
+// SetAttemptFamilyUUID sets the AttemptFamilyUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetAttemptFamilyUUID(attemptFamilyUUID *string) {
+	a.AttemptFamilyUUID = attemptFamilyUUID
+	a.require(agentTraceFieldAttemptFamilyUUID)
+}
+
+// SetClosedAt sets the ClosedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetClosedAt(closedAt *string) {
+	a.ClosedAt = closedAt
+	a.require(agentTraceFieldClosedAt)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetCreatedAt(createdAt *string) {
+	a.CreatedAt = createdAt
+	a.require(agentTraceFieldCreatedAt)
+}
+
+// SetInternal sets the Internal field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetInternal(internal_ *AgentTraceInternal) {
+	a.Internal = internal_
+	a.require(agentTraceFieldInternal)
+}
+
+// SetLearnFrom sets the LearnFrom field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetLearnFrom(learnFrom *bool) {
+	a.LearnFrom = learnFrom
+	a.require(agentTraceFieldLearnFrom)
+}
+
+// SetLearnFromReason sets the LearnFromReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetLearnFromReason(learnFromReason *string) {
+	a.LearnFromReason = learnFromReason
+	a.require(agentTraceFieldLearnFromReason)
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetMetadata(metadata map[string]any) {
+	a.Metadata = metadata
+	a.require(agentTraceFieldMetadata)
+}
+
+// SetObjective sets the Objective field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetObjective(objective *string) {
+	a.Objective = objective
+	a.require(agentTraceFieldObjective)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetOutcome(outcome *AgentTraceOutcome) {
+	a.Outcome = outcome
+	a.require(agentTraceFieldOutcome)
+}
+
+// SetParentTraceUUID sets the ParentTraceUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetParentTraceUUID(parentTraceUUID *string) {
+	a.ParentTraceUUID = parentTraceUUID
+	a.require(agentTraceFieldParentTraceUUID)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetRevision(revision *int) {
+	a.Revision = revision
+	a.require(agentTraceFieldRevision)
+}
+
+// SetSource sets the Source field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetSource(source *AgentTraceSource) {
+	a.Source = source
+	a.require(agentTraceFieldSource)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetStatus(status *AgentTraceLifecycle) {
+	a.Status = status
+	a.require(agentTraceFieldStatus)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentTraceFieldTaskFamily)
+}
+
+// SetTaskFamilyInference sets the TaskFamilyInference field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetTaskFamilyInference(taskFamilyInference *AgentTraceTaskFamilyInference) {
+	a.TaskFamilyInference = taskFamilyInference
+	a.require(agentTraceFieldTaskFamilyInference)
+}
+
+// SetTaskFamilySource sets the TaskFamilySource field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetTaskFamilySource(taskFamilySource *string) {
+	a.TaskFamilySource = taskFamilySource
+	a.require(agentTraceFieldTaskFamilySource)
+}
+
+// SetTraceID sets the TraceID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetTraceID(traceID *string) {
+	a.TraceID = traceID
+	a.require(agentTraceFieldTraceID)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetUpdatedAt(updatedAt *string) {
+	a.UpdatedAt = updatedAt
+	a.require(agentTraceFieldUpdatedAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetUUID(uuid *string) {
+	a.UUID = uuid
+	a.require(agentTraceFieldUUID)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTrace) SetVerification(verification *AgentTraceVerification) {
+	a.Verification = verification
+	a.require(agentTraceFieldVerification)
+}
+
+func (a *AgentTrace) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTrace
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTrace(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTrace) MarshalJSON() ([]byte, error) {
+	type embed AgentTrace
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTrace) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTraceCloseVerifierFieldAssertionID       = big.NewInt(1 << 0)
+	agentTraceCloseVerifierFieldClass             = big.NewInt(1 << 1)
+	agentTraceCloseVerifierFieldEvidenceReference = big.NewInt(1 << 2)
+	agentTraceCloseVerifierFieldOutcome           = big.NewInt(1 << 3)
+	agentTraceCloseVerifierFieldVerifierID        = big.NewInt(1 << 4)
+)
+
+type AgentTraceCloseVerifier struct {
 	AssertionID       *string                        `json:"assertion_id,omitempty" url:"assertion_id,omitempty"`
 	Class             *string                        `json:"class,omitempty" url:"class,omitempty"`
 	EvidenceReference *string                        `json:"evidence_reference,omitempty" url:"evidence_reference,omitempty"`
@@ -8399,49 +8796,49 @@ type AgentTrajectoryCloseVerifier struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryCloseVerifier) GetAssertionID() *string {
+func (a *AgentTraceCloseVerifier) GetAssertionID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.AssertionID
 }
 
-func (a *AgentTrajectoryCloseVerifier) GetClass() *string {
+func (a *AgentTraceCloseVerifier) GetClass() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Class
 }
 
-func (a *AgentTrajectoryCloseVerifier) GetEvidenceReference() *string {
+func (a *AgentTraceCloseVerifier) GetEvidenceReference() *string {
 	if a == nil {
 		return nil
 	}
 	return a.EvidenceReference
 }
 
-func (a *AgentTrajectoryCloseVerifier) GetOutcome() *AgentVerifierAssertionOutcome {
+func (a *AgentTraceCloseVerifier) GetOutcome() *AgentVerifierAssertionOutcome {
 	if a == nil {
 		return nil
 	}
 	return a.Outcome
 }
 
-func (a *AgentTrajectoryCloseVerifier) GetVerifierID() string {
+func (a *AgentTraceCloseVerifier) GetVerifierID() string {
 	if a == nil {
 		return ""
 	}
 	return a.VerifierID
 }
 
-func (a *AgentTrajectoryCloseVerifier) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceCloseVerifier) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryCloseVerifier) require(field *big.Int) {
+func (a *AgentTraceCloseVerifier) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -8452,46 +8849,46 @@ func (a *AgentTrajectoryCloseVerifier) require(field *big.Int) {
 
 // SetAssertionID sets the AssertionID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryCloseVerifier) SetAssertionID(assertionID *string) {
+func (a *AgentTraceCloseVerifier) SetAssertionID(assertionID *string) {
 	a.AssertionID = assertionID
-	a.require(agentTrajectoryCloseVerifierFieldAssertionID)
+	a.require(agentTraceCloseVerifierFieldAssertionID)
 }
 
 // SetClass sets the Class field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryCloseVerifier) SetClass(class *string) {
+func (a *AgentTraceCloseVerifier) SetClass(class *string) {
 	a.Class = class
-	a.require(agentTrajectoryCloseVerifierFieldClass)
+	a.require(agentTraceCloseVerifierFieldClass)
 }
 
 // SetEvidenceReference sets the EvidenceReference field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryCloseVerifier) SetEvidenceReference(evidenceReference *string) {
+func (a *AgentTraceCloseVerifier) SetEvidenceReference(evidenceReference *string) {
 	a.EvidenceReference = evidenceReference
-	a.require(agentTrajectoryCloseVerifierFieldEvidenceReference)
+	a.require(agentTraceCloseVerifierFieldEvidenceReference)
 }
 
 // SetOutcome sets the Outcome field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryCloseVerifier) SetOutcome(outcome *AgentVerifierAssertionOutcome) {
+func (a *AgentTraceCloseVerifier) SetOutcome(outcome *AgentVerifierAssertionOutcome) {
 	a.Outcome = outcome
-	a.require(agentTrajectoryCloseVerifierFieldOutcome)
+	a.require(agentTraceCloseVerifierFieldOutcome)
 }
 
 // SetVerifierID sets the VerifierID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryCloseVerifier) SetVerifierID(verifierID string) {
+func (a *AgentTraceCloseVerifier) SetVerifierID(verifierID string) {
 	a.VerifierID = verifierID
-	a.require(agentTrajectoryCloseVerifierFieldVerifierID)
+	a.require(agentTraceCloseVerifierFieldVerifierID)
 }
 
-func (a *AgentTrajectoryCloseVerifier) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryCloseVerifier
+func (a *AgentTraceCloseVerifier) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceCloseVerifier
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryCloseVerifier(value)
+	*a = AgentTraceCloseVerifier(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -8501,8 +8898,8 @@ func (a *AgentTrajectoryCloseVerifier) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryCloseVerifier) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryCloseVerifier
+func (a *AgentTraceCloseVerifier) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceCloseVerifier
 	var marshaler = struct {
 		embed
 	}{
@@ -8512,7 +8909,7 @@ func (a *AgentTrajectoryCloseVerifier) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryCloseVerifier) String() string {
+func (a *AgentTraceCloseVerifier) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -8528,41 +8925,41 @@ func (a *AgentTrajectoryCloseVerifier) String() string {
 }
 
 var (
-	agentTrajectoryEventFieldAgentUUID       = big.NewInt(1 << 0)
-	agentTrajectoryEventFieldContent         = big.NewInt(1 << 1)
-	agentTrajectoryEventFieldContext         = big.NewInt(1 << 2)
-	agentTrajectoryEventFieldCreatedAt       = big.NewInt(1 << 3)
-	agentTrajectoryEventFieldEventID         = big.NewInt(1 << 4)
-	agentTrajectoryEventFieldEventType       = big.NewInt(1 << 5)
-	agentTrajectoryEventFieldFailedAt        = big.NewInt(1 << 6)
-	agentTrajectoryEventFieldMetadata        = big.NewInt(1 << 7)
-	agentTrajectoryEventFieldOccurredAt      = big.NewInt(1 << 8)
-	agentTrajectoryEventFieldProcessedAt     = big.NewInt(1 << 9)
-	agentTrajectoryEventFieldProcessingState = big.NewInt(1 << 10)
-	agentTrajectoryEventFieldSequence        = big.NewInt(1 << 11)
-	agentTrajectoryEventFieldSources         = big.NewInt(1 << 12)
-	agentTrajectoryEventFieldTrajectoryUUID  = big.NewInt(1 << 13)
-	agentTrajectoryEventFieldUpdatedAt       = big.NewInt(1 << 14)
-	agentTrajectoryEventFieldUUID            = big.NewInt(1 << 15)
+	agentTraceEventFieldAgentUUID       = big.NewInt(1 << 0)
+	agentTraceEventFieldContent         = big.NewInt(1 << 1)
+	agentTraceEventFieldContext         = big.NewInt(1 << 2)
+	agentTraceEventFieldCreatedAt       = big.NewInt(1 << 3)
+	agentTraceEventFieldEventID         = big.NewInt(1 << 4)
+	agentTraceEventFieldEventType       = big.NewInt(1 << 5)
+	agentTraceEventFieldFailedAt        = big.NewInt(1 << 6)
+	agentTraceEventFieldMetadata        = big.NewInt(1 << 7)
+	agentTraceEventFieldOccurredAt      = big.NewInt(1 << 8)
+	agentTraceEventFieldProcessedAt     = big.NewInt(1 << 9)
+	agentTraceEventFieldProcessingState = big.NewInt(1 << 10)
+	agentTraceEventFieldSequence        = big.NewInt(1 << 11)
+	agentTraceEventFieldSources         = big.NewInt(1 << 12)
+	agentTraceEventFieldTraceUUID       = big.NewInt(1 << 13)
+	agentTraceEventFieldUpdatedAt       = big.NewInt(1 << 14)
+	agentTraceEventFieldUUID            = big.NewInt(1 << 15)
 )
 
-type AgentTrajectoryEvent struct {
-	AgentUUID       *string                              `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	Content         *string                              `json:"content,omitempty" url:"content,omitempty"`
-	Context         *AgentTrajectoryEventContext         `json:"context,omitempty" url:"context,omitempty"`
-	CreatedAt       *string                              `json:"created_at,omitempty" url:"created_at,omitempty"`
-	EventID         *string                              `json:"event_id,omitempty" url:"event_id,omitempty"`
-	EventType       *AgentTrajectoryEventType            `json:"event_type,omitempty" url:"event_type,omitempty"`
-	FailedAt        *string                              `json:"failed_at,omitempty" url:"failed_at,omitempty"`
-	Metadata        map[string]any                       `json:"metadata,omitempty" url:"metadata,omitempty"`
-	OccurredAt      *string                              `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
-	ProcessedAt     *string                              `json:"processed_at,omitempty" url:"processed_at,omitempty"`
-	ProcessingState *AgentTrajectoryEventProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
-	Sequence        *int                                 `json:"sequence,omitempty" url:"sequence,omitempty"`
-	Sources         []*AgentTrajectoryEventSource        `json:"sources,omitempty" url:"sources,omitempty"`
-	TrajectoryUUID  *string                              `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
-	UpdatedAt       *string                              `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID            *string                              `json:"uuid,omitempty" url:"uuid,omitempty"`
+type AgentTraceEvent struct {
+	AgentUUID       *string                         `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	Content         *string                         `json:"content,omitempty" url:"content,omitempty"`
+	Context         *AgentTraceEventContext         `json:"context,omitempty" url:"context,omitempty"`
+	CreatedAt       *string                         `json:"created_at,omitempty" url:"created_at,omitempty"`
+	EventID         *string                         `json:"event_id,omitempty" url:"event_id,omitempty"`
+	EventType       *AgentTraceEventType            `json:"event_type,omitempty" url:"event_type,omitempty"`
+	FailedAt        *string                         `json:"failed_at,omitempty" url:"failed_at,omitempty"`
+	Metadata        map[string]any                  `json:"metadata,omitempty" url:"metadata,omitempty"`
+	OccurredAt      *string                         `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
+	ProcessedAt     *string                         `json:"processed_at,omitempty" url:"processed_at,omitempty"`
+	ProcessingState *AgentTraceEventProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
+	Sequence        *int                            `json:"sequence,omitempty" url:"sequence,omitempty"`
+	Sources         []*AgentTraceEventSource        `json:"sources,omitempty" url:"sources,omitempty"`
+	TraceUUID       *string                         `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	UpdatedAt       *string                         `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID            *string                         `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8571,126 +8968,126 @@ type AgentTrajectoryEvent struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryEvent) GetAgentUUID() *string {
+func (a *AgentTraceEvent) GetAgentUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.AgentUUID
 }
 
-func (a *AgentTrajectoryEvent) GetContent() *string {
+func (a *AgentTraceEvent) GetContent() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Content
 }
 
-func (a *AgentTrajectoryEvent) GetContext() *AgentTrajectoryEventContext {
+func (a *AgentTraceEvent) GetContext() *AgentTraceEventContext {
 	if a == nil {
 		return nil
 	}
 	return a.Context
 }
 
-func (a *AgentTrajectoryEvent) GetCreatedAt() *string {
+func (a *AgentTraceEvent) GetCreatedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.CreatedAt
 }
 
-func (a *AgentTrajectoryEvent) GetEventID() *string {
+func (a *AgentTraceEvent) GetEventID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.EventID
 }
 
-func (a *AgentTrajectoryEvent) GetEventType() *AgentTrajectoryEventType {
+func (a *AgentTraceEvent) GetEventType() *AgentTraceEventType {
 	if a == nil {
 		return nil
 	}
 	return a.EventType
 }
 
-func (a *AgentTrajectoryEvent) GetFailedAt() *string {
+func (a *AgentTraceEvent) GetFailedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.FailedAt
 }
 
-func (a *AgentTrajectoryEvent) GetMetadata() map[string]any {
+func (a *AgentTraceEvent) GetMetadata() map[string]any {
 	if a == nil {
 		return nil
 	}
 	return a.Metadata
 }
 
-func (a *AgentTrajectoryEvent) GetOccurredAt() *string {
+func (a *AgentTraceEvent) GetOccurredAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.OccurredAt
 }
 
-func (a *AgentTrajectoryEvent) GetProcessedAt() *string {
+func (a *AgentTraceEvent) GetProcessedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.ProcessedAt
 }
 
-func (a *AgentTrajectoryEvent) GetProcessingState() *AgentTrajectoryEventProcessingState {
+func (a *AgentTraceEvent) GetProcessingState() *AgentTraceEventProcessingState {
 	if a == nil {
 		return nil
 	}
 	return a.ProcessingState
 }
 
-func (a *AgentTrajectoryEvent) GetSequence() *int {
+func (a *AgentTraceEvent) GetSequence() *int {
 	if a == nil {
 		return nil
 	}
 	return a.Sequence
 }
 
-func (a *AgentTrajectoryEvent) GetSources() []*AgentTrajectoryEventSource {
+func (a *AgentTraceEvent) GetSources() []*AgentTraceEventSource {
 	if a == nil {
 		return nil
 	}
 	return a.Sources
 }
 
-func (a *AgentTrajectoryEvent) GetTrajectoryUUID() *string {
+func (a *AgentTraceEvent) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
-func (a *AgentTrajectoryEvent) GetUpdatedAt() *string {
+func (a *AgentTraceEvent) GetUpdatedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.UpdatedAt
 }
 
-func (a *AgentTrajectoryEvent) GetUUID() *string {
+func (a *AgentTraceEvent) GetUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.UUID
 }
 
-func (a *AgentTrajectoryEvent) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceEvent) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryEvent) require(field *big.Int) {
+func (a *AgentTraceEvent) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -8701,123 +9098,123 @@ func (a *AgentTrajectoryEvent) require(field *big.Int) {
 
 // SetAgentUUID sets the AgentUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetAgentUUID(agentUUID *string) {
+func (a *AgentTraceEvent) SetAgentUUID(agentUUID *string) {
 	a.AgentUUID = agentUUID
-	a.require(agentTrajectoryEventFieldAgentUUID)
+	a.require(agentTraceEventFieldAgentUUID)
 }
 
 // SetContent sets the Content field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetContent(content *string) {
+func (a *AgentTraceEvent) SetContent(content *string) {
 	a.Content = content
-	a.require(agentTrajectoryEventFieldContent)
+	a.require(agentTraceEventFieldContent)
 }
 
 // SetContext sets the Context field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetContext(context *AgentTrajectoryEventContext) {
+func (a *AgentTraceEvent) SetContext(context *AgentTraceEventContext) {
 	a.Context = context
-	a.require(agentTrajectoryEventFieldContext)
+	a.require(agentTraceEventFieldContext)
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetCreatedAt(createdAt *string) {
+func (a *AgentTraceEvent) SetCreatedAt(createdAt *string) {
 	a.CreatedAt = createdAt
-	a.require(agentTrajectoryEventFieldCreatedAt)
+	a.require(agentTraceEventFieldCreatedAt)
 }
 
 // SetEventID sets the EventID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetEventID(eventID *string) {
+func (a *AgentTraceEvent) SetEventID(eventID *string) {
 	a.EventID = eventID
-	a.require(agentTrajectoryEventFieldEventID)
+	a.require(agentTraceEventFieldEventID)
 }
 
 // SetEventType sets the EventType field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetEventType(eventType *AgentTrajectoryEventType) {
+func (a *AgentTraceEvent) SetEventType(eventType *AgentTraceEventType) {
 	a.EventType = eventType
-	a.require(agentTrajectoryEventFieldEventType)
+	a.require(agentTraceEventFieldEventType)
 }
 
 // SetFailedAt sets the FailedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetFailedAt(failedAt *string) {
+func (a *AgentTraceEvent) SetFailedAt(failedAt *string) {
 	a.FailedAt = failedAt
-	a.require(agentTrajectoryEventFieldFailedAt)
+	a.require(agentTraceEventFieldFailedAt)
 }
 
 // SetMetadata sets the Metadata field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetMetadata(metadata map[string]any) {
+func (a *AgentTraceEvent) SetMetadata(metadata map[string]any) {
 	a.Metadata = metadata
-	a.require(agentTrajectoryEventFieldMetadata)
+	a.require(agentTraceEventFieldMetadata)
 }
 
 // SetOccurredAt sets the OccurredAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetOccurredAt(occurredAt *string) {
+func (a *AgentTraceEvent) SetOccurredAt(occurredAt *string) {
 	a.OccurredAt = occurredAt
-	a.require(agentTrajectoryEventFieldOccurredAt)
+	a.require(agentTraceEventFieldOccurredAt)
 }
 
 // SetProcessedAt sets the ProcessedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetProcessedAt(processedAt *string) {
+func (a *AgentTraceEvent) SetProcessedAt(processedAt *string) {
 	a.ProcessedAt = processedAt
-	a.require(agentTrajectoryEventFieldProcessedAt)
+	a.require(agentTraceEventFieldProcessedAt)
 }
 
 // SetProcessingState sets the ProcessingState field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetProcessingState(processingState *AgentTrajectoryEventProcessingState) {
+func (a *AgentTraceEvent) SetProcessingState(processingState *AgentTraceEventProcessingState) {
 	a.ProcessingState = processingState
-	a.require(agentTrajectoryEventFieldProcessingState)
+	a.require(agentTraceEventFieldProcessingState)
 }
 
 // SetSequence sets the Sequence field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetSequence(sequence *int) {
+func (a *AgentTraceEvent) SetSequence(sequence *int) {
 	a.Sequence = sequence
-	a.require(agentTrajectoryEventFieldSequence)
+	a.require(agentTraceEventFieldSequence)
 }
 
 // SetSources sets the Sources field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetSources(sources []*AgentTrajectoryEventSource) {
+func (a *AgentTraceEvent) SetSources(sources []*AgentTraceEventSource) {
 	a.Sources = sources
-	a.require(agentTrajectoryEventFieldSources)
+	a.require(agentTraceEventFieldSources)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentTrajectoryEventFieldTrajectoryUUID)
+func (a *AgentTraceEvent) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentTraceEventFieldTraceUUID)
 }
 
 // SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetUpdatedAt(updatedAt *string) {
+func (a *AgentTraceEvent) SetUpdatedAt(updatedAt *string) {
 	a.UpdatedAt = updatedAt
-	a.require(agentTrajectoryEventFieldUpdatedAt)
+	a.require(agentTraceEventFieldUpdatedAt)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEvent) SetUUID(uuid *string) {
+func (a *AgentTraceEvent) SetUUID(uuid *string) {
 	a.UUID = uuid
-	a.require(agentTrajectoryEventFieldUUID)
+	a.require(agentTraceEventFieldUUID)
 }
 
-func (a *AgentTrajectoryEvent) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryEvent
+func (a *AgentTraceEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceEvent
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryEvent(value)
+	*a = AgentTraceEvent(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -8827,8 +9224,8 @@ func (a *AgentTrajectoryEvent) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryEvent) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryEvent
+func (a *AgentTraceEvent) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceEvent
 	var marshaler = struct {
 		embed
 	}{
@@ -8838,7 +9235,7 @@ func (a *AgentTrajectoryEvent) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryEvent) String() string {
+func (a *AgentTraceEvent) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -8854,19 +9251,19 @@ func (a *AgentTrajectoryEvent) String() string {
 }
 
 var (
-	agentTrajectoryEventContextFieldArtifacts    = big.NewInt(1 << 0)
-	agentTrajectoryEventContextFieldEnvironments = big.NewInt(1 << 1)
-	agentTrajectoryEventContextFieldModel        = big.NewInt(1 << 2)
-	agentTrajectoryEventContextFieldTools        = big.NewInt(1 << 3)
-	agentTrajectoryEventContextFieldVerification = big.NewInt(1 << 4)
+	agentTraceEventContextFieldArtifacts    = big.NewInt(1 << 0)
+	agentTraceEventContextFieldEnvironments = big.NewInt(1 << 1)
+	agentTraceEventContextFieldModel        = big.NewInt(1 << 2)
+	agentTraceEventContextFieldTools        = big.NewInt(1 << 3)
+	agentTraceEventContextFieldVerification = big.NewInt(1 << 4)
 )
 
-type AgentTrajectoryEventContext struct {
-	Artifacts    []*AgentTrajectoryResourceRef `json:"artifacts,omitempty" url:"artifacts,omitempty"`
-	Environments []*AgentTrajectoryResourceRef `json:"environments,omitempty" url:"environments,omitempty"`
-	Model        *AgentTrajectoryResourceRef   `json:"model,omitempty" url:"model,omitempty"`
-	Tools        []*AgentTrajectoryResourceRef `json:"tools,omitempty" url:"tools,omitempty"`
-	Verification *string                       `json:"verification,omitempty" url:"verification,omitempty"`
+type AgentTraceEventContext struct {
+	Artifacts    []*AgentTraceResourceRef `json:"artifacts,omitempty" url:"artifacts,omitempty"`
+	Environments []*AgentTraceResourceRef `json:"environments,omitempty" url:"environments,omitempty"`
+	Model        *AgentTraceResourceRef   `json:"model,omitempty" url:"model,omitempty"`
+	Tools        []*AgentTraceResourceRef `json:"tools,omitempty" url:"tools,omitempty"`
+	Verification *string                  `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8875,49 +9272,49 @@ type AgentTrajectoryEventContext struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryEventContext) GetArtifacts() []*AgentTrajectoryResourceRef {
+func (a *AgentTraceEventContext) GetArtifacts() []*AgentTraceResourceRef {
 	if a == nil {
 		return nil
 	}
 	return a.Artifacts
 }
 
-func (a *AgentTrajectoryEventContext) GetEnvironments() []*AgentTrajectoryResourceRef {
+func (a *AgentTraceEventContext) GetEnvironments() []*AgentTraceResourceRef {
 	if a == nil {
 		return nil
 	}
 	return a.Environments
 }
 
-func (a *AgentTrajectoryEventContext) GetModel() *AgentTrajectoryResourceRef {
+func (a *AgentTraceEventContext) GetModel() *AgentTraceResourceRef {
 	if a == nil {
 		return nil
 	}
 	return a.Model
 }
 
-func (a *AgentTrajectoryEventContext) GetTools() []*AgentTrajectoryResourceRef {
+func (a *AgentTraceEventContext) GetTools() []*AgentTraceResourceRef {
 	if a == nil {
 		return nil
 	}
 	return a.Tools
 }
 
-func (a *AgentTrajectoryEventContext) GetVerification() *string {
+func (a *AgentTraceEventContext) GetVerification() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Verification
 }
 
-func (a *AgentTrajectoryEventContext) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceEventContext) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryEventContext) require(field *big.Int) {
+func (a *AgentTraceEventContext) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -8928,46 +9325,46 @@ func (a *AgentTrajectoryEventContext) require(field *big.Int) {
 
 // SetArtifacts sets the Artifacts field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventContext) SetArtifacts(artifacts []*AgentTrajectoryResourceRef) {
+func (a *AgentTraceEventContext) SetArtifacts(artifacts []*AgentTraceResourceRef) {
 	a.Artifacts = artifacts
-	a.require(agentTrajectoryEventContextFieldArtifacts)
+	a.require(agentTraceEventContextFieldArtifacts)
 }
 
 // SetEnvironments sets the Environments field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventContext) SetEnvironments(environments []*AgentTrajectoryResourceRef) {
+func (a *AgentTraceEventContext) SetEnvironments(environments []*AgentTraceResourceRef) {
 	a.Environments = environments
-	a.require(agentTrajectoryEventContextFieldEnvironments)
+	a.require(agentTraceEventContextFieldEnvironments)
 }
 
 // SetModel sets the Model field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventContext) SetModel(model *AgentTrajectoryResourceRef) {
+func (a *AgentTraceEventContext) SetModel(model *AgentTraceResourceRef) {
 	a.Model = model
-	a.require(agentTrajectoryEventContextFieldModel)
+	a.require(agentTraceEventContextFieldModel)
 }
 
 // SetTools sets the Tools field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventContext) SetTools(tools []*AgentTrajectoryResourceRef) {
+func (a *AgentTraceEventContext) SetTools(tools []*AgentTraceResourceRef) {
 	a.Tools = tools
-	a.require(agentTrajectoryEventContextFieldTools)
+	a.require(agentTraceEventContextFieldTools)
 }
 
 // SetVerification sets the Verification field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventContext) SetVerification(verification *string) {
+func (a *AgentTraceEventContext) SetVerification(verification *string) {
 	a.Verification = verification
-	a.require(agentTrajectoryEventContextFieldVerification)
+	a.require(agentTraceEventContextFieldVerification)
 }
 
-func (a *AgentTrajectoryEventContext) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryEventContext
+func (a *AgentTraceEventContext) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceEventContext
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryEventContext(value)
+	*a = AgentTraceEventContext(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -8977,8 +9374,8 @@ func (a *AgentTrajectoryEventContext) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryEventContext) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryEventContext
+func (a *AgentTraceEventContext) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceEventContext
 	var marshaler = struct {
 		embed
 	}{
@@ -8988,7 +9385,7 @@ func (a *AgentTrajectoryEventContext) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryEventContext) String() string {
+func (a *AgentTraceEventContext) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -9004,15 +9401,15 @@ func (a *AgentTrajectoryEventContext) String() string {
 }
 
 var (
-	agentTrajectoryEventPageFieldItems      = big.NewInt(1 << 0)
-	agentTrajectoryEventPageFieldNextCursor = big.NewInt(1 << 1)
-	agentTrajectoryEventPageFieldTotalSize  = big.NewInt(1 << 2)
+	agentTraceEventPageFieldItems      = big.NewInt(1 << 0)
+	agentTraceEventPageFieldNextCursor = big.NewInt(1 << 1)
+	agentTraceEventPageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
-type AgentTrajectoryEventPage struct {
-	Items      []*AgentTrajectoryEvent `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string                 `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int                    `json:"total_size,omitempty" url:"total_size,omitempty"`
+type AgentTraceEventPage struct {
+	Items      []*AgentTraceEvent `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string            `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int               `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9021,35 +9418,35 @@ type AgentTrajectoryEventPage struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryEventPage) GetItems() []*AgentTrajectoryEvent {
+func (a *AgentTraceEventPage) GetItems() []*AgentTraceEvent {
 	if a == nil {
 		return nil
 	}
 	return a.Items
 }
 
-func (a *AgentTrajectoryEventPage) GetNextCursor() *string {
+func (a *AgentTraceEventPage) GetNextCursor() *string {
 	if a == nil {
 		return nil
 	}
 	return a.NextCursor
 }
 
-func (a *AgentTrajectoryEventPage) GetTotalSize() *int {
+func (a *AgentTraceEventPage) GetTotalSize() *int {
 	if a == nil {
 		return nil
 	}
 	return a.TotalSize
 }
 
-func (a *AgentTrajectoryEventPage) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceEventPage) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryEventPage) require(field *big.Int) {
+func (a *AgentTraceEventPage) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -9060,32 +9457,32 @@ func (a *AgentTrajectoryEventPage) require(field *big.Int) {
 
 // SetItems sets the Items field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventPage) SetItems(items []*AgentTrajectoryEvent) {
+func (a *AgentTraceEventPage) SetItems(items []*AgentTraceEvent) {
 	a.Items = items
-	a.require(agentTrajectoryEventPageFieldItems)
+	a.require(agentTraceEventPageFieldItems)
 }
 
 // SetNextCursor sets the NextCursor field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventPage) SetNextCursor(nextCursor *string) {
+func (a *AgentTraceEventPage) SetNextCursor(nextCursor *string) {
 	a.NextCursor = nextCursor
-	a.require(agentTrajectoryEventPageFieldNextCursor)
+	a.require(agentTraceEventPageFieldNextCursor)
 }
 
 // SetTotalSize sets the TotalSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventPage) SetTotalSize(totalSize *int) {
+func (a *AgentTraceEventPage) SetTotalSize(totalSize *int) {
 	a.TotalSize = totalSize
-	a.require(agentTrajectoryEventPageFieldTotalSize)
+	a.require(agentTraceEventPageFieldTotalSize)
 }
 
-func (a *AgentTrajectoryEventPage) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryEventPage
+func (a *AgentTraceEventPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceEventPage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryEventPage(value)
+	*a = AgentTraceEventPage(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -9095,8 +9492,8 @@ func (a *AgentTrajectoryEventPage) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryEventPage) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryEventPage
+func (a *AgentTraceEventPage) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceEventPage
 	var marshaler = struct {
 		embed
 	}{
@@ -9106,7 +9503,7 @@ func (a *AgentTrajectoryEventPage) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryEventPage) String() string {
+func (a *AgentTraceEventPage) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -9121,46 +9518,46 @@ func (a *AgentTrajectoryEventPage) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AgentTrajectoryEventProcessingState string
+type AgentTraceEventProcessingState string
 
 const (
-	AgentTrajectoryEventProcessingStatePending    AgentTrajectoryEventProcessingState = "pending"
-	AgentTrajectoryEventProcessingStateProcessing AgentTrajectoryEventProcessingState = "processing"
-	AgentTrajectoryEventProcessingStateProcessed  AgentTrajectoryEventProcessingState = "processed"
-	AgentTrajectoryEventProcessingStateFailed     AgentTrajectoryEventProcessingState = "failed"
+	AgentTraceEventProcessingStatePending    AgentTraceEventProcessingState = "pending"
+	AgentTraceEventProcessingStateProcessing AgentTraceEventProcessingState = "processing"
+	AgentTraceEventProcessingStateProcessed  AgentTraceEventProcessingState = "processed"
+	AgentTraceEventProcessingStateFailed     AgentTraceEventProcessingState = "failed"
 )
 
-func NewAgentTrajectoryEventProcessingStateFromString(s string) (AgentTrajectoryEventProcessingState, error) {
+func NewAgentTraceEventProcessingStateFromString(s string) (AgentTraceEventProcessingState, error) {
 	switch s {
 	case "pending":
-		return AgentTrajectoryEventProcessingStatePending, nil
+		return AgentTraceEventProcessingStatePending, nil
 	case "processing":
-		return AgentTrajectoryEventProcessingStateProcessing, nil
+		return AgentTraceEventProcessingStateProcessing, nil
 	case "processed":
-		return AgentTrajectoryEventProcessingStateProcessed, nil
+		return AgentTraceEventProcessingStateProcessed, nil
 	case "failed":
-		return AgentTrajectoryEventProcessingStateFailed, nil
+		return AgentTraceEventProcessingStateFailed, nil
 	}
-	var t AgentTrajectoryEventProcessingState
+	var t AgentTraceEventProcessingState
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectoryEventProcessingState) Ptr() *AgentTrajectoryEventProcessingState {
+func (a AgentTraceEventProcessingState) Ptr() *AgentTraceEventProcessingState {
 	return &a
 }
 
 var (
-	agentTrajectoryEventSourceFieldCopyMode      = big.NewInt(1 << 0)
-	agentTrajectoryEventSourceFieldKind          = big.NewInt(1 << 1)
-	agentTrajectoryEventSourceFieldRetentionMode = big.NewInt(1 << 2)
-	agentTrajectoryEventSourceFieldUUID          = big.NewInt(1 << 3)
+	agentTraceEventSourceFieldCopyMode      = big.NewInt(1 << 0)
+	agentTraceEventSourceFieldKind          = big.NewInt(1 << 1)
+	agentTraceEventSourceFieldRetentionMode = big.NewInt(1 << 2)
+	agentTraceEventSourceFieldUUID          = big.NewInt(1 << 3)
 )
 
-type AgentTrajectoryEventSource struct {
-	CopyMode      *AgentTrajectoryEventSourceCopyMode      `json:"copy_mode,omitempty" url:"copy_mode,omitempty"`
-	Kind          string                                   `json:"kind" url:"kind"`
-	RetentionMode *AgentTrajectoryEventSourceRetentionMode `json:"retention_mode,omitempty" url:"retention_mode,omitempty"`
-	UUID          string                                   `json:"uuid" url:"uuid"`
+type AgentTraceEventSource struct {
+	CopyMode      *AgentTraceEventSourceCopyMode      `json:"copy_mode,omitempty" url:"copy_mode,omitempty"`
+	Kind          string                              `json:"kind" url:"kind"`
+	RetentionMode *AgentTraceEventSourceRetentionMode `json:"retention_mode,omitempty" url:"retention_mode,omitempty"`
+	UUID          string                              `json:"uuid" url:"uuid"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9169,42 +9566,42 @@ type AgentTrajectoryEventSource struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryEventSource) GetCopyMode() *AgentTrajectoryEventSourceCopyMode {
+func (a *AgentTraceEventSource) GetCopyMode() *AgentTraceEventSourceCopyMode {
 	if a == nil {
 		return nil
 	}
 	return a.CopyMode
 }
 
-func (a *AgentTrajectoryEventSource) GetKind() string {
+func (a *AgentTraceEventSource) GetKind() string {
 	if a == nil {
 		return ""
 	}
 	return a.Kind
 }
 
-func (a *AgentTrajectoryEventSource) GetRetentionMode() *AgentTrajectoryEventSourceRetentionMode {
+func (a *AgentTraceEventSource) GetRetentionMode() *AgentTraceEventSourceRetentionMode {
 	if a == nil {
 		return nil
 	}
 	return a.RetentionMode
 }
 
-func (a *AgentTrajectoryEventSource) GetUUID() string {
+func (a *AgentTraceEventSource) GetUUID() string {
 	if a == nil {
 		return ""
 	}
 	return a.UUID
 }
 
-func (a *AgentTrajectoryEventSource) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceEventSource) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryEventSource) require(field *big.Int) {
+func (a *AgentTraceEventSource) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -9215,39 +9612,39 @@ func (a *AgentTrajectoryEventSource) require(field *big.Int) {
 
 // SetCopyMode sets the CopyMode field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventSource) SetCopyMode(copyMode *AgentTrajectoryEventSourceCopyMode) {
+func (a *AgentTraceEventSource) SetCopyMode(copyMode *AgentTraceEventSourceCopyMode) {
 	a.CopyMode = copyMode
-	a.require(agentTrajectoryEventSourceFieldCopyMode)
+	a.require(agentTraceEventSourceFieldCopyMode)
 }
 
 // SetKind sets the Kind field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventSource) SetKind(kind string) {
+func (a *AgentTraceEventSource) SetKind(kind string) {
 	a.Kind = kind
-	a.require(agentTrajectoryEventSourceFieldKind)
+	a.require(agentTraceEventSourceFieldKind)
 }
 
 // SetRetentionMode sets the RetentionMode field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventSource) SetRetentionMode(retentionMode *AgentTrajectoryEventSourceRetentionMode) {
+func (a *AgentTraceEventSource) SetRetentionMode(retentionMode *AgentTraceEventSourceRetentionMode) {
 	a.RetentionMode = retentionMode
-	a.require(agentTrajectoryEventSourceFieldRetentionMode)
+	a.require(agentTraceEventSourceFieldRetentionMode)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryEventSource) SetUUID(uuid string) {
+func (a *AgentTraceEventSource) SetUUID(uuid string) {
 	a.UUID = uuid
-	a.require(agentTrajectoryEventSourceFieldUUID)
+	a.require(agentTraceEventSourceFieldUUID)
 }
 
-func (a *AgentTrajectoryEventSource) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryEventSource
+func (a *AgentTraceEventSource) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceEventSource
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryEventSource(value)
+	*a = AgentTraceEventSource(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -9257,8 +9654,8 @@ func (a *AgentTrajectoryEventSource) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryEventSource) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryEventSource
+func (a *AgentTraceEventSource) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceEventSource
 	var marshaler = struct {
 		embed
 	}{
@@ -9268,7 +9665,7 @@ func (a *AgentTrajectoryEventSource) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryEventSource) String() string {
+func (a *AgentTraceEventSource) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -9283,107 +9680,107 @@ func (a *AgentTrajectoryEventSource) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AgentTrajectoryEventSourceCopyMode string
+type AgentTraceEventSourceCopyMode string
 
 const (
-	AgentTrajectoryEventSourceCopyModeReference AgentTrajectoryEventSourceCopyMode = "reference"
-	AgentTrajectoryEventSourceCopyModeCopied    AgentTrajectoryEventSourceCopyMode = "copied"
+	AgentTraceEventSourceCopyModeReference AgentTraceEventSourceCopyMode = "reference"
+	AgentTraceEventSourceCopyModeCopied    AgentTraceEventSourceCopyMode = "copied"
 )
 
-func NewAgentTrajectoryEventSourceCopyModeFromString(s string) (AgentTrajectoryEventSourceCopyMode, error) {
+func NewAgentTraceEventSourceCopyModeFromString(s string) (AgentTraceEventSourceCopyMode, error) {
 	switch s {
 	case "reference":
-		return AgentTrajectoryEventSourceCopyModeReference, nil
+		return AgentTraceEventSourceCopyModeReference, nil
 	case "copied":
-		return AgentTrajectoryEventSourceCopyModeCopied, nil
+		return AgentTraceEventSourceCopyModeCopied, nil
 	}
-	var t AgentTrajectoryEventSourceCopyMode
+	var t AgentTraceEventSourceCopyMode
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectoryEventSourceCopyMode) Ptr() *AgentTrajectoryEventSourceCopyMode {
+func (a AgentTraceEventSourceCopyMode) Ptr() *AgentTraceEventSourceCopyMode {
 	return &a
 }
 
-type AgentTrajectoryEventSourceRetentionMode string
+type AgentTraceEventSourceRetentionMode string
 
 const (
-	AgentTrajectoryEventSourceRetentionModeDeleteWithSource AgentTrajectoryEventSourceRetentionMode = "delete_with_source"
-	AgentTrajectoryEventSourceRetentionModeKeep             AgentTrajectoryEventSourceRetentionMode = "keep"
+	AgentTraceEventSourceRetentionModeDeleteWithSource AgentTraceEventSourceRetentionMode = "delete_with_source"
+	AgentTraceEventSourceRetentionModeKeep             AgentTraceEventSourceRetentionMode = "keep"
 )
 
-func NewAgentTrajectoryEventSourceRetentionModeFromString(s string) (AgentTrajectoryEventSourceRetentionMode, error) {
+func NewAgentTraceEventSourceRetentionModeFromString(s string) (AgentTraceEventSourceRetentionMode, error) {
 	switch s {
 	case "delete_with_source":
-		return AgentTrajectoryEventSourceRetentionModeDeleteWithSource, nil
+		return AgentTraceEventSourceRetentionModeDeleteWithSource, nil
 	case "keep":
-		return AgentTrajectoryEventSourceRetentionModeKeep, nil
+		return AgentTraceEventSourceRetentionModeKeep, nil
 	}
-	var t AgentTrajectoryEventSourceRetentionMode
+	var t AgentTraceEventSourceRetentionMode
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectoryEventSourceRetentionMode) Ptr() *AgentTrajectoryEventSourceRetentionMode {
+func (a AgentTraceEventSourceRetentionMode) Ptr() *AgentTraceEventSourceRetentionMode {
 	return &a
 }
 
-type AgentTrajectoryEventType string
+type AgentTraceEventType string
 
 const (
-	AgentTrajectoryEventTypeInputReference AgentTrajectoryEventType = "input_reference"
-	AgentTrajectoryEventTypeObservation    AgentTrajectoryEventType = "observation"
-	AgentTrajectoryEventTypeDecision       AgentTrajectoryEventType = "decision"
-	AgentTrajectoryEventTypeToolCall       AgentTrajectoryEventType = "tool_call"
-	AgentTrajectoryEventTypeToolResult     AgentTrajectoryEventType = "tool_result"
-	AgentTrajectoryEventTypeArtifact       AgentTrajectoryEventType = "artifact"
-	AgentTrajectoryEventTypeCheckpoint     AgentTrajectoryEventType = "checkpoint"
-	AgentTrajectoryEventTypeFeedback       AgentTrajectoryEventType = "feedback"
-	AgentTrajectoryEventTypeCorrection     AgentTrajectoryEventType = "correction"
-	AgentTrajectoryEventTypeReflection     AgentTrajectoryEventType = "reflection"
-	AgentTrajectoryEventTypeVerification   AgentTrajectoryEventType = "verification"
+	AgentTraceEventTypeInputReference AgentTraceEventType = "input_reference"
+	AgentTraceEventTypeObservation    AgentTraceEventType = "observation"
+	AgentTraceEventTypeDecision       AgentTraceEventType = "decision"
+	AgentTraceEventTypeToolCall       AgentTraceEventType = "tool_call"
+	AgentTraceEventTypeToolResult     AgentTraceEventType = "tool_result"
+	AgentTraceEventTypeArtifact       AgentTraceEventType = "artifact"
+	AgentTraceEventTypeCheckpoint     AgentTraceEventType = "checkpoint"
+	AgentTraceEventTypeFeedback       AgentTraceEventType = "feedback"
+	AgentTraceEventTypeCorrection     AgentTraceEventType = "correction"
+	AgentTraceEventTypeReflection     AgentTraceEventType = "reflection"
+	AgentTraceEventTypeVerification   AgentTraceEventType = "verification"
 )
 
-func NewAgentTrajectoryEventTypeFromString(s string) (AgentTrajectoryEventType, error) {
+func NewAgentTraceEventTypeFromString(s string) (AgentTraceEventType, error) {
 	switch s {
 	case "input_reference":
-		return AgentTrajectoryEventTypeInputReference, nil
+		return AgentTraceEventTypeInputReference, nil
 	case "observation":
-		return AgentTrajectoryEventTypeObservation, nil
+		return AgentTraceEventTypeObservation, nil
 	case "decision":
-		return AgentTrajectoryEventTypeDecision, nil
+		return AgentTraceEventTypeDecision, nil
 	case "tool_call":
-		return AgentTrajectoryEventTypeToolCall, nil
+		return AgentTraceEventTypeToolCall, nil
 	case "tool_result":
-		return AgentTrajectoryEventTypeToolResult, nil
+		return AgentTraceEventTypeToolResult, nil
 	case "artifact":
-		return AgentTrajectoryEventTypeArtifact, nil
+		return AgentTraceEventTypeArtifact, nil
 	case "checkpoint":
-		return AgentTrajectoryEventTypeCheckpoint, nil
+		return AgentTraceEventTypeCheckpoint, nil
 	case "feedback":
-		return AgentTrajectoryEventTypeFeedback, nil
+		return AgentTraceEventTypeFeedback, nil
 	case "correction":
-		return AgentTrajectoryEventTypeCorrection, nil
+		return AgentTraceEventTypeCorrection, nil
 	case "reflection":
-		return AgentTrajectoryEventTypeReflection, nil
+		return AgentTraceEventTypeReflection, nil
 	case "verification":
-		return AgentTrajectoryEventTypeVerification, nil
+		return AgentTraceEventTypeVerification, nil
 	}
-	var t AgentTrajectoryEventType
+	var t AgentTraceEventType
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectoryEventType) Ptr() *AgentTrajectoryEventType {
+func (a AgentTraceEventType) Ptr() *AgentTraceEventType {
 	return &a
 }
 
 var (
-	agentTrajectoryFinalizationResultFieldTask       = big.NewInt(1 << 0)
-	agentTrajectoryFinalizationResultFieldTrajectory = big.NewInt(1 << 1)
+	agentTraceFinalizationResultFieldTask  = big.NewInt(1 << 0)
+	agentTraceFinalizationResultFieldTrace = big.NewInt(1 << 1)
 )
 
-type AgentTrajectoryFinalizationResult struct {
-	Task       *Task            `json:"task,omitempty" url:"task,omitempty"`
-	Trajectory *AgentTrajectory `json:"trajectory,omitempty" url:"trajectory,omitempty"`
+type AgentTraceFinalizationResult struct {
+	Task  *Task       `json:"task,omitempty" url:"task,omitempty"`
+	Trace *AgentTrace `json:"trace,omitempty" url:"trace,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9392,28 +9789,28 @@ type AgentTrajectoryFinalizationResult struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryFinalizationResult) GetTask() *Task {
+func (a *AgentTraceFinalizationResult) GetTask() *Task {
 	if a == nil {
 		return nil
 	}
 	return a.Task
 }
 
-func (a *AgentTrajectoryFinalizationResult) GetTrajectory() *AgentTrajectory {
+func (a *AgentTraceFinalizationResult) GetTrace() *AgentTrace {
 	if a == nil {
 		return nil
 	}
-	return a.Trajectory
+	return a.Trace
 }
 
-func (a *AgentTrajectoryFinalizationResult) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceFinalizationResult) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryFinalizationResult) require(field *big.Int) {
+func (a *AgentTraceFinalizationResult) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -9424,25 +9821,25 @@ func (a *AgentTrajectoryFinalizationResult) require(field *big.Int) {
 
 // SetTask sets the Task field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryFinalizationResult) SetTask(task *Task) {
+func (a *AgentTraceFinalizationResult) SetTask(task *Task) {
 	a.Task = task
-	a.require(agentTrajectoryFinalizationResultFieldTask)
+	a.require(agentTraceFinalizationResultFieldTask)
 }
 
-// SetTrajectory sets the Trajectory field and marks it as non-optional;
+// SetTrace sets the Trace field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryFinalizationResult) SetTrajectory(trajectory *AgentTrajectory) {
-	a.Trajectory = trajectory
-	a.require(agentTrajectoryFinalizationResultFieldTrajectory)
+func (a *AgentTraceFinalizationResult) SetTrace(trace *AgentTrace) {
+	a.Trace = trace
+	a.require(agentTraceFinalizationResultFieldTrace)
 }
 
-func (a *AgentTrajectoryFinalizationResult) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryFinalizationResult
+func (a *AgentTraceFinalizationResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceFinalizationResult
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryFinalizationResult(value)
+	*a = AgentTraceFinalizationResult(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -9452,8 +9849,8 @@ func (a *AgentTrajectoryFinalizationResult) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryFinalizationResult) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryFinalizationResult
+func (a *AgentTraceFinalizationResult) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceFinalizationResult
 	var marshaler = struct {
 		embed
 	}{
@@ -9463,7 +9860,7 @@ func (a *AgentTrajectoryFinalizationResult) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryFinalizationResult) String() string {
+func (a *AgentTraceFinalizationResult) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -9479,21 +9876,21 @@ func (a *AgentTrajectoryFinalizationResult) String() string {
 }
 
 var (
-	agentTrajectoryInternalFieldAssertionUUID         = big.NewInt(1 << 0)
-	agentTrajectoryInternalFieldClosingSequence       = big.NewInt(1 << 1)
-	agentTrajectoryInternalFieldCurrentSummaryVersion = big.NewInt(1 << 2)
-	agentTrajectoryInternalFieldLastTaskUUID          = big.NewInt(1 << 3)
-	agentTrajectoryInternalFieldNextSequence          = big.NewInt(1 << 4)
-	agentTrajectoryInternalFieldProcessingState       = big.NewInt(1 << 5)
+	agentTraceInternalFieldAssertionUUID         = big.NewInt(1 << 0)
+	agentTraceInternalFieldClosingSequence       = big.NewInt(1 << 1)
+	agentTraceInternalFieldCurrentSummaryVersion = big.NewInt(1 << 2)
+	agentTraceInternalFieldLastTaskUUID          = big.NewInt(1 << 3)
+	agentTraceInternalFieldNextSequence          = big.NewInt(1 << 4)
+	agentTraceInternalFieldProcessingState       = big.NewInt(1 << 5)
 )
 
-type AgentTrajectoryInternal struct {
-	AssertionUUID         *string                         `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
-	ClosingSequence       *int                            `json:"closing_sequence,omitempty" url:"closing_sequence,omitempty"`
-	CurrentSummaryVersion *int                            `json:"current_summary_version,omitempty" url:"current_summary_version,omitempty"`
-	LastTaskUUID          *string                         `json:"last_task_uuid,omitempty" url:"last_task_uuid,omitempty"`
-	NextSequence          *int                            `json:"next_sequence,omitempty" url:"next_sequence,omitempty"`
-	ProcessingState       *AgentTrajectoryProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
+type AgentTraceInternal struct {
+	AssertionUUID         *string                    `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	ClosingSequence       *int                       `json:"closing_sequence,omitempty" url:"closing_sequence,omitempty"`
+	CurrentSummaryVersion *int                       `json:"current_summary_version,omitempty" url:"current_summary_version,omitempty"`
+	LastTaskUUID          *string                    `json:"last_task_uuid,omitempty" url:"last_task_uuid,omitempty"`
+	NextSequence          *int                       `json:"next_sequence,omitempty" url:"next_sequence,omitempty"`
+	ProcessingState       *AgentTraceProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9502,56 +9899,56 @@ type AgentTrajectoryInternal struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryInternal) GetAssertionUUID() *string {
+func (a *AgentTraceInternal) GetAssertionUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.AssertionUUID
 }
 
-func (a *AgentTrajectoryInternal) GetClosingSequence() *int {
+func (a *AgentTraceInternal) GetClosingSequence() *int {
 	if a == nil {
 		return nil
 	}
 	return a.ClosingSequence
 }
 
-func (a *AgentTrajectoryInternal) GetCurrentSummaryVersion() *int {
+func (a *AgentTraceInternal) GetCurrentSummaryVersion() *int {
 	if a == nil {
 		return nil
 	}
 	return a.CurrentSummaryVersion
 }
 
-func (a *AgentTrajectoryInternal) GetLastTaskUUID() *string {
+func (a *AgentTraceInternal) GetLastTaskUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.LastTaskUUID
 }
 
-func (a *AgentTrajectoryInternal) GetNextSequence() *int {
+func (a *AgentTraceInternal) GetNextSequence() *int {
 	if a == nil {
 		return nil
 	}
 	return a.NextSequence
 }
 
-func (a *AgentTrajectoryInternal) GetProcessingState() *AgentTrajectoryProcessingState {
+func (a *AgentTraceInternal) GetProcessingState() *AgentTraceProcessingState {
 	if a == nil {
 		return nil
 	}
 	return a.ProcessingState
 }
 
-func (a *AgentTrajectoryInternal) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceInternal) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryInternal) require(field *big.Int) {
+func (a *AgentTraceInternal) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -9562,53 +9959,53 @@ func (a *AgentTrajectoryInternal) require(field *big.Int) {
 
 // SetAssertionUUID sets the AssertionUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryInternal) SetAssertionUUID(assertionUUID *string) {
+func (a *AgentTraceInternal) SetAssertionUUID(assertionUUID *string) {
 	a.AssertionUUID = assertionUUID
-	a.require(agentTrajectoryInternalFieldAssertionUUID)
+	a.require(agentTraceInternalFieldAssertionUUID)
 }
 
 // SetClosingSequence sets the ClosingSequence field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryInternal) SetClosingSequence(closingSequence *int) {
+func (a *AgentTraceInternal) SetClosingSequence(closingSequence *int) {
 	a.ClosingSequence = closingSequence
-	a.require(agentTrajectoryInternalFieldClosingSequence)
+	a.require(agentTraceInternalFieldClosingSequence)
 }
 
 // SetCurrentSummaryVersion sets the CurrentSummaryVersion field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryInternal) SetCurrentSummaryVersion(currentSummaryVersion *int) {
+func (a *AgentTraceInternal) SetCurrentSummaryVersion(currentSummaryVersion *int) {
 	a.CurrentSummaryVersion = currentSummaryVersion
-	a.require(agentTrajectoryInternalFieldCurrentSummaryVersion)
+	a.require(agentTraceInternalFieldCurrentSummaryVersion)
 }
 
 // SetLastTaskUUID sets the LastTaskUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryInternal) SetLastTaskUUID(lastTaskUUID *string) {
+func (a *AgentTraceInternal) SetLastTaskUUID(lastTaskUUID *string) {
 	a.LastTaskUUID = lastTaskUUID
-	a.require(agentTrajectoryInternalFieldLastTaskUUID)
+	a.require(agentTraceInternalFieldLastTaskUUID)
 }
 
 // SetNextSequence sets the NextSequence field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryInternal) SetNextSequence(nextSequence *int) {
+func (a *AgentTraceInternal) SetNextSequence(nextSequence *int) {
 	a.NextSequence = nextSequence
-	a.require(agentTrajectoryInternalFieldNextSequence)
+	a.require(agentTraceInternalFieldNextSequence)
 }
 
 // SetProcessingState sets the ProcessingState field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryInternal) SetProcessingState(processingState *AgentTrajectoryProcessingState) {
+func (a *AgentTraceInternal) SetProcessingState(processingState *AgentTraceProcessingState) {
 	a.ProcessingState = processingState
-	a.require(agentTrajectoryInternalFieldProcessingState)
+	a.require(agentTraceInternalFieldProcessingState)
 }
 
-func (a *AgentTrajectoryInternal) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryInternal
+func (a *AgentTraceInternal) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceInternal
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryInternal(value)
+	*a = AgentTraceInternal(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -9618,8 +10015,8 @@ func (a *AgentTrajectoryInternal) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryInternal) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryInternal
+func (a *AgentTraceInternal) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceInternal
 	var marshaler = struct {
 		embed
 	}{
@@ -9629,7 +10026,7 @@ func (a *AgentTrajectoryInternal) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryInternal) String() string {
+func (a *AgentTraceInternal) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -9644,80 +10041,80 @@ func (a *AgentTrajectoryInternal) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AgentTrajectoryLifecycle string
+type AgentTraceLifecycle string
 
 const (
-	AgentTrajectoryLifecycleOpen      AgentTrajectoryLifecycle = "open"
-	AgentTrajectoryLifecycleClosing   AgentTrajectoryLifecycle = "closing"
-	AgentTrajectoryLifecycleClosed    AgentTrajectoryLifecycle = "closed"
-	AgentTrajectoryLifecycleAbandoned AgentTrajectoryLifecycle = "abandoned"
-	AgentTrajectoryLifecycleDeleted   AgentTrajectoryLifecycle = "deleted"
+	AgentTraceLifecycleOpen      AgentTraceLifecycle = "open"
+	AgentTraceLifecycleClosing   AgentTraceLifecycle = "closing"
+	AgentTraceLifecycleClosed    AgentTraceLifecycle = "closed"
+	AgentTraceLifecycleAbandoned AgentTraceLifecycle = "abandoned"
+	AgentTraceLifecycleDeleted   AgentTraceLifecycle = "deleted"
 )
 
-func NewAgentTrajectoryLifecycleFromString(s string) (AgentTrajectoryLifecycle, error) {
+func NewAgentTraceLifecycleFromString(s string) (AgentTraceLifecycle, error) {
 	switch s {
 	case "open":
-		return AgentTrajectoryLifecycleOpen, nil
+		return AgentTraceLifecycleOpen, nil
 	case "closing":
-		return AgentTrajectoryLifecycleClosing, nil
+		return AgentTraceLifecycleClosing, nil
 	case "closed":
-		return AgentTrajectoryLifecycleClosed, nil
+		return AgentTraceLifecycleClosed, nil
 	case "abandoned":
-		return AgentTrajectoryLifecycleAbandoned, nil
+		return AgentTraceLifecycleAbandoned, nil
 	case "deleted":
-		return AgentTrajectoryLifecycleDeleted, nil
+		return AgentTraceLifecycleDeleted, nil
 	}
-	var t AgentTrajectoryLifecycle
+	var t AgentTraceLifecycle
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectoryLifecycle) Ptr() *AgentTrajectoryLifecycle {
+func (a AgentTraceLifecycle) Ptr() *AgentTraceLifecycle {
 	return &a
 }
 
-type AgentTrajectoryOutcome string
+type AgentTraceOutcome string
 
 const (
-	AgentTrajectoryOutcomeSucceeded AgentTrajectoryOutcome = "succeeded"
-	AgentTrajectoryOutcomeFailed    AgentTrajectoryOutcome = "failed"
-	AgentTrajectoryOutcomePartial   AgentTrajectoryOutcome = "partial"
-	AgentTrajectoryOutcomeAbandoned AgentTrajectoryOutcome = "abandoned"
-	AgentTrajectoryOutcomeUnknown   AgentTrajectoryOutcome = "unknown"
+	AgentTraceOutcomeSucceeded AgentTraceOutcome = "succeeded"
+	AgentTraceOutcomeFailed    AgentTraceOutcome = "failed"
+	AgentTraceOutcomePartial   AgentTraceOutcome = "partial"
+	AgentTraceOutcomeAbandoned AgentTraceOutcome = "abandoned"
+	AgentTraceOutcomeUnknown   AgentTraceOutcome = "unknown"
 )
 
-func NewAgentTrajectoryOutcomeFromString(s string) (AgentTrajectoryOutcome, error) {
+func NewAgentTraceOutcomeFromString(s string) (AgentTraceOutcome, error) {
 	switch s {
 	case "succeeded":
-		return AgentTrajectoryOutcomeSucceeded, nil
+		return AgentTraceOutcomeSucceeded, nil
 	case "failed":
-		return AgentTrajectoryOutcomeFailed, nil
+		return AgentTraceOutcomeFailed, nil
 	case "partial":
-		return AgentTrajectoryOutcomePartial, nil
+		return AgentTraceOutcomePartial, nil
 	case "abandoned":
-		return AgentTrajectoryOutcomeAbandoned, nil
+		return AgentTraceOutcomeAbandoned, nil
 	case "unknown":
-		return AgentTrajectoryOutcomeUnknown, nil
+		return AgentTraceOutcomeUnknown, nil
 	}
-	var t AgentTrajectoryOutcome
+	var t AgentTraceOutcome
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectoryOutcome) Ptr() *AgentTrajectoryOutcome {
+func (a AgentTraceOutcome) Ptr() *AgentTraceOutcome {
 	return &a
 }
 
 var (
-	agentTrajectoryPageFieldItems      = big.NewInt(1 << 0)
-	agentTrajectoryPageFieldNextCursor = big.NewInt(1 << 1)
-	agentTrajectoryPageFieldTotalSize  = big.NewInt(1 << 2)
+	agentTracePageFieldItems      = big.NewInt(1 << 0)
+	agentTracePageFieldNextCursor = big.NewInt(1 << 1)
+	agentTracePageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
-type AgentTrajectoryPage struct {
-	// The Trajectories on this page.
-	Items []*AgentTrajectory `json:"items,omitempty" url:"items,omitempty"`
+type AgentTracePage struct {
+	// The Traces on this page.
+	Items []*AgentTrace `json:"items,omitempty" url:"items,omitempty"`
 	// Opaque cursor for retrieving the next page, present only when more results are available.
 	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	// The total number of Trajectories matching the filters within the owning Agent.
+	// The total number of Traces matching the filters within the owning Agent.
 	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -9727,35 +10124,35 @@ type AgentTrajectoryPage struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryPage) GetItems() []*AgentTrajectory {
+func (a *AgentTracePage) GetItems() []*AgentTrace {
 	if a == nil {
 		return nil
 	}
 	return a.Items
 }
 
-func (a *AgentTrajectoryPage) GetNextCursor() *string {
+func (a *AgentTracePage) GetNextCursor() *string {
 	if a == nil {
 		return nil
 	}
 	return a.NextCursor
 }
 
-func (a *AgentTrajectoryPage) GetTotalSize() *int {
+func (a *AgentTracePage) GetTotalSize() *int {
 	if a == nil {
 		return nil
 	}
 	return a.TotalSize
 }
 
-func (a *AgentTrajectoryPage) GetExtraProperties() map[string]interface{} {
+func (a *AgentTracePage) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryPage) require(field *big.Int) {
+func (a *AgentTracePage) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -9766,32 +10163,32 @@ func (a *AgentTrajectoryPage) require(field *big.Int) {
 
 // SetItems sets the Items field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryPage) SetItems(items []*AgentTrajectory) {
+func (a *AgentTracePage) SetItems(items []*AgentTrace) {
 	a.Items = items
-	a.require(agentTrajectoryPageFieldItems)
+	a.require(agentTracePageFieldItems)
 }
 
 // SetNextCursor sets the NextCursor field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryPage) SetNextCursor(nextCursor *string) {
+func (a *AgentTracePage) SetNextCursor(nextCursor *string) {
 	a.NextCursor = nextCursor
-	a.require(agentTrajectoryPageFieldNextCursor)
+	a.require(agentTracePageFieldNextCursor)
 }
 
 // SetTotalSize sets the TotalSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryPage) SetTotalSize(totalSize *int) {
+func (a *AgentTracePage) SetTotalSize(totalSize *int) {
 	a.TotalSize = totalSize
-	a.require(agentTrajectoryPageFieldTotalSize)
+	a.require(agentTracePageFieldTotalSize)
 }
 
-func (a *AgentTrajectoryPage) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryPage
+func (a *AgentTracePage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTracePage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryPage(value)
+	*a = AgentTracePage(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -9801,8 +10198,8 @@ func (a *AgentTrajectoryPage) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryPage) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryPage
+func (a *AgentTracePage) MarshalJSON() ([]byte, error) {
+	type embed AgentTracePage
 	var marshaler = struct {
 		embed
 	}{
@@ -9812,7 +10209,7 @@ func (a *AgentTrajectoryPage) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryPage) String() string {
+func (a *AgentTracePage) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -9827,40 +10224,40 @@ func (a *AgentTrajectoryPage) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AgentTrajectoryProcessingState string
+type AgentTraceProcessingState string
 
 const (
-	AgentTrajectoryProcessingStateIdle       AgentTrajectoryProcessingState = "idle"
-	AgentTrajectoryProcessingStatePending    AgentTrajectoryProcessingState = "pending"
-	AgentTrajectoryProcessingStateProcessing AgentTrajectoryProcessingState = "processing"
-	AgentTrajectoryProcessingStateFailed     AgentTrajectoryProcessingState = "failed"
+	AgentTraceProcessingStateIdle       AgentTraceProcessingState = "idle"
+	AgentTraceProcessingStatePending    AgentTraceProcessingState = "pending"
+	AgentTraceProcessingStateProcessing AgentTraceProcessingState = "processing"
+	AgentTraceProcessingStateFailed     AgentTraceProcessingState = "failed"
 )
 
-func NewAgentTrajectoryProcessingStateFromString(s string) (AgentTrajectoryProcessingState, error) {
+func NewAgentTraceProcessingStateFromString(s string) (AgentTraceProcessingState, error) {
 	switch s {
 	case "idle":
-		return AgentTrajectoryProcessingStateIdle, nil
+		return AgentTraceProcessingStateIdle, nil
 	case "pending":
-		return AgentTrajectoryProcessingStatePending, nil
+		return AgentTraceProcessingStatePending, nil
 	case "processing":
-		return AgentTrajectoryProcessingStateProcessing, nil
+		return AgentTraceProcessingStateProcessing, nil
 	case "failed":
-		return AgentTrajectoryProcessingStateFailed, nil
+		return AgentTraceProcessingStateFailed, nil
 	}
-	var t AgentTrajectoryProcessingState
+	var t AgentTraceProcessingState
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectoryProcessingState) Ptr() *AgentTrajectoryProcessingState {
+func (a AgentTraceProcessingState) Ptr() *AgentTraceProcessingState {
 	return &a
 }
 
 var (
-	agentTrajectoryResourceRefFieldName    = big.NewInt(1 << 0)
-	agentTrajectoryResourceRefFieldVersion = big.NewInt(1 << 1)
+	agentTraceResourceRefFieldName    = big.NewInt(1 << 0)
+	agentTraceResourceRefFieldVersion = big.NewInt(1 << 1)
 )
 
-type AgentTrajectoryResourceRef struct {
+type AgentTraceResourceRef struct {
 	Name    string  `json:"name" url:"name"`
 	Version *string `json:"version,omitempty" url:"version,omitempty"`
 
@@ -9871,28 +10268,28 @@ type AgentTrajectoryResourceRef struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectoryResourceRef) GetName() string {
+func (a *AgentTraceResourceRef) GetName() string {
 	if a == nil {
 		return ""
 	}
 	return a.Name
 }
 
-func (a *AgentTrajectoryResourceRef) GetVersion() *string {
+func (a *AgentTraceResourceRef) GetVersion() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Version
 }
 
-func (a *AgentTrajectoryResourceRef) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceResourceRef) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectoryResourceRef) require(field *big.Int) {
+func (a *AgentTraceResourceRef) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -9903,25 +10300,25 @@ func (a *AgentTrajectoryResourceRef) require(field *big.Int) {
 
 // SetName sets the Name field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryResourceRef) SetName(name string) {
+func (a *AgentTraceResourceRef) SetName(name string) {
 	a.Name = name
-	a.require(agentTrajectoryResourceRefFieldName)
+	a.require(agentTraceResourceRefFieldName)
 }
 
 // SetVersion sets the Version field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectoryResourceRef) SetVersion(version *string) {
+func (a *AgentTraceResourceRef) SetVersion(version *string) {
 	a.Version = version
-	a.require(agentTrajectoryResourceRefFieldVersion)
+	a.require(agentTraceResourceRefFieldVersion)
 }
 
-func (a *AgentTrajectoryResourceRef) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectoryResourceRef
+func (a *AgentTraceResourceRef) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceResourceRef
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectoryResourceRef(value)
+	*a = AgentTraceResourceRef(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -9931,8 +10328,8 @@ func (a *AgentTrajectoryResourceRef) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectoryResourceRef) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectoryResourceRef
+func (a *AgentTraceResourceRef) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceResourceRef
 	var marshaler = struct {
 		embed
 	}{
@@ -9942,7 +10339,7 @@ func (a *AgentTrajectoryResourceRef) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectoryResourceRef) String() string {
+func (a *AgentTraceResourceRef) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -9958,11 +10355,11 @@ func (a *AgentTrajectoryResourceRef) String() string {
 }
 
 var (
-	agentTrajectorySequenceRangeFieldFirst = big.NewInt(1 << 0)
-	agentTrajectorySequenceRangeFieldLast  = big.NewInt(1 << 1)
+	agentTraceSequenceRangeFieldFirst = big.NewInt(1 << 0)
+	agentTraceSequenceRangeFieldLast  = big.NewInt(1 << 1)
 )
 
-type AgentTrajectorySequenceRange struct {
+type AgentTraceSequenceRange struct {
 	First int `json:"first" url:"first"`
 	Last  int `json:"last" url:"last"`
 
@@ -9973,28 +10370,28 @@ type AgentTrajectorySequenceRange struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectorySequenceRange) GetFirst() int {
+func (a *AgentTraceSequenceRange) GetFirst() int {
 	if a == nil {
 		return 0
 	}
 	return a.First
 }
 
-func (a *AgentTrajectorySequenceRange) GetLast() int {
+func (a *AgentTraceSequenceRange) GetLast() int {
 	if a == nil {
 		return 0
 	}
 	return a.Last
 }
 
-func (a *AgentTrajectorySequenceRange) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceSequenceRange) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectorySequenceRange) require(field *big.Int) {
+func (a *AgentTraceSequenceRange) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -10005,25 +10402,25 @@ func (a *AgentTrajectorySequenceRange) require(field *big.Int) {
 
 // SetFirst sets the First field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySequenceRange) SetFirst(first int) {
+func (a *AgentTraceSequenceRange) SetFirst(first int) {
 	a.First = first
-	a.require(agentTrajectorySequenceRangeFieldFirst)
+	a.require(agentTraceSequenceRangeFieldFirst)
 }
 
 // SetLast sets the Last field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySequenceRange) SetLast(last int) {
+func (a *AgentTraceSequenceRange) SetLast(last int) {
 	a.Last = last
-	a.require(agentTrajectorySequenceRangeFieldLast)
+	a.require(agentTraceSequenceRangeFieldLast)
 }
 
-func (a *AgentTrajectorySequenceRange) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectorySequenceRange
+func (a *AgentTraceSequenceRange) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSequenceRange
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectorySequenceRange(value)
+	*a = AgentTraceSequenceRange(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -10033,8 +10430,8 @@ func (a *AgentTrajectorySequenceRange) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectorySequenceRange) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectorySequenceRange
+func (a *AgentTraceSequenceRange) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSequenceRange
 	var marshaler = struct {
 		embed
 	}{
@@ -10044,7 +10441,7 @@ func (a *AgentTrajectorySequenceRange) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectorySequenceRange) String() string {
+func (a *AgentTraceSequenceRange) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -10060,23 +10457,23 @@ func (a *AgentTrajectorySequenceRange) String() string {
 }
 
 var (
-	agentTrajectorySourceFieldConnectionUUID    = big.NewInt(1 << 0)
-	agentTrajectorySourceFieldImportUUID        = big.NewInt(1 << 1)
-	agentTrajectorySourceFieldImportedAt        = big.NewInt(1 << 2)
-	agentTrajectorySourceFieldKind              = big.NewInt(1 << 3)
-	agentTrajectorySourceFieldProvider          = big.NewInt(1 << 4)
-	agentTrajectorySourceFieldProviderProjectID = big.NewInt(1 << 5)
-	agentTrajectorySourceFieldRunUUID           = big.NewInt(1 << 6)
-	agentTrajectorySourceFieldScores            = big.NewInt(1 << 7)
-	agentTrajectorySourceFieldSourceChanged     = big.NewInt(1 << 8)
-	agentTrajectorySourceFieldSourceRevision    = big.NewInt(1 << 9)
-	agentTrajectorySourceFieldSourceURL         = big.NewInt(1 << 10)
-	agentTrajectorySourceFieldTraceEndedAt      = big.NewInt(1 << 11)
-	agentTrajectorySourceFieldTraceID           = big.NewInt(1 << 12)
-	agentTrajectorySourceFieldTraceStartedAt    = big.NewInt(1 << 13)
+	agentTraceSourceFieldConnectionUUID    = big.NewInt(1 << 0)
+	agentTraceSourceFieldImportUUID        = big.NewInt(1 << 1)
+	agentTraceSourceFieldImportedAt        = big.NewInt(1 << 2)
+	agentTraceSourceFieldKind              = big.NewInt(1 << 3)
+	agentTraceSourceFieldProvider          = big.NewInt(1 << 4)
+	agentTraceSourceFieldProviderProjectID = big.NewInt(1 << 5)
+	agentTraceSourceFieldRunUUID           = big.NewInt(1 << 6)
+	agentTraceSourceFieldScores            = big.NewInt(1 << 7)
+	agentTraceSourceFieldSourceChanged     = big.NewInt(1 << 8)
+	agentTraceSourceFieldSourceRevision    = big.NewInt(1 << 9)
+	agentTraceSourceFieldSourceURL         = big.NewInt(1 << 10)
+	agentTraceSourceFieldTraceEndedAt      = big.NewInt(1 << 11)
+	agentTraceSourceFieldTraceID           = big.NewInt(1 << 12)
+	agentTraceSourceFieldTraceStartedAt    = big.NewInt(1 << 13)
 )
 
-type AgentTrajectorySource struct {
+type AgentTraceSource struct {
 	ConnectionUUID    *string        `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
 	ImportUUID        *string        `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
 	ImportedAt        *string        `json:"imported_at,omitempty" url:"imported_at,omitempty"`
@@ -10100,105 +10497,105 @@ type AgentTrajectorySource struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectorySource) GetConnectionUUID() *string {
+func (a *AgentTraceSource) GetConnectionUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.ConnectionUUID
 }
 
-func (a *AgentTrajectorySource) GetImportUUID() *string {
+func (a *AgentTraceSource) GetImportUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.ImportUUID
 }
 
-func (a *AgentTrajectorySource) GetImportedAt() *string {
+func (a *AgentTraceSource) GetImportedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.ImportedAt
 }
 
-func (a *AgentTrajectorySource) GetProvider() *string {
+func (a *AgentTraceSource) GetProvider() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Provider
 }
 
-func (a *AgentTrajectorySource) GetProviderProjectID() *string {
+func (a *AgentTraceSource) GetProviderProjectID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.ProviderProjectID
 }
 
-func (a *AgentTrajectorySource) GetRunUUID() *string {
+func (a *AgentTraceSource) GetRunUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.RunUUID
 }
 
-func (a *AgentTrajectorySource) GetScores() map[string]any {
+func (a *AgentTraceSource) GetScores() map[string]any {
 	if a == nil {
 		return nil
 	}
 	return a.Scores
 }
 
-func (a *AgentTrajectorySource) GetSourceChanged() *bool {
+func (a *AgentTraceSource) GetSourceChanged() *bool {
 	if a == nil {
 		return nil
 	}
 	return a.SourceChanged
 }
 
-func (a *AgentTrajectorySource) GetSourceRevision() *string {
+func (a *AgentTraceSource) GetSourceRevision() *string {
 	if a == nil {
 		return nil
 	}
 	return a.SourceRevision
 }
 
-func (a *AgentTrajectorySource) GetSourceURL() *string {
+func (a *AgentTraceSource) GetSourceURL() *string {
 	if a == nil {
 		return nil
 	}
 	return a.SourceURL
 }
 
-func (a *AgentTrajectorySource) GetTraceEndedAt() *string {
+func (a *AgentTraceSource) GetTraceEndedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.TraceEndedAt
 }
 
-func (a *AgentTrajectorySource) GetTraceID() *string {
+func (a *AgentTraceSource) GetTraceID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.TraceID
 }
 
-func (a *AgentTrajectorySource) GetTraceStartedAt() *string {
+func (a *AgentTraceSource) GetTraceStartedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.TraceStartedAt
 }
 
-func (a *AgentTrajectorySource) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceSource) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectorySource) require(field *big.Int) {
+func (a *AgentTraceSource) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -10209,109 +10606,109 @@ func (a *AgentTrajectorySource) require(field *big.Int) {
 
 // SetConnectionUUID sets the ConnectionUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetConnectionUUID(connectionUUID *string) {
+func (a *AgentTraceSource) SetConnectionUUID(connectionUUID *string) {
 	a.ConnectionUUID = connectionUUID
-	a.require(agentTrajectorySourceFieldConnectionUUID)
+	a.require(agentTraceSourceFieldConnectionUUID)
 }
 
 // SetImportUUID sets the ImportUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetImportUUID(importUUID *string) {
+func (a *AgentTraceSource) SetImportUUID(importUUID *string) {
 	a.ImportUUID = importUUID
-	a.require(agentTrajectorySourceFieldImportUUID)
+	a.require(agentTraceSourceFieldImportUUID)
 }
 
 // SetImportedAt sets the ImportedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetImportedAt(importedAt *string) {
+func (a *AgentTraceSource) SetImportedAt(importedAt *string) {
 	a.ImportedAt = importedAt
-	a.require(agentTrajectorySourceFieldImportedAt)
+	a.require(agentTraceSourceFieldImportedAt)
 }
 
 // SetKind sets the Kind field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetKind(kind *string) {
+func (a *AgentTraceSource) SetKind(kind *string) {
 	a.Kind = kind
-	a.require(agentTrajectorySourceFieldKind)
+	a.require(agentTraceSourceFieldKind)
 }
 
 // SetProvider sets the Provider field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetProvider(provider *string) {
+func (a *AgentTraceSource) SetProvider(provider *string) {
 	a.Provider = provider
-	a.require(agentTrajectorySourceFieldProvider)
+	a.require(agentTraceSourceFieldProvider)
 }
 
 // SetProviderProjectID sets the ProviderProjectID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetProviderProjectID(providerProjectID *string) {
+func (a *AgentTraceSource) SetProviderProjectID(providerProjectID *string) {
 	a.ProviderProjectID = providerProjectID
-	a.require(agentTrajectorySourceFieldProviderProjectID)
+	a.require(agentTraceSourceFieldProviderProjectID)
 }
 
 // SetRunUUID sets the RunUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetRunUUID(runUUID *string) {
+func (a *AgentTraceSource) SetRunUUID(runUUID *string) {
 	a.RunUUID = runUUID
-	a.require(agentTrajectorySourceFieldRunUUID)
+	a.require(agentTraceSourceFieldRunUUID)
 }
 
 // SetScores sets the Scores field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetScores(scores map[string]any) {
+func (a *AgentTraceSource) SetScores(scores map[string]any) {
 	a.Scores = scores
-	a.require(agentTrajectorySourceFieldScores)
+	a.require(agentTraceSourceFieldScores)
 }
 
 // SetSourceChanged sets the SourceChanged field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetSourceChanged(sourceChanged *bool) {
+func (a *AgentTraceSource) SetSourceChanged(sourceChanged *bool) {
 	a.SourceChanged = sourceChanged
-	a.require(agentTrajectorySourceFieldSourceChanged)
+	a.require(agentTraceSourceFieldSourceChanged)
 }
 
 // SetSourceRevision sets the SourceRevision field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetSourceRevision(sourceRevision *string) {
+func (a *AgentTraceSource) SetSourceRevision(sourceRevision *string) {
 	a.SourceRevision = sourceRevision
-	a.require(agentTrajectorySourceFieldSourceRevision)
+	a.require(agentTraceSourceFieldSourceRevision)
 }
 
 // SetSourceURL sets the SourceURL field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetSourceURL(sourceURL *string) {
+func (a *AgentTraceSource) SetSourceURL(sourceURL *string) {
 	a.SourceURL = sourceURL
-	a.require(agentTrajectorySourceFieldSourceURL)
+	a.require(agentTraceSourceFieldSourceURL)
 }
 
 // SetTraceEndedAt sets the TraceEndedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetTraceEndedAt(traceEndedAt *string) {
+func (a *AgentTraceSource) SetTraceEndedAt(traceEndedAt *string) {
 	a.TraceEndedAt = traceEndedAt
-	a.require(agentTrajectorySourceFieldTraceEndedAt)
+	a.require(agentTraceSourceFieldTraceEndedAt)
 }
 
 // SetTraceID sets the TraceID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetTraceID(traceID *string) {
+func (a *AgentTraceSource) SetTraceID(traceID *string) {
 	a.TraceID = traceID
-	a.require(agentTrajectorySourceFieldTraceID)
+	a.require(agentTraceSourceFieldTraceID)
 }
 
 // SetTraceStartedAt sets the TraceStartedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySource) SetTraceStartedAt(traceStartedAt *string) {
+func (a *AgentTraceSource) SetTraceStartedAt(traceStartedAt *string) {
 	a.TraceStartedAt = traceStartedAt
-	a.require(agentTrajectorySourceFieldTraceStartedAt)
+	a.require(agentTraceSourceFieldTraceStartedAt)
 }
 
-func (a *AgentTrajectorySource) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectorySource
+func (a *AgentTraceSource) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSource
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectorySource(value)
+	*a = AgentTraceSource(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -10321,8 +10718,8 @@ func (a *AgentTrajectorySource) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectorySource) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectorySource
+func (a *AgentTraceSource) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSource
 	var marshaler = struct {
 		embed
 	}{
@@ -10332,7 +10729,7 @@ func (a *AgentTrajectorySource) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectorySource) String() string {
+func (a *AgentTraceSource) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -10348,19 +10745,19 @@ func (a *AgentTrajectorySource) String() string {
 }
 
 var (
-	agentTrajectorySourceDeletionResultFieldAffectedSkills    = big.NewInt(1 << 0)
-	agentTrajectorySourceDeletionResultFieldDeletionUUID      = big.NewInt(1 << 1)
-	agentTrajectorySourceDeletionResultFieldSkillRepairTask   = big.NewInt(1 << 2)
-	agentTrajectorySourceDeletionResultFieldSummaryRepairTask = big.NewInt(1 << 3)
-	agentTrajectorySourceDeletionResultFieldTrajectory        = big.NewInt(1 << 4)
+	agentTraceSourceDeletionResultFieldAffectedSkills    = big.NewInt(1 << 0)
+	agentTraceSourceDeletionResultFieldDeletionUUID      = big.NewInt(1 << 1)
+	agentTraceSourceDeletionResultFieldSkillRepairTask   = big.NewInt(1 << 2)
+	agentTraceSourceDeletionResultFieldSummaryRepairTask = big.NewInt(1 << 3)
+	agentTraceSourceDeletionResultFieldTrace             = big.NewInt(1 << 4)
 )
 
-type AgentTrajectorySourceDeletionResult struct {
-	AffectedSkills    *int             `json:"affected_skills,omitempty" url:"affected_skills,omitempty"`
-	DeletionUUID      *string          `json:"deletion_uuid,omitempty" url:"deletion_uuid,omitempty"`
-	SkillRepairTask   *Task            `json:"skill_repair_task,omitempty" url:"skill_repair_task,omitempty"`
-	SummaryRepairTask *Task            `json:"summary_repair_task,omitempty" url:"summary_repair_task,omitempty"`
-	Trajectory        *AgentTrajectory `json:"trajectory,omitempty" url:"trajectory,omitempty"`
+type AgentTraceSourceDeletionResult struct {
+	AffectedSkills    *int        `json:"affected_skills,omitempty" url:"affected_skills,omitempty"`
+	DeletionUUID      *string     `json:"deletion_uuid,omitempty" url:"deletion_uuid,omitempty"`
+	SkillRepairTask   *Task       `json:"skill_repair_task,omitempty" url:"skill_repair_task,omitempty"`
+	SummaryRepairTask *Task       `json:"summary_repair_task,omitempty" url:"summary_repair_task,omitempty"`
+	Trace             *AgentTrace `json:"trace,omitempty" url:"trace,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -10369,49 +10766,49 @@ type AgentTrajectorySourceDeletionResult struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectorySourceDeletionResult) GetAffectedSkills() *int {
+func (a *AgentTraceSourceDeletionResult) GetAffectedSkills() *int {
 	if a == nil {
 		return nil
 	}
 	return a.AffectedSkills
 }
 
-func (a *AgentTrajectorySourceDeletionResult) GetDeletionUUID() *string {
+func (a *AgentTraceSourceDeletionResult) GetDeletionUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.DeletionUUID
 }
 
-func (a *AgentTrajectorySourceDeletionResult) GetSkillRepairTask() *Task {
+func (a *AgentTraceSourceDeletionResult) GetSkillRepairTask() *Task {
 	if a == nil {
 		return nil
 	}
 	return a.SkillRepairTask
 }
 
-func (a *AgentTrajectorySourceDeletionResult) GetSummaryRepairTask() *Task {
+func (a *AgentTraceSourceDeletionResult) GetSummaryRepairTask() *Task {
 	if a == nil {
 		return nil
 	}
 	return a.SummaryRepairTask
 }
 
-func (a *AgentTrajectorySourceDeletionResult) GetTrajectory() *AgentTrajectory {
+func (a *AgentTraceSourceDeletionResult) GetTrace() *AgentTrace {
 	if a == nil {
 		return nil
 	}
-	return a.Trajectory
+	return a.Trace
 }
 
-func (a *AgentTrajectorySourceDeletionResult) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceSourceDeletionResult) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectorySourceDeletionResult) require(field *big.Int) {
+func (a *AgentTraceSourceDeletionResult) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -10422,46 +10819,46 @@ func (a *AgentTrajectorySourceDeletionResult) require(field *big.Int) {
 
 // SetAffectedSkills sets the AffectedSkills field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySourceDeletionResult) SetAffectedSkills(affectedSkills *int) {
+func (a *AgentTraceSourceDeletionResult) SetAffectedSkills(affectedSkills *int) {
 	a.AffectedSkills = affectedSkills
-	a.require(agentTrajectorySourceDeletionResultFieldAffectedSkills)
+	a.require(agentTraceSourceDeletionResultFieldAffectedSkills)
 }
 
 // SetDeletionUUID sets the DeletionUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySourceDeletionResult) SetDeletionUUID(deletionUUID *string) {
+func (a *AgentTraceSourceDeletionResult) SetDeletionUUID(deletionUUID *string) {
 	a.DeletionUUID = deletionUUID
-	a.require(agentTrajectorySourceDeletionResultFieldDeletionUUID)
+	a.require(agentTraceSourceDeletionResultFieldDeletionUUID)
 }
 
 // SetSkillRepairTask sets the SkillRepairTask field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySourceDeletionResult) SetSkillRepairTask(skillRepairTask *Task) {
+func (a *AgentTraceSourceDeletionResult) SetSkillRepairTask(skillRepairTask *Task) {
 	a.SkillRepairTask = skillRepairTask
-	a.require(agentTrajectorySourceDeletionResultFieldSkillRepairTask)
+	a.require(agentTraceSourceDeletionResultFieldSkillRepairTask)
 }
 
 // SetSummaryRepairTask sets the SummaryRepairTask field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySourceDeletionResult) SetSummaryRepairTask(summaryRepairTask *Task) {
+func (a *AgentTraceSourceDeletionResult) SetSummaryRepairTask(summaryRepairTask *Task) {
 	a.SummaryRepairTask = summaryRepairTask
-	a.require(agentTrajectorySourceDeletionResultFieldSummaryRepairTask)
+	a.require(agentTraceSourceDeletionResultFieldSummaryRepairTask)
 }
 
-// SetTrajectory sets the Trajectory field and marks it as non-optional;
+// SetTrace sets the Trace field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySourceDeletionResult) SetTrajectory(trajectory *AgentTrajectory) {
-	a.Trajectory = trajectory
-	a.require(agentTrajectorySourceDeletionResultFieldTrajectory)
+func (a *AgentTraceSourceDeletionResult) SetTrace(trace *AgentTrace) {
+	a.Trace = trace
+	a.require(agentTraceSourceDeletionResultFieldTrace)
 }
 
-func (a *AgentTrajectorySourceDeletionResult) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectorySourceDeletionResult
+func (a *AgentTraceSourceDeletionResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSourceDeletionResult
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectorySourceDeletionResult(value)
+	*a = AgentTraceSourceDeletionResult(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -10471,8 +10868,8 @@ func (a *AgentTrajectorySourceDeletionResult) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectorySourceDeletionResult) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectorySourceDeletionResult
+func (a *AgentTraceSourceDeletionResult) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSourceDeletionResult
 	var marshaler = struct {
 		embed
 	}{
@@ -10482,7 +10879,7 @@ func (a *AgentTrajectorySourceDeletionResult) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectorySourceDeletionResult) String() string {
+func (a *AgentTraceSourceDeletionResult) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -10497,81 +10894,81 @@ func (a *AgentTrajectorySourceDeletionResult) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AgentTrajectorySummaryCreationReason string
+type AgentTraceSummaryCreationReason string
 
 const (
-	AgentTrajectorySummaryCreationReasonClose                AgentTrajectorySummaryCreationReason = "close"
-	AgentTrajectorySummaryCreationReasonAbandon              AgentTrajectorySummaryCreationReason = "abandon"
-	AgentTrajectorySummaryCreationReasonRevision             AgentTrajectorySummaryCreationReason = "revision"
-	AgentTrajectorySummaryCreationReasonTaskFamilyCorrection AgentTrajectorySummaryCreationReason = "task_family_correction"
-	AgentTrajectorySummaryCreationReasonEvidenceDeletion     AgentTrajectorySummaryCreationReason = "evidence_deletion"
-	AgentTrajectorySummaryCreationReasonPolicyChange         AgentTrajectorySummaryCreationReason = "policy_change"
+	AgentTraceSummaryCreationReasonClose                AgentTraceSummaryCreationReason = "close"
+	AgentTraceSummaryCreationReasonAbandon              AgentTraceSummaryCreationReason = "abandon"
+	AgentTraceSummaryCreationReasonRevision             AgentTraceSummaryCreationReason = "revision"
+	AgentTraceSummaryCreationReasonTaskFamilyCorrection AgentTraceSummaryCreationReason = "task_family_correction"
+	AgentTraceSummaryCreationReasonEvidenceDeletion     AgentTraceSummaryCreationReason = "evidence_deletion"
+	AgentTraceSummaryCreationReasonPolicyChange         AgentTraceSummaryCreationReason = "policy_change"
 )
 
-func NewAgentTrajectorySummaryCreationReasonFromString(s string) (AgentTrajectorySummaryCreationReason, error) {
+func NewAgentTraceSummaryCreationReasonFromString(s string) (AgentTraceSummaryCreationReason, error) {
 	switch s {
 	case "close":
-		return AgentTrajectorySummaryCreationReasonClose, nil
+		return AgentTraceSummaryCreationReasonClose, nil
 	case "abandon":
-		return AgentTrajectorySummaryCreationReasonAbandon, nil
+		return AgentTraceSummaryCreationReasonAbandon, nil
 	case "revision":
-		return AgentTrajectorySummaryCreationReasonRevision, nil
+		return AgentTraceSummaryCreationReasonRevision, nil
 	case "task_family_correction":
-		return AgentTrajectorySummaryCreationReasonTaskFamilyCorrection, nil
+		return AgentTraceSummaryCreationReasonTaskFamilyCorrection, nil
 	case "evidence_deletion":
-		return AgentTrajectorySummaryCreationReasonEvidenceDeletion, nil
+		return AgentTraceSummaryCreationReasonEvidenceDeletion, nil
 	case "policy_change":
-		return AgentTrajectorySummaryCreationReasonPolicyChange, nil
+		return AgentTraceSummaryCreationReasonPolicyChange, nil
 	}
-	var t AgentTrajectorySummaryCreationReason
+	var t AgentTraceSummaryCreationReason
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectorySummaryCreationReason) Ptr() *AgentTrajectorySummaryCreationReason {
+func (a AgentTraceSummaryCreationReason) Ptr() *AgentTraceSummaryCreationReason {
 	return &a
 }
 
-type AgentTrajectorySummaryOmissionReason string
+type AgentTraceSummaryOmissionReason string
 
 const (
-	AgentTrajectorySummaryOmissionReasonNarrowerAuthorization AgentTrajectorySummaryOmissionReason = "narrower_authorization_boundary"
-	AgentTrajectorySummaryOmissionReasonAcknowledgedGap       AgentTrajectorySummaryOmissionReason = "acknowledged_gap"
-	AgentTrajectorySummaryOmissionReasonAbandonedGap          AgentTrajectorySummaryOmissionReason = "abandoned_gap"
-	AgentTrajectorySummaryOmissionReasonProcessingFailed      AgentTrajectorySummaryOmissionReason = "processing_failed"
-	AgentTrajectorySummaryOmissionReasonSourceDeleted         AgentTrajectorySummaryOmissionReason = "source_deleted"
+	AgentTraceSummaryOmissionReasonNarrowerAuthorization AgentTraceSummaryOmissionReason = "narrower_authorization_boundary"
+	AgentTraceSummaryOmissionReasonAcknowledgedGap       AgentTraceSummaryOmissionReason = "acknowledged_gap"
+	AgentTraceSummaryOmissionReasonAbandonedGap          AgentTraceSummaryOmissionReason = "abandoned_gap"
+	AgentTraceSummaryOmissionReasonProcessingFailed      AgentTraceSummaryOmissionReason = "processing_failed"
+	AgentTraceSummaryOmissionReasonSourceDeleted         AgentTraceSummaryOmissionReason = "source_deleted"
 )
 
-func NewAgentTrajectorySummaryOmissionReasonFromString(s string) (AgentTrajectorySummaryOmissionReason, error) {
+func NewAgentTraceSummaryOmissionReasonFromString(s string) (AgentTraceSummaryOmissionReason, error) {
 	switch s {
 	case "narrower_authorization_boundary":
-		return AgentTrajectorySummaryOmissionReasonNarrowerAuthorization, nil
+		return AgentTraceSummaryOmissionReasonNarrowerAuthorization, nil
 	case "acknowledged_gap":
-		return AgentTrajectorySummaryOmissionReasonAcknowledgedGap, nil
+		return AgentTraceSummaryOmissionReasonAcknowledgedGap, nil
 	case "abandoned_gap":
-		return AgentTrajectorySummaryOmissionReasonAbandonedGap, nil
+		return AgentTraceSummaryOmissionReasonAbandonedGap, nil
 	case "processing_failed":
-		return AgentTrajectorySummaryOmissionReasonProcessingFailed, nil
+		return AgentTraceSummaryOmissionReasonProcessingFailed, nil
 	case "source_deleted":
-		return AgentTrajectorySummaryOmissionReasonSourceDeleted, nil
+		return AgentTraceSummaryOmissionReasonSourceDeleted, nil
 	}
-	var t AgentTrajectorySummaryOmissionReason
+	var t AgentTraceSummaryOmissionReason
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectorySummaryOmissionReason) Ptr() *AgentTrajectorySummaryOmissionReason {
+func (a AgentTraceSummaryOmissionReason) Ptr() *AgentTraceSummaryOmissionReason {
 	return &a
 }
 
 var (
-	agentTrajectorySummaryOmittedRangeFieldFirstSequence = big.NewInt(1 << 0)
-	agentTrajectorySummaryOmittedRangeFieldLastSequence  = big.NewInt(1 << 1)
-	agentTrajectorySummaryOmittedRangeFieldReason        = big.NewInt(1 << 2)
+	agentTraceSummaryOmittedRangeFieldFirstSequence = big.NewInt(1 << 0)
+	agentTraceSummaryOmittedRangeFieldLastSequence  = big.NewInt(1 << 1)
+	agentTraceSummaryOmittedRangeFieldReason        = big.NewInt(1 << 2)
 )
 
-type AgentTrajectorySummaryOmittedRange struct {
-	FirstSequence *int                                  `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
-	LastSequence  *int                                  `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
-	Reason        *AgentTrajectorySummaryOmissionReason `json:"reason,omitempty" url:"reason,omitempty"`
+type AgentTraceSummaryOmittedRange struct {
+	FirstSequence *int                             `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
+	LastSequence  *int                             `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	Reason        *AgentTraceSummaryOmissionReason `json:"reason,omitempty" url:"reason,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -10580,35 +10977,35 @@ type AgentTrajectorySummaryOmittedRange struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectorySummaryOmittedRange) GetFirstSequence() *int {
+func (a *AgentTraceSummaryOmittedRange) GetFirstSequence() *int {
 	if a == nil {
 		return nil
 	}
 	return a.FirstSequence
 }
 
-func (a *AgentTrajectorySummaryOmittedRange) GetLastSequence() *int {
+func (a *AgentTraceSummaryOmittedRange) GetLastSequence() *int {
 	if a == nil {
 		return nil
 	}
 	return a.LastSequence
 }
 
-func (a *AgentTrajectorySummaryOmittedRange) GetReason() *AgentTrajectorySummaryOmissionReason {
+func (a *AgentTraceSummaryOmittedRange) GetReason() *AgentTraceSummaryOmissionReason {
 	if a == nil {
 		return nil
 	}
 	return a.Reason
 }
 
-func (a *AgentTrajectorySummaryOmittedRange) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceSummaryOmittedRange) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectorySummaryOmittedRange) require(field *big.Int) {
+func (a *AgentTraceSummaryOmittedRange) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -10619,32 +11016,32 @@ func (a *AgentTrajectorySummaryOmittedRange) require(field *big.Int) {
 
 // SetFirstSequence sets the FirstSequence field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryOmittedRange) SetFirstSequence(firstSequence *int) {
+func (a *AgentTraceSummaryOmittedRange) SetFirstSequence(firstSequence *int) {
 	a.FirstSequence = firstSequence
-	a.require(agentTrajectorySummaryOmittedRangeFieldFirstSequence)
+	a.require(agentTraceSummaryOmittedRangeFieldFirstSequence)
 }
 
 // SetLastSequence sets the LastSequence field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryOmittedRange) SetLastSequence(lastSequence *int) {
+func (a *AgentTraceSummaryOmittedRange) SetLastSequence(lastSequence *int) {
 	a.LastSequence = lastSequence
-	a.require(agentTrajectorySummaryOmittedRangeFieldLastSequence)
+	a.require(agentTraceSummaryOmittedRangeFieldLastSequence)
 }
 
 // SetReason sets the Reason field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryOmittedRange) SetReason(reason *AgentTrajectorySummaryOmissionReason) {
+func (a *AgentTraceSummaryOmittedRange) SetReason(reason *AgentTraceSummaryOmissionReason) {
 	a.Reason = reason
-	a.require(agentTrajectorySummaryOmittedRangeFieldReason)
+	a.require(agentTraceSummaryOmittedRangeFieldReason)
 }
 
-func (a *AgentTrajectorySummaryOmittedRange) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectorySummaryOmittedRange
+func (a *AgentTraceSummaryOmittedRange) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryOmittedRange
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectorySummaryOmittedRange(value)
+	*a = AgentTraceSummaryOmittedRange(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -10654,8 +11051,8 @@ func (a *AgentTrajectorySummaryOmittedRange) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectorySummaryOmittedRange) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectorySummaryOmittedRange
+func (a *AgentTraceSummaryOmittedRange) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryOmittedRange
 	var marshaler = struct {
 		embed
 	}{
@@ -10665,7 +11062,7 @@ func (a *AgentTrajectorySummaryOmittedRange) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectorySummaryOmittedRange) String() string {
+func (a *AgentTraceSummaryOmittedRange) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -10681,15 +11078,15 @@ func (a *AgentTrajectorySummaryOmittedRange) String() string {
 }
 
 var (
-	agentTrajectorySummaryPageFieldItems      = big.NewInt(1 << 0)
-	agentTrajectorySummaryPageFieldNextCursor = big.NewInt(1 << 1)
-	agentTrajectorySummaryPageFieldTotalSize  = big.NewInt(1 << 2)
+	agentTraceSummaryPageFieldItems      = big.NewInt(1 << 0)
+	agentTraceSummaryPageFieldNextCursor = big.NewInt(1 << 1)
+	agentTraceSummaryPageFieldTotalSize  = big.NewInt(1 << 2)
 )
 
-type AgentTrajectorySummaryPage struct {
-	Items      []*AgentTrajectorySummaryVersion `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string                          `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int                             `json:"total_size,omitempty" url:"total_size,omitempty"`
+type AgentTraceSummaryPage struct {
+	Items      []*AgentTraceSummaryVersion `json:"items,omitempty" url:"items,omitempty"`
+	NextCursor *string                     `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	TotalSize  *int                        `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -10698,35 +11095,35 @@ type AgentTrajectorySummaryPage struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectorySummaryPage) GetItems() []*AgentTrajectorySummaryVersion {
+func (a *AgentTraceSummaryPage) GetItems() []*AgentTraceSummaryVersion {
 	if a == nil {
 		return nil
 	}
 	return a.Items
 }
 
-func (a *AgentTrajectorySummaryPage) GetNextCursor() *string {
+func (a *AgentTraceSummaryPage) GetNextCursor() *string {
 	if a == nil {
 		return nil
 	}
 	return a.NextCursor
 }
 
-func (a *AgentTrajectorySummaryPage) GetTotalSize() *int {
+func (a *AgentTraceSummaryPage) GetTotalSize() *int {
 	if a == nil {
 		return nil
 	}
 	return a.TotalSize
 }
 
-func (a *AgentTrajectorySummaryPage) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceSummaryPage) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectorySummaryPage) require(field *big.Int) {
+func (a *AgentTraceSummaryPage) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -10737,32 +11134,32 @@ func (a *AgentTrajectorySummaryPage) require(field *big.Int) {
 
 // SetItems sets the Items field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryPage) SetItems(items []*AgentTrajectorySummaryVersion) {
+func (a *AgentTraceSummaryPage) SetItems(items []*AgentTraceSummaryVersion) {
 	a.Items = items
-	a.require(agentTrajectorySummaryPageFieldItems)
+	a.require(agentTraceSummaryPageFieldItems)
 }
 
 // SetNextCursor sets the NextCursor field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryPage) SetNextCursor(nextCursor *string) {
+func (a *AgentTraceSummaryPage) SetNextCursor(nextCursor *string) {
 	a.NextCursor = nextCursor
-	a.require(agentTrajectorySummaryPageFieldNextCursor)
+	a.require(agentTraceSummaryPageFieldNextCursor)
 }
 
 // SetTotalSize sets the TotalSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryPage) SetTotalSize(totalSize *int) {
+func (a *AgentTraceSummaryPage) SetTotalSize(totalSize *int) {
 	a.TotalSize = totalSize
-	a.require(agentTrajectorySummaryPageFieldTotalSize)
+	a.require(agentTraceSummaryPageFieldTotalSize)
 }
 
-func (a *AgentTrajectorySummaryPage) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectorySummaryPage
+func (a *AgentTraceSummaryPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryPage
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectorySummaryPage(value)
+	*a = AgentTraceSummaryPage(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -10772,8 +11169,8 @@ func (a *AgentTrajectorySummaryPage) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectorySummaryPage) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectorySummaryPage
+func (a *AgentTraceSummaryPage) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryPage
 	var marshaler = struct {
 		embed
 	}{
@@ -10783,7 +11180,7 @@ func (a *AgentTrajectorySummaryPage) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectorySummaryPage) String() string {
+func (a *AgentTraceSummaryPage) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -10799,43 +11196,43 @@ func (a *AgentTrajectorySummaryPage) String() string {
 }
 
 var (
-	agentTrajectorySummaryVersionFieldAgentUUID             = big.NewInt(1 << 0)
-	agentTrajectorySummaryVersionFieldAssertionUUID         = big.NewInt(1 << 1)
-	agentTrajectorySummaryVersionFieldCreatedAt             = big.NewInt(1 << 2)
-	agentTrajectorySummaryVersionFieldCreationReason        = big.NewInt(1 << 3)
-	agentTrajectorySummaryVersionFieldFirstOccurredAt       = big.NewInt(1 << 4)
-	agentTrajectorySummaryVersionFieldFirstSequence         = big.NewInt(1 << 5)
-	agentTrajectorySummaryVersionFieldLastOccurredAt        = big.NewInt(1 << 6)
-	agentTrajectorySummaryVersionFieldLastSequence          = big.NewInt(1 << 7)
-	agentTrajectorySummaryVersionFieldOmittedSequenceRanges = big.NewInt(1 << 8)
-	agentTrajectorySummaryVersionFieldOutcome               = big.NewInt(1 << 9)
-	agentTrajectorySummaryVersionFieldParentVersionUUID     = big.NewInt(1 << 10)
-	agentTrajectorySummaryVersionFieldStructuredSummary     = big.NewInt(1 << 11)
-	agentTrajectorySummaryVersionFieldText                  = big.NewInt(1 << 12)
-	agentTrajectorySummaryVersionFieldTrajectoryUUID        = big.NewInt(1 << 13)
-	agentTrajectorySummaryVersionFieldUUID                  = big.NewInt(1 << 14)
-	agentTrajectorySummaryVersionFieldVerification          = big.NewInt(1 << 15)
-	agentTrajectorySummaryVersionFieldVersion               = big.NewInt(1 << 16)
+	agentTraceSummaryVersionFieldAgentUUID             = big.NewInt(1 << 0)
+	agentTraceSummaryVersionFieldAssertionUUID         = big.NewInt(1 << 1)
+	agentTraceSummaryVersionFieldCreatedAt             = big.NewInt(1 << 2)
+	agentTraceSummaryVersionFieldCreationReason        = big.NewInt(1 << 3)
+	agentTraceSummaryVersionFieldFirstOccurredAt       = big.NewInt(1 << 4)
+	agentTraceSummaryVersionFieldFirstSequence         = big.NewInt(1 << 5)
+	agentTraceSummaryVersionFieldLastOccurredAt        = big.NewInt(1 << 6)
+	agentTraceSummaryVersionFieldLastSequence          = big.NewInt(1 << 7)
+	agentTraceSummaryVersionFieldOmittedSequenceRanges = big.NewInt(1 << 8)
+	agentTraceSummaryVersionFieldOutcome               = big.NewInt(1 << 9)
+	agentTraceSummaryVersionFieldParentVersionUUID     = big.NewInt(1 << 10)
+	agentTraceSummaryVersionFieldStructuredSummary     = big.NewInt(1 << 11)
+	agentTraceSummaryVersionFieldText                  = big.NewInt(1 << 12)
+	agentTraceSummaryVersionFieldTraceUUID             = big.NewInt(1 << 13)
+	agentTraceSummaryVersionFieldUUID                  = big.NewInt(1 << 14)
+	agentTraceSummaryVersionFieldVerification          = big.NewInt(1 << 15)
+	agentTraceSummaryVersionFieldVersion               = big.NewInt(1 << 16)
 )
 
-type AgentTrajectorySummaryVersion struct {
-	AgentUUID             *string                               `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	AssertionUUID         *string                               `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
-	CreatedAt             *string                               `json:"created_at,omitempty" url:"created_at,omitempty"`
-	CreationReason        *AgentTrajectorySummaryCreationReason `json:"creation_reason,omitempty" url:"creation_reason,omitempty"`
-	FirstOccurredAt       *string                               `json:"first_occurred_at,omitempty" url:"first_occurred_at,omitempty"`
-	FirstSequence         *int                                  `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
-	LastOccurredAt        *string                               `json:"last_occurred_at,omitempty" url:"last_occurred_at,omitempty"`
-	LastSequence          *int                                  `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
-	OmittedSequenceRanges []*AgentTrajectorySummaryOmittedRange `json:"omitted_sequence_ranges,omitempty" url:"omitted_sequence_ranges,omitempty"`
-	Outcome               *AgentTrajectoryOutcome               `json:"outcome,omitempty" url:"outcome,omitempty"`
-	ParentVersionUUID     *string                               `json:"parent_version_uuid,omitempty" url:"parent_version_uuid,omitempty"`
-	StructuredSummary     map[string]any                        `json:"structured_summary,omitempty" url:"structured_summary,omitempty"`
-	Text                  *string                               `json:"text,omitempty" url:"text,omitempty"`
-	TrajectoryUUID        *string                               `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
-	UUID                  *string                               `json:"uuid,omitempty" url:"uuid,omitempty"`
-	Verification          *AgentTrajectoryVerification          `json:"verification,omitempty" url:"verification,omitempty"`
-	Version               *int                                  `json:"version,omitempty" url:"version,omitempty"`
+type AgentTraceSummaryVersion struct {
+	AgentUUID             *string                          `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	AssertionUUID         *string                          `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	CreatedAt             *string                          `json:"created_at,omitempty" url:"created_at,omitempty"`
+	CreationReason        *AgentTraceSummaryCreationReason `json:"creation_reason,omitempty" url:"creation_reason,omitempty"`
+	FirstOccurredAt       *string                          `json:"first_occurred_at,omitempty" url:"first_occurred_at,omitempty"`
+	FirstSequence         *int                             `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
+	LastOccurredAt        *string                          `json:"last_occurred_at,omitempty" url:"last_occurred_at,omitempty"`
+	LastSequence          *int                             `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	OmittedSequenceRanges []*AgentTraceSummaryOmittedRange `json:"omitted_sequence_ranges,omitempty" url:"omitted_sequence_ranges,omitempty"`
+	Outcome               *AgentTraceOutcome               `json:"outcome,omitempty" url:"outcome,omitempty"`
+	ParentVersionUUID     *string                          `json:"parent_version_uuid,omitempty" url:"parent_version_uuid,omitempty"`
+	StructuredSummary     map[string]any                   `json:"structured_summary,omitempty" url:"structured_summary,omitempty"`
+	Text                  *string                          `json:"text,omitempty" url:"text,omitempty"`
+	TraceUUID             *string                          `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	UUID                  *string                          `json:"uuid,omitempty" url:"uuid,omitempty"`
+	Verification          *AgentTraceVerification          `json:"verification,omitempty" url:"verification,omitempty"`
+	Version               *int                             `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -10844,133 +11241,133 @@ type AgentTrajectorySummaryVersion struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentTrajectorySummaryVersion) GetAgentUUID() *string {
+func (a *AgentTraceSummaryVersion) GetAgentUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.AgentUUID
 }
 
-func (a *AgentTrajectorySummaryVersion) GetAssertionUUID() *string {
+func (a *AgentTraceSummaryVersion) GetAssertionUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.AssertionUUID
 }
 
-func (a *AgentTrajectorySummaryVersion) GetCreatedAt() *string {
+func (a *AgentTraceSummaryVersion) GetCreatedAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.CreatedAt
 }
 
-func (a *AgentTrajectorySummaryVersion) GetCreationReason() *AgentTrajectorySummaryCreationReason {
+func (a *AgentTraceSummaryVersion) GetCreationReason() *AgentTraceSummaryCreationReason {
 	if a == nil {
 		return nil
 	}
 	return a.CreationReason
 }
 
-func (a *AgentTrajectorySummaryVersion) GetFirstOccurredAt() *string {
+func (a *AgentTraceSummaryVersion) GetFirstOccurredAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.FirstOccurredAt
 }
 
-func (a *AgentTrajectorySummaryVersion) GetFirstSequence() *int {
+func (a *AgentTraceSummaryVersion) GetFirstSequence() *int {
 	if a == nil {
 		return nil
 	}
 	return a.FirstSequence
 }
 
-func (a *AgentTrajectorySummaryVersion) GetLastOccurredAt() *string {
+func (a *AgentTraceSummaryVersion) GetLastOccurredAt() *string {
 	if a == nil {
 		return nil
 	}
 	return a.LastOccurredAt
 }
 
-func (a *AgentTrajectorySummaryVersion) GetLastSequence() *int {
+func (a *AgentTraceSummaryVersion) GetLastSequence() *int {
 	if a == nil {
 		return nil
 	}
 	return a.LastSequence
 }
 
-func (a *AgentTrajectorySummaryVersion) GetOmittedSequenceRanges() []*AgentTrajectorySummaryOmittedRange {
+func (a *AgentTraceSummaryVersion) GetOmittedSequenceRanges() []*AgentTraceSummaryOmittedRange {
 	if a == nil {
 		return nil
 	}
 	return a.OmittedSequenceRanges
 }
 
-func (a *AgentTrajectorySummaryVersion) GetOutcome() *AgentTrajectoryOutcome {
+func (a *AgentTraceSummaryVersion) GetOutcome() *AgentTraceOutcome {
 	if a == nil {
 		return nil
 	}
 	return a.Outcome
 }
 
-func (a *AgentTrajectorySummaryVersion) GetParentVersionUUID() *string {
+func (a *AgentTraceSummaryVersion) GetParentVersionUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.ParentVersionUUID
 }
 
-func (a *AgentTrajectorySummaryVersion) GetStructuredSummary() map[string]any {
+func (a *AgentTraceSummaryVersion) GetStructuredSummary() map[string]any {
 	if a == nil {
 		return nil
 	}
 	return a.StructuredSummary
 }
 
-func (a *AgentTrajectorySummaryVersion) GetText() *string {
+func (a *AgentTraceSummaryVersion) GetText() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Text
 }
 
-func (a *AgentTrajectorySummaryVersion) GetTrajectoryUUID() *string {
+func (a *AgentTraceSummaryVersion) GetTraceUUID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryUUID
+	return a.TraceUUID
 }
 
-func (a *AgentTrajectorySummaryVersion) GetUUID() *string {
+func (a *AgentTraceSummaryVersion) GetUUID() *string {
 	if a == nil {
 		return nil
 	}
 	return a.UUID
 }
 
-func (a *AgentTrajectorySummaryVersion) GetVerification() *AgentTrajectoryVerification {
+func (a *AgentTraceSummaryVersion) GetVerification() *AgentTraceVerification {
 	if a == nil {
 		return nil
 	}
 	return a.Verification
 }
 
-func (a *AgentTrajectorySummaryVersion) GetVersion() *int {
+func (a *AgentTraceSummaryVersion) GetVersion() *int {
 	if a == nil {
 		return nil
 	}
 	return a.Version
 }
 
-func (a *AgentTrajectorySummaryVersion) GetExtraProperties() map[string]interface{} {
+func (a *AgentTraceSummaryVersion) GetExtraProperties() map[string]interface{} {
 	if a == nil {
 		return nil
 	}
 	return a.extraProperties
 }
 
-func (a *AgentTrajectorySummaryVersion) require(field *big.Int) {
+func (a *AgentTraceSummaryVersion) require(field *big.Int) {
 	next := new(big.Int)
 	if a.explicitFields != nil {
 		next.Set(a.explicitFields)
@@ -10981,130 +11378,130 @@ func (a *AgentTrajectorySummaryVersion) require(field *big.Int) {
 
 // SetAgentUUID sets the AgentUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetAgentUUID(agentUUID *string) {
+func (a *AgentTraceSummaryVersion) SetAgentUUID(agentUUID *string) {
 	a.AgentUUID = agentUUID
-	a.require(agentTrajectorySummaryVersionFieldAgentUUID)
+	a.require(agentTraceSummaryVersionFieldAgentUUID)
 }
 
 // SetAssertionUUID sets the AssertionUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetAssertionUUID(assertionUUID *string) {
+func (a *AgentTraceSummaryVersion) SetAssertionUUID(assertionUUID *string) {
 	a.AssertionUUID = assertionUUID
-	a.require(agentTrajectorySummaryVersionFieldAssertionUUID)
+	a.require(agentTraceSummaryVersionFieldAssertionUUID)
 }
 
 // SetCreatedAt sets the CreatedAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetCreatedAt(createdAt *string) {
+func (a *AgentTraceSummaryVersion) SetCreatedAt(createdAt *string) {
 	a.CreatedAt = createdAt
-	a.require(agentTrajectorySummaryVersionFieldCreatedAt)
+	a.require(agentTraceSummaryVersionFieldCreatedAt)
 }
 
 // SetCreationReason sets the CreationReason field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetCreationReason(creationReason *AgentTrajectorySummaryCreationReason) {
+func (a *AgentTraceSummaryVersion) SetCreationReason(creationReason *AgentTraceSummaryCreationReason) {
 	a.CreationReason = creationReason
-	a.require(agentTrajectorySummaryVersionFieldCreationReason)
+	a.require(agentTraceSummaryVersionFieldCreationReason)
 }
 
 // SetFirstOccurredAt sets the FirstOccurredAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetFirstOccurredAt(firstOccurredAt *string) {
+func (a *AgentTraceSummaryVersion) SetFirstOccurredAt(firstOccurredAt *string) {
 	a.FirstOccurredAt = firstOccurredAt
-	a.require(agentTrajectorySummaryVersionFieldFirstOccurredAt)
+	a.require(agentTraceSummaryVersionFieldFirstOccurredAt)
 }
 
 // SetFirstSequence sets the FirstSequence field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetFirstSequence(firstSequence *int) {
+func (a *AgentTraceSummaryVersion) SetFirstSequence(firstSequence *int) {
 	a.FirstSequence = firstSequence
-	a.require(agentTrajectorySummaryVersionFieldFirstSequence)
+	a.require(agentTraceSummaryVersionFieldFirstSequence)
 }
 
 // SetLastOccurredAt sets the LastOccurredAt field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetLastOccurredAt(lastOccurredAt *string) {
+func (a *AgentTraceSummaryVersion) SetLastOccurredAt(lastOccurredAt *string) {
 	a.LastOccurredAt = lastOccurredAt
-	a.require(agentTrajectorySummaryVersionFieldLastOccurredAt)
+	a.require(agentTraceSummaryVersionFieldLastOccurredAt)
 }
 
 // SetLastSequence sets the LastSequence field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetLastSequence(lastSequence *int) {
+func (a *AgentTraceSummaryVersion) SetLastSequence(lastSequence *int) {
 	a.LastSequence = lastSequence
-	a.require(agentTrajectorySummaryVersionFieldLastSequence)
+	a.require(agentTraceSummaryVersionFieldLastSequence)
 }
 
 // SetOmittedSequenceRanges sets the OmittedSequenceRanges field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetOmittedSequenceRanges(omittedSequenceRanges []*AgentTrajectorySummaryOmittedRange) {
+func (a *AgentTraceSummaryVersion) SetOmittedSequenceRanges(omittedSequenceRanges []*AgentTraceSummaryOmittedRange) {
 	a.OmittedSequenceRanges = omittedSequenceRanges
-	a.require(agentTrajectorySummaryVersionFieldOmittedSequenceRanges)
+	a.require(agentTraceSummaryVersionFieldOmittedSequenceRanges)
 }
 
 // SetOutcome sets the Outcome field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetOutcome(outcome *AgentTrajectoryOutcome) {
+func (a *AgentTraceSummaryVersion) SetOutcome(outcome *AgentTraceOutcome) {
 	a.Outcome = outcome
-	a.require(agentTrajectorySummaryVersionFieldOutcome)
+	a.require(agentTraceSummaryVersionFieldOutcome)
 }
 
 // SetParentVersionUUID sets the ParentVersionUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetParentVersionUUID(parentVersionUUID *string) {
+func (a *AgentTraceSummaryVersion) SetParentVersionUUID(parentVersionUUID *string) {
 	a.ParentVersionUUID = parentVersionUUID
-	a.require(agentTrajectorySummaryVersionFieldParentVersionUUID)
+	a.require(agentTraceSummaryVersionFieldParentVersionUUID)
 }
 
 // SetStructuredSummary sets the StructuredSummary field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetStructuredSummary(structuredSummary map[string]any) {
+func (a *AgentTraceSummaryVersion) SetStructuredSummary(structuredSummary map[string]any) {
 	a.StructuredSummary = structuredSummary
-	a.require(agentTrajectorySummaryVersionFieldStructuredSummary)
+	a.require(agentTraceSummaryVersionFieldStructuredSummary)
 }
 
 // SetText sets the Text field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetText(text *string) {
+func (a *AgentTraceSummaryVersion) SetText(text *string) {
 	a.Text = text
-	a.require(agentTrajectorySummaryVersionFieldText)
+	a.require(agentTraceSummaryVersionFieldText)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetTrajectoryUUID(trajectoryUUID *string) {
-	a.TrajectoryUUID = trajectoryUUID
-	a.require(agentTrajectorySummaryVersionFieldTrajectoryUUID)
+func (a *AgentTraceSummaryVersion) SetTraceUUID(traceUUID *string) {
+	a.TraceUUID = traceUUID
+	a.require(agentTraceSummaryVersionFieldTraceUUID)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetUUID(uuid *string) {
+func (a *AgentTraceSummaryVersion) SetUUID(uuid *string) {
 	a.UUID = uuid
-	a.require(agentTrajectorySummaryVersionFieldUUID)
+	a.require(agentTraceSummaryVersionFieldUUID)
 }
 
 // SetVerification sets the Verification field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetVerification(verification *AgentTrajectoryVerification) {
+func (a *AgentTraceSummaryVersion) SetVerification(verification *AgentTraceVerification) {
 	a.Verification = verification
-	a.require(agentTrajectorySummaryVersionFieldVerification)
+	a.require(agentTraceSummaryVersionFieldVerification)
 }
 
 // SetVersion sets the Version field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTrajectorySummaryVersion) SetVersion(version *int) {
+func (a *AgentTraceSummaryVersion) SetVersion(version *int) {
 	a.Version = version
-	a.require(agentTrajectorySummaryVersionFieldVersion)
+	a.require(agentTraceSummaryVersionFieldVersion)
 }
 
-func (a *AgentTrajectorySummaryVersion) UnmarshalJSON(data []byte) error {
-	type unmarshaler AgentTrajectorySummaryVersion
+func (a *AgentTraceSummaryVersion) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryVersion
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*a = AgentTrajectorySummaryVersion(value)
+	*a = AgentTraceSummaryVersion(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *a)
 	if err != nil {
 		return err
@@ -11114,8 +11511,8 @@ func (a *AgentTrajectorySummaryVersion) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AgentTrajectorySummaryVersion) MarshalJSON() ([]byte, error) {
-	type embed AgentTrajectorySummaryVersion
+func (a *AgentTraceSummaryVersion) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryVersion
 	var marshaler = struct {
 		embed
 	}{
@@ -11125,7 +11522,7 @@ func (a *AgentTrajectorySummaryVersion) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (a *AgentTrajectorySummaryVersion) String() string {
+func (a *AgentTraceSummaryVersion) String() string {
 	if a == nil {
 		return "<nil>"
 	}
@@ -11140,34 +11537,206 @@ func (a *AgentTrajectorySummaryVersion) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AgentTrajectoryVerification string
-
-const (
-	AgentTrajectoryVerificationNone     AgentTrajectoryVerification = "none"
-	AgentTrajectoryVerificationAgent    AgentTrajectoryVerification = "agent"
-	AgentTrajectoryVerificationTool     AgentTrajectoryVerification = "tool"
-	AgentTrajectoryVerificationCustomer AgentTrajectoryVerification = "customer"
-	AgentTrajectoryVerificationExternal AgentTrajectoryVerification = "external"
+var (
+	agentTraceTaskFamilyInferenceFieldAssignedAt        = big.NewInt(1 << 0)
+	agentTraceTaskFamilyInferenceFieldClassifierVersion = big.NewInt(1 << 1)
+	agentTraceTaskFamilyInferenceFieldConfidence        = big.NewInt(1 << 2)
+	agentTraceTaskFamilyInferenceFieldDescriptorVersion = big.NewInt(1 << 3)
+	agentTraceTaskFamilyInferenceFieldLearningReusable  = big.NewInt(1 << 4)
+	agentTraceTaskFamilyInferenceFieldState             = big.NewInt(1 << 5)
 )
 
-func NewAgentTrajectoryVerificationFromString(s string) (AgentTrajectoryVerification, error) {
+type AgentTraceTaskFamilyInference struct {
+	// The time the outcome was recorded.
+	AssignedAt *string `json:"assigned_at,omitempty" url:"assigned_at,omitempty"`
+	// The classifier version that produced the outcome.
+	ClassifierVersion *string `json:"classifier_version,omitempty" url:"classifier_version,omitempty"`
+	// The classifier confidence of the accepted or top candidate.
+	Confidence *float64 `json:"confidence,omitempty" url:"confidence,omitempty"`
+	// The descriptor set version the classifier ran against.
+	DescriptorVersion *int `json:"descriptor_version,omitempty" url:"descriptor_version,omitempty"`
+	// Whether the classifier marked the Trace reusable for learning.
+	LearningReusable *bool `json:"learning_reusable,omitempty" url:"learning_reusable,omitempty"`
+	// The inference state: pending, assigned, or unassigned.
+	State *string `json:"state,omitempty" url:"state,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceTaskFamilyInference) GetAssignedAt() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AssignedAt
+}
+
+func (a *AgentTraceTaskFamilyInference) GetClassifierVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ClassifierVersion
+}
+
+func (a *AgentTraceTaskFamilyInference) GetConfidence() *float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Confidence
+}
+
+func (a *AgentTraceTaskFamilyInference) GetDescriptorVersion() *int {
+	if a == nil {
+		return nil
+	}
+	return a.DescriptorVersion
+}
+
+func (a *AgentTraceTaskFamilyInference) GetLearningReusable() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.LearningReusable
+}
+
+func (a *AgentTraceTaskFamilyInference) GetState() *string {
+	if a == nil {
+		return nil
+	}
+	return a.State
+}
+
+func (a *AgentTraceTaskFamilyInference) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceTaskFamilyInference) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAssignedAt sets the AssignedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceTaskFamilyInference) SetAssignedAt(assignedAt *string) {
+	a.AssignedAt = assignedAt
+	a.require(agentTraceTaskFamilyInferenceFieldAssignedAt)
+}
+
+// SetClassifierVersion sets the ClassifierVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceTaskFamilyInference) SetClassifierVersion(classifierVersion *string) {
+	a.ClassifierVersion = classifierVersion
+	a.require(agentTraceTaskFamilyInferenceFieldClassifierVersion)
+}
+
+// SetConfidence sets the Confidence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceTaskFamilyInference) SetConfidence(confidence *float64) {
+	a.Confidence = confidence
+	a.require(agentTraceTaskFamilyInferenceFieldConfidence)
+}
+
+// SetDescriptorVersion sets the DescriptorVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceTaskFamilyInference) SetDescriptorVersion(descriptorVersion *int) {
+	a.DescriptorVersion = descriptorVersion
+	a.require(agentTraceTaskFamilyInferenceFieldDescriptorVersion)
+}
+
+// SetLearningReusable sets the LearningReusable field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceTaskFamilyInference) SetLearningReusable(learningReusable *bool) {
+	a.LearningReusable = learningReusable
+	a.require(agentTraceTaskFamilyInferenceFieldLearningReusable)
+}
+
+// SetState sets the State field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceTaskFamilyInference) SetState(state *string) {
+	a.State = state
+	a.require(agentTraceTaskFamilyInferenceFieldState)
+}
+
+func (a *AgentTraceTaskFamilyInference) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceTaskFamilyInference
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceTaskFamilyInference(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceTaskFamilyInference) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceTaskFamilyInference
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceTaskFamilyInference) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentTraceVerification string
+
+const (
+	AgentTraceVerificationNone     AgentTraceVerification = "none"
+	AgentTraceVerificationAgent    AgentTraceVerification = "agent"
+	AgentTraceVerificationTool     AgentTraceVerification = "tool"
+	AgentTraceVerificationCustomer AgentTraceVerification = "customer"
+	AgentTraceVerificationExternal AgentTraceVerification = "external"
+)
+
+func NewAgentTraceVerificationFromString(s string) (AgentTraceVerification, error) {
 	switch s {
 	case "none":
-		return AgentTrajectoryVerificationNone, nil
+		return AgentTraceVerificationNone, nil
 	case "agent":
-		return AgentTrajectoryVerificationAgent, nil
+		return AgentTraceVerificationAgent, nil
 	case "tool":
-		return AgentTrajectoryVerificationTool, nil
+		return AgentTraceVerificationTool, nil
 	case "customer":
-		return AgentTrajectoryVerificationCustomer, nil
+		return AgentTraceVerificationCustomer, nil
 	case "external":
-		return AgentTrajectoryVerificationExternal, nil
+		return AgentTraceVerificationExternal, nil
 	}
-	var t AgentTrajectoryVerification
+	var t AgentTraceVerification
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
 }
 
-func (a AgentTrajectoryVerification) Ptr() *AgentTrajectoryVerification {
+func (a AgentTraceVerification) Ptr() *AgentTraceVerification {
 	return &a
 }
 
@@ -12851,7 +13420,7 @@ type CreateAgentRequest struct {
 	DeploymentID *string `json:"deployment_id,omitempty" url:"deployment_id,omitempty"`
 	// A human-readable description of the Agent.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	// Agent Memory capture, compilation, and promotion settings.
+	// Agent Skills capture, compilation, and promotion settings.
 	MemorySettings *AgentMemorySettings `json:"memory_settings,omitempty" url:"memory_settings,omitempty"`
 	// Developer metadata used to organize and filter Agents.
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
@@ -13691,10 +14260,10 @@ func (d DebugLogStatus) Ptr() *DebugLogStatus {
 }
 
 var (
-	deleteAgentTrajectoryRequestFieldExpectedRevision = big.NewInt(1 << 0)
+	deleteAgentTraceRequestFieldExpectedRevision = big.NewInt(1 << 0)
 )
 
-type DeleteAgentTrajectoryRequest struct {
+type DeleteAgentTraceRequest struct {
 	ExpectedRevision int `json:"expected_revision" url:"expected_revision"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -13704,21 +14273,21 @@ type DeleteAgentTrajectoryRequest struct {
 	rawJSON         json.RawMessage
 }
 
-func (d *DeleteAgentTrajectoryRequest) GetExpectedRevision() int {
+func (d *DeleteAgentTraceRequest) GetExpectedRevision() int {
 	if d == nil {
 		return 0
 	}
 	return d.ExpectedRevision
 }
 
-func (d *DeleteAgentTrajectoryRequest) GetExtraProperties() map[string]interface{} {
+func (d *DeleteAgentTraceRequest) GetExtraProperties() map[string]interface{} {
 	if d == nil {
 		return nil
 	}
 	return d.extraProperties
 }
 
-func (d *DeleteAgentTrajectoryRequest) require(field *big.Int) {
+func (d *DeleteAgentTraceRequest) require(field *big.Int) {
 	next := new(big.Int)
 	if d.explicitFields != nil {
 		next.Set(d.explicitFields)
@@ -13729,18 +14298,18 @@ func (d *DeleteAgentTrajectoryRequest) require(field *big.Int) {
 
 // SetExpectedRevision sets the ExpectedRevision field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DeleteAgentTrajectoryRequest) SetExpectedRevision(expectedRevision int) {
+func (d *DeleteAgentTraceRequest) SetExpectedRevision(expectedRevision int) {
 	d.ExpectedRevision = expectedRevision
-	d.require(deleteAgentTrajectoryRequestFieldExpectedRevision)
+	d.require(deleteAgentTraceRequestFieldExpectedRevision)
 }
 
-func (d *DeleteAgentTrajectoryRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler DeleteAgentTrajectoryRequest
+func (d *DeleteAgentTraceRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler DeleteAgentTraceRequest
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*d = DeleteAgentTrajectoryRequest(value)
+	*d = DeleteAgentTraceRequest(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *d)
 	if err != nil {
 		return err
@@ -13750,8 +14319,8 @@ func (d *DeleteAgentTrajectoryRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (d *DeleteAgentTrajectoryRequest) MarshalJSON() ([]byte, error) {
-	type embed DeleteAgentTrajectoryRequest
+func (d *DeleteAgentTraceRequest) MarshalJSON() ([]byte, error) {
+	type embed DeleteAgentTraceRequest
 	var marshaler = struct {
 		embed
 	}{
@@ -13761,7 +14330,7 @@ func (d *DeleteAgentTrajectoryRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (d *DeleteAgentTrajectoryRequest) String() string {
+func (d *DeleteAgentTraceRequest) String() string {
 	if d == nil {
 		return "<nil>"
 	}
@@ -15243,7 +15812,8 @@ func (e *EdgeType) String() string {
 var (
 	entityPropertyFieldDescription = big.NewInt(1 << 0)
 	entityPropertyFieldName        = big.NewInt(1 << 1)
-	entityPropertyFieldType        = big.NewInt(1 << 2)
+	entityPropertyFieldProtected   = big.NewInt(1 << 2)
+	entityPropertyFieldType        = big.NewInt(1 << 3)
 )
 
 type EntityProperty struct {
@@ -15251,6 +15821,10 @@ type EntityProperty struct {
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
 	// The name of the property.
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Whether ingestion keeps the stored value of this property when it merges
+	// new information into an existing node. Supported on entity type
+	// properties only.
+	Protected *bool `json:"protected,omitempty" url:"protected,omitempty"`
 	// The value type of the property: text, int, float, or boolean.
 	Type *EntityPropertyType `json:"type,omitempty" url:"type,omitempty"`
 
@@ -15273,6 +15847,13 @@ func (e *EntityProperty) GetName() *string {
 		return nil
 	}
 	return e.Name
+}
+
+func (e *EntityProperty) GetProtected() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.Protected
 }
 
 func (e *EntityProperty) GetType() *EntityPropertyType {
@@ -15310,6 +15891,13 @@ func (e *EntityProperty) SetDescription(description *string) {
 func (e *EntityProperty) SetName(name *string) {
 	e.Name = name
 	e.require(entityPropertyFieldName)
+}
+
+// SetProtected sets the Protected field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EntityProperty) SetProtected(protected *bool) {
+	e.Protected = protected
+	e.require(entityPropertyFieldProtected)
 }
 
 // SetType sets the Type field and marks it as non-optional;
@@ -15536,15 +16124,15 @@ var (
 	episodeFieldGraphUUID         = big.NewInt(1 << 4)
 	episodeFieldMetadata          = big.NewInt(1 << 5)
 	episodeFieldProcessed         = big.NewInt(1 << 6)
-	episodeFieldRelevance         = big.NewInt(1 << 7)
-	episodeFieldRole              = big.NewInt(1 << 8)
-	episodeFieldRoleName          = big.NewInt(1 << 9)
-	episodeFieldScore             = big.NewInt(1 << 10)
-	episodeFieldSource            = big.NewInt(1 << 11)
-	episodeFieldSourceDescription = big.NewInt(1 << 12)
-	episodeFieldThreadUUID        = big.NewInt(1 << 13)
-	episodeFieldUUID              = big.NewInt(1 << 14)
-	episodeFieldValidAt           = big.NewInt(1 << 15)
+	episodeFieldReferenceTime     = big.NewInt(1 << 7)
+	episodeFieldRelevance         = big.NewInt(1 << 8)
+	episodeFieldRole              = big.NewInt(1 << 9)
+	episodeFieldRoleName          = big.NewInt(1 << 10)
+	episodeFieldScore             = big.NewInt(1 << 11)
+	episodeFieldSource            = big.NewInt(1 << 12)
+	episodeFieldSourceDescription = big.NewInt(1 << 13)
+	episodeFieldThreadUUID        = big.NewInt(1 << 14)
+	episodeFieldUUID              = big.NewInt(1 << 15)
 )
 
 type Episode struct {
@@ -15553,7 +16141,7 @@ type Episode struct {
 	// The content policy state of the episode, present only on a graph with a
 	// bound content policy rule.
 	ContentPolicy *EpisodeContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
-	// The time the episode was created.
+	// The time Zep received the episode.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The developer-assigned identifier of the document this episode belongs to,
 	// present only for episodes added to a document.
@@ -15564,6 +16152,10 @@ type Episode struct {
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// Whether the episode has finished graph extraction and indexing.
 	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
+	// The episode's reference time, used for temporal reasoning: the time that
+	// the developer supplied on add, or the ingestion time when the developer
+	// supplied no time.
+	ReferenceTime *string `json:"reference_time,omitempty" url:"reference_time,omitempty"`
 	// A cross-encoder-derived relevance score, present only when the
 	// cross-encoder reranker scored this result; like score, it is omitted from
 	// plain list results.
@@ -15586,9 +16178,6 @@ type Episode struct {
 	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
 	// The unique identifier of the episode.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-	// The time the episode's content became true or was observed, used for
-	// temporal reasoning.
-	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -15646,6 +16235,13 @@ func (e *Episode) GetProcessed() *bool {
 	return e.Processed
 }
 
+func (e *Episode) GetReferenceTime() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ReferenceTime
+}
+
 func (e *Episode) GetRelevance() *float64 {
 	if e == nil {
 		return nil
@@ -15700,13 +16296,6 @@ func (e *Episode) GetUUID() *string {
 		return nil
 	}
 	return e.UUID
-}
-
-func (e *Episode) GetValidAt() *string {
-	if e == nil {
-		return nil
-	}
-	return e.ValidAt
 }
 
 func (e *Episode) GetExtraProperties() map[string]interface{} {
@@ -15774,6 +16363,13 @@ func (e *Episode) SetProcessed(processed *bool) {
 	e.require(episodeFieldProcessed)
 }
 
+// SetReferenceTime sets the ReferenceTime field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetReferenceTime(referenceTime *string) {
+	e.ReferenceTime = referenceTime
+	e.require(episodeFieldReferenceTime)
+}
+
 // SetRelevance sets the Relevance field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (e *Episode) SetRelevance(relevance *float64) {
@@ -15828,13 +16424,6 @@ func (e *Episode) SetThreadUUID(threadUUID *string) {
 func (e *Episode) SetUUID(uuid *string) {
 	e.UUID = uuid
 	e.require(episodeFieldUUID)
-}
-
-// SetValidAt sets the ValidAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (e *Episode) SetValidAt(validAt *string) {
-	e.ValidAt = validAt
-	e.require(episodeFieldValidAt)
 }
 
 func (e *Episode) UnmarshalJSON(data []byte) error {
@@ -17234,18 +17823,18 @@ func (h *HyperedgePage) String() string {
 }
 
 var (
-	importedTrajectoryReferenceFieldAgentUUID      = big.NewInt(1 << 0)
-	importedTrajectoryReferenceFieldImportUUID     = big.NewInt(1 << 1)
-	importedTrajectoryReferenceFieldTrajectoryUUID = big.NewInt(1 << 2)
+	importedTraceReferenceFieldAgentUUID  = big.NewInt(1 << 0)
+	importedTraceReferenceFieldImportUUID = big.NewInt(1 << 1)
+	importedTraceReferenceFieldTraceUUID  = big.NewInt(1 << 2)
 )
 
-type ImportedTrajectoryReference struct {
+type ImportedTraceReference struct {
 	// AgentUUID is the visible Agent identifier.
 	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
 	// ImportUUID is the active import owner identifier.
 	ImportUUID *string `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
-	// TrajectoryUUID is the imported Trajectory identifier.
-	TrajectoryUUID *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
+	// TraceUUID is the imported Trace identifier.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -17254,35 +17843,35 @@ type ImportedTrajectoryReference struct {
 	rawJSON         json.RawMessage
 }
 
-func (i *ImportedTrajectoryReference) GetAgentUUID() *string {
+func (i *ImportedTraceReference) GetAgentUUID() *string {
 	if i == nil {
 		return nil
 	}
 	return i.AgentUUID
 }
 
-func (i *ImportedTrajectoryReference) GetImportUUID() *string {
+func (i *ImportedTraceReference) GetImportUUID() *string {
 	if i == nil {
 		return nil
 	}
 	return i.ImportUUID
 }
 
-func (i *ImportedTrajectoryReference) GetTrajectoryUUID() *string {
+func (i *ImportedTraceReference) GetTraceUUID() *string {
 	if i == nil {
 		return nil
 	}
-	return i.TrajectoryUUID
+	return i.TraceUUID
 }
 
-func (i *ImportedTrajectoryReference) GetExtraProperties() map[string]interface{} {
+func (i *ImportedTraceReference) GetExtraProperties() map[string]interface{} {
 	if i == nil {
 		return nil
 	}
 	return i.extraProperties
 }
 
-func (i *ImportedTrajectoryReference) require(field *big.Int) {
+func (i *ImportedTraceReference) require(field *big.Int) {
 	next := new(big.Int)
 	if i.explicitFields != nil {
 		next.Set(i.explicitFields)
@@ -17293,32 +17882,32 @@ func (i *ImportedTrajectoryReference) require(field *big.Int) {
 
 // SetAgentUUID sets the AgentUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (i *ImportedTrajectoryReference) SetAgentUUID(agentUUID *string) {
+func (i *ImportedTraceReference) SetAgentUUID(agentUUID *string) {
 	i.AgentUUID = agentUUID
-	i.require(importedTrajectoryReferenceFieldAgentUUID)
+	i.require(importedTraceReferenceFieldAgentUUID)
 }
 
 // SetImportUUID sets the ImportUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (i *ImportedTrajectoryReference) SetImportUUID(importUUID *string) {
+func (i *ImportedTraceReference) SetImportUUID(importUUID *string) {
 	i.ImportUUID = importUUID
-	i.require(importedTrajectoryReferenceFieldImportUUID)
+	i.require(importedTraceReferenceFieldImportUUID)
 }
 
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (i *ImportedTrajectoryReference) SetTrajectoryUUID(trajectoryUUID *string) {
-	i.TrajectoryUUID = trajectoryUUID
-	i.require(importedTrajectoryReferenceFieldTrajectoryUUID)
+func (i *ImportedTraceReference) SetTraceUUID(traceUUID *string) {
+	i.TraceUUID = traceUUID
+	i.require(importedTraceReferenceFieldTraceUUID)
 }
 
-func (i *ImportedTrajectoryReference) UnmarshalJSON(data []byte) error {
-	type unmarshaler ImportedTrajectoryReference
+func (i *ImportedTraceReference) UnmarshalJSON(data []byte) error {
+	type unmarshaler ImportedTraceReference
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*i = ImportedTrajectoryReference(value)
+	*i = ImportedTraceReference(value)
 	extraProperties, err := internal.ExtractExtraProperties(data, *i)
 	if err != nil {
 		return err
@@ -17328,8 +17917,8 @@ func (i *ImportedTrajectoryReference) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (i *ImportedTrajectoryReference) MarshalJSON() ([]byte, error) {
-	type embed ImportedTrajectoryReference
+func (i *ImportedTraceReference) MarshalJSON() ([]byte, error) {
+	type embed ImportedTraceReference
 	var marshaler = struct {
 		embed
 	}{
@@ -17339,7 +17928,7 @@ func (i *ImportedTrajectoryReference) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
-func (i *ImportedTrajectoryReference) String() string {
+func (i *ImportedTraceReference) String() string {
 	if i == nil {
 		return "<nil>"
 	}
@@ -18321,18 +18910,19 @@ func (i *IngestionTraceEpisode) String() string {
 }
 
 var (
-	ingestionTraceInputFieldCandidateEdges        = big.NewInt(1 << 0)
-	ingestionTraceInputFieldCandidateNodes        = big.NewInt(1 << 1)
-	ingestionTraceInputFieldCustomInstructions    = big.NewInt(1 << 2)
-	ingestionTraceInputFieldEdgeTypes             = big.NewInt(1 << 3)
-	ingestionTraceInputFieldEntityTypes           = big.NewInt(1 << 4)
-	ingestionTraceInputFieldEpisodeContent        = big.NewInt(1 << 5)
-	ingestionTraceInputFieldEpisodes              = big.NewInt(1 << 6)
-	ingestionTraceInputFieldExtractedEdges        = big.NewInt(1 << 7)
-	ingestionTraceInputFieldExtractedNodes        = big.NewInt(1 << 8)
-	ingestionTraceInputFieldIgnoreDefaultOntology = big.NewInt(1 << 9)
-	ingestionTraceInputFieldPreviousEpisodes      = big.NewInt(1 << 10)
-	ingestionTraceInputFieldResolvedNodes         = big.NewInt(1 << 11)
+	ingestionTraceInputFieldCandidateEdges              = big.NewInt(1 << 0)
+	ingestionTraceInputFieldCandidateNodes              = big.NewInt(1 << 1)
+	ingestionTraceInputFieldCustomInstructions          = big.NewInt(1 << 2)
+	ingestionTraceInputFieldEdgeTypes                   = big.NewInt(1 << 3)
+	ingestionTraceInputFieldEntityTypes                 = big.NewInt(1 << 4)
+	ingestionTraceInputFieldEpisodeContent              = big.NewInt(1 << 5)
+	ingestionTraceInputFieldEpisodes                    = big.NewInt(1 << 6)
+	ingestionTraceInputFieldExtractedEdges              = big.NewInt(1 << 7)
+	ingestionTraceInputFieldExtractedNodes              = big.NewInt(1 << 8)
+	ingestionTraceInputFieldIgnoreDefaultOntology       = big.NewInt(1 << 9)
+	ingestionTraceInputFieldPreviousEpisodes            = big.NewInt(1 << 10)
+	ingestionTraceInputFieldProtectedAttributeConflicts = big.NewInt(1 << 11)
+	ingestionTraceInputFieldResolvedNodes               = big.NewInt(1 << 12)
 )
 
 type IngestionTraceInput struct {
@@ -18364,6 +18954,10 @@ type IngestionTraceInput struct {
 	IgnoreDefaultOntology *bool `json:"ignore_default_ontology,omitempty" url:"ignore_default_ontology,omitempty"`
 	// The previous episodes that the step used as context.
 	PreviousEpisodes []*IngestionTraceEpisode `json:"previous_episodes,omitempty" url:"previous_episodes,omitempty"`
+	// The identity attributes where the extracted value differed from the
+	// stored value. The nodes keep the stored values. Present for resolve_nodes
+	// and empty for the other steps.
+	ProtectedAttributeConflicts []*IngestionTraceProtectedAttributeConflict `json:"protected_attribute_conflicts,omitempty" url:"protected_attribute_conflicts,omitempty"`
 	// The resolved nodes that the extracted edges connect. Present for resolve_edges and empty for
 	// the other steps.
 	ResolvedNodes []*IngestionTraceNode `json:"resolved_nodes,omitempty" url:"resolved_nodes,omitempty"`
@@ -18450,6 +19044,13 @@ func (i *IngestionTraceInput) GetPreviousEpisodes() []*IngestionTraceEpisode {
 		return nil
 	}
 	return i.PreviousEpisodes
+}
+
+func (i *IngestionTraceInput) GetProtectedAttributeConflicts() []*IngestionTraceProtectedAttributeConflict {
+	if i == nil {
+		return nil
+	}
+	return i.ProtectedAttributeConflicts
 }
 
 func (i *IngestionTraceInput) GetResolvedNodes() []*IngestionTraceNode {
@@ -18550,6 +19151,13 @@ func (i *IngestionTraceInput) SetIgnoreDefaultOntology(ignoreDefaultOntology *bo
 func (i *IngestionTraceInput) SetPreviousEpisodes(previousEpisodes []*IngestionTraceEpisode) {
 	i.PreviousEpisodes = previousEpisodes
 	i.require(ingestionTraceInputFieldPreviousEpisodes)
+}
+
+// SetProtectedAttributeConflicts sets the ProtectedAttributeConflicts field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceInput) SetProtectedAttributeConflicts(protectedAttributeConflicts []*IngestionTraceProtectedAttributeConflict) {
+	i.ProtectedAttributeConflicts = protectedAttributeConflicts
+	i.require(ingestionTraceInputFieldProtectedAttributeConflicts)
 }
 
 // SetResolvedNodes sets the ResolvedNodes field and marks it as non-optional;
@@ -19354,6 +19962,144 @@ func (i *IngestionTracePage) String() string {
 	return fmt.Sprintf("%#v", i)
 }
 
+var (
+	ingestionTraceProtectedAttributeConflictFieldAttribute      = big.NewInt(1 << 0)
+	ingestionTraceProtectedAttributeConflictFieldExtractedValue = big.NewInt(1 << 1)
+	ingestionTraceProtectedAttributeConflictFieldNodeUUID       = big.NewInt(1 << 2)
+	ingestionTraceProtectedAttributeConflictFieldStoredValue    = big.NewInt(1 << 3)
+)
+
+type IngestionTraceProtectedAttributeConflict struct {
+	// The name of the identity attribute.
+	Attribute *string `json:"attribute,omitempty" url:"attribute,omitempty"`
+	// The value that the step extracted from the episode.
+	ExtractedValue any `json:"extracted_value,omitempty" url:"extracted_value,omitempty"`
+	// The unique identifier of the node.
+	NodeUUID *string `json:"node_uuid,omitempty" url:"node_uuid,omitempty"`
+	// The stored value, which the node keeps.
+	StoredValue any `json:"stored_value,omitempty" url:"stored_value,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) GetAttribute() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Attribute
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) GetExtractedValue() any {
+	if i == nil {
+		return nil
+	}
+	return i.ExtractedValue
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) GetNodeUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.NodeUUID
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) GetStoredValue() any {
+	if i == nil {
+		return nil
+	}
+	return i.StoredValue
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetAttribute sets the Attribute field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceProtectedAttributeConflict) SetAttribute(attribute *string) {
+	i.Attribute = attribute
+	i.require(ingestionTraceProtectedAttributeConflictFieldAttribute)
+}
+
+// SetExtractedValue sets the ExtractedValue field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceProtectedAttributeConflict) SetExtractedValue(extractedValue any) {
+	i.ExtractedValue = extractedValue
+	i.require(ingestionTraceProtectedAttributeConflictFieldExtractedValue)
+}
+
+// SetNodeUUID sets the NodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceProtectedAttributeConflict) SetNodeUUID(nodeUUID *string) {
+	i.NodeUUID = nodeUUID
+	i.require(ingestionTraceProtectedAttributeConflictFieldNodeUUID)
+}
+
+// SetStoredValue sets the StoredValue field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceProtectedAttributeConflict) SetStoredValue(storedValue any) {
+	i.StoredValue = storedValue
+	i.require(ingestionTraceProtectedAttributeConflictFieldStoredValue)
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceProtectedAttributeConflict
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceProtectedAttributeConflict(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceProtectedAttributeConflict
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceProtectedAttributeConflict) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
 type IngestionTraceStatus string
 
 const (
@@ -19632,20 +20378,21 @@ func (l *LookupRequest) String() string {
 }
 
 var (
-	messageFieldContent    = big.NewInt(1 << 0)
-	messageFieldCreatedAt  = big.NewInt(1 << 1)
-	messageFieldMetadata   = big.NewInt(1 << 2)
-	messageFieldName       = big.NewInt(1 << 3)
-	messageFieldProcessed  = big.NewInt(1 << 4)
-	messageFieldRole       = big.NewInt(1 << 5)
-	messageFieldThreadUUID = big.NewInt(1 << 6)
-	messageFieldUUID       = big.NewInt(1 << 7)
+	messageFieldContent       = big.NewInt(1 << 0)
+	messageFieldCreatedAt     = big.NewInt(1 << 1)
+	messageFieldMetadata      = big.NewInt(1 << 2)
+	messageFieldName          = big.NewInt(1 << 3)
+	messageFieldProcessed     = big.NewInt(1 << 4)
+	messageFieldReferenceTime = big.NewInt(1 << 5)
+	messageFieldRole          = big.NewInt(1 << 6)
+	messageFieldThreadUUID    = big.NewInt(1 << 7)
+	messageFieldUUID          = big.NewInt(1 << 8)
 )
 
 type Message struct {
 	// The content of the message.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
-	// The time the message was created.
+	// The time Zep received the message.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// Arbitrary key-value metadata attached to the message.
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
@@ -19654,6 +20401,9 @@ type Message struct {
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// Whether the message has finished being ingested into the user's graph.
 	Processed *bool `json:"processed,omitempty" url:"processed,omitempty"`
+	// The message's reference time: the time that the developer supplied on
+	// add, or the ingestion time when the developer supplied no time.
+	ReferenceTime *string `json:"reference_time,omitempty" url:"reference_time,omitempty"`
 	// The role of the message's sender: system, assistant, user, function, or
 	// tool.
 	Role *RoleType `json:"role,omitempty" url:"role,omitempty"`
@@ -19702,6 +20452,13 @@ func (m *Message) GetProcessed() *bool {
 		return nil
 	}
 	return m.Processed
+}
+
+func (m *Message) GetReferenceTime() *string {
+	if m == nil {
+		return nil
+	}
+	return m.ReferenceTime
 }
 
 func (m *Message) GetRole() *RoleType {
@@ -19774,6 +20531,13 @@ func (m *Message) SetName(name *string) {
 func (m *Message) SetProcessed(processed *bool) {
 	m.Processed = processed
 	m.require(messageFieldProcessed)
+}
+
+// SetReferenceTime sets the ReferenceTime field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (m *Message) SetReferenceTime(referenceTime *string) {
+	m.ReferenceTime = referenceTime
+	m.require(messageFieldReferenceTime)
 }
 
 // SetRole sets the Role field and marks it as non-optional;
@@ -22008,7 +22772,7 @@ type OutcomeMappingRule struct {
 	Rule *OutcomeMappingRuleRule `json:"rule,omitempty" url:"rule,omitempty"`
 	// SucceededAtOrAbove is the score threshold for success.
 	SucceededAtOrAbove *float64 `json:"succeeded_at_or_above,omitempty" url:"succeeded_at_or_above,omitempty"`
-	// Values maps metadata strings to Trajectory outcomes.
+	// Values maps metadata strings to Trace outcomes.
 	Values map[string]string `json:"values,omitempty" url:"values,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -23365,6 +24129,111 @@ func (p *PropertyFilterValueThreeItem) Accept(visitor PropertyFilterValueThreeIt
 	return fmt.Errorf("type %T does not include a non-empty union type", p)
 }
 
+var (
+	renameAgentTaskFamilyResponseFieldMerged     = big.NewInt(1 << 0)
+	renameAgentTaskFamilyResponseFieldTaskFamily = big.NewInt(1 << 1)
+)
+
+type RenameAgentTaskFamilyResponse struct {
+	// True when the source descriptor merged into an existing one.
+	Merged *bool `json:"merged,omitempty" url:"merged,omitempty"`
+	// The descriptor after the operation. On a merge it is the descriptor that
+	// kept the target slug.
+	TaskFamily *AgentTaskFamilyDescriptor `json:"task_family,omitempty" url:"task_family,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (r *RenameAgentTaskFamilyResponse) GetMerged() *bool {
+	if r == nil {
+		return nil
+	}
+	return r.Merged
+}
+
+func (r *RenameAgentTaskFamilyResponse) GetTaskFamily() *AgentTaskFamilyDescriptor {
+	if r == nil {
+		return nil
+	}
+	return r.TaskFamily
+}
+
+func (r *RenameAgentTaskFamilyResponse) GetExtraProperties() map[string]interface{} {
+	if r == nil {
+		return nil
+	}
+	return r.extraProperties
+}
+
+func (r *RenameAgentTaskFamilyResponse) require(field *big.Int) {
+	next := new(big.Int)
+	if r.explicitFields != nil {
+		next.Set(r.explicitFields)
+	}
+	next.Or(next, field)
+	r.explicitFields = next
+}
+
+// SetMerged sets the Merged field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RenameAgentTaskFamilyResponse) SetMerged(merged *bool) {
+	r.Merged = merged
+	r.require(renameAgentTaskFamilyResponseFieldMerged)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RenameAgentTaskFamilyResponse) SetTaskFamily(taskFamily *AgentTaskFamilyDescriptor) {
+	r.TaskFamily = taskFamily
+	r.require(renameAgentTaskFamilyResponseFieldTaskFamily)
+}
+
+func (r *RenameAgentTaskFamilyResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler RenameAgentTaskFamilyResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RenameAgentTaskFamilyResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+	r.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RenameAgentTaskFamilyResponse) MarshalJSON() ([]byte, error) {
+	type embed RenameAgentTaskFamilyResponse
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*r),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, r.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (r *RenameAgentTaskFamilyResponse) String() string {
+	if r == nil {
+		return "<nil>"
+	}
+	if len(r.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(r.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
 type RoleType string
 
 const (
@@ -23413,31 +24282,31 @@ var (
 )
 
 type SearchFilters struct {
-	// Include edges connected to any of these node UUIDs.
+	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
 	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
 	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
 	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
 	// Filter results by temporal values.
 	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
-	// Include results with any of these edge types.
+	// Include results with any of these edge types. Node search does not support this filter.
 	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// Include results with any of these edge UUIDs.
+	// Include results with any of these edge UUIDs. Node search does not support this filter.
 	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
 	// Include results derived from any of these episode UUIDs.
 	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	// Exclude results with any of these edge types.
+	// Exclude results with any of these edge types. Node search does not support this filter.
 	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
-	// Exclude results with any of these node labels.
+	// Exclude results with any of these node labels. Edge search does not support this filter.
 	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
 	// Filter results by episode metadata.
 	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
-	// Include results with any of these node labels.
+	// Include results with any of these node labels. Edge search does not support this filter.
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 	// Filter results by node or edge properties.
 	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
-	// Include edges that start at any of these node UUIDs.
+	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
 	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
-	// Include edges that end at any of these node UUIDs.
+	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
 	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -24927,21 +25796,21 @@ func (s *SourceSpan) String() string {
 }
 
 var (
-	sourceTraceFieldClosed               = big.NewInt(1 << 0)
-	sourceTraceFieldEndedAt              = big.NewInt(1 << 1)
-	sourceTraceFieldHasError             = big.NewInt(1 << 2)
-	sourceTraceFieldImportedTrajectories = big.NewInt(1 << 3)
-	sourceTraceFieldLastActivityAt       = big.NewInt(1 << 4)
-	sourceTraceFieldMetadata             = big.NewInt(1 << 5)
-	sourceTraceFieldName                 = big.NewInt(1 << 6)
-	sourceTraceFieldScores               = big.NewInt(1 << 7)
-	sourceTraceFieldSourceRevision       = big.NewInt(1 << 8)
-	sourceTraceFieldSourceURL            = big.NewInt(1 << 9)
-	sourceTraceFieldSpanCount            = big.NewInt(1 << 10)
-	sourceTraceFieldSpans                = big.NewInt(1 << 11)
-	sourceTraceFieldStartedAt            = big.NewInt(1 << 12)
-	sourceTraceFieldTags                 = big.NewInt(1 << 13)
-	sourceTraceFieldTraceID              = big.NewInt(1 << 14)
+	sourceTraceFieldClosed         = big.NewInt(1 << 0)
+	sourceTraceFieldEndedAt        = big.NewInt(1 << 1)
+	sourceTraceFieldHasError       = big.NewInt(1 << 2)
+	sourceTraceFieldImportedTraces = big.NewInt(1 << 3)
+	sourceTraceFieldLastActivityAt = big.NewInt(1 << 4)
+	sourceTraceFieldMetadata       = big.NewInt(1 << 5)
+	sourceTraceFieldName           = big.NewInt(1 << 6)
+	sourceTraceFieldScores         = big.NewInt(1 << 7)
+	sourceTraceFieldSourceRevision = big.NewInt(1 << 8)
+	sourceTraceFieldSourceURL      = big.NewInt(1 << 9)
+	sourceTraceFieldSpanCount      = big.NewInt(1 << 10)
+	sourceTraceFieldSpans          = big.NewInt(1 << 11)
+	sourceTraceFieldStartedAt      = big.NewInt(1 << 12)
+	sourceTraceFieldTags           = big.NewInt(1 << 13)
+	sourceTraceFieldTraceID        = big.NewInt(1 << 14)
 )
 
 type SourceTrace struct {
@@ -24951,8 +25820,8 @@ type SourceTrace struct {
 	EndedAt *string `json:"ended_at,omitempty" url:"ended_at,omitempty"`
 	// HasError reports whether the trace contains an error.
 	HasError *bool `json:"has_error,omitempty" url:"has_error,omitempty"`
-	// ImportedTrajectories contains visible Zep Trajectories imported from this trace. Example: [{"agent_uuid":"f8b28f94-4f5a-4b3a-b782-87aa8464ac04","trajectory_uuid":"6a906e70-50ca-4e43-a874-5fcae02a71fa","import_uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa"}].
-	ImportedTrajectories []*ImportedTrajectoryReference `json:"imported_trajectories,omitempty" url:"imported_trajectories,omitempty"`
+	// ImportedTraces contains visible Zep Traces imported from this trace. Example: [{"agent_uuid":"f8b28f94-4f5a-4b3a-b782-87aa8464ac04","trace_uuid":"6a906e70-50ca-4e43-a874-5fcae02a71fa","import_uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa"}].
+	ImportedTraces []*ImportedTraceReference `json:"imported_traces,omitempty" url:"imported_traces,omitempty"`
 	// LastActivityAt is the most recent activity time across spans.
 	LastActivityAt *string `json:"last_activity_at,omitempty" url:"last_activity_at,omitempty"`
 	// Metadata contains the root span metadata summary. Example: {"team":"support"}.
@@ -25004,11 +25873,11 @@ func (s *SourceTrace) GetHasError() *bool {
 	return s.HasError
 }
 
-func (s *SourceTrace) GetImportedTrajectories() []*ImportedTrajectoryReference {
+func (s *SourceTrace) GetImportedTraces() []*ImportedTraceReference {
 	if s == nil {
 		return nil
 	}
-	return s.ImportedTrajectories
+	return s.ImportedTraces
 }
 
 func (s *SourceTrace) GetLastActivityAt() *string {
@@ -25125,11 +25994,11 @@ func (s *SourceTrace) SetHasError(hasError *bool) {
 	s.require(sourceTraceFieldHasError)
 }
 
-// SetImportedTrajectories sets the ImportedTrajectories field and marks it as non-optional;
+// SetImportedTraces sets the ImportedTraces field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SourceTrace) SetImportedTrajectories(importedTrajectories []*ImportedTrajectoryReference) {
-	s.ImportedTrajectories = importedTrajectories
-	s.require(sourceTraceFieldImportedTrajectories)
+func (s *SourceTrace) SetImportedTraces(importedTraces []*ImportedTraceReference) {
+	s.ImportedTraces = importedTraces
+	s.require(sourceTraceFieldImportedTraces)
 }
 
 // SetLastActivityAt sets the LastActivityAt field and marks it as non-optional;
@@ -25460,20 +26329,20 @@ func (s *SourceTraceResponse) String() string {
 }
 
 var (
-	sourceTraceSummaryFieldClosed               = big.NewInt(1 << 0)
-	sourceTraceSummaryFieldEndedAt              = big.NewInt(1 << 1)
-	sourceTraceSummaryFieldHasError             = big.NewInt(1 << 2)
-	sourceTraceSummaryFieldImportedTrajectories = big.NewInt(1 << 3)
-	sourceTraceSummaryFieldLastActivityAt       = big.NewInt(1 << 4)
-	sourceTraceSummaryFieldMetadata             = big.NewInt(1 << 5)
-	sourceTraceSummaryFieldName                 = big.NewInt(1 << 6)
-	sourceTraceSummaryFieldScores               = big.NewInt(1 << 7)
-	sourceTraceSummaryFieldSourceRevision       = big.NewInt(1 << 8)
-	sourceTraceSummaryFieldSourceURL            = big.NewInt(1 << 9)
-	sourceTraceSummaryFieldSpanCount            = big.NewInt(1 << 10)
-	sourceTraceSummaryFieldStartedAt            = big.NewInt(1 << 11)
-	sourceTraceSummaryFieldTags                 = big.NewInt(1 << 12)
-	sourceTraceSummaryFieldTraceID              = big.NewInt(1 << 13)
+	sourceTraceSummaryFieldClosed         = big.NewInt(1 << 0)
+	sourceTraceSummaryFieldEndedAt        = big.NewInt(1 << 1)
+	sourceTraceSummaryFieldHasError       = big.NewInt(1 << 2)
+	sourceTraceSummaryFieldImportedTraces = big.NewInt(1 << 3)
+	sourceTraceSummaryFieldLastActivityAt = big.NewInt(1 << 4)
+	sourceTraceSummaryFieldMetadata       = big.NewInt(1 << 5)
+	sourceTraceSummaryFieldName           = big.NewInt(1 << 6)
+	sourceTraceSummaryFieldScores         = big.NewInt(1 << 7)
+	sourceTraceSummaryFieldSourceRevision = big.NewInt(1 << 8)
+	sourceTraceSummaryFieldSourceURL      = big.NewInt(1 << 9)
+	sourceTraceSummaryFieldSpanCount      = big.NewInt(1 << 10)
+	sourceTraceSummaryFieldStartedAt      = big.NewInt(1 << 11)
+	sourceTraceSummaryFieldTags           = big.NewInt(1 << 12)
+	sourceTraceSummaryFieldTraceID        = big.NewInt(1 << 13)
 )
 
 type SourceTraceSummary struct {
@@ -25483,8 +26352,8 @@ type SourceTraceSummary struct {
 	EndedAt *string `json:"ended_at,omitempty" url:"ended_at,omitempty"`
 	// HasError reports whether the trace contains an error.
 	HasError *bool `json:"has_error,omitempty" url:"has_error,omitempty"`
-	// ImportedTrajectories contains visible Zep Trajectories imported from this trace. Example: [{"agent_uuid":"f8b28f94-4f5a-4b3a-b782-87aa8464ac04","trajectory_uuid":"6a906e70-50ca-4e43-a874-5fcae02a71fa","import_uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa"}].
-	ImportedTrajectories []*ImportedTrajectoryReference `json:"imported_trajectories,omitempty" url:"imported_trajectories,omitempty"`
+	// ImportedTraces contains visible Zep Traces imported from this trace. Example: [{"agent_uuid":"f8b28f94-4f5a-4b3a-b782-87aa8464ac04","trace_uuid":"6a906e70-50ca-4e43-a874-5fcae02a71fa","import_uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa"}].
+	ImportedTraces []*ImportedTraceReference `json:"imported_traces,omitempty" url:"imported_traces,omitempty"`
 	// LastActivityAt is the most recent activity time across spans.
 	LastActivityAt *string `json:"last_activity_at,omitempty" url:"last_activity_at,omitempty"`
 	// Metadata contains the root span metadata summary. Example: {"team":"support"}.
@@ -25534,11 +26403,11 @@ func (s *SourceTraceSummary) GetHasError() *bool {
 	return s.HasError
 }
 
-func (s *SourceTraceSummary) GetImportedTrajectories() []*ImportedTrajectoryReference {
+func (s *SourceTraceSummary) GetImportedTraces() []*ImportedTraceReference {
 	if s == nil {
 		return nil
 	}
-	return s.ImportedTrajectories
+	return s.ImportedTraces
 }
 
 func (s *SourceTraceSummary) GetLastActivityAt() *string {
@@ -25648,11 +26517,11 @@ func (s *SourceTraceSummary) SetHasError(hasError *bool) {
 	s.require(sourceTraceSummaryFieldHasError)
 }
 
-// SetImportedTrajectories sets the ImportedTrajectories field and marks it as non-optional;
+// SetImportedTraces sets the ImportedTraces field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SourceTraceSummary) SetImportedTrajectories(importedTrajectories []*ImportedTrajectoryReference) {
-	s.ImportedTrajectories = importedTrajectories
-	s.require(sourceTraceSummaryFieldImportedTrajectories)
+func (s *SourceTraceSummary) SetImportedTraces(importedTraces []*ImportedTraceReference) {
+	s.ImportedTraces = importedTraces
+	s.require(sourceTraceSummaryFieldImportedTraces)
 }
 
 // SetLastActivityAt sets the LastActivityAt field and marks it as non-optional;
@@ -26618,6 +27487,110 @@ func (t *ThreadSummaryPage) String() string {
 }
 
 var (
+	traceContentMappingFieldIncludeSystemMessages = big.NewInt(1 << 0)
+	traceContentMappingFieldMetadataKeys          = big.NewInt(1 << 1)
+)
+
+type TraceContentMapping struct {
+	// IncludeSystemMessages controls whether system messages become events.
+	IncludeSystemMessages *bool `json:"include_system_messages,omitempty" url:"include_system_messages,omitempty"`
+	// MetadataKeys contains root metadata keys copied to the Trace.
+	MetadataKeys []string `json:"metadata_keys,omitempty" url:"metadata_keys,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceContentMapping) GetIncludeSystemMessages() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.IncludeSystemMessages
+}
+
+func (t *TraceContentMapping) GetMetadataKeys() []string {
+	if t == nil {
+		return nil
+	}
+	return t.MetadataKeys
+}
+
+func (t *TraceContentMapping) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceContentMapping) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetIncludeSystemMessages sets the IncludeSystemMessages field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceContentMapping) SetIncludeSystemMessages(includeSystemMessages *bool) {
+	t.IncludeSystemMessages = includeSystemMessages
+	t.require(traceContentMappingFieldIncludeSystemMessages)
+}
+
+// SetMetadataKeys sets the MetadataKeys field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceContentMapping) SetMetadataKeys(metadataKeys []string) {
+	t.MetadataKeys = metadataKeys
+	t.require(traceContentMappingFieldMetadataKeys)
+}
+
+func (t *TraceContentMapping) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceContentMapping
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceContentMapping(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceContentMapping) MarshalJSON() ([]byte, error) {
+	type embed TraceContentMapping
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceContentMapping) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
 	traceFilterFieldHasError      = big.NewInt(1 << 0)
 	traceFilterFieldMetadata      = big.NewInt(1 << 1)
 	traceFilterFieldName          = big.NewInt(1 << 2)
@@ -26824,6 +27797,2232 @@ func (t *TraceFilter) String() string {
 }
 
 var (
+	traceImportFieldAgentUUID              = big.NewInt(1 << 0)
+	traceImportFieldConnectionUUID         = big.NewInt(1 << 1)
+	traceImportFieldCreatedAt              = big.NewInt(1 << 2)
+	traceImportFieldImportedTraceCount     = big.NewInt(1 << 3)
+	traceImportFieldLastRun                = big.NewInt(1 << 4)
+	traceImportFieldLearnFrom              = big.NewInt(1 << 5)
+	traceImportFieldMapping                = big.NewInt(1 << 6)
+	traceImportFieldName                   = big.NewInt(1 << 7)
+	traceImportFieldNextRunAt              = big.NewInt(1 << 8)
+	traceImportFieldOnSourceChange         = big.NewInt(1 << 9)
+	traceImportFieldPauseReason            = big.NewInt(1 << 10)
+	traceImportFieldProvider               = big.NewInt(1 << 11)
+	traceImportFieldProviderOrganizationID = big.NewInt(1 << 12)
+	traceImportFieldProviderProjectID      = big.NewInt(1 << 13)
+	traceImportFieldRequireReview          = big.NewInt(1 << 14)
+	traceImportFieldRevision               = big.NewInt(1 << 15)
+	traceImportFieldSchedule               = big.NewInt(1 << 16)
+	traceImportFieldSelection              = big.NewInt(1 << 17)
+	traceImportFieldSourceCursorUpdatedAt  = big.NewInt(1 << 18)
+	traceImportFieldStatus                 = big.NewInt(1 << 19)
+	traceImportFieldUpdatedAt              = big.NewInt(1 << 20)
+	traceImportFieldUUID                   = big.NewInt(1 << 21)
+)
+
+type TraceImport struct {
+	// AgentUUID is the owning Agent identifier.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// ConnectionUUID is the trace connection identifier.
+	ConnectionUUID *string `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
+	// CreatedAt is the resource creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// ImportedTraceCount is the number of Traces currently owned by this import.
+	ImportedTraceCount *int `json:"imported_trace_count,omitempty" url:"imported_trace_count,omitempty"`
+	// LastRun is the latest run for this import, when one exists.
+	LastRun *TraceImportRunReference `json:"last_run,omitempty" url:"last_run,omitempty"`
+	// LearnFrom reports whether imported evidence can support Skills.
+	LearnFrom *bool `json:"learn_from,omitempty" url:"learn_from,omitempty"`
+	// Mapping defines how traces become Traces. Example: {"task_family":{"source":"fixed","value":"support"}}.
+	Mapping *TraceMapping `json:"mapping,omitempty" url:"mapping,omitempty"`
+	// Name is the import display name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// NextRunAt is the next scheduled run time.
+	NextRunAt *string `json:"next_run_at,omitempty" url:"next_run_at,omitempty"`
+	// OnSourceChange defines how changed source traces are handled.
+	OnSourceChange *string `json:"on_source_change,omitempty" url:"on_source_change,omitempty"`
+	// PauseReason is the reason for a paused import, when present.
+	PauseReason *TraceImportPauseReason `json:"pause_reason,omitempty" url:"pause_reason,omitempty"`
+	// Provider is the Braintrust or LangSmith provider.
+	Provider *TraceImportProvider `json:"provider,omitempty" url:"provider,omitempty"`
+	// ProviderOrganizationID is the provider organization identifier.
+	ProviderOrganizationID *string `json:"provider_organization_id,omitempty" url:"provider_organization_id,omitempty"`
+	// ProviderProjectID is the source project identifier.
+	ProviderProjectID *string `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
+	// RequireReview reports whether candidate review is required.
+	RequireReview *bool `json:"require_review,omitempty" url:"require_review,omitempty"`
+	// Revision is the import update revision.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// Schedule contains recurring import settings, when enabled. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+	Schedule *TraceImportSchedule `json:"schedule,omitempty" url:"schedule,omitempty"`
+	// Selection defines the source traces to import. Example: {"trace_ids":["trace_123"]}.
+	Selection *TraceImportSelection `json:"selection,omitempty" url:"selection,omitempty"`
+	// SourceCursorUpdatedAt is the last source cursor update time.
+	SourceCursorUpdatedAt *string `json:"source_cursor_updated_at,omitempty" url:"source_cursor_updated_at,omitempty"`
+	// Status is the import status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// UpdatedAt is the last resource update time.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// UUID is the trace import identifier.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImport) GetAgentUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.AgentUUID
+}
+
+func (t *TraceImport) GetConnectionUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ConnectionUUID
+}
+
+func (t *TraceImport) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *TraceImport) GetImportedTraceCount() *int {
+	if t == nil {
+		return nil
+	}
+	return t.ImportedTraceCount
+}
+
+func (t *TraceImport) GetLastRun() *TraceImportRunReference {
+	if t == nil {
+		return nil
+	}
+	return t.LastRun
+}
+
+func (t *TraceImport) GetLearnFrom() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.LearnFrom
+}
+
+func (t *TraceImport) GetMapping() *TraceMapping {
+	if t == nil {
+		return nil
+	}
+	return t.Mapping
+}
+
+func (t *TraceImport) GetName() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Name
+}
+
+func (t *TraceImport) GetNextRunAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextRunAt
+}
+
+func (t *TraceImport) GetOnSourceChange() *string {
+	if t == nil {
+		return nil
+	}
+	return t.OnSourceChange
+}
+
+func (t *TraceImport) GetPauseReason() *TraceImportPauseReason {
+	if t == nil {
+		return nil
+	}
+	return t.PauseReason
+}
+
+func (t *TraceImport) GetProvider() *TraceImportProvider {
+	if t == nil {
+		return nil
+	}
+	return t.Provider
+}
+
+func (t *TraceImport) GetProviderOrganizationID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ProviderOrganizationID
+}
+
+func (t *TraceImport) GetProviderProjectID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ProviderProjectID
+}
+
+func (t *TraceImport) GetRequireReview() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.RequireReview
+}
+
+func (t *TraceImport) GetRevision() *int {
+	if t == nil {
+		return nil
+	}
+	return t.Revision
+}
+
+func (t *TraceImport) GetSchedule() *TraceImportSchedule {
+	if t == nil {
+		return nil
+	}
+	return t.Schedule
+}
+
+func (t *TraceImport) GetSelection() *TraceImportSelection {
+	if t == nil {
+		return nil
+	}
+	return t.Selection
+}
+
+func (t *TraceImport) GetSourceCursorUpdatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.SourceCursorUpdatedAt
+}
+
+func (t *TraceImport) GetStatus() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TraceImport) GetUpdatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UpdatedAt
+}
+
+func (t *TraceImport) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *TraceImport) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImport) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetAgentUUID(agentUUID *string) {
+	t.AgentUUID = agentUUID
+	t.require(traceImportFieldAgentUUID)
+}
+
+// SetConnectionUUID sets the ConnectionUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetConnectionUUID(connectionUUID *string) {
+	t.ConnectionUUID = connectionUUID
+	t.require(traceImportFieldConnectionUUID)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(traceImportFieldCreatedAt)
+}
+
+// SetImportedTraceCount sets the ImportedTraceCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetImportedTraceCount(importedTraceCount *int) {
+	t.ImportedTraceCount = importedTraceCount
+	t.require(traceImportFieldImportedTraceCount)
+}
+
+// SetLastRun sets the LastRun field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetLastRun(lastRun *TraceImportRunReference) {
+	t.LastRun = lastRun
+	t.require(traceImportFieldLastRun)
+}
+
+// SetLearnFrom sets the LearnFrom field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetLearnFrom(learnFrom *bool) {
+	t.LearnFrom = learnFrom
+	t.require(traceImportFieldLearnFrom)
+}
+
+// SetMapping sets the Mapping field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetMapping(mapping *TraceMapping) {
+	t.Mapping = mapping
+	t.require(traceImportFieldMapping)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetName(name *string) {
+	t.Name = name
+	t.require(traceImportFieldName)
+}
+
+// SetNextRunAt sets the NextRunAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetNextRunAt(nextRunAt *string) {
+	t.NextRunAt = nextRunAt
+	t.require(traceImportFieldNextRunAt)
+}
+
+// SetOnSourceChange sets the OnSourceChange field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetOnSourceChange(onSourceChange *string) {
+	t.OnSourceChange = onSourceChange
+	t.require(traceImportFieldOnSourceChange)
+}
+
+// SetPauseReason sets the PauseReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetPauseReason(pauseReason *TraceImportPauseReason) {
+	t.PauseReason = pauseReason
+	t.require(traceImportFieldPauseReason)
+}
+
+// SetProvider sets the Provider field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetProvider(provider *TraceImportProvider) {
+	t.Provider = provider
+	t.require(traceImportFieldProvider)
+}
+
+// SetProviderOrganizationID sets the ProviderOrganizationID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetProviderOrganizationID(providerOrganizationID *string) {
+	t.ProviderOrganizationID = providerOrganizationID
+	t.require(traceImportFieldProviderOrganizationID)
+}
+
+// SetProviderProjectID sets the ProviderProjectID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetProviderProjectID(providerProjectID *string) {
+	t.ProviderProjectID = providerProjectID
+	t.require(traceImportFieldProviderProjectID)
+}
+
+// SetRequireReview sets the RequireReview field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetRequireReview(requireReview *bool) {
+	t.RequireReview = requireReview
+	t.require(traceImportFieldRequireReview)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetRevision(revision *int) {
+	t.Revision = revision
+	t.require(traceImportFieldRevision)
+}
+
+// SetSchedule sets the Schedule field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetSchedule(schedule *TraceImportSchedule) {
+	t.Schedule = schedule
+	t.require(traceImportFieldSchedule)
+}
+
+// SetSelection sets the Selection field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetSelection(selection *TraceImportSelection) {
+	t.Selection = selection
+	t.require(traceImportFieldSelection)
+}
+
+// SetSourceCursorUpdatedAt sets the SourceCursorUpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetSourceCursorUpdatedAt(sourceCursorUpdatedAt *string) {
+	t.SourceCursorUpdatedAt = sourceCursorUpdatedAt
+	t.require(traceImportFieldSourceCursorUpdatedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetStatus(status *string) {
+	t.Status = status
+	t.require(traceImportFieldStatus)
+}
+
+// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetUpdatedAt(updatedAt *string) {
+	t.UpdatedAt = updatedAt
+	t.require(traceImportFieldUpdatedAt)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImport) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(traceImportFieldUUID)
+}
+
+func (t *TraceImport) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImport
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImport(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImport) MarshalJSON() ([]byte, error) {
+	type embed TraceImport
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImport) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceImportPageFieldItems      = big.NewInt(1 << 0)
+	traceImportPageFieldNextCursor = big.NewInt(1 << 1)
+	traceImportPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type TraceImportPage struct {
+	// Items contains trace imports on this page. Example: [{"uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa","name":"Support traces"}].
+	Items []*TraceImport `json:"items,omitempty" url:"items,omitempty"`
+	// NextCursor is the cursor for the next page.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// TotalSize is the number of matching imports.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportPage) GetItems() []*TraceImport {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *TraceImportPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *TraceImportPage) GetTotalSize() *int {
+	if t == nil {
+		return nil
+	}
+	return t.TotalSize
+}
+
+func (t *TraceImportPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportPage) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportPage) SetItems(items []*TraceImport) {
+	t.Items = items
+	t.require(traceImportPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(traceImportPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(traceImportPageFieldTotalSize)
+}
+
+func (t *TraceImportPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportPage) MarshalJSON() ([]byte, error) {
+	type embed TraceImportPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type TraceImportPauseReason string
+
+const (
+	TraceImportPauseReasonUser                    TraceImportPauseReason = "user"
+	TraceImportPauseReasonCredentialRejected      TraceImportPauseReason = "credential_rejected"
+	TraceImportPauseReasonProviderProjectNotFound TraceImportPauseReason = "provider_project_not_found"
+)
+
+func NewTraceImportPauseReasonFromString(s string) (TraceImportPauseReason, error) {
+	switch s {
+	case "user":
+		return TraceImportPauseReasonUser, nil
+	case "credential_rejected":
+		return TraceImportPauseReasonCredentialRejected, nil
+	case "provider_project_not_found":
+		return TraceImportPauseReasonProviderProjectNotFound, nil
+	}
+	var t TraceImportPauseReason
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceImportPauseReason) Ptr() *TraceImportPauseReason {
+	return &t
+}
+
+// Provider is the Braintrust or LangSmith provider.
+type TraceImportProvider string
+
+const (
+	TraceImportProviderBraintrust TraceImportProvider = "braintrust"
+	TraceImportProviderLangsmith  TraceImportProvider = "langsmith"
+)
+
+func NewTraceImportProviderFromString(s string) (TraceImportProvider, error) {
+	switch s {
+	case "braintrust":
+		return TraceImportProviderBraintrust, nil
+	case "langsmith":
+		return TraceImportProviderLangsmith, nil
+	}
+	var t TraceImportProvider
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceImportProvider) Ptr() *TraceImportProvider {
+	return &t
+}
+
+var (
+	traceImportRunFieldCompletedAt   = big.NewInt(1 << 0)
+	traceImportRunFieldCounts        = big.NewInt(1 << 1)
+	traceImportRunFieldCreatedAt     = big.NewInt(1 << 2)
+	traceImportRunFieldDueAt         = big.NewInt(1 << 3)
+	traceImportRunFieldErrorCode     = big.NewInt(1 << 4)
+	traceImportRunFieldImportUUID    = big.NewInt(1 << 5)
+	traceImportRunFieldMoreAvailable = big.NewInt(1 << 6)
+	traceImportRunFieldSkipReasons   = big.NewInt(1 << 7)
+	traceImportRunFieldStartedAt     = big.NewInt(1 << 8)
+	traceImportRunFieldStatus        = big.NewInt(1 << 9)
+	traceImportRunFieldTaskUUID      = big.NewInt(1 << 10)
+	traceImportRunFieldTrigger       = big.NewInt(1 << 11)
+	traceImportRunFieldUUID          = big.NewInt(1 << 12)
+)
+
+type TraceImportRun struct {
+	// CompletedAt is the run completion time, when present.
+	CompletedAt *string `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	// Counts contains run totals by result type.
+	Counts map[string]int `json:"counts,omitempty" url:"counts,omitempty"`
+	// CreatedAt is the run creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// DueAt is the scheduled run time, when present.
+	DueAt *string `json:"due_at,omitempty" url:"due_at,omitempty"`
+	// ErrorCode is the safe run error code, when present.
+	ErrorCode *string `json:"error_code,omitempty" url:"error_code,omitempty"`
+	// ImportUUID is the owning import identifier.
+	ImportUUID *string `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
+	// MoreAvailable reports whether more matching traces remain.
+	MoreAvailable *bool `json:"more_available,omitempty" url:"more_available,omitempty"`
+	// SkipReasons contains skip totals by reason.
+	SkipReasons map[string]int `json:"skip_reasons,omitempty" url:"skip_reasons,omitempty"`
+	// StartedAt is the run start time, when present.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// Status is the run status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// TaskUUID is the Task identifier.
+	TaskUUID *string `json:"task_uuid,omitempty" url:"task_uuid,omitempty"`
+	// Trigger is the event that created the run.
+	Trigger *string `json:"trigger,omitempty" url:"trigger,omitempty"`
+	// UUID is the run identifier.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportRun) GetCompletedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CompletedAt
+}
+
+func (t *TraceImportRun) GetCounts() map[string]int {
+	if t == nil {
+		return nil
+	}
+	return t.Counts
+}
+
+func (t *TraceImportRun) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *TraceImportRun) GetDueAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.DueAt
+}
+
+func (t *TraceImportRun) GetErrorCode() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ErrorCode
+}
+
+func (t *TraceImportRun) GetImportUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.ImportUUID
+}
+
+func (t *TraceImportRun) GetMoreAvailable() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.MoreAvailable
+}
+
+func (t *TraceImportRun) GetSkipReasons() map[string]int {
+	if t == nil {
+		return nil
+	}
+	return t.SkipReasons
+}
+
+func (t *TraceImportRun) GetStartedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartedAt
+}
+
+func (t *TraceImportRun) GetStatus() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TraceImportRun) GetTaskUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TaskUUID
+}
+
+func (t *TraceImportRun) GetTrigger() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Trigger
+}
+
+func (t *TraceImportRun) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *TraceImportRun) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportRun) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetCompletedAt sets the CompletedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetCompletedAt(completedAt *string) {
+	t.CompletedAt = completedAt
+	t.require(traceImportRunFieldCompletedAt)
+}
+
+// SetCounts sets the Counts field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetCounts(counts map[string]int) {
+	t.Counts = counts
+	t.require(traceImportRunFieldCounts)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(traceImportRunFieldCreatedAt)
+}
+
+// SetDueAt sets the DueAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetDueAt(dueAt *string) {
+	t.DueAt = dueAt
+	t.require(traceImportRunFieldDueAt)
+}
+
+// SetErrorCode sets the ErrorCode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetErrorCode(errorCode *string) {
+	t.ErrorCode = errorCode
+	t.require(traceImportRunFieldErrorCode)
+}
+
+// SetImportUUID sets the ImportUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetImportUUID(importUUID *string) {
+	t.ImportUUID = importUUID
+	t.require(traceImportRunFieldImportUUID)
+}
+
+// SetMoreAvailable sets the MoreAvailable field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetMoreAvailable(moreAvailable *bool) {
+	t.MoreAvailable = moreAvailable
+	t.require(traceImportRunFieldMoreAvailable)
+}
+
+// SetSkipReasons sets the SkipReasons field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetSkipReasons(skipReasons map[string]int) {
+	t.SkipReasons = skipReasons
+	t.require(traceImportRunFieldSkipReasons)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetStartedAt(startedAt *string) {
+	t.StartedAt = startedAt
+	t.require(traceImportRunFieldStartedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetStatus(status *string) {
+	t.Status = status
+	t.require(traceImportRunFieldStatus)
+}
+
+// SetTaskUUID sets the TaskUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetTaskUUID(taskUUID *string) {
+	t.TaskUUID = taskUUID
+	t.require(traceImportRunFieldTaskUUID)
+}
+
+// SetTrigger sets the Trigger field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetTrigger(trigger *string) {
+	t.Trigger = trigger
+	t.require(traceImportRunFieldTrigger)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRun) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(traceImportRunFieldUUID)
+}
+
+func (t *TraceImportRun) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportRun
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportRun(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportRun) MarshalJSON() ([]byte, error) {
+	type embed TraceImportRun
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportRun) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceImportRunItemFieldCreatedAt      = big.NewInt(1 << 0)
+	traceImportRunItemFieldReason         = big.NewInt(1 << 1)
+	traceImportRunItemFieldSourceRevision = big.NewInt(1 << 2)
+	traceImportRunItemFieldStatus         = big.NewInt(1 << 3)
+	traceImportRunItemFieldTraceID        = big.NewInt(1 << 4)
+	traceImportRunItemFieldTraceUUID      = big.NewInt(1 << 5)
+)
+
+type TraceImportRunItem struct {
+	// CreatedAt is the item creation time.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// Reason is the safe skip or failure reason, when present.
+	Reason *string `json:"reason,omitempty" url:"reason,omitempty"`
+	// SourceRevision is the provider revision processed by the run.
+	SourceRevision *string `json:"source_revision,omitempty" url:"source_revision,omitempty"`
+	// Status is the trace result status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// TraceID is the provider trace identifier.
+	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
+	// TraceUUID is the created Trace identifier, when present.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportRunItem) GetCreatedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CreatedAt
+}
+
+func (t *TraceImportRunItem) GetReason() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Reason
+}
+
+func (t *TraceImportRunItem) GetSourceRevision() *string {
+	if t == nil {
+		return nil
+	}
+	return t.SourceRevision
+}
+
+func (t *TraceImportRunItem) GetStatus() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TraceImportRunItem) GetTraceID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TraceID
+}
+
+func (t *TraceImportRunItem) GetTraceUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TraceUUID
+}
+
+func (t *TraceImportRunItem) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportRunItem) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItem) SetCreatedAt(createdAt *string) {
+	t.CreatedAt = createdAt
+	t.require(traceImportRunItemFieldCreatedAt)
+}
+
+// SetReason sets the Reason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItem) SetReason(reason *string) {
+	t.Reason = reason
+	t.require(traceImportRunItemFieldReason)
+}
+
+// SetSourceRevision sets the SourceRevision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItem) SetSourceRevision(sourceRevision *string) {
+	t.SourceRevision = sourceRevision
+	t.require(traceImportRunItemFieldSourceRevision)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItem) SetStatus(status *string) {
+	t.Status = status
+	t.require(traceImportRunItemFieldStatus)
+}
+
+// SetTraceID sets the TraceID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItem) SetTraceID(traceID *string) {
+	t.TraceID = traceID
+	t.require(traceImportRunItemFieldTraceID)
+}
+
+// SetTraceUUID sets the TraceUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItem) SetTraceUUID(traceUUID *string) {
+	t.TraceUUID = traceUUID
+	t.require(traceImportRunItemFieldTraceUUID)
+}
+
+func (t *TraceImportRunItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportRunItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportRunItem(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportRunItem) MarshalJSON() ([]byte, error) {
+	type embed TraceImportRunItem
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportRunItem) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceImportRunItemPageFieldItems      = big.NewInt(1 << 0)
+	traceImportRunItemPageFieldNextCursor = big.NewInt(1 << 1)
+	traceImportRunItemPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type TraceImportRunItemPage struct {
+	// Items contains run items on this page. Example: [{"trace_id":"trace_123","status":"imported"}].
+	Items []*TraceImportRunItem `json:"items,omitempty" url:"items,omitempty"`
+	// NextCursor is the cursor for the next page.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// TotalSize is the number of matching run items.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportRunItemPage) GetItems() []*TraceImportRunItem {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *TraceImportRunItemPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *TraceImportRunItemPage) GetTotalSize() *int {
+	if t == nil {
+		return nil
+	}
+	return t.TotalSize
+}
+
+func (t *TraceImportRunItemPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportRunItemPage) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItemPage) SetItems(items []*TraceImportRunItem) {
+	t.Items = items
+	t.require(traceImportRunItemPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItemPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(traceImportRunItemPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunItemPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(traceImportRunItemPageFieldTotalSize)
+}
+
+func (t *TraceImportRunItemPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportRunItemPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportRunItemPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportRunItemPage) MarshalJSON() ([]byte, error) {
+	type embed TraceImportRunItemPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportRunItemPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceImportRunPageFieldItems      = big.NewInt(1 << 0)
+	traceImportRunPageFieldNextCursor = big.NewInt(1 << 1)
+	traceImportRunPageFieldTotalSize  = big.NewInt(1 << 2)
+)
+
+type TraceImportRunPage struct {
+	// Items contains runs on this page. Example: [{"uuid":"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688","status":"pending"}].
+	Items []*TraceImportRun `json:"items,omitempty" url:"items,omitempty"`
+	// NextCursor is the cursor for the next page.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// TotalSize is the number of matching runs.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportRunPage) GetItems() []*TraceImportRun {
+	if t == nil {
+		return nil
+	}
+	return t.Items
+}
+
+func (t *TraceImportRunPage) GetNextCursor() *string {
+	if t == nil {
+		return nil
+	}
+	return t.NextCursor
+}
+
+func (t *TraceImportRunPage) GetTotalSize() *int {
+	if t == nil {
+		return nil
+	}
+	return t.TotalSize
+}
+
+func (t *TraceImportRunPage) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportRunPage) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunPage) SetItems(items []*TraceImportRun) {
+	t.Items = items
+	t.require(traceImportRunPageFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunPage) SetNextCursor(nextCursor *string) {
+	t.NextCursor = nextCursor
+	t.require(traceImportRunPageFieldNextCursor)
+}
+
+// SetTotalSize sets the TotalSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunPage) SetTotalSize(totalSize *int) {
+	t.TotalSize = totalSize
+	t.require(traceImportRunPageFieldTotalSize)
+}
+
+func (t *TraceImportRunPage) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportRunPage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportRunPage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportRunPage) MarshalJSON() ([]byte, error) {
+	type embed TraceImportRunPage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportRunPage) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceImportRunReferenceFieldCompletedAt = big.NewInt(1 << 0)
+	traceImportRunReferenceFieldStartedAt   = big.NewInt(1 << 1)
+	traceImportRunReferenceFieldStatus      = big.NewInt(1 << 2)
+	traceImportRunReferenceFieldTrigger     = big.NewInt(1 << 3)
+	traceImportRunReferenceFieldUUID        = big.NewInt(1 << 4)
+)
+
+type TraceImportRunReference struct {
+	// CompletedAt is the run completion time, when present.
+	CompletedAt *string `json:"completed_at,omitempty" url:"completed_at,omitempty"`
+	// StartedAt is the run start time, when present.
+	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
+	// Status is the run status.
+	Status *TraceImportRunReferenceStatus `json:"status,omitempty" url:"status,omitempty"`
+	// Trigger is the event that created the run.
+	Trigger *TraceImportRunReferenceTrigger `json:"trigger,omitempty" url:"trigger,omitempty"`
+	// UUID is the run identifier.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportRunReference) GetCompletedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.CompletedAt
+}
+
+func (t *TraceImportRunReference) GetStartedAt() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartedAt
+}
+
+func (t *TraceImportRunReference) GetStatus() *TraceImportRunReferenceStatus {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TraceImportRunReference) GetTrigger() *TraceImportRunReferenceTrigger {
+	if t == nil {
+		return nil
+	}
+	return t.Trigger
+}
+
+func (t *TraceImportRunReference) GetUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.UUID
+}
+
+func (t *TraceImportRunReference) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportRunReference) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetCompletedAt sets the CompletedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunReference) SetCompletedAt(completedAt *string) {
+	t.CompletedAt = completedAt
+	t.require(traceImportRunReferenceFieldCompletedAt)
+}
+
+// SetStartedAt sets the StartedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunReference) SetStartedAt(startedAt *string) {
+	t.StartedAt = startedAt
+	t.require(traceImportRunReferenceFieldStartedAt)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunReference) SetStatus(status *TraceImportRunReferenceStatus) {
+	t.Status = status
+	t.require(traceImportRunReferenceFieldStatus)
+}
+
+// SetTrigger sets the Trigger field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunReference) SetTrigger(trigger *TraceImportRunReferenceTrigger) {
+	t.Trigger = trigger
+	t.require(traceImportRunReferenceFieldTrigger)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportRunReference) SetUUID(uuid *string) {
+	t.UUID = uuid
+	t.require(traceImportRunReferenceFieldUUID)
+}
+
+func (t *TraceImportRunReference) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportRunReference
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportRunReference(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportRunReference) MarshalJSON() ([]byte, error) {
+	type embed TraceImportRunReference
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportRunReference) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// Status is the run status.
+type TraceImportRunReferenceStatus string
+
+const (
+	TraceImportRunReferenceStatusPending   TraceImportRunReferenceStatus = "pending"
+	TraceImportRunReferenceStatusRunning   TraceImportRunReferenceStatus = "running"
+	TraceImportRunReferenceStatusSucceeded TraceImportRunReferenceStatus = "succeeded"
+	TraceImportRunReferenceStatusPartial   TraceImportRunReferenceStatus = "partial"
+	TraceImportRunReferenceStatusFailed    TraceImportRunReferenceStatus = "failed"
+	TraceImportRunReferenceStatusCanceled  TraceImportRunReferenceStatus = "canceled"
+)
+
+func NewTraceImportRunReferenceStatusFromString(s string) (TraceImportRunReferenceStatus, error) {
+	switch s {
+	case "pending":
+		return TraceImportRunReferenceStatusPending, nil
+	case "running":
+		return TraceImportRunReferenceStatusRunning, nil
+	case "succeeded":
+		return TraceImportRunReferenceStatusSucceeded, nil
+	case "partial":
+		return TraceImportRunReferenceStatusPartial, nil
+	case "failed":
+		return TraceImportRunReferenceStatusFailed, nil
+	case "canceled":
+		return TraceImportRunReferenceStatusCanceled, nil
+	}
+	var t TraceImportRunReferenceStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceImportRunReferenceStatus) Ptr() *TraceImportRunReferenceStatus {
+	return &t
+}
+
+// Trigger is the event that created the run.
+type TraceImportRunReferenceTrigger string
+
+const (
+	TraceImportRunReferenceTriggerCreate   TraceImportRunReferenceTrigger = "create"
+	TraceImportRunReferenceTriggerSchedule TraceImportRunReferenceTrigger = "schedule"
+	TraceImportRunReferenceTriggerManual   TraceImportRunReferenceTrigger = "manual"
+)
+
+func NewTraceImportRunReferenceTriggerFromString(s string) (TraceImportRunReferenceTrigger, error) {
+	switch s {
+	case "create":
+		return TraceImportRunReferenceTriggerCreate, nil
+	case "schedule":
+		return TraceImportRunReferenceTriggerSchedule, nil
+	case "manual":
+		return TraceImportRunReferenceTriggerManual, nil
+	}
+	var t TraceImportRunReferenceTrigger
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceImportRunReferenceTrigger) Ptr() *TraceImportRunReferenceTrigger {
+	return &t
+}
+
+var (
+	traceImportScheduleFieldIntervalHours = big.NewInt(1 << 0)
+	traceImportScheduleFieldMaxOpenHours  = big.NewInt(1 << 1)
+	traceImportScheduleFieldSettleMinutes = big.NewInt(1 << 2)
+	traceImportScheduleFieldStartFrom     = big.NewInt(1 << 3)
+)
+
+type TraceImportSchedule struct {
+	// IntervalHours is the scheduled run interval.
+	IntervalHours *int `json:"interval_hours,omitempty" url:"interval_hours,omitempty"`
+	// MaxOpenHours is the maximum wait for an open trace.
+	MaxOpenHours *int `json:"max_open_hours,omitempty" url:"max_open_hours,omitempty"`
+	// SettleMinutes is the wait time for trace updates.
+	SettleMinutes *int `json:"settle_minutes,omitempty" url:"settle_minutes,omitempty"`
+	// StartFrom selects the initial history window.
+	StartFrom *string `json:"start_from,omitempty" url:"start_from,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportSchedule) GetIntervalHours() *int {
+	if t == nil {
+		return nil
+	}
+	return t.IntervalHours
+}
+
+func (t *TraceImportSchedule) GetMaxOpenHours() *int {
+	if t == nil {
+		return nil
+	}
+	return t.MaxOpenHours
+}
+
+func (t *TraceImportSchedule) GetSettleMinutes() *int {
+	if t == nil {
+		return nil
+	}
+	return t.SettleMinutes
+}
+
+func (t *TraceImportSchedule) GetStartFrom() *string {
+	if t == nil {
+		return nil
+	}
+	return t.StartFrom
+}
+
+func (t *TraceImportSchedule) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportSchedule) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetIntervalHours sets the IntervalHours field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportSchedule) SetIntervalHours(intervalHours *int) {
+	t.IntervalHours = intervalHours
+	t.require(traceImportScheduleFieldIntervalHours)
+}
+
+// SetMaxOpenHours sets the MaxOpenHours field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportSchedule) SetMaxOpenHours(maxOpenHours *int) {
+	t.MaxOpenHours = maxOpenHours
+	t.require(traceImportScheduleFieldMaxOpenHours)
+}
+
+// SetSettleMinutes sets the SettleMinutes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportSchedule) SetSettleMinutes(settleMinutes *int) {
+	t.SettleMinutes = settleMinutes
+	t.require(traceImportScheduleFieldSettleMinutes)
+}
+
+// SetStartFrom sets the StartFrom field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportSchedule) SetStartFrom(startFrom *string) {
+	t.StartFrom = startFrom
+	t.require(traceImportScheduleFieldStartFrom)
+}
+
+func (t *TraceImportSchedule) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportSchedule
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportSchedule(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportSchedule) MarshalJSON() ([]byte, error) {
+	type embed TraceImportSchedule
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportSchedule) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceImportSelectionFieldFilter   = big.NewInt(1 << 0)
+	traceImportSelectionFieldTraceIDs = big.NewInt(1 << 1)
+)
+
+type TraceImportSelection struct {
+	// Filter selects traces by provider fields. Example: {"started_after":"2026-01-01T00:00:00Z"}.
+	Filter *TraceFilter `json:"filter,omitempty" url:"filter,omitempty"`
+	// TraceIDs contains explicit provider trace identifiers.
+	TraceIDs []string `json:"trace_ids,omitempty" url:"trace_ids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportSelection) GetFilter() *TraceFilter {
+	if t == nil {
+		return nil
+	}
+	return t.Filter
+}
+
+func (t *TraceImportSelection) GetTraceIDs() []string {
+	if t == nil {
+		return nil
+	}
+	return t.TraceIDs
+}
+
+func (t *TraceImportSelection) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportSelection) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetFilter sets the Filter field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportSelection) SetFilter(filter *TraceFilter) {
+	t.Filter = filter
+	t.require(traceImportSelectionFieldFilter)
+}
+
+// SetTraceIDs sets the TraceIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportSelection) SetTraceIDs(traceIDs []string) {
+	t.TraceIDs = traceIDs
+	t.require(traceImportSelectionFieldTraceIDs)
+}
+
+func (t *TraceImportSelection) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportSelection
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportSelection(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportSelection) MarshalJSON() ([]byte, error) {
+	type embed TraceImportSelection
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportSelection) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceMappingFieldContent         = big.NewInt(1 << 0)
+	traceMappingFieldIncludeOutcomes = big.NewInt(1 << 1)
+	traceMappingFieldObjective       = big.NewInt(1 << 2)
+	traceMappingFieldOutcome         = big.NewInt(1 << 3)
+	traceMappingFieldScoreVerifier   = big.NewInt(1 << 4)
+	traceMappingFieldTaskFamily      = big.NewInt(1 << 5)
+)
+
+type TraceMapping struct {
+	// Content configures copied span content. Example: {"include_system_messages":false}.
+	Content *TraceContentMapping `json:"content,omitempty" url:"content,omitempty"`
+	// IncludeOutcomes lists outcomes that can support a Skill.
+	IncludeOutcomes []TraceMappingIncludeOutcomesItem `json:"include_outcomes,omitempty" url:"include_outcomes,omitempty"`
+	// Objective maps provider data to a Trace objective. Example: {"source":"first_user_message"}.
+	Objective *ObjectiveMappingRule `json:"objective,omitempty" url:"objective,omitempty"`
+	// Outcome contains ordered outcome mapping rules. Example: [{"rule":"score","name":"quality","succeeded_at_or_above":0.8}].
+	Outcome []*OutcomeMappingRule `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// ScoreVerifier enables score-based verification.
+	ScoreVerifier *bool `json:"score_verifier,omitempty" url:"score_verifier,omitempty"`
+	// TaskFamily maps provider data to a task family. Example: {"source":"fixed","value":"support"}.
+	TaskFamily *TaskFamilyMappingRule `json:"task_family,omitempty" url:"task_family,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceMapping) GetContent() *TraceContentMapping {
+	if t == nil {
+		return nil
+	}
+	return t.Content
+}
+
+func (t *TraceMapping) GetIncludeOutcomes() []TraceMappingIncludeOutcomesItem {
+	if t == nil {
+		return nil
+	}
+	return t.IncludeOutcomes
+}
+
+func (t *TraceMapping) GetObjective() *ObjectiveMappingRule {
+	if t == nil {
+		return nil
+	}
+	return t.Objective
+}
+
+func (t *TraceMapping) GetOutcome() []*OutcomeMappingRule {
+	if t == nil {
+		return nil
+	}
+	return t.Outcome
+}
+
+func (t *TraceMapping) GetScoreVerifier() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.ScoreVerifier
+}
+
+func (t *TraceMapping) GetTaskFamily() *TaskFamilyMappingRule {
+	if t == nil {
+		return nil
+	}
+	return t.TaskFamily
+}
+
+func (t *TraceMapping) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceMapping) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetContent sets the Content field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMapping) SetContent(content *TraceContentMapping) {
+	t.Content = content
+	t.require(traceMappingFieldContent)
+}
+
+// SetIncludeOutcomes sets the IncludeOutcomes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMapping) SetIncludeOutcomes(includeOutcomes []TraceMappingIncludeOutcomesItem) {
+	t.IncludeOutcomes = includeOutcomes
+	t.require(traceMappingFieldIncludeOutcomes)
+}
+
+// SetObjective sets the Objective field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMapping) SetObjective(objective *ObjectiveMappingRule) {
+	t.Objective = objective
+	t.require(traceMappingFieldObjective)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMapping) SetOutcome(outcome []*OutcomeMappingRule) {
+	t.Outcome = outcome
+	t.require(traceMappingFieldOutcome)
+}
+
+// SetScoreVerifier sets the ScoreVerifier field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMapping) SetScoreVerifier(scoreVerifier *bool) {
+	t.ScoreVerifier = scoreVerifier
+	t.require(traceMappingFieldScoreVerifier)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMapping) SetTaskFamily(taskFamily *TaskFamilyMappingRule) {
+	t.TaskFamily = taskFamily
+	t.require(traceMappingFieldTaskFamily)
+}
+
+func (t *TraceMapping) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceMapping
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceMapping(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceMapping) MarshalJSON() ([]byte, error) {
+	type embed TraceMapping
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceMapping) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type TraceMappingIncludeOutcomesItem string
+
+const (
+	TraceMappingIncludeOutcomesItemSucceeded TraceMappingIncludeOutcomesItem = "succeeded"
+	TraceMappingIncludeOutcomesItemFailed    TraceMappingIncludeOutcomesItem = "failed"
+	TraceMappingIncludeOutcomesItemPartial   TraceMappingIncludeOutcomesItem = "partial"
+	TraceMappingIncludeOutcomesItemAbandoned TraceMappingIncludeOutcomesItem = "abandoned"
+	TraceMappingIncludeOutcomesItemUnknown   TraceMappingIncludeOutcomesItem = "unknown"
+)
+
+func NewTraceMappingIncludeOutcomesItemFromString(s string) (TraceMappingIncludeOutcomesItem, error) {
+	switch s {
+	case "succeeded":
+		return TraceMappingIncludeOutcomesItemSucceeded, nil
+	case "failed":
+		return TraceMappingIncludeOutcomesItemFailed, nil
+	case "partial":
+		return TraceMappingIncludeOutcomesItemPartial, nil
+	case "abandoned":
+		return TraceMappingIncludeOutcomesItemAbandoned, nil
+	case "unknown":
+		return TraceMappingIncludeOutcomesItemUnknown, nil
+	}
+	var t TraceMappingIncludeOutcomesItem
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceMappingIncludeOutcomesItem) Ptr() *TraceMappingIncludeOutcomesItem {
+	return &t
+}
+
+var (
+	traceMappingResultFieldMetadata     = big.NewInt(1 << 0)
+	traceMappingResultFieldObjective    = big.NewInt(1 << 1)
+	traceMappingResultFieldOutcome      = big.NewInt(1 << 2)
+	traceMappingResultFieldOutcomeRule  = big.NewInt(1 << 3)
+	traceMappingResultFieldScores       = big.NewInt(1 << 4)
+	traceMappingResultFieldTaskFamily   = big.NewInt(1 << 5)
+	traceMappingResultFieldVerification = big.NewInt(1 << 6)
+)
+
+type TraceMappingResult struct {
+	// Metadata contains mapped source metadata. Example: {"ticket_id":"123"}.
+	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
+	// Objective is the resolved objective.
+	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
+	// Outcome is the resolved outcome.
+	Outcome *TraceMappingResultOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// OutcomeRule is the rule that selected the outcome.
+	OutcomeRule *TraceMappingResultOutcomeRule `json:"outcome_rule,omitempty" url:"outcome_rule,omitempty"`
+	// Scores contains provider score values.
+	Scores map[string]float64 `json:"scores,omitempty" url:"scores,omitempty"`
+	// TaskFamily is the resolved task family.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// Verification is the resolved verification state.
+	Verification *string `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceMappingResult) GetMetadata() map[string]any {
+	if t == nil {
+		return nil
+	}
+	return t.Metadata
+}
+
+func (t *TraceMappingResult) GetObjective() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Objective
+}
+
+func (t *TraceMappingResult) GetOutcome() *TraceMappingResultOutcome {
+	if t == nil {
+		return nil
+	}
+	return t.Outcome
+}
+
+func (t *TraceMappingResult) GetOutcomeRule() *TraceMappingResultOutcomeRule {
+	if t == nil {
+		return nil
+	}
+	return t.OutcomeRule
+}
+
+func (t *TraceMappingResult) GetScores() map[string]float64 {
+	if t == nil {
+		return nil
+	}
+	return t.Scores
+}
+
+func (t *TraceMappingResult) GetTaskFamily() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TaskFamily
+}
+
+func (t *TraceMappingResult) GetVerification() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Verification
+}
+
+func (t *TraceMappingResult) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceMappingResult) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetMetadata sets the Metadata field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMappingResult) SetMetadata(metadata map[string]any) {
+	t.Metadata = metadata
+	t.require(traceMappingResultFieldMetadata)
+}
+
+// SetObjective sets the Objective field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMappingResult) SetObjective(objective *string) {
+	t.Objective = objective
+	t.require(traceMappingResultFieldObjective)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMappingResult) SetOutcome(outcome *TraceMappingResultOutcome) {
+	t.Outcome = outcome
+	t.require(traceMappingResultFieldOutcome)
+}
+
+// SetOutcomeRule sets the OutcomeRule field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMappingResult) SetOutcomeRule(outcomeRule *TraceMappingResultOutcomeRule) {
+	t.OutcomeRule = outcomeRule
+	t.require(traceMappingResultFieldOutcomeRule)
+}
+
+// SetScores sets the Scores field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMappingResult) SetScores(scores map[string]float64) {
+	t.Scores = scores
+	t.require(traceMappingResultFieldScores)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMappingResult) SetTaskFamily(taskFamily *string) {
+	t.TaskFamily = taskFamily
+	t.require(traceMappingResultFieldTaskFamily)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceMappingResult) SetVerification(verification *string) {
+	t.Verification = verification
+	t.require(traceMappingResultFieldVerification)
+}
+
+func (t *TraceMappingResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceMappingResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceMappingResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceMappingResult) MarshalJSON() ([]byte, error) {
+	type embed TraceMappingResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceMappingResult) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// Outcome is the resolved outcome.
+type TraceMappingResultOutcome string
+
+const (
+	TraceMappingResultOutcomeSucceeded TraceMappingResultOutcome = "succeeded"
+	TraceMappingResultOutcomeFailed    TraceMappingResultOutcome = "failed"
+	TraceMappingResultOutcomePartial   TraceMappingResultOutcome = "partial"
+	TraceMappingResultOutcomeAbandoned TraceMappingResultOutcome = "abandoned"
+	TraceMappingResultOutcomeUnknown   TraceMappingResultOutcome = "unknown"
+)
+
+func NewTraceMappingResultOutcomeFromString(s string) (TraceMappingResultOutcome, error) {
+	switch s {
+	case "succeeded":
+		return TraceMappingResultOutcomeSucceeded, nil
+	case "failed":
+		return TraceMappingResultOutcomeFailed, nil
+	case "partial":
+		return TraceMappingResultOutcomePartial, nil
+	case "abandoned":
+		return TraceMappingResultOutcomeAbandoned, nil
+	case "unknown":
+		return TraceMappingResultOutcomeUnknown, nil
+	}
+	var t TraceMappingResultOutcome
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceMappingResultOutcome) Ptr() *TraceMappingResultOutcome {
+	return &t
+}
+
+// OutcomeRule is the rule that selected the outcome.
+type TraceMappingResultOutcomeRule string
+
+const (
+	TraceMappingResultOutcomeRuleScore    TraceMappingResultOutcomeRule = "score"
+	TraceMappingResultOutcomeRuleMetadata TraceMappingResultOutcomeRule = "metadata"
+	TraceMappingResultOutcomeRuleError    TraceMappingResultOutcomeRule = "error"
+)
+
+func NewTraceMappingResultOutcomeRuleFromString(s string) (TraceMappingResultOutcomeRule, error) {
+	switch s {
+	case "score":
+		return TraceMappingResultOutcomeRuleScore, nil
+	case "metadata":
+		return TraceMappingResultOutcomeRuleMetadata, nil
+	case "error":
+		return TraceMappingResultOutcomeRuleError, nil
+	}
+	var t TraceMappingResultOutcomeRule
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceMappingResultOutcomeRule) Ptr() *TraceMappingResultOutcomeRule {
+	return &t
+}
+
+var (
 	tracePreviewFieldEventCount    = big.NewInt(1 << 0)
 	tracePreviewFieldMappingResult = big.NewInt(1 << 1)
 	tracePreviewFieldSkipReason    = big.NewInt(1 << 2)
@@ -26832,8 +30031,8 @@ var (
 type TracePreview struct {
 	// EventCount is the number of mapped events.
 	EventCount *int `json:"event_count,omitempty" url:"event_count,omitempty"`
-	// MappingResult contains the resolved Trajectory fields. Example: {"task_family":"support","objective":"Help the customer"}.
-	MappingResult *TrajectoryMappingResult `json:"mapping_result,omitempty" url:"mapping_result,omitempty"`
+	// MappingResult contains the resolved Trace fields. Example: {"task_family":"support","objective":"Help the customer"}.
+	MappingResult *TraceMappingResult `json:"mapping_result,omitempty" url:"mapping_result,omitempty"`
 	// SkipReason is the reason the trace cannot be imported, when present.
 	SkipReason *string `json:"skip_reason,omitempty" url:"skip_reason,omitempty"`
 
@@ -26851,7 +30050,7 @@ func (t *TracePreview) GetEventCount() *int {
 	return t.EventCount
 }
 
-func (t *TracePreview) GetMappingResult() *TrajectoryMappingResult {
+func (t *TracePreview) GetMappingResult() *TraceMappingResult {
 	if t == nil {
 		return nil
 	}
@@ -26890,7 +30089,7 @@ func (t *TracePreview) SetEventCount(eventCount *int) {
 
 // SetMappingResult sets the MappingResult field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TracePreview) SetMappingResult(mappingResult *TrajectoryMappingResult) {
+func (t *TracePreview) SetMappingResult(mappingResult *TraceMappingResult) {
 	t.MappingResult = mappingResult
 	t.require(tracePreviewFieldMappingResult)
 }
@@ -27288,2313 +30487,6 @@ func (t *TraceScoreRange) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryContentMappingFieldIncludeSystemMessages = big.NewInt(1 << 0)
-	trajectoryContentMappingFieldMetadataKeys          = big.NewInt(1 << 1)
-)
-
-type TrajectoryContentMapping struct {
-	// IncludeSystemMessages controls whether system messages become events.
-	IncludeSystemMessages *bool `json:"include_system_messages,omitempty" url:"include_system_messages,omitempty"`
-	// MetadataKeys contains root metadata keys copied to the Trajectory.
-	MetadataKeys []string `json:"metadata_keys,omitempty" url:"metadata_keys,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryContentMapping) GetIncludeSystemMessages() *bool {
-	if t == nil {
-		return nil
-	}
-	return t.IncludeSystemMessages
-}
-
-func (t *TrajectoryContentMapping) GetMetadataKeys() []string {
-	if t == nil {
-		return nil
-	}
-	return t.MetadataKeys
-}
-
-func (t *TrajectoryContentMapping) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryContentMapping) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetIncludeSystemMessages sets the IncludeSystemMessages field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryContentMapping) SetIncludeSystemMessages(includeSystemMessages *bool) {
-	t.IncludeSystemMessages = includeSystemMessages
-	t.require(trajectoryContentMappingFieldIncludeSystemMessages)
-}
-
-// SetMetadataKeys sets the MetadataKeys field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryContentMapping) SetMetadataKeys(metadataKeys []string) {
-	t.MetadataKeys = metadataKeys
-	t.require(trajectoryContentMappingFieldMetadataKeys)
-}
-
-func (t *TrajectoryContentMapping) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryContentMapping
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryContentMapping(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryContentMapping) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryContentMapping
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryContentMapping) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryImportFieldAgentUUID               = big.NewInt(1 << 0)
-	trajectoryImportFieldConnectionUUID          = big.NewInt(1 << 1)
-	trajectoryImportFieldCreatedAt               = big.NewInt(1 << 2)
-	trajectoryImportFieldImportedTrajectoryCount = big.NewInt(1 << 3)
-	trajectoryImportFieldLastRun                 = big.NewInt(1 << 4)
-	trajectoryImportFieldLearnFrom               = big.NewInt(1 << 5)
-	trajectoryImportFieldMapping                 = big.NewInt(1 << 6)
-	trajectoryImportFieldName                    = big.NewInt(1 << 7)
-	trajectoryImportFieldNextRunAt               = big.NewInt(1 << 8)
-	trajectoryImportFieldOnSourceChange          = big.NewInt(1 << 9)
-	trajectoryImportFieldPauseReason             = big.NewInt(1 << 10)
-	trajectoryImportFieldProvider                = big.NewInt(1 << 11)
-	trajectoryImportFieldProviderOrganizationID  = big.NewInt(1 << 12)
-	trajectoryImportFieldProviderProjectID       = big.NewInt(1 << 13)
-	trajectoryImportFieldRequireReview           = big.NewInt(1 << 14)
-	trajectoryImportFieldRevision                = big.NewInt(1 << 15)
-	trajectoryImportFieldSchedule                = big.NewInt(1 << 16)
-	trajectoryImportFieldSelection               = big.NewInt(1 << 17)
-	trajectoryImportFieldSourceCursorUpdatedAt   = big.NewInt(1 << 18)
-	trajectoryImportFieldStatus                  = big.NewInt(1 << 19)
-	trajectoryImportFieldUpdatedAt               = big.NewInt(1 << 20)
-	trajectoryImportFieldUUID                    = big.NewInt(1 << 21)
-)
-
-type TrajectoryImport struct {
-	// AgentUUID is the owning Agent identifier.
-	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	// ConnectionUUID is the trace connection identifier.
-	ConnectionUUID *string `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
-	// CreatedAt is the resource creation time.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// ImportedTrajectoryCount is the number of Trajectories currently owned by this import.
-	ImportedTrajectoryCount *int `json:"imported_trajectory_count,omitempty" url:"imported_trajectory_count,omitempty"`
-	// LastRun is the latest run for this import, when one exists.
-	LastRun *TrajectoryImportRunReference `json:"last_run,omitempty" url:"last_run,omitempty"`
-	// LearnFrom reports whether imported evidence can support Skills.
-	LearnFrom *bool `json:"learn_from,omitempty" url:"learn_from,omitempty"`
-	// Mapping defines how traces become Trajectories. Example: {"task_family":{"source":"fixed","value":"support"}}.
-	Mapping *TrajectoryMapping `json:"mapping,omitempty" url:"mapping,omitempty"`
-	// Name is the import display name.
-	Name *string `json:"name,omitempty" url:"name,omitempty"`
-	// NextRunAt is the next scheduled run time.
-	NextRunAt *string `json:"next_run_at,omitempty" url:"next_run_at,omitempty"`
-	// OnSourceChange defines how changed source traces are handled.
-	OnSourceChange *string `json:"on_source_change,omitempty" url:"on_source_change,omitempty"`
-	// PauseReason is the reason for a paused import, when present.
-	PauseReason *TrajectoryImportPauseReason `json:"pause_reason,omitempty" url:"pause_reason,omitempty"`
-	// Provider is the observability provider.
-	Provider *string `json:"provider,omitempty" url:"provider,omitempty"`
-	// ProviderOrganizationID is the provider organization identifier.
-	ProviderOrganizationID *string `json:"provider_organization_id,omitempty" url:"provider_organization_id,omitempty"`
-	// ProviderProjectID is the source project identifier.
-	ProviderProjectID *string `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
-	// RequireReview reports whether candidate review is required.
-	RequireReview *bool `json:"require_review,omitempty" url:"require_review,omitempty"`
-	// Revision is the import update revision.
-	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
-	// Schedule contains recurring import settings, when enabled. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
-	Schedule *TrajectoryImportSchedule `json:"schedule,omitempty" url:"schedule,omitempty"`
-	// Selection defines the source traces to import. Example: {"trace_ids":["trace_123"]}.
-	Selection *TrajectoryImportSelection `json:"selection,omitempty" url:"selection,omitempty"`
-	// SourceCursorUpdatedAt is the last source cursor update time.
-	SourceCursorUpdatedAt *string `json:"source_cursor_updated_at,omitempty" url:"source_cursor_updated_at,omitempty"`
-	// Status is the import status.
-	Status *string `json:"status,omitempty" url:"status,omitempty"`
-	// UpdatedAt is the last resource update time.
-	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	// UUID is the trajectory import identifier.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImport) GetAgentUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.AgentUUID
-}
-
-func (t *TrajectoryImport) GetConnectionUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.ConnectionUUID
-}
-
-func (t *TrajectoryImport) GetCreatedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.CreatedAt
-}
-
-func (t *TrajectoryImport) GetImportedTrajectoryCount() *int {
-	if t == nil {
-		return nil
-	}
-	return t.ImportedTrajectoryCount
-}
-
-func (t *TrajectoryImport) GetLastRun() *TrajectoryImportRunReference {
-	if t == nil {
-		return nil
-	}
-	return t.LastRun
-}
-
-func (t *TrajectoryImport) GetLearnFrom() *bool {
-	if t == nil {
-		return nil
-	}
-	return t.LearnFrom
-}
-
-func (t *TrajectoryImport) GetMapping() *TrajectoryMapping {
-	if t == nil {
-		return nil
-	}
-	return t.Mapping
-}
-
-func (t *TrajectoryImport) GetName() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Name
-}
-
-func (t *TrajectoryImport) GetNextRunAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.NextRunAt
-}
-
-func (t *TrajectoryImport) GetOnSourceChange() *string {
-	if t == nil {
-		return nil
-	}
-	return t.OnSourceChange
-}
-
-func (t *TrajectoryImport) GetPauseReason() *TrajectoryImportPauseReason {
-	if t == nil {
-		return nil
-	}
-	return t.PauseReason
-}
-
-func (t *TrajectoryImport) GetProvider() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Provider
-}
-
-func (t *TrajectoryImport) GetProviderOrganizationID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.ProviderOrganizationID
-}
-
-func (t *TrajectoryImport) GetProviderProjectID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.ProviderProjectID
-}
-
-func (t *TrajectoryImport) GetRequireReview() *bool {
-	if t == nil {
-		return nil
-	}
-	return t.RequireReview
-}
-
-func (t *TrajectoryImport) GetRevision() *int {
-	if t == nil {
-		return nil
-	}
-	return t.Revision
-}
-
-func (t *TrajectoryImport) GetSchedule() *TrajectoryImportSchedule {
-	if t == nil {
-		return nil
-	}
-	return t.Schedule
-}
-
-func (t *TrajectoryImport) GetSelection() *TrajectoryImportSelection {
-	if t == nil {
-		return nil
-	}
-	return t.Selection
-}
-
-func (t *TrajectoryImport) GetSourceCursorUpdatedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.SourceCursorUpdatedAt
-}
-
-func (t *TrajectoryImport) GetStatus() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Status
-}
-
-func (t *TrajectoryImport) GetUpdatedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.UpdatedAt
-}
-
-func (t *TrajectoryImport) GetUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.UUID
-}
-
-func (t *TrajectoryImport) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImport) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetAgentUUID sets the AgentUUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetAgentUUID(agentUUID *string) {
-	t.AgentUUID = agentUUID
-	t.require(trajectoryImportFieldAgentUUID)
-}
-
-// SetConnectionUUID sets the ConnectionUUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetConnectionUUID(connectionUUID *string) {
-	t.ConnectionUUID = connectionUUID
-	t.require(trajectoryImportFieldConnectionUUID)
-}
-
-// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetCreatedAt(createdAt *string) {
-	t.CreatedAt = createdAt
-	t.require(trajectoryImportFieldCreatedAt)
-}
-
-// SetImportedTrajectoryCount sets the ImportedTrajectoryCount field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetImportedTrajectoryCount(importedTrajectoryCount *int) {
-	t.ImportedTrajectoryCount = importedTrajectoryCount
-	t.require(trajectoryImportFieldImportedTrajectoryCount)
-}
-
-// SetLastRun sets the LastRun field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetLastRun(lastRun *TrajectoryImportRunReference) {
-	t.LastRun = lastRun
-	t.require(trajectoryImportFieldLastRun)
-}
-
-// SetLearnFrom sets the LearnFrom field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetLearnFrom(learnFrom *bool) {
-	t.LearnFrom = learnFrom
-	t.require(trajectoryImportFieldLearnFrom)
-}
-
-// SetMapping sets the Mapping field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetMapping(mapping *TrajectoryMapping) {
-	t.Mapping = mapping
-	t.require(trajectoryImportFieldMapping)
-}
-
-// SetName sets the Name field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetName(name *string) {
-	t.Name = name
-	t.require(trajectoryImportFieldName)
-}
-
-// SetNextRunAt sets the NextRunAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetNextRunAt(nextRunAt *string) {
-	t.NextRunAt = nextRunAt
-	t.require(trajectoryImportFieldNextRunAt)
-}
-
-// SetOnSourceChange sets the OnSourceChange field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetOnSourceChange(onSourceChange *string) {
-	t.OnSourceChange = onSourceChange
-	t.require(trajectoryImportFieldOnSourceChange)
-}
-
-// SetPauseReason sets the PauseReason field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetPauseReason(pauseReason *TrajectoryImportPauseReason) {
-	t.PauseReason = pauseReason
-	t.require(trajectoryImportFieldPauseReason)
-}
-
-// SetProvider sets the Provider field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetProvider(provider *string) {
-	t.Provider = provider
-	t.require(trajectoryImportFieldProvider)
-}
-
-// SetProviderOrganizationID sets the ProviderOrganizationID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetProviderOrganizationID(providerOrganizationID *string) {
-	t.ProviderOrganizationID = providerOrganizationID
-	t.require(trajectoryImportFieldProviderOrganizationID)
-}
-
-// SetProviderProjectID sets the ProviderProjectID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetProviderProjectID(providerProjectID *string) {
-	t.ProviderProjectID = providerProjectID
-	t.require(trajectoryImportFieldProviderProjectID)
-}
-
-// SetRequireReview sets the RequireReview field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetRequireReview(requireReview *bool) {
-	t.RequireReview = requireReview
-	t.require(trajectoryImportFieldRequireReview)
-}
-
-// SetRevision sets the Revision field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetRevision(revision *int) {
-	t.Revision = revision
-	t.require(trajectoryImportFieldRevision)
-}
-
-// SetSchedule sets the Schedule field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetSchedule(schedule *TrajectoryImportSchedule) {
-	t.Schedule = schedule
-	t.require(trajectoryImportFieldSchedule)
-}
-
-// SetSelection sets the Selection field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetSelection(selection *TrajectoryImportSelection) {
-	t.Selection = selection
-	t.require(trajectoryImportFieldSelection)
-}
-
-// SetSourceCursorUpdatedAt sets the SourceCursorUpdatedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetSourceCursorUpdatedAt(sourceCursorUpdatedAt *string) {
-	t.SourceCursorUpdatedAt = sourceCursorUpdatedAt
-	t.require(trajectoryImportFieldSourceCursorUpdatedAt)
-}
-
-// SetStatus sets the Status field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetStatus(status *string) {
-	t.Status = status
-	t.require(trajectoryImportFieldStatus)
-}
-
-// SetUpdatedAt sets the UpdatedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetUpdatedAt(updatedAt *string) {
-	t.UpdatedAt = updatedAt
-	t.require(trajectoryImportFieldUpdatedAt)
-}
-
-// SetUUID sets the UUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImport) SetUUID(uuid *string) {
-	t.UUID = uuid
-	t.require(trajectoryImportFieldUUID)
-}
-
-func (t *TrajectoryImport) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImport
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImport(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImport) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImport
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImport) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryImportPageFieldItems      = big.NewInt(1 << 0)
-	trajectoryImportPageFieldNextCursor = big.NewInt(1 << 1)
-	trajectoryImportPageFieldTotalSize  = big.NewInt(1 << 2)
-)
-
-type TrajectoryImportPage struct {
-	// Items contains trajectory imports on this page. Example: [{"uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa","name":"Support traces"}].
-	Items []*TrajectoryImport `json:"items,omitempty" url:"items,omitempty"`
-	// NextCursor is the cursor for the next page.
-	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	// TotalSize is the number of matching imports.
-	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImportPage) GetItems() []*TrajectoryImport {
-	if t == nil {
-		return nil
-	}
-	return t.Items
-}
-
-func (t *TrajectoryImportPage) GetNextCursor() *string {
-	if t == nil {
-		return nil
-	}
-	return t.NextCursor
-}
-
-func (t *TrajectoryImportPage) GetTotalSize() *int {
-	if t == nil {
-		return nil
-	}
-	return t.TotalSize
-}
-
-func (t *TrajectoryImportPage) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImportPage) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetItems sets the Items field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportPage) SetItems(items []*TrajectoryImport) {
-	t.Items = items
-	t.require(trajectoryImportPageFieldItems)
-}
-
-// SetNextCursor sets the NextCursor field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportPage) SetNextCursor(nextCursor *string) {
-	t.NextCursor = nextCursor
-	t.require(trajectoryImportPageFieldNextCursor)
-}
-
-// SetTotalSize sets the TotalSize field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportPage) SetTotalSize(totalSize *int) {
-	t.TotalSize = totalSize
-	t.require(trajectoryImportPageFieldTotalSize)
-}
-
-func (t *TrajectoryImportPage) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImportPage
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImportPage(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImportPage) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImportPage
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImportPage) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-type TrajectoryImportPauseReason string
-
-const (
-	TrajectoryImportPauseReasonUser                    TrajectoryImportPauseReason = "user"
-	TrajectoryImportPauseReasonCredentialRejected      TrajectoryImportPauseReason = "credential_rejected"
-	TrajectoryImportPauseReasonProviderProjectNotFound TrajectoryImportPauseReason = "provider_project_not_found"
-)
-
-func NewTrajectoryImportPauseReasonFromString(s string) (TrajectoryImportPauseReason, error) {
-	switch s {
-	case "user":
-		return TrajectoryImportPauseReasonUser, nil
-	case "credential_rejected":
-		return TrajectoryImportPauseReasonCredentialRejected, nil
-	case "provider_project_not_found":
-		return TrajectoryImportPauseReasonProviderProjectNotFound, nil
-	}
-	var t TrajectoryImportPauseReason
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (t TrajectoryImportPauseReason) Ptr() *TrajectoryImportPauseReason {
-	return &t
-}
-
-var (
-	trajectoryImportRunFieldCompletedAt   = big.NewInt(1 << 0)
-	trajectoryImportRunFieldCounts        = big.NewInt(1 << 1)
-	trajectoryImportRunFieldCreatedAt     = big.NewInt(1 << 2)
-	trajectoryImportRunFieldDueAt         = big.NewInt(1 << 3)
-	trajectoryImportRunFieldErrorCode     = big.NewInt(1 << 4)
-	trajectoryImportRunFieldImportUUID    = big.NewInt(1 << 5)
-	trajectoryImportRunFieldMoreAvailable = big.NewInt(1 << 6)
-	trajectoryImportRunFieldSkipReasons   = big.NewInt(1 << 7)
-	trajectoryImportRunFieldStartedAt     = big.NewInt(1 << 8)
-	trajectoryImportRunFieldStatus        = big.NewInt(1 << 9)
-	trajectoryImportRunFieldTaskUUID      = big.NewInt(1 << 10)
-	trajectoryImportRunFieldTrigger       = big.NewInt(1 << 11)
-	trajectoryImportRunFieldUUID          = big.NewInt(1 << 12)
-)
-
-type TrajectoryImportRun struct {
-	// CompletedAt is the run completion time, when present.
-	CompletedAt *string `json:"completed_at,omitempty" url:"completed_at,omitempty"`
-	// Counts contains run totals by result type.
-	Counts map[string]int `json:"counts,omitempty" url:"counts,omitempty"`
-	// CreatedAt is the run creation time.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// DueAt is the scheduled run time, when present.
-	DueAt *string `json:"due_at,omitempty" url:"due_at,omitempty"`
-	// ErrorCode is the safe run error code, when present.
-	ErrorCode *string `json:"error_code,omitempty" url:"error_code,omitempty"`
-	// ImportUUID is the owning import identifier.
-	ImportUUID *string `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
-	// MoreAvailable reports whether more matching traces remain.
-	MoreAvailable *bool `json:"more_available,omitempty" url:"more_available,omitempty"`
-	// SkipReasons contains skip totals by reason.
-	SkipReasons map[string]int `json:"skip_reasons,omitempty" url:"skip_reasons,omitempty"`
-	// StartedAt is the run start time, when present.
-	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
-	// Status is the run status.
-	Status *string `json:"status,omitempty" url:"status,omitempty"`
-	// TaskUUID is the Task identifier.
-	TaskUUID *string `json:"task_uuid,omitempty" url:"task_uuid,omitempty"`
-	// Trigger is the event that created the run.
-	Trigger *string `json:"trigger,omitempty" url:"trigger,omitempty"`
-	// UUID is the run identifier.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImportRun) GetCompletedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.CompletedAt
-}
-
-func (t *TrajectoryImportRun) GetCounts() map[string]int {
-	if t == nil {
-		return nil
-	}
-	return t.Counts
-}
-
-func (t *TrajectoryImportRun) GetCreatedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.CreatedAt
-}
-
-func (t *TrajectoryImportRun) GetDueAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.DueAt
-}
-
-func (t *TrajectoryImportRun) GetErrorCode() *string {
-	if t == nil {
-		return nil
-	}
-	return t.ErrorCode
-}
-
-func (t *TrajectoryImportRun) GetImportUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.ImportUUID
-}
-
-func (t *TrajectoryImportRun) GetMoreAvailable() *bool {
-	if t == nil {
-		return nil
-	}
-	return t.MoreAvailable
-}
-
-func (t *TrajectoryImportRun) GetSkipReasons() map[string]int {
-	if t == nil {
-		return nil
-	}
-	return t.SkipReasons
-}
-
-func (t *TrajectoryImportRun) GetStartedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.StartedAt
-}
-
-func (t *TrajectoryImportRun) GetStatus() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Status
-}
-
-func (t *TrajectoryImportRun) GetTaskUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.TaskUUID
-}
-
-func (t *TrajectoryImportRun) GetTrigger() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Trigger
-}
-
-func (t *TrajectoryImportRun) GetUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.UUID
-}
-
-func (t *TrajectoryImportRun) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImportRun) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetCompletedAt sets the CompletedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetCompletedAt(completedAt *string) {
-	t.CompletedAt = completedAt
-	t.require(trajectoryImportRunFieldCompletedAt)
-}
-
-// SetCounts sets the Counts field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetCounts(counts map[string]int) {
-	t.Counts = counts
-	t.require(trajectoryImportRunFieldCounts)
-}
-
-// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetCreatedAt(createdAt *string) {
-	t.CreatedAt = createdAt
-	t.require(trajectoryImportRunFieldCreatedAt)
-}
-
-// SetDueAt sets the DueAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetDueAt(dueAt *string) {
-	t.DueAt = dueAt
-	t.require(trajectoryImportRunFieldDueAt)
-}
-
-// SetErrorCode sets the ErrorCode field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetErrorCode(errorCode *string) {
-	t.ErrorCode = errorCode
-	t.require(trajectoryImportRunFieldErrorCode)
-}
-
-// SetImportUUID sets the ImportUUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetImportUUID(importUUID *string) {
-	t.ImportUUID = importUUID
-	t.require(trajectoryImportRunFieldImportUUID)
-}
-
-// SetMoreAvailable sets the MoreAvailable field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetMoreAvailable(moreAvailable *bool) {
-	t.MoreAvailable = moreAvailable
-	t.require(trajectoryImportRunFieldMoreAvailable)
-}
-
-// SetSkipReasons sets the SkipReasons field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetSkipReasons(skipReasons map[string]int) {
-	t.SkipReasons = skipReasons
-	t.require(trajectoryImportRunFieldSkipReasons)
-}
-
-// SetStartedAt sets the StartedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetStartedAt(startedAt *string) {
-	t.StartedAt = startedAt
-	t.require(trajectoryImportRunFieldStartedAt)
-}
-
-// SetStatus sets the Status field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetStatus(status *string) {
-	t.Status = status
-	t.require(trajectoryImportRunFieldStatus)
-}
-
-// SetTaskUUID sets the TaskUUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetTaskUUID(taskUUID *string) {
-	t.TaskUUID = taskUUID
-	t.require(trajectoryImportRunFieldTaskUUID)
-}
-
-// SetTrigger sets the Trigger field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetTrigger(trigger *string) {
-	t.Trigger = trigger
-	t.require(trajectoryImportRunFieldTrigger)
-}
-
-// SetUUID sets the UUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRun) SetUUID(uuid *string) {
-	t.UUID = uuid
-	t.require(trajectoryImportRunFieldUUID)
-}
-
-func (t *TrajectoryImportRun) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImportRun
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImportRun(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImportRun) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImportRun
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImportRun) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryImportRunItemFieldCreatedAt      = big.NewInt(1 << 0)
-	trajectoryImportRunItemFieldReason         = big.NewInt(1 << 1)
-	trajectoryImportRunItemFieldSourceRevision = big.NewInt(1 << 2)
-	trajectoryImportRunItemFieldStatus         = big.NewInt(1 << 3)
-	trajectoryImportRunItemFieldTraceID        = big.NewInt(1 << 4)
-	trajectoryImportRunItemFieldTrajectoryUUID = big.NewInt(1 << 5)
-)
-
-type TrajectoryImportRunItem struct {
-	// CreatedAt is the item creation time.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// Reason is the safe skip or failure reason, when present.
-	Reason *string `json:"reason,omitempty" url:"reason,omitempty"`
-	// SourceRevision is the provider revision processed by the run.
-	SourceRevision *string `json:"source_revision,omitempty" url:"source_revision,omitempty"`
-	// Status is the trace result status.
-	Status *string `json:"status,omitempty" url:"status,omitempty"`
-	// TraceID is the provider trace identifier.
-	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
-	// TrajectoryUUID is the created Trajectory identifier, when present.
-	TrajectoryUUID *string `json:"trajectory_uuid,omitempty" url:"trajectory_uuid,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImportRunItem) GetCreatedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.CreatedAt
-}
-
-func (t *TrajectoryImportRunItem) GetReason() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Reason
-}
-
-func (t *TrajectoryImportRunItem) GetSourceRevision() *string {
-	if t == nil {
-		return nil
-	}
-	return t.SourceRevision
-}
-
-func (t *TrajectoryImportRunItem) GetStatus() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Status
-}
-
-func (t *TrajectoryImportRunItem) GetTraceID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.TraceID
-}
-
-func (t *TrajectoryImportRunItem) GetTrajectoryUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.TrajectoryUUID
-}
-
-func (t *TrajectoryImportRunItem) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImportRunItem) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItem) SetCreatedAt(createdAt *string) {
-	t.CreatedAt = createdAt
-	t.require(trajectoryImportRunItemFieldCreatedAt)
-}
-
-// SetReason sets the Reason field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItem) SetReason(reason *string) {
-	t.Reason = reason
-	t.require(trajectoryImportRunItemFieldReason)
-}
-
-// SetSourceRevision sets the SourceRevision field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItem) SetSourceRevision(sourceRevision *string) {
-	t.SourceRevision = sourceRevision
-	t.require(trajectoryImportRunItemFieldSourceRevision)
-}
-
-// SetStatus sets the Status field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItem) SetStatus(status *string) {
-	t.Status = status
-	t.require(trajectoryImportRunItemFieldStatus)
-}
-
-// SetTraceID sets the TraceID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItem) SetTraceID(traceID *string) {
-	t.TraceID = traceID
-	t.require(trajectoryImportRunItemFieldTraceID)
-}
-
-// SetTrajectoryUUID sets the TrajectoryUUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItem) SetTrajectoryUUID(trajectoryUUID *string) {
-	t.TrajectoryUUID = trajectoryUUID
-	t.require(trajectoryImportRunItemFieldTrajectoryUUID)
-}
-
-func (t *TrajectoryImportRunItem) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImportRunItem
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImportRunItem(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImportRunItem) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImportRunItem
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImportRunItem) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryImportRunItemPageFieldItems      = big.NewInt(1 << 0)
-	trajectoryImportRunItemPageFieldNextCursor = big.NewInt(1 << 1)
-	trajectoryImportRunItemPageFieldTotalSize  = big.NewInt(1 << 2)
-)
-
-type TrajectoryImportRunItemPage struct {
-	// Items contains run items on this page. Example: [{"trace_id":"trace_123","status":"imported"}].
-	Items []*TrajectoryImportRunItem `json:"items,omitempty" url:"items,omitempty"`
-	// NextCursor is the cursor for the next page.
-	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	// TotalSize is the number of matching run items.
-	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImportRunItemPage) GetItems() []*TrajectoryImportRunItem {
-	if t == nil {
-		return nil
-	}
-	return t.Items
-}
-
-func (t *TrajectoryImportRunItemPage) GetNextCursor() *string {
-	if t == nil {
-		return nil
-	}
-	return t.NextCursor
-}
-
-func (t *TrajectoryImportRunItemPage) GetTotalSize() *int {
-	if t == nil {
-		return nil
-	}
-	return t.TotalSize
-}
-
-func (t *TrajectoryImportRunItemPage) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImportRunItemPage) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetItems sets the Items field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItemPage) SetItems(items []*TrajectoryImportRunItem) {
-	t.Items = items
-	t.require(trajectoryImportRunItemPageFieldItems)
-}
-
-// SetNextCursor sets the NextCursor field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItemPage) SetNextCursor(nextCursor *string) {
-	t.NextCursor = nextCursor
-	t.require(trajectoryImportRunItemPageFieldNextCursor)
-}
-
-// SetTotalSize sets the TotalSize field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunItemPage) SetTotalSize(totalSize *int) {
-	t.TotalSize = totalSize
-	t.require(trajectoryImportRunItemPageFieldTotalSize)
-}
-
-func (t *TrajectoryImportRunItemPage) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImportRunItemPage
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImportRunItemPage(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImportRunItemPage) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImportRunItemPage
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImportRunItemPage) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryImportRunPageFieldItems      = big.NewInt(1 << 0)
-	trajectoryImportRunPageFieldNextCursor = big.NewInt(1 << 1)
-	trajectoryImportRunPageFieldTotalSize  = big.NewInt(1 << 2)
-)
-
-type TrajectoryImportRunPage struct {
-	// Items contains runs on this page. Example: [{"uuid":"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688","status":"pending"}].
-	Items []*TrajectoryImportRun `json:"items,omitempty" url:"items,omitempty"`
-	// NextCursor is the cursor for the next page.
-	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	// TotalSize is the number of matching runs.
-	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImportRunPage) GetItems() []*TrajectoryImportRun {
-	if t == nil {
-		return nil
-	}
-	return t.Items
-}
-
-func (t *TrajectoryImportRunPage) GetNextCursor() *string {
-	if t == nil {
-		return nil
-	}
-	return t.NextCursor
-}
-
-func (t *TrajectoryImportRunPage) GetTotalSize() *int {
-	if t == nil {
-		return nil
-	}
-	return t.TotalSize
-}
-
-func (t *TrajectoryImportRunPage) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImportRunPage) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetItems sets the Items field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunPage) SetItems(items []*TrajectoryImportRun) {
-	t.Items = items
-	t.require(trajectoryImportRunPageFieldItems)
-}
-
-// SetNextCursor sets the NextCursor field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunPage) SetNextCursor(nextCursor *string) {
-	t.NextCursor = nextCursor
-	t.require(trajectoryImportRunPageFieldNextCursor)
-}
-
-// SetTotalSize sets the TotalSize field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunPage) SetTotalSize(totalSize *int) {
-	t.TotalSize = totalSize
-	t.require(trajectoryImportRunPageFieldTotalSize)
-}
-
-func (t *TrajectoryImportRunPage) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImportRunPage
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImportRunPage(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImportRunPage) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImportRunPage
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImportRunPage) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryImportRunReferenceFieldCompletedAt = big.NewInt(1 << 0)
-	trajectoryImportRunReferenceFieldStartedAt   = big.NewInt(1 << 1)
-	trajectoryImportRunReferenceFieldStatus      = big.NewInt(1 << 2)
-	trajectoryImportRunReferenceFieldTrigger     = big.NewInt(1 << 3)
-	trajectoryImportRunReferenceFieldUUID        = big.NewInt(1 << 4)
-)
-
-type TrajectoryImportRunReference struct {
-	// CompletedAt is the run completion time, when present.
-	CompletedAt *string `json:"completed_at,omitempty" url:"completed_at,omitempty"`
-	// StartedAt is the run start time, when present.
-	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
-	// Status is the run status.
-	Status *TrajectoryImportRunReferenceStatus `json:"status,omitempty" url:"status,omitempty"`
-	// Trigger is the event that created the run.
-	Trigger *TrajectoryImportRunReferenceTrigger `json:"trigger,omitempty" url:"trigger,omitempty"`
-	// UUID is the run identifier.
-	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImportRunReference) GetCompletedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.CompletedAt
-}
-
-func (t *TrajectoryImportRunReference) GetStartedAt() *string {
-	if t == nil {
-		return nil
-	}
-	return t.StartedAt
-}
-
-func (t *TrajectoryImportRunReference) GetStatus() *TrajectoryImportRunReferenceStatus {
-	if t == nil {
-		return nil
-	}
-	return t.Status
-}
-
-func (t *TrajectoryImportRunReference) GetTrigger() *TrajectoryImportRunReferenceTrigger {
-	if t == nil {
-		return nil
-	}
-	return t.Trigger
-}
-
-func (t *TrajectoryImportRunReference) GetUUID() *string {
-	if t == nil {
-		return nil
-	}
-	return t.UUID
-}
-
-func (t *TrajectoryImportRunReference) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImportRunReference) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetCompletedAt sets the CompletedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunReference) SetCompletedAt(completedAt *string) {
-	t.CompletedAt = completedAt
-	t.require(trajectoryImportRunReferenceFieldCompletedAt)
-}
-
-// SetStartedAt sets the StartedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunReference) SetStartedAt(startedAt *string) {
-	t.StartedAt = startedAt
-	t.require(trajectoryImportRunReferenceFieldStartedAt)
-}
-
-// SetStatus sets the Status field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunReference) SetStatus(status *TrajectoryImportRunReferenceStatus) {
-	t.Status = status
-	t.require(trajectoryImportRunReferenceFieldStatus)
-}
-
-// SetTrigger sets the Trigger field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunReference) SetTrigger(trigger *TrajectoryImportRunReferenceTrigger) {
-	t.Trigger = trigger
-	t.require(trajectoryImportRunReferenceFieldTrigger)
-}
-
-// SetUUID sets the UUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportRunReference) SetUUID(uuid *string) {
-	t.UUID = uuid
-	t.require(trajectoryImportRunReferenceFieldUUID)
-}
-
-func (t *TrajectoryImportRunReference) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImportRunReference
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImportRunReference(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImportRunReference) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImportRunReference
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImportRunReference) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-// Status is the run status.
-type TrajectoryImportRunReferenceStatus string
-
-const (
-	TrajectoryImportRunReferenceStatusPending   TrajectoryImportRunReferenceStatus = "pending"
-	TrajectoryImportRunReferenceStatusRunning   TrajectoryImportRunReferenceStatus = "running"
-	TrajectoryImportRunReferenceStatusSucceeded TrajectoryImportRunReferenceStatus = "succeeded"
-	TrajectoryImportRunReferenceStatusPartial   TrajectoryImportRunReferenceStatus = "partial"
-	TrajectoryImportRunReferenceStatusFailed    TrajectoryImportRunReferenceStatus = "failed"
-	TrajectoryImportRunReferenceStatusCanceled  TrajectoryImportRunReferenceStatus = "canceled"
-)
-
-func NewTrajectoryImportRunReferenceStatusFromString(s string) (TrajectoryImportRunReferenceStatus, error) {
-	switch s {
-	case "pending":
-		return TrajectoryImportRunReferenceStatusPending, nil
-	case "running":
-		return TrajectoryImportRunReferenceStatusRunning, nil
-	case "succeeded":
-		return TrajectoryImportRunReferenceStatusSucceeded, nil
-	case "partial":
-		return TrajectoryImportRunReferenceStatusPartial, nil
-	case "failed":
-		return TrajectoryImportRunReferenceStatusFailed, nil
-	case "canceled":
-		return TrajectoryImportRunReferenceStatusCanceled, nil
-	}
-	var t TrajectoryImportRunReferenceStatus
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (t TrajectoryImportRunReferenceStatus) Ptr() *TrajectoryImportRunReferenceStatus {
-	return &t
-}
-
-// Trigger is the event that created the run.
-type TrajectoryImportRunReferenceTrigger string
-
-const (
-	TrajectoryImportRunReferenceTriggerCreate   TrajectoryImportRunReferenceTrigger = "create"
-	TrajectoryImportRunReferenceTriggerSchedule TrajectoryImportRunReferenceTrigger = "schedule"
-	TrajectoryImportRunReferenceTriggerManual   TrajectoryImportRunReferenceTrigger = "manual"
-)
-
-func NewTrajectoryImportRunReferenceTriggerFromString(s string) (TrajectoryImportRunReferenceTrigger, error) {
-	switch s {
-	case "create":
-		return TrajectoryImportRunReferenceTriggerCreate, nil
-	case "schedule":
-		return TrajectoryImportRunReferenceTriggerSchedule, nil
-	case "manual":
-		return TrajectoryImportRunReferenceTriggerManual, nil
-	}
-	var t TrajectoryImportRunReferenceTrigger
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (t TrajectoryImportRunReferenceTrigger) Ptr() *TrajectoryImportRunReferenceTrigger {
-	return &t
-}
-
-var (
-	trajectoryImportScheduleFieldIntervalHours = big.NewInt(1 << 0)
-	trajectoryImportScheduleFieldMaxOpenHours  = big.NewInt(1 << 1)
-	trajectoryImportScheduleFieldSettleMinutes = big.NewInt(1 << 2)
-	trajectoryImportScheduleFieldStartFrom     = big.NewInt(1 << 3)
-)
-
-type TrajectoryImportSchedule struct {
-	// IntervalHours is the scheduled run interval.
-	IntervalHours *int `json:"interval_hours,omitempty" url:"interval_hours,omitempty"`
-	// MaxOpenHours is the maximum wait for an open trace.
-	MaxOpenHours *int `json:"max_open_hours,omitempty" url:"max_open_hours,omitempty"`
-	// SettleMinutes is the wait time for trace updates.
-	SettleMinutes *int `json:"settle_minutes,omitempty" url:"settle_minutes,omitempty"`
-	// StartFrom selects the initial history window.
-	StartFrom *string `json:"start_from,omitempty" url:"start_from,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImportSchedule) GetIntervalHours() *int {
-	if t == nil {
-		return nil
-	}
-	return t.IntervalHours
-}
-
-func (t *TrajectoryImportSchedule) GetMaxOpenHours() *int {
-	if t == nil {
-		return nil
-	}
-	return t.MaxOpenHours
-}
-
-func (t *TrajectoryImportSchedule) GetSettleMinutes() *int {
-	if t == nil {
-		return nil
-	}
-	return t.SettleMinutes
-}
-
-func (t *TrajectoryImportSchedule) GetStartFrom() *string {
-	if t == nil {
-		return nil
-	}
-	return t.StartFrom
-}
-
-func (t *TrajectoryImportSchedule) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImportSchedule) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetIntervalHours sets the IntervalHours field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportSchedule) SetIntervalHours(intervalHours *int) {
-	t.IntervalHours = intervalHours
-	t.require(trajectoryImportScheduleFieldIntervalHours)
-}
-
-// SetMaxOpenHours sets the MaxOpenHours field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportSchedule) SetMaxOpenHours(maxOpenHours *int) {
-	t.MaxOpenHours = maxOpenHours
-	t.require(trajectoryImportScheduleFieldMaxOpenHours)
-}
-
-// SetSettleMinutes sets the SettleMinutes field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportSchedule) SetSettleMinutes(settleMinutes *int) {
-	t.SettleMinutes = settleMinutes
-	t.require(trajectoryImportScheduleFieldSettleMinutes)
-}
-
-// SetStartFrom sets the StartFrom field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportSchedule) SetStartFrom(startFrom *string) {
-	t.StartFrom = startFrom
-	t.require(trajectoryImportScheduleFieldStartFrom)
-}
-
-func (t *TrajectoryImportSchedule) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImportSchedule
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImportSchedule(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImportSchedule) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImportSchedule
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImportSchedule) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryImportSelectionFieldFilter   = big.NewInt(1 << 0)
-	trajectoryImportSelectionFieldTraceIDs = big.NewInt(1 << 1)
-)
-
-type TrajectoryImportSelection struct {
-	// Filter selects traces by provider fields. Example: {"started_after":"2026-01-01T00:00:00Z"}.
-	Filter *TraceFilter `json:"filter,omitempty" url:"filter,omitempty"`
-	// TraceIDs contains explicit provider trace identifiers.
-	TraceIDs []string `json:"trace_ids,omitempty" url:"trace_ids,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryImportSelection) GetFilter() *TraceFilter {
-	if t == nil {
-		return nil
-	}
-	return t.Filter
-}
-
-func (t *TrajectoryImportSelection) GetTraceIDs() []string {
-	if t == nil {
-		return nil
-	}
-	return t.TraceIDs
-}
-
-func (t *TrajectoryImportSelection) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryImportSelection) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetFilter sets the Filter field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportSelection) SetFilter(filter *TraceFilter) {
-	t.Filter = filter
-	t.require(trajectoryImportSelectionFieldFilter)
-}
-
-// SetTraceIDs sets the TraceIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryImportSelection) SetTraceIDs(traceIDs []string) {
-	t.TraceIDs = traceIDs
-	t.require(trajectoryImportSelectionFieldTraceIDs)
-}
-
-func (t *TrajectoryImportSelection) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryImportSelection
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryImportSelection(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryImportSelection) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryImportSelection
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryImportSelection) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-var (
-	trajectoryMappingFieldContent         = big.NewInt(1 << 0)
-	trajectoryMappingFieldIncludeOutcomes = big.NewInt(1 << 1)
-	trajectoryMappingFieldObjective       = big.NewInt(1 << 2)
-	trajectoryMappingFieldOutcome         = big.NewInt(1 << 3)
-	trajectoryMappingFieldScoreVerifier   = big.NewInt(1 << 4)
-	trajectoryMappingFieldTaskFamily      = big.NewInt(1 << 5)
-)
-
-type TrajectoryMapping struct {
-	// Content configures copied span content. Example: {"include_system_messages":false}.
-	Content *TrajectoryContentMapping `json:"content,omitempty" url:"content,omitempty"`
-	// IncludeOutcomes lists outcomes that can support a Skill.
-	IncludeOutcomes []TrajectoryMappingIncludeOutcomesItem `json:"include_outcomes,omitempty" url:"include_outcomes,omitempty"`
-	// Objective maps provider data to a Trajectory objective. Example: {"source":"first_user_message"}.
-	Objective *ObjectiveMappingRule `json:"objective,omitempty" url:"objective,omitempty"`
-	// Outcome contains ordered outcome mapping rules. Example: [{"rule":"score","name":"quality","succeeded_at_or_above":0.8}].
-	Outcome []*OutcomeMappingRule `json:"outcome,omitempty" url:"outcome,omitempty"`
-	// ScoreVerifier enables score-based verification.
-	ScoreVerifier *bool `json:"score_verifier,omitempty" url:"score_verifier,omitempty"`
-	// TaskFamily maps provider data to a task family. Example: {"source":"fixed","value":"support"}.
-	TaskFamily *TaskFamilyMappingRule `json:"task_family,omitempty" url:"task_family,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryMapping) GetContent() *TrajectoryContentMapping {
-	if t == nil {
-		return nil
-	}
-	return t.Content
-}
-
-func (t *TrajectoryMapping) GetIncludeOutcomes() []TrajectoryMappingIncludeOutcomesItem {
-	if t == nil {
-		return nil
-	}
-	return t.IncludeOutcomes
-}
-
-func (t *TrajectoryMapping) GetObjective() *ObjectiveMappingRule {
-	if t == nil {
-		return nil
-	}
-	return t.Objective
-}
-
-func (t *TrajectoryMapping) GetOutcome() []*OutcomeMappingRule {
-	if t == nil {
-		return nil
-	}
-	return t.Outcome
-}
-
-func (t *TrajectoryMapping) GetScoreVerifier() *bool {
-	if t == nil {
-		return nil
-	}
-	return t.ScoreVerifier
-}
-
-func (t *TrajectoryMapping) GetTaskFamily() *TaskFamilyMappingRule {
-	if t == nil {
-		return nil
-	}
-	return t.TaskFamily
-}
-
-func (t *TrajectoryMapping) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryMapping) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetContent sets the Content field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMapping) SetContent(content *TrajectoryContentMapping) {
-	t.Content = content
-	t.require(trajectoryMappingFieldContent)
-}
-
-// SetIncludeOutcomes sets the IncludeOutcomes field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMapping) SetIncludeOutcomes(includeOutcomes []TrajectoryMappingIncludeOutcomesItem) {
-	t.IncludeOutcomes = includeOutcomes
-	t.require(trajectoryMappingFieldIncludeOutcomes)
-}
-
-// SetObjective sets the Objective field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMapping) SetObjective(objective *ObjectiveMappingRule) {
-	t.Objective = objective
-	t.require(trajectoryMappingFieldObjective)
-}
-
-// SetOutcome sets the Outcome field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMapping) SetOutcome(outcome []*OutcomeMappingRule) {
-	t.Outcome = outcome
-	t.require(trajectoryMappingFieldOutcome)
-}
-
-// SetScoreVerifier sets the ScoreVerifier field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMapping) SetScoreVerifier(scoreVerifier *bool) {
-	t.ScoreVerifier = scoreVerifier
-	t.require(trajectoryMappingFieldScoreVerifier)
-}
-
-// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMapping) SetTaskFamily(taskFamily *TaskFamilyMappingRule) {
-	t.TaskFamily = taskFamily
-	t.require(trajectoryMappingFieldTaskFamily)
-}
-
-func (t *TrajectoryMapping) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryMapping
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryMapping(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryMapping) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryMapping
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryMapping) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-type TrajectoryMappingIncludeOutcomesItem string
-
-const (
-	TrajectoryMappingIncludeOutcomesItemSucceeded TrajectoryMappingIncludeOutcomesItem = "succeeded"
-	TrajectoryMappingIncludeOutcomesItemFailed    TrajectoryMappingIncludeOutcomesItem = "failed"
-	TrajectoryMappingIncludeOutcomesItemPartial   TrajectoryMappingIncludeOutcomesItem = "partial"
-	TrajectoryMappingIncludeOutcomesItemAbandoned TrajectoryMappingIncludeOutcomesItem = "abandoned"
-	TrajectoryMappingIncludeOutcomesItemUnknown   TrajectoryMappingIncludeOutcomesItem = "unknown"
-)
-
-func NewTrajectoryMappingIncludeOutcomesItemFromString(s string) (TrajectoryMappingIncludeOutcomesItem, error) {
-	switch s {
-	case "succeeded":
-		return TrajectoryMappingIncludeOutcomesItemSucceeded, nil
-	case "failed":
-		return TrajectoryMappingIncludeOutcomesItemFailed, nil
-	case "partial":
-		return TrajectoryMappingIncludeOutcomesItemPartial, nil
-	case "abandoned":
-		return TrajectoryMappingIncludeOutcomesItemAbandoned, nil
-	case "unknown":
-		return TrajectoryMappingIncludeOutcomesItemUnknown, nil
-	}
-	var t TrajectoryMappingIncludeOutcomesItem
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (t TrajectoryMappingIncludeOutcomesItem) Ptr() *TrajectoryMappingIncludeOutcomesItem {
-	return &t
-}
-
-var (
-	trajectoryMappingResultFieldMetadata     = big.NewInt(1 << 0)
-	trajectoryMappingResultFieldObjective    = big.NewInt(1 << 1)
-	trajectoryMappingResultFieldOutcome      = big.NewInt(1 << 2)
-	trajectoryMappingResultFieldOutcomeRule  = big.NewInt(1 << 3)
-	trajectoryMappingResultFieldScores       = big.NewInt(1 << 4)
-	trajectoryMappingResultFieldTaskFamily   = big.NewInt(1 << 5)
-	trajectoryMappingResultFieldVerification = big.NewInt(1 << 6)
-)
-
-type TrajectoryMappingResult struct {
-	// Metadata contains mapped source metadata. Example: {"ticket_id":"123"}.
-	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// Objective is the resolved objective.
-	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
-	// Outcome is the resolved outcome.
-	Outcome *TrajectoryMappingResultOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
-	// OutcomeRule is the rule that selected the outcome.
-	OutcomeRule *TrajectoryMappingResultOutcomeRule `json:"outcome_rule,omitempty" url:"outcome_rule,omitempty"`
-	// Scores contains provider score values.
-	Scores map[string]float64 `json:"scores,omitempty" url:"scores,omitempty"`
-	// TaskFamily is the resolved task family.
-	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
-	// Verification is the resolved verification state.
-	Verification *string `json:"verification,omitempty" url:"verification,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (t *TrajectoryMappingResult) GetMetadata() map[string]any {
-	if t == nil {
-		return nil
-	}
-	return t.Metadata
-}
-
-func (t *TrajectoryMappingResult) GetObjective() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Objective
-}
-
-func (t *TrajectoryMappingResult) GetOutcome() *TrajectoryMappingResultOutcome {
-	if t == nil {
-		return nil
-	}
-	return t.Outcome
-}
-
-func (t *TrajectoryMappingResult) GetOutcomeRule() *TrajectoryMappingResultOutcomeRule {
-	if t == nil {
-		return nil
-	}
-	return t.OutcomeRule
-}
-
-func (t *TrajectoryMappingResult) GetScores() map[string]float64 {
-	if t == nil {
-		return nil
-	}
-	return t.Scores
-}
-
-func (t *TrajectoryMappingResult) GetTaskFamily() *string {
-	if t == nil {
-		return nil
-	}
-	return t.TaskFamily
-}
-
-func (t *TrajectoryMappingResult) GetVerification() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Verification
-}
-
-func (t *TrajectoryMappingResult) GetExtraProperties() map[string]interface{} {
-	if t == nil {
-		return nil
-	}
-	return t.extraProperties
-}
-
-func (t *TrajectoryMappingResult) require(field *big.Int) {
-	next := new(big.Int)
-	if t.explicitFields != nil {
-		next.Set(t.explicitFields)
-	}
-	next.Or(next, field)
-	t.explicitFields = next
-}
-
-// SetMetadata sets the Metadata field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMappingResult) SetMetadata(metadata map[string]any) {
-	t.Metadata = metadata
-	t.require(trajectoryMappingResultFieldMetadata)
-}
-
-// SetObjective sets the Objective field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMappingResult) SetObjective(objective *string) {
-	t.Objective = objective
-	t.require(trajectoryMappingResultFieldObjective)
-}
-
-// SetOutcome sets the Outcome field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMappingResult) SetOutcome(outcome *TrajectoryMappingResultOutcome) {
-	t.Outcome = outcome
-	t.require(trajectoryMappingResultFieldOutcome)
-}
-
-// SetOutcomeRule sets the OutcomeRule field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMappingResult) SetOutcomeRule(outcomeRule *TrajectoryMappingResultOutcomeRule) {
-	t.OutcomeRule = outcomeRule
-	t.require(trajectoryMappingResultFieldOutcomeRule)
-}
-
-// SetScores sets the Scores field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMappingResult) SetScores(scores map[string]float64) {
-	t.Scores = scores
-	t.require(trajectoryMappingResultFieldScores)
-}
-
-// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMappingResult) SetTaskFamily(taskFamily *string) {
-	t.TaskFamily = taskFamily
-	t.require(trajectoryMappingResultFieldTaskFamily)
-}
-
-// SetVerification sets the Verification field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TrajectoryMappingResult) SetVerification(verification *string) {
-	t.Verification = verification
-	t.require(trajectoryMappingResultFieldVerification)
-}
-
-func (t *TrajectoryMappingResult) UnmarshalJSON(data []byte) error {
-	type unmarshaler TrajectoryMappingResult
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TrajectoryMappingResult(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *t)
-	if err != nil {
-		return err
-	}
-	t.extraProperties = extraProperties
-	t.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TrajectoryMappingResult) MarshalJSON() ([]byte, error) {
-	type embed TrajectoryMappingResult
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*t),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (t *TrajectoryMappingResult) String() string {
-	if t == nil {
-		return "<nil>"
-	}
-	if len(t.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
-
-// Outcome is the resolved outcome.
-type TrajectoryMappingResultOutcome string
-
-const (
-	TrajectoryMappingResultOutcomeSucceeded TrajectoryMappingResultOutcome = "succeeded"
-	TrajectoryMappingResultOutcomeFailed    TrajectoryMappingResultOutcome = "failed"
-	TrajectoryMappingResultOutcomePartial   TrajectoryMappingResultOutcome = "partial"
-	TrajectoryMappingResultOutcomeAbandoned TrajectoryMappingResultOutcome = "abandoned"
-	TrajectoryMappingResultOutcomeUnknown   TrajectoryMappingResultOutcome = "unknown"
-)
-
-func NewTrajectoryMappingResultOutcomeFromString(s string) (TrajectoryMappingResultOutcome, error) {
-	switch s {
-	case "succeeded":
-		return TrajectoryMappingResultOutcomeSucceeded, nil
-	case "failed":
-		return TrajectoryMappingResultOutcomeFailed, nil
-	case "partial":
-		return TrajectoryMappingResultOutcomePartial, nil
-	case "abandoned":
-		return TrajectoryMappingResultOutcomeAbandoned, nil
-	case "unknown":
-		return TrajectoryMappingResultOutcomeUnknown, nil
-	}
-	var t TrajectoryMappingResultOutcome
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (t TrajectoryMappingResultOutcome) Ptr() *TrajectoryMappingResultOutcome {
-	return &t
-}
-
-// OutcomeRule is the rule that selected the outcome.
-type TrajectoryMappingResultOutcomeRule string
-
-const (
-	TrajectoryMappingResultOutcomeRuleScore    TrajectoryMappingResultOutcomeRule = "score"
-	TrajectoryMappingResultOutcomeRuleMetadata TrajectoryMappingResultOutcomeRule = "metadata"
-	TrajectoryMappingResultOutcomeRuleError    TrajectoryMappingResultOutcomeRule = "error"
-)
-
-func NewTrajectoryMappingResultOutcomeRuleFromString(s string) (TrajectoryMappingResultOutcomeRule, error) {
-	switch s {
-	case "score":
-		return TrajectoryMappingResultOutcomeRuleScore, nil
-	case "metadata":
-		return TrajectoryMappingResultOutcomeRuleMetadata, nil
-	case "error":
-		return TrajectoryMappingResultOutcomeRuleError, nil
-	}
-	var t TrajectoryMappingResultOutcomeRule
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (t TrajectoryMappingResultOutcomeRule) Ptr() *TrajectoryMappingResultOutcomeRule {
-	return &t
 }
 
 var (

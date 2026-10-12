@@ -114,7 +114,7 @@ func (c *Client) List(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Verify the provider credential before Zep stores it. Example request: `{"name":"Support traces","provider":"braintrust","credential":"secret","requests_per_minute":10}`.
+// Verify a provider credential before Zep stores it. Both providers accept 1 to 60 requests per minute and an optional retention window. Example requests: `{"name":"Support traces","provider":"braintrust","credential":"secret","requests_per_minute":60,"retention_days":30}` and `{"name":"Support traces","provider":"langsmith","credential":"secret","requests_per_minute":60,"retention_days":30}`.
 //
 // Example:
 //
@@ -164,7 +164,7 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
-// Delete a trace connection that no active trajectory import uses.
+// Delete a trace connection that no active trace import uses.
 //
 // Example:
 //
@@ -189,7 +189,7 @@ func (c *Client) Delete(
 	return nil
 }
 
-// Verify changed provider settings before Zep stores them. Example request: `{"credential":"new-secret","requests_per_minute":20}`.
+// Verify changed settings before Zep stores them. Both providers accept 1 to 60 requests per minute and an optional retention window. Example request: `{"requests_per_minute":60,"retention_days":30}`.
 //
 // Example:
 //

@@ -7,7 +7,7 @@ import (
 	http "net/http"
 
 	zep "github.com/getzep/zep-go/v4"
-	trajectoryimport "github.com/getzep/zep-go/v4/agent/trajectoryimport"
+	traceimport "github.com/getzep/zep-go/v4/agent/traceimport"
 	core "github.com/getzep/zep-go/v4/core"
 	internal "github.com/getzep/zep-go/v4/internal"
 	option "github.com/getzep/zep-go/v4/option"
@@ -37,7 +37,7 @@ func (r *RawClient) Create(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	opts ...option.IdempotentRequestOption,
 ) (*core.Response[*zep.Task], error) {
@@ -48,7 +48,7 @@ func (r *RawClient) Create(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports/%v/runs",
+		baseURL+"/agents/%v/trace-imports/%v/runs",
 		agentUUID,
 		importUUID,
 	)
@@ -71,7 +71,7 @@ func (r *RawClient) Create(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(trajectoryimport.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(traceimport.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -88,12 +88,12 @@ func (r *RawClient) Get(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Trajectory import UUID
+	// Trace import UUID
 	importUUID string,
 	// Run UUID
 	runUUID string,
 	opts ...option.RequestOption,
-) (*core.Response[*zep.TrajectoryImportRun], error) {
+) (*core.Response[*zep.TraceImportRun], error) {
 	options := core.NewRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -101,7 +101,7 @@ func (r *RawClient) Get(
 		"https://api.getzep.com/api/v4",
 	)
 	endpointURL := internal.EncodeURL(
-		baseURL+"/agents/%v/trajectory-imports/%v/runs/%v",
+		baseURL+"/agents/%v/trace-imports/%v/runs/%v",
 		agentUUID,
 		importUUID,
 		runUUID,
@@ -110,7 +110,7 @@ func (r *RawClient) Get(
 		r.options.ToHeader(),
 		options.ToHeader(),
 	)
-	var response *zep.TrajectoryImportRun
+	var response *zep.TraceImportRun
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -123,13 +123,13 @@ func (r *RawClient) Get(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(trajectoryimport.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(traceimport.ErrorCodes),
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*zep.TrajectoryImportRun]{
+	return &core.Response[*zep.TraceImportRun]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,
