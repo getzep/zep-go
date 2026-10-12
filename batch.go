@@ -635,13 +635,13 @@ func (b *BatchItem) String() string {
 
 var (
 	batchItemInputFieldContent           = big.NewInt(1 << 0)
-	batchItemInputFieldCreatedAt         = big.NewInt(1 << 1)
-	batchItemInputFieldData              = big.NewInt(1 << 2)
-	batchItemInputFieldDataType          = big.NewInt(1 << 3)
-	batchItemInputFieldDocumentID        = big.NewInt(1 << 4)
-	batchItemInputFieldGraphUUID         = big.NewInt(1 << 5)
-	batchItemInputFieldMetadata          = big.NewInt(1 << 6)
-	batchItemInputFieldName              = big.NewInt(1 << 7)
+	batchItemInputFieldData              = big.NewInt(1 << 1)
+	batchItemInputFieldDataType          = big.NewInt(1 << 2)
+	batchItemInputFieldDocumentID        = big.NewInt(1 << 3)
+	batchItemInputFieldGraphUUID         = big.NewInt(1 << 4)
+	batchItemInputFieldMetadata          = big.NewInt(1 << 5)
+	batchItemInputFieldName              = big.NewInt(1 << 6)
+	batchItemInputFieldReferenceTime     = big.NewInt(1 << 7)
 	batchItemInputFieldRole              = big.NewInt(1 << 8)
 	batchItemInputFieldSourceDescription = big.NewInt(1 << 9)
 	batchItemInputFieldThreadUUID        = big.NewInt(1 << 10)
@@ -652,9 +652,6 @@ var (
 type BatchItemInput struct {
 	// The message content, for a thread_message item.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
-	// The item's reference time, used for temporal reasoning rather than
-	// ingestion time. Applies to both graph_episode and thread_message items.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The episode content, for a graph_episode item.
 	Data *string `json:"data,omitempty" url:"data,omitempty"`
 	// The data format of the episode: text, json, or message.
@@ -667,6 +664,10 @@ type BatchItemInput struct {
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// A customizable name for the sender of the message.
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The item's reference time, used for temporal reasoning rather than
+	// ingestion time. Applies to both graph_episode and thread_message items.
+	// Defaults to the ingestion time.
+	ReferenceTime *string `json:"reference_time,omitempty" url:"reference_time,omitempty"`
 	// The role of the message's sender, for a thread_message item.
 	Role *BatchItemInputRole `json:"role,omitempty" url:"role,omitempty"`
 	// A description of the source of this episode.
@@ -690,13 +691,6 @@ func (b *BatchItemInput) GetContent() *string {
 		return nil
 	}
 	return b.Content
-}
-
-func (b *BatchItemInput) GetCreatedAt() *string {
-	if b == nil {
-		return nil
-	}
-	return b.CreatedAt
 }
 
 func (b *BatchItemInput) GetData() *string {
@@ -739,6 +733,13 @@ func (b *BatchItemInput) GetName() *string {
 		return nil
 	}
 	return b.Name
+}
+
+func (b *BatchItemInput) GetReferenceTime() *string {
+	if b == nil {
+		return nil
+	}
+	return b.ReferenceTime
 }
 
 func (b *BatchItemInput) GetRole() *BatchItemInputRole {
@@ -799,13 +800,6 @@ func (b *BatchItemInput) SetContent(content *string) {
 	b.require(batchItemInputFieldContent)
 }
 
-// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (b *BatchItemInput) SetCreatedAt(createdAt *string) {
-	b.CreatedAt = createdAt
-	b.require(batchItemInputFieldCreatedAt)
-}
-
 // SetData sets the Data field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (b *BatchItemInput) SetData(data *string) {
@@ -846,6 +840,13 @@ func (b *BatchItemInput) SetMetadata(metadata map[string]any) {
 func (b *BatchItemInput) SetName(name *string) {
 	b.Name = name
 	b.require(batchItemInputFieldName)
+}
+
+// SetReferenceTime sets the ReferenceTime field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemInput) SetReferenceTime(referenceTime *string) {
+	b.ReferenceTime = referenceTime
+	b.require(batchItemInputFieldReferenceTime)
 }
 
 // SetRole sets the Role field and marks it as non-optional;

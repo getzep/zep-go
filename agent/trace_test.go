@@ -10,9 +10,9 @@ import (
 	testing "testing"
 )
 
-func TestSettersAbandonAgentTrajectoryRequest(t *testing.T) {
+func TestSettersAbandonAgentTraceRequest(t *testing.T) {
 	t.Run("SetAssertionUUID", func(t *testing.T) {
-		obj := &AbandonAgentTrajectoryRequest{}
+		obj := &AbandonAgentTraceRequest{}
 		var fernTestValueAssertionUUID *string
 		obj.SetAssertionUUID(fernTestValueAssertionUUID)
 		assert.Equal(t, fernTestValueAssertionUUID, obj.AssertionUUID)
@@ -20,7 +20,7 @@ func TestSettersAbandonAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetExpectedRevision", func(t *testing.T) {
-		obj := &AbandonAgentTrajectoryRequest{}
+		obj := &AbandonAgentTraceRequest{}
 		var fernTestValueExpectedRevision *int
 		obj.SetExpectedRevision(fernTestValueExpectedRevision)
 		assert.Equal(t, fernTestValueExpectedRevision, obj.ExpectedRevision)
@@ -28,7 +28,7 @@ func TestSettersAbandonAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetHighestAcceptedSequence", func(t *testing.T) {
-		obj := &AbandonAgentTrajectoryRequest{}
+		obj := &AbandonAgentTraceRequest{}
 		var fernTestValueHighestAcceptedSequence int
 		obj.SetHighestAcceptedSequence(fernTestValueHighestAcceptedSequence)
 		assert.Equal(t, fernTestValueHighestAcceptedSequence, obj.HighestAcceptedSequence)
@@ -36,15 +36,15 @@ func TestSettersAbandonAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetMissingSequenceRanges", func(t *testing.T) {
-		obj := &AbandonAgentTrajectoryRequest{}
-		var fernTestValueMissingSequenceRanges []*v4.AgentTrajectorySequenceRange
+		obj := &AbandonAgentTraceRequest{}
+		var fernTestValueMissingSequenceRanges []*v4.AgentTraceSequenceRange
 		obj.SetMissingSequenceRanges(fernTestValueMissingSequenceRanges)
 		assert.Equal(t, fernTestValueMissingSequenceRanges, obj.MissingSequenceRanges)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetReason", func(t *testing.T) {
-		obj := &AbandonAgentTrajectoryRequest{}
+		obj := &AbandonAgentTraceRequest{}
 		var fernTestValueReason *string
 		obj.SetReason(fernTestValueReason)
 		assert.Equal(t, fernTestValueReason, obj.Reason)
@@ -52,8 +52,8 @@ func TestSettersAbandonAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetVerification", func(t *testing.T) {
-		obj := &AbandonAgentTrajectoryRequest{}
-		var fernTestValueVerification *v4.AgentTrajectoryVerification
+		obj := &AbandonAgentTraceRequest{}
+		var fernTestValueVerification *v4.AgentTraceVerification
 		obj.SetVerification(fernTestValueVerification)
 		assert.Equal(t, fernTestValueVerification, obj.Verification)
 		assert.NotNil(t, obj.explicitFields)
@@ -61,11 +61,11 @@ func TestSettersAbandonAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitAbandonAgentTrajectoryRequest(t *testing.T) {
+func TestSettersMarkExplicitAbandonAgentTraceRequest(t *testing.T) {
 	t.Run("SetAssertionUUID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AbandonAgentTrajectoryRequest{}
+		obj := &AbandonAgentTraceRequest{}
 		var fernTestValueAssertionUUID *string
 
 		// Act
@@ -96,7 +96,7 @@ func TestSettersMarkExplicitAbandonAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetExpectedRevision_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AbandonAgentTrajectoryRequest{}
+		obj := &AbandonAgentTraceRequest{}
 		var fernTestValueExpectedRevision *int
 
 		// Act
@@ -127,7 +127,7 @@ func TestSettersMarkExplicitAbandonAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetHighestAcceptedSequence_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AbandonAgentTrajectoryRequest{}
+		obj := &AbandonAgentTraceRequest{}
 		var fernTestValueHighestAcceptedSequence int
 
 		// Act
@@ -158,8 +158,8 @@ func TestSettersMarkExplicitAbandonAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetMissingSequenceRanges_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AbandonAgentTrajectoryRequest{}
-		var fernTestValueMissingSequenceRanges []*v4.AgentTrajectorySequenceRange
+		obj := &AbandonAgentTraceRequest{}
+		var fernTestValueMissingSequenceRanges []*v4.AgentTraceSequenceRange
 
 		// Act
 		obj.SetMissingSequenceRanges(fernTestValueMissingSequenceRanges)
@@ -189,7 +189,7 @@ func TestSettersMarkExplicitAbandonAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetReason_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AbandonAgentTrajectoryRequest{}
+		obj := &AbandonAgentTraceRequest{}
 		var fernTestValueReason *string
 
 		// Act
@@ -220,8 +220,8 @@ func TestSettersMarkExplicitAbandonAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetVerification_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AbandonAgentTrajectoryRequest{}
-		var fernTestValueVerification *v4.AgentTrajectoryVerification
+		obj := &AbandonAgentTraceRequest{}
+		var fernTestValueVerification *v4.AgentTraceVerification
 
 		// Act
 		obj.SetVerification(fernTestValueVerification)
@@ -250,9 +250,9 @@ func TestSettersMarkExplicitAbandonAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestSettersAppendAgentTrajectoryEventRequest(t *testing.T) {
+func TestSettersAppendAgentTraceEventRequest(t *testing.T) {
 	t.Run("SetContent", func(t *testing.T) {
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueContent *string
 		obj.SetContent(fernTestValueContent)
 		assert.Equal(t, fernTestValueContent, obj.Content)
@@ -260,15 +260,15 @@ func TestSettersAppendAgentTrajectoryEventRequest(t *testing.T) {
 	})
 
 	t.Run("SetContext", func(t *testing.T) {
-		obj := &AppendAgentTrajectoryEventRequest{}
-		var fernTestValueContext *v4.AgentTrajectoryEventContext
+		obj := &AppendAgentTraceEventRequest{}
+		var fernTestValueContext *v4.AgentTraceEventContext
 		obj.SetContext(fernTestValueContext)
 		assert.Equal(t, fernTestValueContext, obj.Context)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetEventID", func(t *testing.T) {
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueEventID *string
 		obj.SetEventID(fernTestValueEventID)
 		assert.Equal(t, fernTestValueEventID, obj.EventID)
@@ -276,15 +276,15 @@ func TestSettersAppendAgentTrajectoryEventRequest(t *testing.T) {
 	})
 
 	t.Run("SetEventType", func(t *testing.T) {
-		obj := &AppendAgentTrajectoryEventRequest{}
-		var fernTestValueEventType v4.AgentTrajectoryEventType
+		obj := &AppendAgentTraceEventRequest{}
+		var fernTestValueEventType v4.AgentTraceEventType
 		obj.SetEventType(fernTestValueEventType)
 		assert.Equal(t, fernTestValueEventType, obj.EventType)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetMetadata", func(t *testing.T) {
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueMetadata map[string]any
 		obj.SetMetadata(fernTestValueMetadata)
 		assert.Equal(t, fernTestValueMetadata, obj.Metadata)
@@ -292,7 +292,7 @@ func TestSettersAppendAgentTrajectoryEventRequest(t *testing.T) {
 	})
 
 	t.Run("SetOccurredAt", func(t *testing.T) {
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueOccurredAt *string
 		obj.SetOccurredAt(fernTestValueOccurredAt)
 		assert.Equal(t, fernTestValueOccurredAt, obj.OccurredAt)
@@ -300,7 +300,7 @@ func TestSettersAppendAgentTrajectoryEventRequest(t *testing.T) {
 	})
 
 	t.Run("SetSequence", func(t *testing.T) {
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueSequence *int
 		obj.SetSequence(fernTestValueSequence)
 		assert.Equal(t, fernTestValueSequence, obj.Sequence)
@@ -308,8 +308,8 @@ func TestSettersAppendAgentTrajectoryEventRequest(t *testing.T) {
 	})
 
 	t.Run("SetSources", func(t *testing.T) {
-		obj := &AppendAgentTrajectoryEventRequest{}
-		var fernTestValueSources []*v4.AgentTrajectoryEventSource
+		obj := &AppendAgentTraceEventRequest{}
+		var fernTestValueSources []*v4.AgentTraceEventSource
 		obj.SetSources(fernTestValueSources)
 		assert.Equal(t, fernTestValueSources, obj.Sources)
 		assert.NotNil(t, obj.explicitFields)
@@ -317,11 +317,11 @@ func TestSettersAppendAgentTrajectoryEventRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
+func TestSettersMarkExplicitAppendAgentTraceEventRequest(t *testing.T) {
 	t.Run("SetContent_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueContent *string
 
 		// Act
@@ -352,8 +352,8 @@ func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
 	t.Run("SetContext_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AppendAgentTrajectoryEventRequest{}
-		var fernTestValueContext *v4.AgentTrajectoryEventContext
+		obj := &AppendAgentTraceEventRequest{}
+		var fernTestValueContext *v4.AgentTraceEventContext
 
 		// Act
 		obj.SetContext(fernTestValueContext)
@@ -383,7 +383,7 @@ func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
 	t.Run("SetEventID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueEventID *string
 
 		// Act
@@ -414,8 +414,8 @@ func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
 	t.Run("SetEventType_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AppendAgentTrajectoryEventRequest{}
-		var fernTestValueEventType v4.AgentTrajectoryEventType
+		obj := &AppendAgentTraceEventRequest{}
+		var fernTestValueEventType v4.AgentTraceEventType
 
 		// Act
 		obj.SetEventType(fernTestValueEventType)
@@ -445,7 +445,7 @@ func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
 	t.Run("SetMetadata_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueMetadata map[string]any
 
 		// Act
@@ -476,7 +476,7 @@ func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
 	t.Run("SetOccurredAt_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueOccurredAt *string
 
 		// Act
@@ -507,7 +507,7 @@ func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
 	t.Run("SetSequence_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AppendAgentTrajectoryEventRequest{}
+		obj := &AppendAgentTraceEventRequest{}
 		var fernTestValueSequence *int
 
 		// Act
@@ -538,8 +538,8 @@ func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
 	t.Run("SetSources_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AppendAgentTrajectoryEventRequest{}
-		var fernTestValueSources []*v4.AgentTrajectoryEventSource
+		obj := &AppendAgentTraceEventRequest{}
+		var fernTestValueSources []*v4.AgentTraceEventSource
 
 		// Act
 		obj.SetSources(fernTestValueSources)
@@ -568,9 +568,9 @@ func TestSettersMarkExplicitAppendAgentTrajectoryEventRequest(t *testing.T) {
 
 }
 
-func TestSettersCloseAgentTrajectoryRequest(t *testing.T) {
+func TestSettersCloseAgentTraceRequest(t *testing.T) {
 	t.Run("SetClosingSequence", func(t *testing.T) {
-		obj := &CloseAgentTrajectoryRequest{}
+		obj := &CloseAgentTraceRequest{}
 		var fernTestValueClosingSequence *int
 		obj.SetClosingSequence(fernTestValueClosingSequence)
 		assert.Equal(t, fernTestValueClosingSequence, obj.ClosingSequence)
@@ -578,7 +578,7 @@ func TestSettersCloseAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetExpectedRevision", func(t *testing.T) {
-		obj := &CloseAgentTrajectoryRequest{}
+		obj := &CloseAgentTraceRequest{}
 		var fernTestValueExpectedRevision *int
 		obj.SetExpectedRevision(fernTestValueExpectedRevision)
 		assert.Equal(t, fernTestValueExpectedRevision, obj.ExpectedRevision)
@@ -586,23 +586,23 @@ func TestSettersCloseAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetMissingSequenceRanges", func(t *testing.T) {
-		obj := &CloseAgentTrajectoryRequest{}
-		var fernTestValueMissingSequenceRanges []*v4.AgentTrajectorySequenceRange
+		obj := &CloseAgentTraceRequest{}
+		var fernTestValueMissingSequenceRanges []*v4.AgentTraceSequenceRange
 		obj.SetMissingSequenceRanges(fernTestValueMissingSequenceRanges)
 		assert.Equal(t, fernTestValueMissingSequenceRanges, obj.MissingSequenceRanges)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetOutcome", func(t *testing.T) {
-		obj := &CloseAgentTrajectoryRequest{}
-		var fernTestValueOutcome *v4.AgentTrajectoryOutcome
+		obj := &CloseAgentTraceRequest{}
+		var fernTestValueOutcome *v4.AgentTraceOutcome
 		obj.SetOutcome(fernTestValueOutcome)
 		assert.Equal(t, fernTestValueOutcome, obj.Outcome)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetReason", func(t *testing.T) {
-		obj := &CloseAgentTrajectoryRequest{}
+		obj := &CloseAgentTraceRequest{}
 		var fernTestValueReason *string
 		obj.SetReason(fernTestValueReason)
 		assert.Equal(t, fernTestValueReason, obj.Reason)
@@ -610,23 +610,23 @@ func TestSettersCloseAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetVerification", func(t *testing.T) {
-		obj := &CloseAgentTrajectoryRequest{}
-		var fernTestValueVerification *v4.AgentTrajectoryVerification
+		obj := &CloseAgentTraceRequest{}
+		var fernTestValueVerification *v4.AgentTraceVerification
 		obj.SetVerification(fernTestValueVerification)
 		assert.Equal(t, fernTestValueVerification, obj.Verification)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetVerifier", func(t *testing.T) {
-		obj := &CloseAgentTrajectoryRequest{}
-		var fernTestValueVerifier *v4.AgentTrajectoryCloseVerifier
+		obj := &CloseAgentTraceRequest{}
+		var fernTestValueVerifier *v4.AgentTraceCloseVerifier
 		obj.SetVerifier(fernTestValueVerifier)
 		assert.Equal(t, fernTestValueVerifier, obj.Verifier)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetVerifierID", func(t *testing.T) {
-		obj := &CloseAgentTrajectoryRequest{}
+		obj := &CloseAgentTraceRequest{}
 		var fernTestValueVerifierID *string
 		obj.SetVerifierID(fernTestValueVerifierID)
 		assert.Equal(t, fernTestValueVerifierID, obj.VerifierID)
@@ -635,11 +635,11 @@ func TestSettersCloseAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
+func TestSettersMarkExplicitCloseAgentTraceRequest(t *testing.T) {
 	t.Run("SetClosingSequence_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CloseAgentTrajectoryRequest{}
+		obj := &CloseAgentTraceRequest{}
 		var fernTestValueClosingSequence *int
 
 		// Act
@@ -670,7 +670,7 @@ func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetExpectedRevision_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CloseAgentTrajectoryRequest{}
+		obj := &CloseAgentTraceRequest{}
 		var fernTestValueExpectedRevision *int
 
 		// Act
@@ -701,8 +701,8 @@ func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetMissingSequenceRanges_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CloseAgentTrajectoryRequest{}
-		var fernTestValueMissingSequenceRanges []*v4.AgentTrajectorySequenceRange
+		obj := &CloseAgentTraceRequest{}
+		var fernTestValueMissingSequenceRanges []*v4.AgentTraceSequenceRange
 
 		// Act
 		obj.SetMissingSequenceRanges(fernTestValueMissingSequenceRanges)
@@ -732,8 +732,8 @@ func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetOutcome_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CloseAgentTrajectoryRequest{}
-		var fernTestValueOutcome *v4.AgentTrajectoryOutcome
+		obj := &CloseAgentTraceRequest{}
+		var fernTestValueOutcome *v4.AgentTraceOutcome
 
 		// Act
 		obj.SetOutcome(fernTestValueOutcome)
@@ -763,7 +763,7 @@ func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetReason_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CloseAgentTrajectoryRequest{}
+		obj := &CloseAgentTraceRequest{}
 		var fernTestValueReason *string
 
 		// Act
@@ -794,8 +794,8 @@ func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetVerification_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CloseAgentTrajectoryRequest{}
-		var fernTestValueVerification *v4.AgentTrajectoryVerification
+		obj := &CloseAgentTraceRequest{}
+		var fernTestValueVerification *v4.AgentTraceVerification
 
 		// Act
 		obj.SetVerification(fernTestValueVerification)
@@ -825,8 +825,8 @@ func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetVerifier_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CloseAgentTrajectoryRequest{}
-		var fernTestValueVerifier *v4.AgentTrajectoryCloseVerifier
+		obj := &CloseAgentTraceRequest{}
+		var fernTestValueVerifier *v4.AgentTraceCloseVerifier
 
 		// Act
 		obj.SetVerifier(fernTestValueVerifier)
@@ -856,7 +856,7 @@ func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetVerifierID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CloseAgentTrajectoryRequest{}
+		obj := &CloseAgentTraceRequest{}
 		var fernTestValueVerifierID *string
 
 		// Act
@@ -886,9 +886,9 @@ func TestSettersMarkExplicitCloseAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestSettersCorrectAgentTrajectoryTaskFamilyRequest(t *testing.T) {
+func TestSettersCorrectAgentTraceTaskFamilyRequest(t *testing.T) {
 	t.Run("SetExpectedRevision", func(t *testing.T) {
-		obj := &CorrectAgentTrajectoryTaskFamilyRequest{}
+		obj := &CorrectAgentTraceTaskFamilyRequest{}
 		var fernTestValueExpectedRevision int
 		obj.SetExpectedRevision(fernTestValueExpectedRevision)
 		assert.Equal(t, fernTestValueExpectedRevision, obj.ExpectedRevision)
@@ -896,7 +896,7 @@ func TestSettersCorrectAgentTrajectoryTaskFamilyRequest(t *testing.T) {
 	})
 
 	t.Run("SetReason", func(t *testing.T) {
-		obj := &CorrectAgentTrajectoryTaskFamilyRequest{}
+		obj := &CorrectAgentTraceTaskFamilyRequest{}
 		var fernTestValueReason string
 		obj.SetReason(fernTestValueReason)
 		assert.Equal(t, fernTestValueReason, obj.Reason)
@@ -904,7 +904,7 @@ func TestSettersCorrectAgentTrajectoryTaskFamilyRequest(t *testing.T) {
 	})
 
 	t.Run("SetTaskFamily", func(t *testing.T) {
-		obj := &CorrectAgentTrajectoryTaskFamilyRequest{}
+		obj := &CorrectAgentTraceTaskFamilyRequest{}
 		var fernTestValueTaskFamily *string
 		obj.SetTaskFamily(fernTestValueTaskFamily)
 		assert.Equal(t, fernTestValueTaskFamily, obj.TaskFamily)
@@ -913,11 +913,11 @@ func TestSettersCorrectAgentTrajectoryTaskFamilyRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitCorrectAgentTrajectoryTaskFamilyRequest(t *testing.T) {
+func TestSettersMarkExplicitCorrectAgentTraceTaskFamilyRequest(t *testing.T) {
 	t.Run("SetExpectedRevision_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CorrectAgentTrajectoryTaskFamilyRequest{}
+		obj := &CorrectAgentTraceTaskFamilyRequest{}
 		var fernTestValueExpectedRevision int
 
 		// Act
@@ -948,7 +948,7 @@ func TestSettersMarkExplicitCorrectAgentTrajectoryTaskFamilyRequest(t *testing.T
 	t.Run("SetReason_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CorrectAgentTrajectoryTaskFamilyRequest{}
+		obj := &CorrectAgentTraceTaskFamilyRequest{}
 		var fernTestValueReason string
 
 		// Act
@@ -979,7 +979,7 @@ func TestSettersMarkExplicitCorrectAgentTrajectoryTaskFamilyRequest(t *testing.T
 	t.Run("SetTaskFamily_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CorrectAgentTrajectoryTaskFamilyRequest{}
+		obj := &CorrectAgentTraceTaskFamilyRequest{}
 		var fernTestValueTaskFamily *string
 
 		// Act
@@ -1009,9 +1009,9 @@ func TestSettersMarkExplicitCorrectAgentTrajectoryTaskFamilyRequest(t *testing.T
 
 }
 
-func TestSettersCreateAgentTrajectoryRequest(t *testing.T) {
+func TestSettersCreateAgentTraceRequest(t *testing.T) {
 	t.Run("SetLearnFrom", func(t *testing.T) {
-		obj := &CreateAgentTrajectoryRequest{}
+		obj := &CreateAgentTraceRequest{}
 		var fernTestValueLearnFrom *bool
 		obj.SetLearnFrom(fernTestValueLearnFrom)
 		assert.Equal(t, fernTestValueLearnFrom, obj.LearnFrom)
@@ -1019,7 +1019,7 @@ func TestSettersCreateAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetMetadata", func(t *testing.T) {
-		obj := &CreateAgentTrajectoryRequest{}
+		obj := &CreateAgentTraceRequest{}
 		var fernTestValueMetadata map[string]any
 		obj.SetMetadata(fernTestValueMetadata)
 		assert.Equal(t, fernTestValueMetadata, obj.Metadata)
@@ -1027,44 +1027,44 @@ func TestSettersCreateAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetObjective", func(t *testing.T) {
-		obj := &CreateAgentTrajectoryRequest{}
+		obj := &CreateAgentTraceRequest{}
 		var fernTestValueObjective string
 		obj.SetObjective(fernTestValueObjective)
 		assert.Equal(t, fernTestValueObjective, obj.Objective)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
-	t.Run("SetParentTrajectoryUUID", func(t *testing.T) {
-		obj := &CreateAgentTrajectoryRequest{}
-		var fernTestValueParentTrajectoryUUID *string
-		obj.SetParentTrajectoryUUID(fernTestValueParentTrajectoryUUID)
-		assert.Equal(t, fernTestValueParentTrajectoryUUID, obj.ParentTrajectoryUUID)
+	t.Run("SetParentTraceUUID", func(t *testing.T) {
+		obj := &CreateAgentTraceRequest{}
+		var fernTestValueParentTraceUUID *string
+		obj.SetParentTraceUUID(fernTestValueParentTraceUUID)
+		assert.Equal(t, fernTestValueParentTraceUUID, obj.ParentTraceUUID)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetTaskFamily", func(t *testing.T) {
-		obj := &CreateAgentTrajectoryRequest{}
-		var fernTestValueTaskFamily string
+		obj := &CreateAgentTraceRequest{}
+		var fernTestValueTaskFamily *string
 		obj.SetTaskFamily(fernTestValueTaskFamily)
 		assert.Equal(t, fernTestValueTaskFamily, obj.TaskFamily)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
-	t.Run("SetTrajectoryID", func(t *testing.T) {
-		obj := &CreateAgentTrajectoryRequest{}
-		var fernTestValueTrajectoryID *string
-		obj.SetTrajectoryID(fernTestValueTrajectoryID)
-		assert.Equal(t, fernTestValueTrajectoryID, obj.TrajectoryID)
+	t.Run("SetTraceID", func(t *testing.T) {
+		obj := &CreateAgentTraceRequest{}
+		var fernTestValueTraceID *string
+		obj.SetTraceID(fernTestValueTraceID)
+		assert.Equal(t, fernTestValueTraceID, obj.TraceID)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 }
 
-func TestSettersMarkExplicitCreateAgentTrajectoryRequest(t *testing.T) {
+func TestSettersMarkExplicitCreateAgentTraceRequest(t *testing.T) {
 	t.Run("SetLearnFrom_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateAgentTrajectoryRequest{}
+		obj := &CreateAgentTraceRequest{}
 		var fernTestValueLearnFrom *bool
 
 		// Act
@@ -1095,7 +1095,7 @@ func TestSettersMarkExplicitCreateAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetMetadata_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateAgentTrajectoryRequest{}
+		obj := &CreateAgentTraceRequest{}
 		var fernTestValueMetadata map[string]any
 
 		// Act
@@ -1126,7 +1126,7 @@ func TestSettersMarkExplicitCreateAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetObjective_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateAgentTrajectoryRequest{}
+		obj := &CreateAgentTraceRequest{}
 		var fernTestValueObjective string
 
 		// Act
@@ -1154,14 +1154,14 @@ func TestSettersMarkExplicitCreateAgentTrajectoryRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
-	t.Run("SetParentTrajectoryUUID_MarksExplicit", func(t *testing.T) {
+	t.Run("SetParentTraceUUID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateAgentTrajectoryRequest{}
-		var fernTestValueParentTrajectoryUUID *string
+		obj := &CreateAgentTraceRequest{}
+		var fernTestValueParentTraceUUID *string
 
 		// Act
-		obj.SetParentTrajectoryUUID(fernTestValueParentTrajectoryUUID)
+		obj.SetParentTraceUUID(fernTestValueParentTraceUUID)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -1188,8 +1188,8 @@ func TestSettersMarkExplicitCreateAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetTaskFamily_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateAgentTrajectoryRequest{}
-		var fernTestValueTaskFamily string
+		obj := &CreateAgentTraceRequest{}
+		var fernTestValueTaskFamily *string
 
 		// Act
 		obj.SetTaskFamily(fernTestValueTaskFamily)
@@ -1216,14 +1216,14 @@ func TestSettersMarkExplicitCreateAgentTrajectoryRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
-	t.Run("SetTrajectoryID_MarksExplicit", func(t *testing.T) {
+	t.Run("SetTraceID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &CreateAgentTrajectoryRequest{}
-		var fernTestValueTrajectoryID *string
+		obj := &CreateAgentTraceRequest{}
+		var fernTestValueTraceID *string
 
 		// Act
-		obj.SetTrajectoryID(fernTestValueTrajectoryID)
+		obj.SetTraceID(fernTestValueTraceID)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -1249,9 +1249,9 @@ func TestSettersMarkExplicitCreateAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestSettersAgentTrajectoryListRequest(t *testing.T) {
+func TestSettersAgentTraceListRequest(t *testing.T) {
 	t.Run("SetLimit", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueLimit *int
 		obj.SetLimit(fernTestValueLimit)
 		assert.Equal(t, fernTestValueLimit, obj.Limit)
@@ -1259,15 +1259,31 @@ func TestSettersAgentTrajectoryListRequest(t *testing.T) {
 	})
 
 	t.Run("SetCursor", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueCursor *string
 		obj.SetCursor(fernTestValueCursor)
 		assert.Equal(t, fernTestValueCursor, obj.Cursor)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetOrderBy", func(t *testing.T) {
+		obj := &AgentTraceListRequest{}
+		var fernTestValueOrderBy *TraceListRequestOrderBy
+		obj.SetOrderBy(fernTestValueOrderBy)
+		assert.Equal(t, fernTestValueOrderBy, obj.OrderBy)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+	t.Run("SetOrder", func(t *testing.T) {
+		obj := &AgentTraceListRequest{}
+		var fernTestValueOrder *TraceListRequestOrder
+		obj.SetOrder(fernTestValueOrder)
+		assert.Equal(t, fernTestValueOrder, obj.Order)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetImportUUID", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueImportUUID *string
 		obj.SetImportUUID(fernTestValueImportUUID)
 		assert.Equal(t, fernTestValueImportUUID, obj.ImportUUID)
@@ -1275,15 +1291,15 @@ func TestSettersAgentTrajectoryListRequest(t *testing.T) {
 	})
 
 	t.Run("SetSourceKind", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueSourceKind *TrajectoryListRequestSourceKind
+		obj := &AgentTraceListRequest{}
+		var fernTestValueSourceKind *TraceListRequestSourceKind
 		obj.SetSourceKind(fernTestValueSourceKind)
 		assert.Equal(t, fernTestValueSourceKind, obj.SourceKind)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetMetadata", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueMetadata map[string]any
 		obj.SetMetadata(fernTestValueMetadata)
 		assert.Equal(t, fernTestValueMetadata, obj.Metadata)
@@ -1291,31 +1307,31 @@ func TestSettersAgentTrajectoryListRequest(t *testing.T) {
 	})
 
 	t.Run("SetOutcome", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueOutcome *v4.AgentTrajectoryOutcome
+		obj := &AgentTraceListRequest{}
+		var fernTestValueOutcome *v4.AgentTraceOutcome
 		obj.SetOutcome(fernTestValueOutcome)
 		assert.Equal(t, fernTestValueOutcome, obj.Outcome)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
-	t.Run("SetParentTrajectoryUUID", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueParentTrajectoryUUID *string
-		obj.SetParentTrajectoryUUID(fernTestValueParentTrajectoryUUID)
-		assert.Equal(t, fernTestValueParentTrajectoryUUID, obj.ParentTrajectoryUUID)
+	t.Run("SetParentTraceUUID", func(t *testing.T) {
+		obj := &AgentTraceListRequest{}
+		var fernTestValueParentTraceUUID *string
+		obj.SetParentTraceUUID(fernTestValueParentTraceUUID)
+		assert.Equal(t, fernTestValueParentTraceUUID, obj.ParentTraceUUID)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetStatus", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueStatus *v4.AgentTrajectoryLifecycle
+		obj := &AgentTraceListRequest{}
+		var fernTestValueStatus *v4.AgentTraceLifecycle
 		obj.SetStatus(fernTestValueStatus)
 		assert.Equal(t, fernTestValueStatus, obj.Status)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
 	t.Run("SetTaskFamily", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueTaskFamily *string
 		obj.SetTaskFamily(fernTestValueTaskFamily)
 		assert.Equal(t, fernTestValueTaskFamily, obj.TaskFamily)
@@ -1323,8 +1339,8 @@ func TestSettersAgentTrajectoryListRequest(t *testing.T) {
 	})
 
 	t.Run("SetVerification", func(t *testing.T) {
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueVerification *v4.AgentTrajectoryVerification
+		obj := &AgentTraceListRequest{}
+		var fernTestValueVerification *v4.AgentTraceVerification
 		obj.SetVerification(fernTestValueVerification)
 		assert.Equal(t, fernTestValueVerification, obj.Verification)
 		assert.NotNil(t, obj.explicitFields)
@@ -1332,11 +1348,11 @@ func TestSettersAgentTrajectoryListRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
+func TestSettersMarkExplicitAgentTraceListRequest(t *testing.T) {
 	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueLimit *int
 
 		// Act
@@ -1367,7 +1383,7 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 	t.Run("SetCursor_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueCursor *string
 
 		// Act
@@ -1395,10 +1411,72 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
+	t.Run("SetOrderBy_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &AgentTraceListRequest{}
+		var fernTestValueOrderBy *TraceListRequestOrderBy
+
+		// Act
+		obj.SetOrderBy(fernTestValueOrderBy)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetOrder_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &AgentTraceListRequest{}
+		var fernTestValueOrder *TraceListRequestOrder
+
+		// Act
+		obj.SetOrder(fernTestValueOrder)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
 	t.Run("SetImportUUID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueImportUUID *string
 
 		// Act
@@ -1429,8 +1507,8 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 	t.Run("SetSourceKind_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueSourceKind *TrajectoryListRequestSourceKind
+		obj := &AgentTraceListRequest{}
+		var fernTestValueSourceKind *TraceListRequestSourceKind
 
 		// Act
 		obj.SetSourceKind(fernTestValueSourceKind)
@@ -1460,7 +1538,7 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 	t.Run("SetMetadata_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueMetadata map[string]any
 
 		// Act
@@ -1491,8 +1569,8 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 	t.Run("SetOutcome_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueOutcome *v4.AgentTrajectoryOutcome
+		obj := &AgentTraceListRequest{}
+		var fernTestValueOutcome *v4.AgentTraceOutcome
 
 		// Act
 		obj.SetOutcome(fernTestValueOutcome)
@@ -1519,14 +1597,14 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
-	t.Run("SetParentTrajectoryUUID_MarksExplicit", func(t *testing.T) {
+	t.Run("SetParentTraceUUID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueParentTrajectoryUUID *string
+		obj := &AgentTraceListRequest{}
+		var fernTestValueParentTraceUUID *string
 
 		// Act
-		obj.SetParentTrajectoryUUID(fernTestValueParentTrajectoryUUID)
+		obj.SetParentTraceUUID(fernTestValueParentTraceUUID)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -1553,8 +1631,8 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 	t.Run("SetStatus_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueStatus *v4.AgentTrajectoryLifecycle
+		obj := &AgentTraceListRequest{}
+		var fernTestValueStatus *v4.AgentTraceLifecycle
 
 		// Act
 		obj.SetStatus(fernTestValueStatus)
@@ -1584,7 +1662,7 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 	t.Run("SetTaskFamily_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
+		obj := &AgentTraceListRequest{}
 		var fernTestValueTaskFamily *string
 
 		// Act
@@ -1615,8 +1693,8 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 	t.Run("SetVerification_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &AgentTrajectoryListRequest{}
-		var fernTestValueVerification *v4.AgentTrajectoryVerification
+		obj := &AgentTraceListRequest{}
+		var fernTestValueVerification *v4.AgentTraceVerification
 
 		// Act
 		obj.SetVerification(fernTestValueVerification)
@@ -1645,9 +1723,9 @@ func TestSettersMarkExplicitAgentTrajectoryListRequest(t *testing.T) {
 
 }
 
-func TestSettersTrajectoryListEventsRequest(t *testing.T) {
+func TestSettersTraceListEventsRequest(t *testing.T) {
 	t.Run("SetLimit", func(t *testing.T) {
-		obj := &TrajectoryListEventsRequest{}
+		obj := &TraceListEventsRequest{}
 		var fernTestValueLimit *int
 		obj.SetLimit(fernTestValueLimit)
 		assert.Equal(t, fernTestValueLimit, obj.Limit)
@@ -1655,7 +1733,7 @@ func TestSettersTrajectoryListEventsRequest(t *testing.T) {
 	})
 
 	t.Run("SetCursor", func(t *testing.T) {
-		obj := &TrajectoryListEventsRequest{}
+		obj := &TraceListEventsRequest{}
 		var fernTestValueCursor *string
 		obj.SetCursor(fernTestValueCursor)
 		assert.Equal(t, fernTestValueCursor, obj.Cursor)
@@ -1664,11 +1742,11 @@ func TestSettersTrajectoryListEventsRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitTrajectoryListEventsRequest(t *testing.T) {
+func TestSettersMarkExplicitTraceListEventsRequest(t *testing.T) {
 	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &TrajectoryListEventsRequest{}
+		obj := &TraceListEventsRequest{}
 		var fernTestValueLimit *int
 
 		// Act
@@ -1699,7 +1777,7 @@ func TestSettersMarkExplicitTrajectoryListEventsRequest(t *testing.T) {
 	t.Run("SetCursor_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &TrajectoryListEventsRequest{}
+		obj := &TraceListEventsRequest{}
 		var fernTestValueCursor *string
 
 		// Act
@@ -1729,9 +1807,9 @@ func TestSettersMarkExplicitTrajectoryListEventsRequest(t *testing.T) {
 
 }
 
-func TestSettersTrajectoryListSummaryVersionsRequest(t *testing.T) {
+func TestSettersTraceListSummaryVersionsRequest(t *testing.T) {
 	t.Run("SetLimit", func(t *testing.T) {
-		obj := &TrajectoryListSummaryVersionsRequest{}
+		obj := &TraceListSummaryVersionsRequest{}
 		var fernTestValueLimit *int
 		obj.SetLimit(fernTestValueLimit)
 		assert.Equal(t, fernTestValueLimit, obj.Limit)
@@ -1739,7 +1817,7 @@ func TestSettersTrajectoryListSummaryVersionsRequest(t *testing.T) {
 	})
 
 	t.Run("SetCursor", func(t *testing.T) {
-		obj := &TrajectoryListSummaryVersionsRequest{}
+		obj := &TraceListSummaryVersionsRequest{}
 		var fernTestValueCursor *string
 		obj.SetCursor(fernTestValueCursor)
 		assert.Equal(t, fernTestValueCursor, obj.Cursor)
@@ -1748,11 +1826,11 @@ func TestSettersTrajectoryListSummaryVersionsRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitTrajectoryListSummaryVersionsRequest(t *testing.T) {
+func TestSettersMarkExplicitTraceListSummaryVersionsRequest(t *testing.T) {
 	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &TrajectoryListSummaryVersionsRequest{}
+		obj := &TraceListSummaryVersionsRequest{}
 		var fernTestValueLimit *int
 
 		// Act
@@ -1783,7 +1861,7 @@ func TestSettersMarkExplicitTrajectoryListSummaryVersionsRequest(t *testing.T) {
 	t.Run("SetCursor_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &TrajectoryListSummaryVersionsRequest{}
+		obj := &TraceListSummaryVersionsRequest{}
 		var fernTestValueCursor *string
 
 		// Act
@@ -1813,9 +1891,9 @@ func TestSettersMarkExplicitTrajectoryListSummaryVersionsRequest(t *testing.T) {
 
 }
 
-func TestSettersReopenAgentTrajectoryRequest(t *testing.T) {
+func TestSettersReopenAgentTraceRequest(t *testing.T) {
 	t.Run("SetExpectedRevision", func(t *testing.T) {
-		obj := &ReopenAgentTrajectoryRequest{}
+		obj := &ReopenAgentTraceRequest{}
 		var fernTestValueExpectedRevision int
 		obj.SetExpectedRevision(fernTestValueExpectedRevision)
 		assert.Equal(t, fernTestValueExpectedRevision, obj.ExpectedRevision)
@@ -1824,11 +1902,11 @@ func TestSettersReopenAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitReopenAgentTrajectoryRequest(t *testing.T) {
+func TestSettersMarkExplicitReopenAgentTraceRequest(t *testing.T) {
 	t.Run("SetExpectedRevision_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &ReopenAgentTrajectoryRequest{}
+		obj := &ReopenAgentTraceRequest{}
 		var fernTestValueExpectedRevision int
 
 		// Act
@@ -1858,9 +1936,9 @@ func TestSettersMarkExplicitReopenAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestSettersPatchAgentTrajectoryRequest(t *testing.T) {
+func TestSettersPatchAgentTraceRequest(t *testing.T) {
 	t.Run("SetExpectedRevision", func(t *testing.T) {
-		obj := &PatchAgentTrajectoryRequest{}
+		obj := &PatchAgentTraceRequest{}
 		var fernTestValueExpectedRevision int
 		obj.SetExpectedRevision(fernTestValueExpectedRevision)
 		assert.Equal(t, fernTestValueExpectedRevision, obj.ExpectedRevision)
@@ -1868,7 +1946,7 @@ func TestSettersPatchAgentTrajectoryRequest(t *testing.T) {
 	})
 
 	t.Run("SetTaskFamily", func(t *testing.T) {
-		obj := &PatchAgentTrajectoryRequest{}
+		obj := &PatchAgentTraceRequest{}
 		var fernTestValueTaskFamily *string
 		obj.SetTaskFamily(fernTestValueTaskFamily)
 		assert.Equal(t, fernTestValueTaskFamily, obj.TaskFamily)
@@ -1877,11 +1955,11 @@ func TestSettersPatchAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestSettersMarkExplicitPatchAgentTrajectoryRequest(t *testing.T) {
+func TestSettersMarkExplicitPatchAgentTraceRequest(t *testing.T) {
 	t.Run("SetExpectedRevision_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &PatchAgentTrajectoryRequest{}
+		obj := &PatchAgentTraceRequest{}
 		var fernTestValueExpectedRevision int
 
 		// Act
@@ -1912,7 +1990,7 @@ func TestSettersMarkExplicitPatchAgentTrajectoryRequest(t *testing.T) {
 	t.Run("SetTaskFamily_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
-		obj := &PatchAgentTrajectoryRequest{}
+		obj := &PatchAgentTraceRequest{}
 		var fernTestValueTaskFamily *string
 
 		// Act
@@ -1942,28 +2020,86 @@ func TestSettersMarkExplicitPatchAgentTrajectoryRequest(t *testing.T) {
 
 }
 
-func TestEnumTrajectoryListRequestSourceKind(t *testing.T) {
-	t.Run("NewFromString_native", func(t *testing.T) {
+func TestEnumTraceListRequestOrder(t *testing.T) {
+	t.Run("NewFromString_asc", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewTrajectoryListRequestSourceKindFromString("native")
+		val, err := NewTraceListRequestOrderFromString("asc")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, TrajectoryListRequestSourceKind("native"), val, "enum value should match expected wire value")
+		assert.Equal(t, TraceListRequestOrder("asc"), val, "enum value should match expected wire value")
 	})
 
-	t.Run("NewFromString_trace_import", func(t *testing.T) {
+	t.Run("NewFromString_desc", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewTrajectoryListRequestSourceKindFromString("trace_import")
+		val, err := NewTraceListRequestOrderFromString("desc")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, TrajectoryListRequestSourceKind("trace_import"), val, "enum value should match expected wire value")
+		assert.Equal(t, TraceListRequestOrder("desc"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_Invalid", func(t *testing.T) {
-		_, err := NewTrajectoryListRequestSourceKindFromString("invalid_value_that_does_not_exist")
+		_, err := NewTraceListRequestOrderFromString("invalid_value_that_does_not_exist")
 		assert.Error(t, err)
 	})
 
 	t.Run("Ptr", func(t *testing.T) {
-		val, err := NewTrajectoryListRequestSourceKindFromString("native")
+		val, err := NewTraceListRequestOrderFromString("asc")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumTraceListRequestOrderBy(t *testing.T) {
+	t.Run("NewFromString_created_at", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTraceListRequestOrderByFromString("created_at")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TraceListRequestOrderBy("created_at"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_updated_at", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTraceListRequestOrderByFromString("updated_at")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TraceListRequestOrderBy("updated_at"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewTraceListRequestOrderByFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewTraceListRequestOrderByFromString("created_at")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumTraceListRequestSourceKind(t *testing.T) {
+	t.Run("NewFromString_native", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTraceListRequestSourceKindFromString("native")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TraceListRequestSourceKind("native"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_trace_import", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTraceListRequestSourceKindFromString("trace_import")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TraceListRequestSourceKind("trace_import"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewTraceListRequestSourceKindFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewTraceListRequestSourceKindFromString("native")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)

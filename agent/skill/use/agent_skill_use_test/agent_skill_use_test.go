@@ -90,9 +90,9 @@ func TestAgentSkillUseCreateWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &skill.CreateAgentSkillUseRequest{
-		SearchID:       "search_id",
-		TrajectoryUUID: "trajectory_uuid",
-		Usage:          skill.CreateAgentSkillUseRequestUsageSelected,
+		SearchID:  "search_id",
+		TraceUUID: "trace_uuid",
+		Usage:     skill.CreateAgentSkillUseRequestUsageSelected,
 	}
 	_, invocationErr := client.Agent.Skill.Use.Create(
 		context.TODO(),

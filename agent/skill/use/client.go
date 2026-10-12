@@ -43,7 +43,7 @@ func NewClient(options *core.RequestOptions) *Client {
 //
 //	request := &skill.CreateAgentSkillUseRequest{
 //	    SearchID: "search_id",
-//	    TrajectoryUUID: "trajectory_uuid",
+//	    TraceUUID: "trace_uuid",
 //	    Usage: skill.CreateAgentSkillUseRequestUsageSelected,
 //	}
 //	client.Agent.Skill.Use.Create(

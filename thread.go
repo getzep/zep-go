@@ -333,25 +333,25 @@ func (t *ThreadListMessagesRequest) SetOrder(order *ThreadListMessagesRequestOrd
 }
 
 var (
-	addMessageFieldContent   = big.NewInt(1 << 0)
-	addMessageFieldCreatedAt = big.NewInt(1 << 1)
-	addMessageFieldMetadata  = big.NewInt(1 << 2)
-	addMessageFieldName      = big.NewInt(1 << 3)
-	addMessageFieldRole      = big.NewInt(1 << 4)
-	addMessageFieldUUID      = big.NewInt(1 << 5)
+	addMessageFieldContent       = big.NewInt(1 << 0)
+	addMessageFieldMetadata      = big.NewInt(1 << 1)
+	addMessageFieldName          = big.NewInt(1 << 2)
+	addMessageFieldReferenceTime = big.NewInt(1 << 3)
+	addMessageFieldRole          = big.NewInt(1 << 4)
+	addMessageFieldUUID          = big.NewInt(1 << 5)
 )
 
 type AddMessage struct {
 	// The content of the message.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
-	// The message's reference time, used for temporal reasoning rather than
-	// ingestion time. Defaults to the ingestion time.
-	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// Custom metadata to store with the message. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// A customizable name for the sender of the message, for example "john" or
 	// "sales_agent".
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The message's reference time, used for temporal reasoning rather than
+	// ingestion time. Defaults to the ingestion time.
+	ReferenceTime *string `json:"reference_time,omitempty" url:"reference_time,omitempty"`
 	// The role of the message's sender.
 	Role *RoleType `json:"role,omitempty" url:"role,omitempty"`
 	// Reserved for future use. Message identifiers are always server-assigned,
@@ -372,13 +372,6 @@ func (a *AddMessage) GetContent() *string {
 	return a.Content
 }
 
-func (a *AddMessage) GetCreatedAt() *string {
-	if a == nil {
-		return nil
-	}
-	return a.CreatedAt
-}
-
 func (a *AddMessage) GetMetadata() map[string]any {
 	if a == nil {
 		return nil
@@ -391,6 +384,13 @@ func (a *AddMessage) GetName() *string {
 		return nil
 	}
 	return a.Name
+}
+
+func (a *AddMessage) GetReferenceTime() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ReferenceTime
 }
 
 func (a *AddMessage) GetRole() *RoleType {
@@ -430,13 +430,6 @@ func (a *AddMessage) SetContent(content *string) {
 	a.require(addMessageFieldContent)
 }
 
-// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddMessage) SetCreatedAt(createdAt *string) {
-	a.CreatedAt = createdAt
-	a.require(addMessageFieldCreatedAt)
-}
-
 // SetMetadata sets the Metadata field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (a *AddMessage) SetMetadata(metadata map[string]any) {
@@ -449,6 +442,13 @@ func (a *AddMessage) SetMetadata(metadata map[string]any) {
 func (a *AddMessage) SetName(name *string) {
 	a.Name = name
 	a.require(addMessageFieldName)
+}
+
+// SetReferenceTime sets the ReferenceTime field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddMessage) SetReferenceTime(referenceTime *string) {
+	a.ReferenceTime = referenceTime
+	a.require(addMessageFieldReferenceTime)
 }
 
 // SetRole sets the Role field and marks it as non-optional;

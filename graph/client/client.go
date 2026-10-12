@@ -562,12 +562,12 @@ func (c *Client) SetOntology(
 	return response.Body, nil
 }
 
+// Edge search does not support node_labels or exclude_node_labels. An edge has two nodes, so a node label filter is not defined for edge search. To filter edges by node label, use graph.edge.list, graph.node.list_neighbors, or graph.get_subgraph. To search the edges of nodes that have a label, do these two steps. First, call graph.search_nodes with node_labels. Then, call graph.search_edges with connected_node_uuids set to the UUIDs of the returned nodes.
+//
 // Example:
 //
-//	request := &zep.GraphSearchEdgesRequest{
-//	    Body: &zep.SearchRequest{
-//	        Query: "query",
-//	    },
+//	request := &zep.SearchEdgesRequest{
+//	    Query: "query",
 //	}
 //	client.Graph.SearchEdges(
 //	    context.TODO(),
@@ -578,7 +578,7 @@ func (c *Client) SearchEdges(
 	ctx context.Context,
 	// Graph UUID
 	graphUUID string,
-	request *zep.GraphSearchEdgesRequest,
+	request *zep.SearchEdgesRequest,
 	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Edge, *zep.EdgePage], error) {
 	options := core.NewRequestOptions(opts...)
@@ -724,12 +724,12 @@ func (c *Client) SearchEpisodes(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// Node search does not support edge_types, exclude_edge_types, edge_uuids, connected_node_uuids, source_node_uuids, or target_node_uuids. These filters select edges. To get the nodes that an edge connects, use graph.search_edges or graph.node.list_neighbors.
+//
 // Example:
 //
-//	request := &zep.GraphSearchNodesRequest{
-//	    Body: &zep.SearchRequest{
-//	        Query: "query",
-//	    },
+//	request := &zep.SearchNodesRequest{
+//	    Query: "query",
 //	}
 //	client.Graph.SearchNodes(
 //	    context.TODO(),
@@ -740,7 +740,7 @@ func (c *Client) SearchNodes(
 	ctx context.Context,
 	// Graph UUID
 	graphUUID string,
-	request *zep.GraphSearchNodesRequest,
+	request *zep.SearchNodesRequest,
 	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Node, *zep.NodePage], error) {
 	options := core.NewRequestOptions(opts...)

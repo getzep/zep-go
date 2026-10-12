@@ -717,14 +717,6 @@ func TestSettersAddMessage(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
-	t.Run("SetCreatedAt", func(t *testing.T) {
-		obj := &AddMessage{}
-		var fernTestValueCreatedAt *string
-		obj.SetCreatedAt(fernTestValueCreatedAt)
-		assert.Equal(t, fernTestValueCreatedAt, obj.CreatedAt)
-		assert.NotNil(t, obj.explicitFields)
-	})
-
 	t.Run("SetMetadata", func(t *testing.T) {
 		obj := &AddMessage{}
 		var fernTestValueMetadata map[string]any
@@ -738,6 +730,14 @@ func TestSettersAddMessage(t *testing.T) {
 		var fernTestValueName *string
 		obj.SetName(fernTestValueName)
 		assert.Equal(t, fernTestValueName, obj.Name)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+	t.Run("SetReferenceTime", func(t *testing.T) {
+		obj := &AddMessage{}
+		var fernTestValueReferenceTime *string
+		obj.SetReferenceTime(fernTestValueReferenceTime)
+		assert.Equal(t, fernTestValueReferenceTime, obj.ReferenceTime)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -791,39 +791,6 @@ func TestGettersAddMessage(t *testing.T) {
 			}
 		}()
 		_ = obj.GetContent() // Should return zero value
-	})
-
-	t.Run("GetCreatedAt", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &AddMessage{}
-		var expected *string
-		obj.CreatedAt = expected
-
-		// Act & Assert
-		assert.Equal(t, expected, obj.GetCreatedAt(), "getter should return the property value")
-	})
-
-	t.Run("GetCreatedAt_NilValue", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &AddMessage{}
-		obj.CreatedAt = nil
-
-		// Act & Assert
-		assert.Nil(t, obj.GetCreatedAt(), "getter should return nil when property is nil")
-	})
-
-	t.Run("GetCreatedAt_NilReceiver", func(t *testing.T) {
-		t.Parallel()
-		var obj *AddMessage
-		// Should not panic - getters should handle nil receiver gracefully
-		defer func() {
-			if r := recover(); r != nil {
-				t.Errorf("Getter panicked on nil receiver: %v", r)
-			}
-		}()
-		_ = obj.GetCreatedAt() // Should return zero value
 	})
 
 	t.Run("GetMetadata", func(t *testing.T) {
@@ -890,6 +857,39 @@ func TestGettersAddMessage(t *testing.T) {
 			}
 		}()
 		_ = obj.GetName() // Should return zero value
+	})
+
+	t.Run("GetReferenceTime", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &AddMessage{}
+		var expected *string
+		obj.ReferenceTime = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetReferenceTime(), "getter should return the property value")
+	})
+
+	t.Run("GetReferenceTime_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &AddMessage{}
+		obj.ReferenceTime = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetReferenceTime(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetReferenceTime_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *AddMessage
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetReferenceTime() // Should return zero value
 	})
 
 	t.Run("GetRole", func(t *testing.T) {
@@ -992,37 +992,6 @@ func TestSettersMarkExplicitAddMessage(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
-	t.Run("SetCreatedAt_MarksExplicit", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &AddMessage{}
-		var fernTestValueCreatedAt *string
-
-		// Act
-		obj.SetCreatedAt(fernTestValueCreatedAt)
-
-		// Assert - object with explicitly set field can be marshaled/unmarshaled
-		bytes, err := json.Marshal(obj)
-		require.NoError(t, err, "marshaling should succeed for test setup")
-
-		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
-		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
-		if len(bytes) > 0 && bytes[0] == '{' {
-			// JSON object - unmarshal into map
-			var unmarshaled map[string]interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		} else {
-			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
-			var unmarshaled interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		}
-
-		// Note: This does not explicitly assert the presence of a specific JSON field
-		// It verifies that setting a field via setter allows successful JSON round-trip
-	})
-
 	t.Run("SetMetadata_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -1062,6 +1031,37 @@ func TestSettersMarkExplicitAddMessage(t *testing.T) {
 
 		// Act
 		obj.SetName(fernTestValueName)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetReferenceTime_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &AddMessage{}
+		var fernTestValueReferenceTime *string
+
+		// Act
+		obj.SetReferenceTime(fernTestValueReferenceTime)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)

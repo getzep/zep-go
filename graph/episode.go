@@ -11,25 +11,25 @@ import (
 )
 
 var (
-	addEpisodeRequestFieldCreatedAt         = big.NewInt(1 << 0)
-	addEpisodeRequestFieldData              = big.NewInt(1 << 1)
-	addEpisodeRequestFieldDocumentID        = big.NewInt(1 << 2)
-	addEpisodeRequestFieldMetadata          = big.NewInt(1 << 3)
+	addEpisodeRequestFieldData              = big.NewInt(1 << 0)
+	addEpisodeRequestFieldDocumentID        = big.NewInt(1 << 1)
+	addEpisodeRequestFieldMetadata          = big.NewInt(1 << 2)
+	addEpisodeRequestFieldReferenceTime     = big.NewInt(1 << 3)
 	addEpisodeRequestFieldSourceDescription = big.NewInt(1 << 4)
 	addEpisodeRequestFieldStrictOntology    = big.NewInt(1 << 5)
 	addEpisodeRequestFieldType              = big.NewInt(1 << 6)
 )
 
 type AddEpisodeRequest struct {
-	// The episode's reference time, used for temporal reasoning rather than
-	// ingestion time.
-	CreatedAt *string `json:"created_at,omitempty" url:"-"`
 	// The episode content to add to the graph.
 	Data string `json:"data" url:"-"`
 	// Groups this episode as a chunk of a document on the graph.
 	DocumentID *string `json:"document_id,omitempty" url:"-"`
 	// Metadata to store on the episode. Max 10 keys. Values must be strings, numbers, booleans, or arrays of scalars.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
+	// The episode's reference time, used for temporal reasoning rather than
+	// ingestion time. Defaults to the ingestion time.
+	ReferenceTime *string `json:"reference_time,omitempty" url:"-"`
 	// A description of the source of this episode.
 	SourceDescription *string `json:"source_description,omitempty" url:"-"`
 	// When true, prevents extraction of generic entity nodes that do not match
@@ -51,13 +51,6 @@ func (a *AddEpisodeRequest) require(field *big.Int) {
 	a.explicitFields = next
 }
 
-// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AddEpisodeRequest) SetCreatedAt(createdAt *string) {
-	a.CreatedAt = createdAt
-	a.require(addEpisodeRequestFieldCreatedAt)
-}
-
 // SetData sets the Data field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (a *AddEpisodeRequest) SetData(data string) {
@@ -77,6 +70,13 @@ func (a *AddEpisodeRequest) SetDocumentID(documentID *string) {
 func (a *AddEpisodeRequest) SetMetadata(metadata map[string]any) {
 	a.Metadata = metadata
 	a.require(addEpisodeRequestFieldMetadata)
+}
+
+// SetReferenceTime sets the ReferenceTime field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AddEpisodeRequest) SetReferenceTime(referenceTime *string) {
+	a.ReferenceTime = referenceTime
+	a.require(addEpisodeRequestFieldReferenceTime)
 }
 
 // SetSourceDescription sets the SourceDescription field and marks it as non-optional;

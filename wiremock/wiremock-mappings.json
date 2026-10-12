@@ -225,7 +225,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"context\": \"context\",\n  \"objective\": \"objective\",\n  \"partial_sources\": [\n    {\n      \"reason\": \"reason\",\n      \"source\": \"source\",\n      \"task_uuid\": \"task_uuid\"\n    }\n  ],\n  \"request_id\": \"request_id\",\n  \"skipped\": [\n    {\n      \"reason\": \"reason\",\n      \"skill_uuid\": \"skill_uuid\",\n      \"version\": 1\n    }\n  ],\n  \"snapshot\": [\n    {\n      \"artifact_sha256\": \"artifact_sha256\",\n      \"evidence_citations\": [\n        \"evidence_citations\"\n      ],\n      \"rank\": 1,\n      \"skill_uuid\": \"skill_uuid\",\n      \"version\": 1\n    }\n  ],\n  \"task_family\": \"task_family\",\n  \"trajectory_uuid\": \"trajectory_uuid\",\n  \"truncated\": true\n}",
+        "body": "{\n  \"context\": \"context\",\n  \"objective\": \"objective\",\n  \"partial_sources\": [\n    {\n      \"reason\": \"reason\",\n      \"source\": \"source\",\n      \"task_uuid\": \"task_uuid\"\n    }\n  ],\n  \"request_id\": \"request_id\",\n  \"skipped\": [\n    {\n      \"reason\": \"reason\",\n      \"skill_uuid\": \"skill_uuid\",\n      \"version\": 1\n    }\n  ],\n  \"snapshot\": [\n    {\n      \"artifact_sha256\": \"artifact_sha256\",\n      \"evidence_citations\": [\n        \"evidence_citations\"\n      ],\n      \"rank\": 1,\n      \"skill_uuid\": \"skill_uuid\",\n      \"version\": 1\n    }\n  ],\n  \"task_family\": \"task_family\",\n  \"trace_uuid\": \"trace_uuid\",\n  \"truncated\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1194,7 +1194,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1230,7 +1230,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1302,7 +1302,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1544,7 +1544,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"created_at\": \"created_at\",\n  \"default_time_zone\": \"default_time_zone\",\n  \"description\": \"description\",\n  \"include_policy_violating_episodes\": false,\n  \"name\": \"name\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"default_time_zone\": \"default_time_zone\",\n  \"description\": \"description\",\n  \"hyperedges_enabled\": true,\n  \"include_policy_violating_episodes\": false,\n  \"name\": \"name\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1576,7 +1576,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"created_at\": \"created_at\",\n  \"default_time_zone\": \"default_time_zone\",\n  \"description\": \"description\",\n  \"include_policy_violating_episodes\": false,\n  \"name\": \"name\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"default_time_zone\": \"default_time_zone\",\n  \"description\": \"description\",\n  \"hyperedges_enabled\": true,\n  \"include_policy_violating_episodes\": false,\n  \"name\": \"name\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1864,7 +1864,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1896,7 +1896,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {}\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2265,7 +2265,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2301,7 +2301,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"role\": \"system\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"role\": \"system\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2337,7 +2337,7 @@
       },
       "response": {
         "status": 202,
-        "body": "{\n  \"context\": \"context\",\n  \"messages\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"role\": \"system\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "body": "{\n  \"context\": \"context\",\n  \"messages\": [\n    {\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"name\",\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"role\": \"system\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2404,7 +2404,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"2026-01-01T00:00:00Z\",\n      \"credential_hint\": \"1234\",\n      \"credential_version\": 1,\n      \"import_count\": 2,\n      \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n      \"name\": \"Support traces\",\n      \"provider\": \"braintrust\",\n      \"provider_organization_id\": \"org_123\",\n      \"provider_organization_name\": \"Example organization\",\n      \"settings\": {\n        \"api_url\": \"https://api.braintrust.dev\",\n        \"requests_per_minute\": 10,\n        \"retention_days\": 30\n      },\n      \"status\": \"active\",\n      \"updated_at\": \"2026-01-01T00:00:00Z\",\n      \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n    }\n  ],\n  \"next_cursor\": \"eyJvZmZzZXQiOjI1fQ\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"2026-01-01T00:00:00Z\",\n      \"credential_hint\": \"1234\",\n      \"credential_version\": 1,\n      \"import_count\": 2,\n      \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n      \"name\": \"Support traces\",\n      \"provider\": \"braintrust\",\n      \"provider_organization_id\": \"org_123\",\n      \"provider_organization_name\": \"Example organization\",\n      \"settings\": {\n        \"api_url\": \"https://api.smith.langchain.com\",\n        \"requests_per_minute\": 10,\n        \"retention_days\": 30\n      },\n      \"status\": \"active\",\n      \"updated_at\": \"2026-01-01T00:00:00Z\",\n      \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n    }\n  ],\n  \"next_cursor\": \"eyJvZmZzZXQiOjI1fQ\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2436,7 +2436,7 @@
       },
       "response": {
         "status": 201,
-        "body": "{\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"credential_hint\": \"1234\",\n  \"credential_version\": 1,\n  \"import_count\": 2,\n  \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n  \"name\": \"Support traces\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_organization_name\": \"Example organization\",\n  \"settings\": {\n    \"api_url\": \"https://api.braintrust.dev\",\n    \"requests_per_minute\": 10,\n    \"retention_days\": 30\n  },\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n}",
+        "body": "{\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"credential_hint\": \"1234\",\n  \"credential_version\": 1,\n  \"import_count\": 2,\n  \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n  \"name\": \"Support traces\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_organization_name\": \"Example organization\",\n  \"settings\": {\n    \"api_url\": \"https://api.smith.langchain.com\",\n    \"requests_per_minute\": 10,\n    \"retention_days\": 30\n  },\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2472,7 +2472,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"credential_hint\": \"1234\",\n  \"credential_version\": 1,\n  \"import_count\": 2,\n  \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n  \"name\": \"Support traces\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_organization_name\": \"Example organization\",\n  \"settings\": {\n    \"api_url\": \"https://api.braintrust.dev\",\n    \"requests_per_minute\": 10,\n    \"retention_days\": 30\n  },\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n}",
+        "body": "{\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"credential_hint\": \"1234\",\n  \"credential_version\": 1,\n  \"import_count\": 2,\n  \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n  \"name\": \"Support traces\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_organization_name\": \"Example organization\",\n  \"settings\": {\n    \"api_url\": \"https://api.smith.langchain.com\",\n    \"requests_per_minute\": 10,\n    \"retention_days\": 30\n  },\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2544,7 +2544,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"credential_hint\": \"1234\",\n  \"credential_version\": 1,\n  \"import_count\": 2,\n  \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n  \"name\": \"Support traces\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_organization_name\": \"Example organization\",\n  \"settings\": {\n    \"api_url\": \"https://api.braintrust.dev\",\n    \"requests_per_minute\": 10,\n    \"retention_days\": 30\n  },\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n}",
+        "body": "{\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"credential_hint\": \"1234\",\n  \"credential_version\": 1,\n  \"import_count\": 2,\n  \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n  \"name\": \"Support traces\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_organization_name\": \"Example organization\",\n  \"settings\": {\n    \"api_url\": \"https://api.smith.langchain.com\",\n    \"requests_per_minute\": 10,\n    \"retention_days\": 30\n  },\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2580,7 +2580,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"credential_hint\": \"1234\",\n  \"credential_version\": 1,\n  \"import_count\": 2,\n  \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n  \"name\": \"Support traces\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_organization_name\": \"Example organization\",\n  \"settings\": {\n    \"api_url\": \"https://api.braintrust.dev\",\n    \"requests_per_minute\": 10,\n    \"retention_days\": 30\n  },\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n}",
+        "body": "{\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"credential_hint\": \"1234\",\n  \"credential_version\": 1,\n  \"import_count\": 2,\n  \"last_verified_at\": \"2026-01-01T00:00:00Z\",\n  \"name\": \"Support traces\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_organization_name\": \"Example organization\",\n  \"settings\": {\n    \"api_url\": \"https://api.smith.langchain.com\",\n    \"requests_per_minute\": 10,\n    \"retention_days\": 30\n  },\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -3319,7 +3319,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"approval\": \"approval\",\n  \"compilation_mode\": \"compilation_mode\",\n  \"compilation_pending\": true,\n  \"eligible_trajectory_count\": 1,\n  \"minimum_attempt_families\": 1,\n  \"next_step\": \"next_step\",\n  \"required_evaluations\": [\n    \"required_evaluations\"\n  ],\n  \"task_family\": \"task_family\"\n}",
+        "body": "{\n  \"approval\": \"approval\",\n  \"compilation_mode\": \"compilation_mode\",\n  \"compilation_pending\": true,\n  \"eligible_trace_count\": 1,\n  \"minimum_attempt_families\": 1,\n  \"next_step\": \"next_step\",\n  \"required_evaluations\": [\n    \"required_evaluations\"\n  ],\n  \"task_family\": \"task_family\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -3355,7 +3355,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"agent_uuid\",\n      \"attempts\": 1,\n      \"candidate_count\": 1,\n      \"compilation_identity\": \"compilation_identity\",\n      \"compilation_window_uuid\": \"compilation_window_uuid\",\n      \"created_at\": \"created_at\",\n      \"decision\": \"decision\",\n      \"proposal_count\": 1,\n      \"reason_text\": \"reason_text\",\n      \"rejected_add_count\": 1,\n      \"rejection_class\": \"no_eligible_trajectories\",\n      \"stage\": \"stage\",\n      \"task_family\": \"task_family\",\n      \"trajectory_count\": 1,\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"agent_uuid\",\n      \"attempts\": 1,\n      \"candidate_count\": 1,\n      \"compilation_identity\": \"compilation_identity\",\n      \"compilation_window_uuid\": \"compilation_window_uuid\",\n      \"created_at\": \"created_at\",\n      \"decision\": \"decision\",\n      \"proposal_count\": 1,\n      \"reason_text\": \"reason_text\",\n      \"rejected_add_count\": 1,\n      \"rejection_class\": \"no_eligible_traces\",\n      \"stage\": \"stage\",\n      \"task_family\": \"task_family\",\n      \"trace_count\": 1,\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -3745,10 +3745,10 @@
       }
     },
     {
-      "id": "4a9840ca-49f3-4166-a397-e2a6c784e75c",
-      "name": "Create Agent Trajectory - default",
+      "id": "abb1dd42-3de0-4a8d-baf3-97a25a03b66d",
+      "name": "List Agent Task Families - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories",
+        "urlPathTemplate": "/agents/{agent_uuid}/task-families/list",
         "method": "POST",
         "headers": {
           "Authorization": {
@@ -3763,12 +3763,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"abandoned_at\": \"abandoned_at\",\n  \"agent_uuid\": \"agent_uuid\",\n  \"attempt_family_uuid\": \"attempt_family_uuid\",\n  \"closed_at\": \"closed_at\",\n  \"created_at\": \"created_at\",\n  \"internal\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"closing_sequence\": 1,\n    \"current_summary_version\": 1,\n    \"last_task_uuid\": \"last_task_uuid\",\n    \"next_sequence\": 1,\n    \"processing_state\": \"idle\"\n  },\n  \"learn_from\": true,\n  \"learn_from_reason\": \"learn_from_reason\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"objective\": \"objective\",\n  \"outcome\": \"succeeded\",\n  \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n  \"revision\": 1,\n  \"source\": {\n    \"connection_uuid\": \"connection_uuid\",\n    \"import_uuid\": \"import_uuid\",\n    \"imported_at\": \"imported_at\",\n    \"kind\": \"trace_import\",\n    \"provider\": \"provider\",\n    \"provider_project_id\": \"provider_project_id\",\n    \"run_uuid\": \"run_uuid\",\n    \"scores\": {\n      \"key\": \"value\"\n    },\n    \"source_changed\": false,\n    \"source_revision\": \"source_revision\",\n    \"source_url\": \"source_url\",\n    \"trace_ended_at\": \"trace_ended_at\",\n    \"trace_id\": \"trace_id\",\n    \"trace_started_at\": \"trace_started_at\"\n  },\n  \"status\": \"open\",\n  \"task_family\": \"task_family\",\n  \"trajectory_id\": \"trajectory_id\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\"\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"agent_uuid\",\n      \"created_at\": \"created_at\",\n      \"description\": \"description\",\n      \"descriptor_version\": 1,\n      \"distinguishing_tools\": [\n        \"distinguishing_tools\"\n      ],\n      \"not_for\": \"not_for\",\n      \"slug\": \"slug\",\n      \"updated_at\": \"updated_at\",\n      \"use_when\": \"use_when\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "4a9840ca-49f3-4166-a397-e2a6c784e75c",
+      "uuid": "abb1dd42-3de0-4a8d-baf3-97a25a03b66d",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -3781,10 +3781,10 @@
       }
     },
     {
-      "id": "f84d5840-d064-450f-a38f-c87b0bd0e628",
-      "name": "List Agent Trajectories - default",
+      "id": "464e6227-2756-4fca-88ae-8b848e0db7b1",
+      "name": "Rename Agent Task Family - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/list",
+        "urlPathTemplate": "/agents/{agent_uuid}/task-families/rename",
         "method": "POST",
         "headers": {
           "Authorization": {
@@ -3799,12 +3799,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"abandoned_at\": \"abandoned_at\",\n      \"agent_uuid\": \"agent_uuid\",\n      \"attempt_family_uuid\": \"attempt_family_uuid\",\n      \"closed_at\": \"closed_at\",\n      \"created_at\": \"created_at\",\n      \"learn_from\": true,\n      \"learn_from_reason\": \"learn_from_reason\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"objective\": \"objective\",\n      \"outcome\": \"succeeded\",\n      \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n      \"revision\": 1,\n      \"source\": {\n        \"source_changed\": false\n      },\n      \"status\": \"open\",\n      \"task_family\": \"task_family\",\n      \"trajectory_id\": \"trajectory_id\",\n      \"updated_at\": \"updated_at\",\n      \"uuid\": \"uuid\",\n      \"verification\": \"none\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"merged\": true,\n  \"task_family\": {\n    \"agent_uuid\": \"agent_uuid\",\n    \"created_at\": \"created_at\",\n    \"description\": \"description\",\n    \"descriptor_version\": 1,\n    \"distinguishing_tools\": [\n      \"distinguishing_tools\"\n    ],\n    \"not_for\": \"not_for\",\n    \"slug\": \"slug\",\n    \"updated_at\": \"updated_at\",\n    \"use_when\": \"use_when\",\n    \"uuid\": \"uuid\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "f84d5840-d064-450f-a38f-c87b0bd0e628",
+      "uuid": "464e6227-2756-4fca-88ae-8b848e0db7b1",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -3817,481 +3817,10 @@
       }
     },
     {
-      "id": "40ff05b7-924e-471b-8cb4-481c7f148111",
-      "name": "Get Agent Trajectory - default",
+      "id": "bec01b92-026a-4ec5-bd1e-1287dc7a2701",
+      "name": "List trace imports - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"abandoned_at\": \"abandoned_at\",\n  \"agent_uuid\": \"agent_uuid\",\n  \"attempt_family_uuid\": \"attempt_family_uuid\",\n  \"closed_at\": \"closed_at\",\n  \"created_at\": \"created_at\",\n  \"internal\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"closing_sequence\": 1,\n    \"current_summary_version\": 1,\n    \"last_task_uuid\": \"last_task_uuid\",\n    \"next_sequence\": 1,\n    \"processing_state\": \"idle\"\n  },\n  \"learn_from\": true,\n  \"learn_from_reason\": \"learn_from_reason\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"objective\": \"objective\",\n  \"outcome\": \"succeeded\",\n  \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n  \"revision\": 1,\n  \"source\": {\n    \"connection_uuid\": \"connection_uuid\",\n    \"import_uuid\": \"import_uuid\",\n    \"imported_at\": \"imported_at\",\n    \"kind\": \"trace_import\",\n    \"provider\": \"provider\",\n    \"provider_project_id\": \"provider_project_id\",\n    \"run_uuid\": \"run_uuid\",\n    \"scores\": {\n      \"key\": \"value\"\n    },\n    \"source_changed\": false,\n    \"source_revision\": \"source_revision\",\n    \"source_url\": \"source_url\",\n    \"trace_ended_at\": \"trace_ended_at\",\n    \"trace_id\": \"trace_id\",\n    \"trace_started_at\": \"trace_started_at\"\n  },\n  \"status\": \"open\",\n  \"task_family\": \"task_family\",\n  \"trajectory_id\": \"trajectory_id\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "40ff05b7-924e-471b-8cb4-481c7f148111",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "fbf08be7-7605-41aa-aeac-8234ba2381cb",
-      "name": "Delete Agent Trajectory - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}",
-        "method": "DELETE",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 202,
-        "body": "{\n  \"affected_skills\": 1,\n  \"deletion_uuid\": \"deletion_uuid\",\n  \"skill_repair_task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"summary_repair_task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trajectory\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"trajectory_id\": \"trajectory_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "fbf08be7-7605-41aa-aeac-8234ba2381cb",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "3eee0807-b220-48a8-8a3c-7582f049af58",
-      "name": "Update Agent Trajectory - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}",
-        "method": "PATCH",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"abandoned_at\": \"abandoned_at\",\n  \"agent_uuid\": \"agent_uuid\",\n  \"attempt_family_uuid\": \"attempt_family_uuid\",\n  \"closed_at\": \"closed_at\",\n  \"created_at\": \"created_at\",\n  \"internal\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"closing_sequence\": 1,\n    \"current_summary_version\": 1,\n    \"last_task_uuid\": \"last_task_uuid\",\n    \"next_sequence\": 1,\n    \"processing_state\": \"idle\"\n  },\n  \"learn_from\": true,\n  \"learn_from_reason\": \"learn_from_reason\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"objective\": \"objective\",\n  \"outcome\": \"succeeded\",\n  \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n  \"revision\": 1,\n  \"source\": {\n    \"connection_uuid\": \"connection_uuid\",\n    \"import_uuid\": \"import_uuid\",\n    \"imported_at\": \"imported_at\",\n    \"kind\": \"trace_import\",\n    \"provider\": \"provider\",\n    \"provider_project_id\": \"provider_project_id\",\n    \"run_uuid\": \"run_uuid\",\n    \"scores\": {\n      \"key\": \"value\"\n    },\n    \"source_changed\": false,\n    \"source_revision\": \"source_revision\",\n    \"source_url\": \"source_url\",\n    \"trace_ended_at\": \"trace_ended_at\",\n    \"trace_id\": \"trace_id\",\n    \"trace_started_at\": \"trace_started_at\"\n  },\n  \"status\": \"open\",\n  \"task_family\": \"task_family\",\n  \"trajectory_id\": \"trajectory_id\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "3eee0807-b220-48a8-8a3c-7582f049af58",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "0b35f597-6e45-41a1-8456-aec6a5bc6591",
-      "name": "Abandon Agent Trajectory - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/abandon",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 202,
-        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trajectory\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"trajectory_id\": \"trajectory_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "0b35f597-6e45-41a1-8456-aec6a5bc6591",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "4a1db3c5-a6d2-4231-a84a-da44f72522f9",
-      "name": "Close Agent Trajectory - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/close",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 202,
-        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trajectory\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"trajectory_id\": \"trajectory_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "4a1db3c5-a6d2-4231-a84a-da44f72522f9",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "641e0e68-31ff-4fee-95d7-fbebf9ae44fe",
-      "name": "Correct Agent Trajectory Task Family - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/correct-task-family",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 202,
-        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trajectory\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"trajectory_id\": \"trajectory_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "641e0e68-31ff-4fee-95d7-fbebf9ae44fe",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "cd97f12f-7e2c-4750-8f03-1f6feb9b0a86",
-      "name": "List Agent Trajectory Events - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/events",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"agent_uuid\",\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"event_id\": \"event_id\",\n      \"event_type\": \"input_reference\",\n      \"failed_at\": \"failed_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"occurred_at\": \"occurred_at\",\n      \"processed_at\": \"processed_at\",\n      \"processing_state\": \"pending\",\n      \"sequence\": 1,\n      \"sources\": [\n        {\n          \"kind\": \"kind\",\n          \"uuid\": \"uuid\"\n        }\n      ],\n      \"trajectory_uuid\": \"trajectory_uuid\",\n      \"updated_at\": \"updated_at\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "cd97f12f-7e2c-4750-8f03-1f6feb9b0a86",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "1897a63e-c1b6-4f63-8690-06a669dea655",
-      "name": "Append Agent Trajectory Event - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/events",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"agent_uuid\": \"agent_uuid\",\n  \"content\": \"content\",\n  \"context\": {\n    \"artifacts\": [\n      {\n        \"name\": \"name\"\n      }\n    ],\n    \"environments\": [\n      {\n        \"name\": \"name\"\n      }\n    ],\n    \"model\": {\n      \"name\": \"name\",\n      \"version\": \"version\"\n    },\n    \"tools\": [\n      {\n        \"name\": \"name\"\n      }\n    ],\n    \"verification\": \"verification\"\n  },\n  \"created_at\": \"created_at\",\n  \"event_id\": \"event_id\",\n  \"event_type\": \"input_reference\",\n  \"failed_at\": \"failed_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"occurred_at\": \"occurred_at\",\n  \"processed_at\": \"processed_at\",\n  \"processing_state\": \"pending\",\n  \"sequence\": 1,\n  \"sources\": [\n    {\n      \"copy_mode\": \"reference\",\n      \"kind\": \"kind\",\n      \"retention_mode\": \"delete_with_source\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"trajectory_uuid\": \"trajectory_uuid\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "1897a63e-c1b6-4f63-8690-06a669dea655",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "687ecab3-26c6-4545-a8c2-dfe938b9f352",
-      "name": "Delete Agent Trajectory Event - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/events/{event_uuid}",
-        "method": "DELETE",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          },
-          "event_uuid": {
-            "equalTo": "event_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 202,
-        "body": "{\n  \"affected_skills\": 1,\n  \"deletion_uuid\": \"deletion_uuid\",\n  \"skill_repair_task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"summary_repair_task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trajectory\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"trajectory_id\": \"trajectory_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "687ecab3-26c6-4545-a8c2-dfe938b9f352",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "fea7b245-8e6a-469b-9857-22200f6e3e54",
-      "name": "Reopen Agent Trajectory - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/reopen",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"abandoned_at\": \"abandoned_at\",\n  \"agent_uuid\": \"agent_uuid\",\n  \"attempt_family_uuid\": \"attempt_family_uuid\",\n  \"closed_at\": \"closed_at\",\n  \"created_at\": \"created_at\",\n  \"internal\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"closing_sequence\": 1,\n    \"current_summary_version\": 1,\n    \"last_task_uuid\": \"last_task_uuid\",\n    \"next_sequence\": 1,\n    \"processing_state\": \"idle\"\n  },\n  \"learn_from\": true,\n  \"learn_from_reason\": \"learn_from_reason\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"objective\": \"objective\",\n  \"outcome\": \"succeeded\",\n  \"parent_trajectory_uuid\": \"parent_trajectory_uuid\",\n  \"revision\": 1,\n  \"source\": {\n    \"connection_uuid\": \"connection_uuid\",\n    \"import_uuid\": \"import_uuid\",\n    \"imported_at\": \"imported_at\",\n    \"kind\": \"trace_import\",\n    \"provider\": \"provider\",\n    \"provider_project_id\": \"provider_project_id\",\n    \"run_uuid\": \"run_uuid\",\n    \"scores\": {\n      \"key\": \"value\"\n    },\n    \"source_changed\": false,\n    \"source_revision\": \"source_revision\",\n    \"source_url\": \"source_url\",\n    \"trace_ended_at\": \"trace_ended_at\",\n    \"trace_id\": \"trace_id\",\n    \"trace_started_at\": \"trace_started_at\"\n  },\n  \"status\": \"open\",\n  \"task_family\": \"task_family\",\n  \"trajectory_id\": \"trajectory_id\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "fea7b245-8e6a-469b-9857-22200f6e3e54",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "89f6ce5d-e681-41ae-82a2-ae8e7bf1a25f",
-      "name": "Get Current Agent Trajectory Summary - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/summary",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"agent_uuid\": \"agent_uuid\",\n  \"assertion_uuid\": \"assertion_uuid\",\n  \"created_at\": \"created_at\",\n  \"creation_reason\": \"close\",\n  \"first_occurred_at\": \"first_occurred_at\",\n  \"first_sequence\": 1,\n  \"last_occurred_at\": \"last_occurred_at\",\n  \"last_sequence\": 1,\n  \"omitted_sequence_ranges\": [\n    {\n      \"first_sequence\": 1,\n      \"last_sequence\": 1,\n      \"reason\": \"narrower_authorization_boundary\"\n    }\n  ],\n  \"outcome\": \"succeeded\",\n  \"parent_version_uuid\": \"parent_version_uuid\",\n  \"structured_summary\": {\n    \"key\": \"value\"\n  },\n  \"text\": \"text\",\n  \"trajectory_uuid\": \"trajectory_uuid\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\",\n  \"version\": 1\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "89f6ce5d-e681-41ae-82a2-ae8e7bf1a25f",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "fd9b7e46-6c64-418b-ae18-150f3e1bdccf",
-      "name": "List Agent Trajectory Summary Versions - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectories/{trajectory_uuid}/summary/versions",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "agent_uuid": {
-            "equalTo": "agent_uuid"
-          },
-          "trajectory_uuid": {
-            "equalTo": "trajectory_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"agent_uuid\",\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"created_at\": \"created_at\",\n      \"creation_reason\": \"close\",\n      \"first_occurred_at\": \"first_occurred_at\",\n      \"first_sequence\": 1,\n      \"last_occurred_at\": \"last_occurred_at\",\n      \"last_sequence\": 1,\n      \"omitted_sequence_ranges\": [\n        {}\n      ],\n      \"outcome\": \"succeeded\",\n      \"parent_version_uuid\": \"parent_version_uuid\",\n      \"structured_summary\": {\n        \"key\": \"value\"\n      },\n      \"text\": \"text\",\n      \"trajectory_uuid\": \"trajectory_uuid\",\n      \"uuid\": \"uuid\",\n      \"verification\": \"none\",\n      \"version\": 1\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "fd9b7e46-6c64-418b-ae18-150f3e1bdccf",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "1a2fab26-a0d6-447b-af52-fd835dfcf853",
-      "name": "List trajectory imports - default",
-      "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports",
         "method": "GET",
         "headers": {
           "Authorization": {
@@ -4306,12 +3835,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n      \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n      \"created_at\": \"2026-01-01T00:00:00Z\",\n      \"imported_trajectory_count\": 10,\n      \"last_run\": {\n        \"completed_at\": \"2026-01-01T00:01:00Z\",\n        \"started_at\": \"2026-01-01T00:00:01Z\",\n        \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n      },\n      \"learn_from\": true,\n      \"mapping\": {\n        \"content\": {\n          \"include_system_messages\": false,\n          \"metadata_keys\": [\n            \"ticket_id\",\n            \"queue\"\n          ]\n        },\n        \"include_outcomes\": [\n          \"succeeded\",\n          \"failed\"\n        ],\n        \"objective\": {\n          \"key\": \"objective\"\n        },\n        \"outcome\": [\n          {\n            \"failed_below\": 0.4,\n            \"key\": \"outcome\",\n            \"name\": \"quality\",\n            \"succeeded_at_or_above\": 0.8,\n            \"values\": {\n              \"ok\": \"succeeded\"\n            }\n          }\n        ],\n        \"score_verifier\": false,\n        \"task_family\": {\n          \"fallback\": \"support/general\",\n          \"key\": \"task_family\",\n          \"prefix\": \"task:\",\n          \"value\": \"support/refund\"\n        }\n      },\n      \"name\": \"Support traces\",\n      \"next_run_at\": \"2026-01-01T04:00:00Z\",\n      \"on_source_change\": \"ignore\",\n      \"pause_reason\": \"user\",\n      \"provider\": \"braintrust\",\n      \"provider_organization_id\": \"org_123\",\n      \"provider_project_id\": \"project_123\",\n      \"require_review\": false,\n      \"revision\": 1,\n      \"schedule\": {\n        \"interval_hours\": 4,\n        \"max_open_hours\": 24,\n        \"settle_minutes\": 5,\n        \"start_from\": \"24h\"\n      },\n      \"selection\": {\n        \"filter\": {\n          \"has_error\": false,\n          \"name\": \"Handle support request\",\n          \"scores\": [\n            {\n              \"max\": 1,\n              \"min\": 0.5,\n              \"name\": \"quality\"\n            }\n          ],\n          \"started_after\": \"2026-01-01T00:00:00Z\",\n          \"started_before\": \"2026-02-01T00:00:00Z\",\n          \"tags_all\": [\n            \"support\",\n            \"prod\"\n          ],\n          \"tags_any\": [\n            \"support\",\n            \"billing\"\n          ]\n        },\n        \"trace_ids\": [\n          \"trace_123\",\n          \"trace_456\"\n        ]\n      },\n      \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n      \"status\": \"active\",\n      \"updated_at\": \"2026-01-01T00:00:00Z\",\n      \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n    }\n  ],\n  \"next_cursor\": \"eyJvZmZzZXQiOjI1fQ\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n      \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n      \"created_at\": \"2026-01-01T00:00:00Z\",\n      \"imported_trace_count\": 10,\n      \"last_run\": {\n        \"completed_at\": \"2026-01-01T00:01:00Z\",\n        \"started_at\": \"2026-01-01T00:00:01Z\",\n        \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n      },\n      \"learn_from\": true,\n      \"mapping\": {\n        \"content\": {\n          \"include_system_messages\": false,\n          \"metadata_keys\": [\n            \"ticket_id\",\n            \"queue\"\n          ]\n        },\n        \"include_outcomes\": [\n          \"succeeded\",\n          \"failed\"\n        ],\n        \"objective\": {\n          \"key\": \"objective\"\n        },\n        \"outcome\": [\n          {\n            \"failed_below\": 0.4,\n            \"key\": \"outcome\",\n            \"name\": \"quality\",\n            \"succeeded_at_or_above\": 0.8,\n            \"values\": {\n              \"ok\": \"succeeded\"\n            }\n          }\n        ],\n        \"score_verifier\": false,\n        \"task_family\": {\n          \"fallback\": \"support/general\",\n          \"key\": \"task_family\",\n          \"prefix\": \"task:\",\n          \"value\": \"support/refund\"\n        }\n      },\n      \"name\": \"Support traces\",\n      \"next_run_at\": \"2026-01-01T04:00:00Z\",\n      \"on_source_change\": \"ignore\",\n      \"pause_reason\": \"user\",\n      \"provider\": \"braintrust\",\n      \"provider_organization_id\": \"org_123\",\n      \"provider_project_id\": \"project_123\",\n      \"require_review\": false,\n      \"revision\": 1,\n      \"schedule\": {\n        \"interval_hours\": 4,\n        \"max_open_hours\": 24,\n        \"settle_minutes\": 5,\n        \"start_from\": \"24h\"\n      },\n      \"selection\": {\n        \"filter\": {\n          \"has_error\": false,\n          \"name\": \"Handle support request\",\n          \"scores\": [\n            {\n              \"max\": 1,\n              \"min\": 0.5,\n              \"name\": \"quality\"\n            }\n          ],\n          \"started_after\": \"2026-01-01T00:00:00Z\",\n          \"started_before\": \"2026-02-01T00:00:00Z\",\n          \"tags_all\": [\n            \"support\",\n            \"prod\"\n          ],\n          \"tags_any\": [\n            \"support\",\n            \"billing\"\n          ]\n        },\n        \"trace_ids\": [\n          \"trace_123\",\n          \"trace_456\"\n        ]\n      },\n      \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n      \"status\": \"active\",\n      \"updated_at\": \"2026-01-01T00:00:00Z\",\n      \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n    }\n  ],\n  \"next_cursor\": \"eyJvZmZzZXQiOjI1fQ\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "1a2fab26-a0d6-447b-af52-fd835dfcf853",
+      "uuid": "bec01b92-026a-4ec5-bd1e-1287dc7a2701",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -4324,10 +3853,10 @@
       }
     },
     {
-      "id": "f97852d8-9521-4b09-8f68-c90a83997d87",
-      "name": "Create a trajectory import - default",
+      "id": "78c6104e-d7d8-426f-b3f5-b9e4b1c5bc2f",
+      "name": "Create a trace import - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports",
         "method": "POST",
         "headers": {
           "Authorization": {
@@ -4342,12 +3871,12 @@
       },
       "response": {
         "status": 201,
-        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trajectory_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
+        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trace_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "f97852d8-9521-4b09-8f68-c90a83997d87",
+      "uuid": "78c6104e-d7d8-426f-b3f5-b9e4b1c5bc2f",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -4360,10 +3889,10 @@
       }
     },
     {
-      "id": "d54f4c5f-04f2-4325-b649-98b6816305e2",
-      "name": "Get a trajectory import - default",
+      "id": "0c0d8be4-6ff8-4f8d-98db-3ef8fc78a235",
+      "name": "Get a trace import - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}",
         "method": "GET",
         "headers": {
           "Authorization": {
@@ -4381,12 +3910,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trajectory_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
+        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trace_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "d54f4c5f-04f2-4325-b649-98b6816305e2",
+      "uuid": "0c0d8be4-6ff8-4f8d-98db-3ef8fc78a235",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -4399,10 +3928,10 @@
       }
     },
     {
-      "id": "c5bab258-ad5e-4206-9777-92dc6a0f1717",
-      "name": "Delete a trajectory import - default",
+      "id": "67014bd9-6c75-4561-9b2e-fbcb0b8f6a58",
+      "name": "Delete a trace import - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}",
         "method": "DELETE",
         "headers": {
           "Authorization": {
@@ -4425,7 +3954,7 @@
           "Content-Type": "application/json"
         }
       },
-      "uuid": "c5bab258-ad5e-4206-9777-92dc6a0f1717",
+      "uuid": "67014bd9-6c75-4561-9b2e-fbcb0b8f6a58",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -4438,10 +3967,10 @@
       }
     },
     {
-      "id": "0e260f6e-8c88-4821-ad52-0fb3512b281b",
-      "name": "Update a trajectory import - default",
+      "id": "54b75b82-a697-4ccf-9148-32fa9abbee90",
+      "name": "Update a trace import - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}",
         "method": "PATCH",
         "headers": {
           "Authorization": {
@@ -4459,12 +3988,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trajectory_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
+        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trace_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "0e260f6e-8c88-4821-ad52-0fb3512b281b",
+      "uuid": "54b75b82-a697-4ccf-9148-32fa9abbee90",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -4477,10 +4006,10 @@
       }
     },
     {
-      "id": "e5700566-6248-4dcd-ab4a-a4382b876cf7",
-      "name": "Pause a trajectory import - default",
+      "id": "a290a38c-00bc-49b0-ba28-e29976e1a794",
+      "name": "Pause a trace import - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}/pause",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}/pause",
         "method": "POST",
         "headers": {
           "Authorization": {
@@ -4498,12 +4027,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trajectory_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
+        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trace_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "e5700566-6248-4dcd-ab4a-a4382b876cf7",
+      "uuid": "a290a38c-00bc-49b0-ba28-e29976e1a794",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -4516,10 +4045,10 @@
       }
     },
     {
-      "id": "e569b4d0-6dd7-4676-a081-47342e6fb696",
-      "name": "Resume a trajectory import - default",
+      "id": "d546cdb9-7c00-45fb-ae4e-e641c5339357",
+      "name": "Resume a trace import - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}/resume",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}/resume",
         "method": "POST",
         "headers": {
           "Authorization": {
@@ -4537,12 +4066,555 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trajectory_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
+        "body": "{\n  \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n  \"connection_uuid\": \"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1\",\n  \"created_at\": \"2026-01-01T00:00:00Z\",\n  \"imported_trace_count\": 10,\n  \"last_run\": {\n    \"completed_at\": \"2026-01-01T00:01:00Z\",\n    \"started_at\": \"2026-01-01T00:00:01Z\",\n    \"status\": \"pending\",\n    \"trigger\": \"create\",\n    \"uuid\": \"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688\"\n  },\n  \"learn_from\": true,\n  \"mapping\": {\n    \"content\": {\n      \"include_system_messages\": false,\n      \"metadata_keys\": [\n        \"ticket_id\",\n        \"queue\"\n      ]\n    },\n    \"include_outcomes\": [\n      \"succeeded\",\n      \"failed\"\n    ],\n    \"objective\": {\n      \"key\": \"objective\",\n      \"source\": \"first_user_message\"\n    },\n    \"outcome\": [\n      {\n        \"failed_below\": 0.4,\n        \"key\": \"outcome\",\n        \"name\": \"quality\",\n        \"succeeded_at_or_above\": 0.8,\n        \"values\": {\n          \"ok\": \"succeeded\"\n        }\n      }\n    ],\n    \"score_verifier\": false,\n    \"task_family\": {\n      \"fallback\": \"support/general\",\n      \"key\": \"task_family\",\n      \"prefix\": \"task:\",\n      \"source\": \"fixed\",\n      \"value\": \"support/refund\"\n    }\n  },\n  \"name\": \"Support traces\",\n  \"next_run_at\": \"2026-01-01T04:00:00Z\",\n  \"on_source_change\": \"ignore\",\n  \"pause_reason\": \"user\",\n  \"provider\": \"braintrust\",\n  \"provider_organization_id\": \"org_123\",\n  \"provider_project_id\": \"project_123\",\n  \"require_review\": false,\n  \"revision\": 1,\n  \"schedule\": {\n    \"interval_hours\": 4,\n    \"max_open_hours\": 24,\n    \"settle_minutes\": 5,\n    \"start_from\": \"24h\"\n  },\n  \"selection\": {\n    \"filter\": {\n      \"has_error\": false,\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": [\n        {\n          \"max\": 1,\n          \"min\": 0.5,\n          \"name\": \"quality\"\n        }\n      ],\n      \"started_after\": \"2026-01-01T00:00:00Z\",\n      \"started_before\": \"2026-02-01T00:00:00Z\",\n      \"tags_all\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"tags_any\": [\n        \"support\",\n        \"billing\"\n      ]\n    },\n    \"trace_ids\": [\n      \"trace_123\",\n      \"trace_456\"\n    ]\n  },\n  \"source_cursor_updated_at\": \"2026-01-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"updated_at\": \"2026-01-01T00:00:00Z\",\n  \"uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "e569b4d0-6dd7-4676-a081-47342e6fb696",
+      "uuid": "d546cdb9-7c00-45fb-ae4e-e641c5339357",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "86559b18-b2aa-433b-8db6-089ea6064c02",
+      "name": "Create Agent Trace - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"abandoned_at\": \"abandoned_at\",\n  \"agent_uuid\": \"agent_uuid\",\n  \"attempt_family_uuid\": \"attempt_family_uuid\",\n  \"closed_at\": \"closed_at\",\n  \"created_at\": \"created_at\",\n  \"internal\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"closing_sequence\": 1,\n    \"current_summary_version\": 1,\n    \"last_task_uuid\": \"last_task_uuid\",\n    \"next_sequence\": 1,\n    \"processing_state\": \"idle\"\n  },\n  \"learn_from\": true,\n  \"learn_from_reason\": \"learn_from_reason\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"objective\": \"objective\",\n  \"outcome\": \"succeeded\",\n  \"parent_trace_uuid\": \"parent_trace_uuid\",\n  \"revision\": 1,\n  \"source\": {\n    \"connection_uuid\": \"connection_uuid\",\n    \"import_uuid\": \"import_uuid\",\n    \"imported_at\": \"imported_at\",\n    \"kind\": \"trace_import\",\n    \"provider\": \"provider\",\n    \"provider_project_id\": \"provider_project_id\",\n    \"run_uuid\": \"run_uuid\",\n    \"scores\": {\n      \"key\": \"value\"\n    },\n    \"source_changed\": false,\n    \"source_revision\": \"source_revision\",\n    \"source_url\": \"source_url\",\n    \"trace_ended_at\": \"trace_ended_at\",\n    \"trace_id\": \"trace_id\",\n    \"trace_started_at\": \"trace_started_at\"\n  },\n  \"status\": \"open\",\n  \"task_family\": \"task_family\",\n  \"task_family_inference\": {\n    \"assigned_at\": \"assigned_at\",\n    \"classifier_version\": \"classifier_version\",\n    \"confidence\": 1.1,\n    \"descriptor_version\": 1,\n    \"learning_reusable\": true,\n    \"state\": \"state\"\n  },\n  \"task_family_source\": \"task_family_source\",\n  \"trace_id\": \"trace_id\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "86559b18-b2aa-433b-8db6-089ea6064c02",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c36866bc-44a8-4bcf-accf-038da16ee0f5",
+      "name": "List Agent Traces - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"abandoned_at\": \"abandoned_at\",\n      \"agent_uuid\": \"agent_uuid\",\n      \"attempt_family_uuid\": \"attempt_family_uuid\",\n      \"closed_at\": \"closed_at\",\n      \"created_at\": \"created_at\",\n      \"learn_from\": true,\n      \"learn_from_reason\": \"learn_from_reason\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"objective\": \"objective\",\n      \"outcome\": \"succeeded\",\n      \"parent_trace_uuid\": \"parent_trace_uuid\",\n      \"revision\": 1,\n      \"source\": {\n        \"source_changed\": false\n      },\n      \"status\": \"open\",\n      \"task_family\": \"task_family\",\n      \"task_family_source\": \"task_family_source\",\n      \"trace_id\": \"trace_id\",\n      \"updated_at\": \"updated_at\",\n      \"uuid\": \"uuid\",\n      \"verification\": \"none\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c36866bc-44a8-4bcf-accf-038da16ee0f5",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "08b29daa-c446-4f68-bfb9-ae9ef2dcb460",
+      "name": "Get Agent Trace - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"abandoned_at\": \"abandoned_at\",\n  \"agent_uuid\": \"agent_uuid\",\n  \"attempt_family_uuid\": \"attempt_family_uuid\",\n  \"closed_at\": \"closed_at\",\n  \"created_at\": \"created_at\",\n  \"internal\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"closing_sequence\": 1,\n    \"current_summary_version\": 1,\n    \"last_task_uuid\": \"last_task_uuid\",\n    \"next_sequence\": 1,\n    \"processing_state\": \"idle\"\n  },\n  \"learn_from\": true,\n  \"learn_from_reason\": \"learn_from_reason\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"objective\": \"objective\",\n  \"outcome\": \"succeeded\",\n  \"parent_trace_uuid\": \"parent_trace_uuid\",\n  \"revision\": 1,\n  \"source\": {\n    \"connection_uuid\": \"connection_uuid\",\n    \"import_uuid\": \"import_uuid\",\n    \"imported_at\": \"imported_at\",\n    \"kind\": \"trace_import\",\n    \"provider\": \"provider\",\n    \"provider_project_id\": \"provider_project_id\",\n    \"run_uuid\": \"run_uuid\",\n    \"scores\": {\n      \"key\": \"value\"\n    },\n    \"source_changed\": false,\n    \"source_revision\": \"source_revision\",\n    \"source_url\": \"source_url\",\n    \"trace_ended_at\": \"trace_ended_at\",\n    \"trace_id\": \"trace_id\",\n    \"trace_started_at\": \"trace_started_at\"\n  },\n  \"status\": \"open\",\n  \"task_family\": \"task_family\",\n  \"task_family_inference\": {\n    \"assigned_at\": \"assigned_at\",\n    \"classifier_version\": \"classifier_version\",\n    \"confidence\": 1.1,\n    \"descriptor_version\": 1,\n    \"learning_reusable\": true,\n    \"state\": \"state\"\n  },\n  \"task_family_source\": \"task_family_source\",\n  \"trace_id\": \"trace_id\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "08b29daa-c446-4f68-bfb9-ae9ef2dcb460",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "5f83320e-a175-4cc0-a3e4-44408cabce34",
+      "name": "Delete Agent Trace - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"affected_skills\": 1,\n  \"deletion_uuid\": \"deletion_uuid\",\n  \"skill_repair_task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"summary_repair_task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trace\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trace_uuid\": \"parent_trace_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"task_family_inference\": {\n      \"assigned_at\": \"assigned_at\",\n      \"classifier_version\": \"classifier_version\",\n      \"confidence\": 1.1,\n      \"descriptor_version\": 1,\n      \"learning_reusable\": true,\n      \"state\": \"state\"\n    },\n    \"task_family_source\": \"task_family_source\",\n    \"trace_id\": \"trace_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5f83320e-a175-4cc0-a3e4-44408cabce34",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e04eafa2-d71f-41a5-b37d-fac8b200723d",
+      "name": "Update Agent Trace - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"abandoned_at\": \"abandoned_at\",\n  \"agent_uuid\": \"agent_uuid\",\n  \"attempt_family_uuid\": \"attempt_family_uuid\",\n  \"closed_at\": \"closed_at\",\n  \"created_at\": \"created_at\",\n  \"internal\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"closing_sequence\": 1,\n    \"current_summary_version\": 1,\n    \"last_task_uuid\": \"last_task_uuid\",\n    \"next_sequence\": 1,\n    \"processing_state\": \"idle\"\n  },\n  \"learn_from\": true,\n  \"learn_from_reason\": \"learn_from_reason\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"objective\": \"objective\",\n  \"outcome\": \"succeeded\",\n  \"parent_trace_uuid\": \"parent_trace_uuid\",\n  \"revision\": 1,\n  \"source\": {\n    \"connection_uuid\": \"connection_uuid\",\n    \"import_uuid\": \"import_uuid\",\n    \"imported_at\": \"imported_at\",\n    \"kind\": \"trace_import\",\n    \"provider\": \"provider\",\n    \"provider_project_id\": \"provider_project_id\",\n    \"run_uuid\": \"run_uuid\",\n    \"scores\": {\n      \"key\": \"value\"\n    },\n    \"source_changed\": false,\n    \"source_revision\": \"source_revision\",\n    \"source_url\": \"source_url\",\n    \"trace_ended_at\": \"trace_ended_at\",\n    \"trace_id\": \"trace_id\",\n    \"trace_started_at\": \"trace_started_at\"\n  },\n  \"status\": \"open\",\n  \"task_family\": \"task_family\",\n  \"task_family_inference\": {\n    \"assigned_at\": \"assigned_at\",\n    \"classifier_version\": \"classifier_version\",\n    \"confidence\": 1.1,\n    \"descriptor_version\": 1,\n    \"learning_reusable\": true,\n    \"state\": \"state\"\n  },\n  \"task_family_source\": \"task_family_source\",\n  \"trace_id\": \"trace_id\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e04eafa2-d71f-41a5-b37d-fac8b200723d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8a01aae5-899c-4a35-a14f-b50e3a37f6e9",
+      "name": "Abandon Agent Trace - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/abandon",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trace\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trace_uuid\": \"parent_trace_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"task_family_inference\": {\n      \"assigned_at\": \"assigned_at\",\n      \"classifier_version\": \"classifier_version\",\n      \"confidence\": 1.1,\n      \"descriptor_version\": 1,\n      \"learning_reusable\": true,\n      \"state\": \"state\"\n    },\n    \"task_family_source\": \"task_family_source\",\n    \"trace_id\": \"trace_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8a01aae5-899c-4a35-a14f-b50e3a37f6e9",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "413cda71-8ba2-45fb-831c-ae932492221b",
+      "name": "Close Agent Trace - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/close",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trace\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trace_uuid\": \"parent_trace_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"task_family_inference\": {\n      \"assigned_at\": \"assigned_at\",\n      \"classifier_version\": \"classifier_version\",\n      \"confidence\": 1.1,\n      \"descriptor_version\": 1,\n      \"learning_reusable\": true,\n      \"state\": \"state\"\n    },\n    \"task_family_source\": \"task_family_source\",\n    \"trace_id\": \"trace_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "413cda71-8ba2-45fb-831c-ae932492221b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "fb0074bd-455e-42cc-94c1-893bc7ac8dea",
+      "name": "Correct Agent Trace Task Family - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/correct-task-family",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trace\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trace_uuid\": \"parent_trace_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"task_family_inference\": {\n      \"assigned_at\": \"assigned_at\",\n      \"classifier_version\": \"classifier_version\",\n      \"confidence\": 1.1,\n      \"descriptor_version\": 1,\n      \"learning_reusable\": true,\n      \"state\": \"state\"\n    },\n    \"task_family_source\": \"task_family_source\",\n    \"trace_id\": \"trace_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "fb0074bd-455e-42cc-94c1-893bc7ac8dea",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "6cf559b1-ff55-461d-a4c9-ae67e5089b0e",
+      "name": "List Agent Trace Events - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/events",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"agent_uuid\",\n      \"content\": \"content\",\n      \"created_at\": \"created_at\",\n      \"event_id\": \"event_id\",\n      \"event_type\": \"input_reference\",\n      \"failed_at\": \"failed_at\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"occurred_at\": \"occurred_at\",\n      \"processed_at\": \"processed_at\",\n      \"processing_state\": \"pending\",\n      \"sequence\": 1,\n      \"sources\": [\n        {\n          \"kind\": \"kind\",\n          \"uuid\": \"uuid\"\n        }\n      ],\n      \"trace_uuid\": \"trace_uuid\",\n      \"updated_at\": \"updated_at\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "6cf559b1-ff55-461d-a4c9-ae67e5089b0e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3c9d5e4a-6356-4255-9b15-31e8e891d96d",
+      "name": "Append Agent Trace Event - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/events",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"agent_uuid\": \"agent_uuid\",\n  \"content\": \"content\",\n  \"context\": {\n    \"artifacts\": [\n      {\n        \"name\": \"name\"\n      }\n    ],\n    \"environments\": [\n      {\n        \"name\": \"name\"\n      }\n    ],\n    \"model\": {\n      \"name\": \"name\",\n      \"version\": \"version\"\n    },\n    \"tools\": [\n      {\n        \"name\": \"name\"\n      }\n    ],\n    \"verification\": \"verification\"\n  },\n  \"created_at\": \"created_at\",\n  \"event_id\": \"event_id\",\n  \"event_type\": \"input_reference\",\n  \"failed_at\": \"failed_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"occurred_at\": \"occurred_at\",\n  \"processed_at\": \"processed_at\",\n  \"processing_state\": \"pending\",\n  \"sequence\": 1,\n  \"sources\": [\n    {\n      \"copy_mode\": \"reference\",\n      \"kind\": \"kind\",\n      \"retention_mode\": \"delete_with_source\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"trace_uuid\": \"trace_uuid\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3c9d5e4a-6356-4255-9b15-31e8e891d96d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3bdbd5f6-70b6-4d24-8ee2-802490a4471f",
+      "name": "Delete Agent Trace Event - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/events/{event_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          },
+          "event_uuid": {
+            "equalTo": "event_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"affected_skills\": 1,\n  \"deletion_uuid\": \"deletion_uuid\",\n  \"skill_repair_task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"summary_repair_task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  },\n  \"trace\": {\n    \"abandoned_at\": \"abandoned_at\",\n    \"agent_uuid\": \"agent_uuid\",\n    \"attempt_family_uuid\": \"attempt_family_uuid\",\n    \"closed_at\": \"closed_at\",\n    \"created_at\": \"created_at\",\n    \"internal\": {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"closing_sequence\": 1,\n      \"current_summary_version\": 1,\n      \"last_task_uuid\": \"last_task_uuid\",\n      \"next_sequence\": 1,\n      \"processing_state\": \"idle\"\n    },\n    \"learn_from\": true,\n    \"learn_from_reason\": \"learn_from_reason\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"objective\": \"objective\",\n    \"outcome\": \"succeeded\",\n    \"parent_trace_uuid\": \"parent_trace_uuid\",\n    \"revision\": 1,\n    \"source\": {\n      \"connection_uuid\": \"connection_uuid\",\n      \"import_uuid\": \"import_uuid\",\n      \"imported_at\": \"imported_at\",\n      \"kind\": \"trace_import\",\n      \"provider\": \"provider\",\n      \"provider_project_id\": \"provider_project_id\",\n      \"run_uuid\": \"run_uuid\",\n      \"scores\": {\n        \"key\": \"value\"\n      },\n      \"source_changed\": false,\n      \"source_revision\": \"source_revision\",\n      \"source_url\": \"source_url\",\n      \"trace_ended_at\": \"trace_ended_at\",\n      \"trace_id\": \"trace_id\",\n      \"trace_started_at\": \"trace_started_at\"\n    },\n    \"status\": \"open\",\n    \"task_family\": \"task_family\",\n    \"task_family_inference\": {\n      \"assigned_at\": \"assigned_at\",\n      \"classifier_version\": \"classifier_version\",\n      \"confidence\": 1.1,\n      \"descriptor_version\": 1,\n      \"learning_reusable\": true,\n      \"state\": \"state\"\n    },\n    \"task_family_source\": \"task_family_source\",\n    \"trace_id\": \"trace_id\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"none\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3bdbd5f6-70b6-4d24-8ee2-802490a4471f",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "b0140a46-f99f-482b-840a-6011de44687e",
+      "name": "Reopen Agent Trace - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/reopen",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"abandoned_at\": \"abandoned_at\",\n  \"agent_uuid\": \"agent_uuid\",\n  \"attempt_family_uuid\": \"attempt_family_uuid\",\n  \"closed_at\": \"closed_at\",\n  \"created_at\": \"created_at\",\n  \"internal\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"closing_sequence\": 1,\n    \"current_summary_version\": 1,\n    \"last_task_uuid\": \"last_task_uuid\",\n    \"next_sequence\": 1,\n    \"processing_state\": \"idle\"\n  },\n  \"learn_from\": true,\n  \"learn_from_reason\": \"learn_from_reason\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"objective\": \"objective\",\n  \"outcome\": \"succeeded\",\n  \"parent_trace_uuid\": \"parent_trace_uuid\",\n  \"revision\": 1,\n  \"source\": {\n    \"connection_uuid\": \"connection_uuid\",\n    \"import_uuid\": \"import_uuid\",\n    \"imported_at\": \"imported_at\",\n    \"kind\": \"trace_import\",\n    \"provider\": \"provider\",\n    \"provider_project_id\": \"provider_project_id\",\n    \"run_uuid\": \"run_uuid\",\n    \"scores\": {\n      \"key\": \"value\"\n    },\n    \"source_changed\": false,\n    \"source_revision\": \"source_revision\",\n    \"source_url\": \"source_url\",\n    \"trace_ended_at\": \"trace_ended_at\",\n    \"trace_id\": \"trace_id\",\n    \"trace_started_at\": \"trace_started_at\"\n  },\n  \"status\": \"open\",\n  \"task_family\": \"task_family\",\n  \"task_family_inference\": {\n    \"assigned_at\": \"assigned_at\",\n    \"classifier_version\": \"classifier_version\",\n    \"confidence\": 1.1,\n    \"descriptor_version\": 1,\n    \"learning_reusable\": true,\n    \"state\": \"state\"\n  },\n  \"task_family_source\": \"task_family_source\",\n  \"trace_id\": \"trace_id\",\n  \"updated_at\": \"updated_at\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "b0140a46-f99f-482b-840a-6011de44687e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c2536a3a-b665-49f9-8bf9-f209b57de47d",
+      "name": "Get Current Agent Trace Summary - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/summary",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"agent_uuid\": \"agent_uuid\",\n  \"assertion_uuid\": \"assertion_uuid\",\n  \"created_at\": \"created_at\",\n  \"creation_reason\": \"close\",\n  \"first_occurred_at\": \"first_occurred_at\",\n  \"first_sequence\": 1,\n  \"last_occurred_at\": \"last_occurred_at\",\n  \"last_sequence\": 1,\n  \"omitted_sequence_ranges\": [\n    {\n      \"first_sequence\": 1,\n      \"last_sequence\": 1,\n      \"reason\": \"narrower_authorization_boundary\"\n    }\n  ],\n  \"outcome\": \"succeeded\",\n  \"parent_version_uuid\": \"parent_version_uuid\",\n  \"structured_summary\": {\n    \"key\": \"value\"\n  },\n  \"text\": \"text\",\n  \"trace_uuid\": \"trace_uuid\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"none\",\n  \"version\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c2536a3a-b665-49f9-8bf9-f209b57de47d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "a8cb013b-6f1c-44dd-b478-f39028b24ea6",
+      "name": "List Agent Trace Summary Versions - default",
+      "request": {
+        "urlPathTemplate": "/agents/{agent_uuid}/traces/{trace_uuid}/summary/versions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "agent_uuid": {
+            "equalTo": "agent_uuid"
+          },
+          "trace_uuid": {
+            "equalTo": "trace_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"agent_uuid\": \"agent_uuid\",\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"created_at\": \"created_at\",\n      \"creation_reason\": \"close\",\n      \"first_occurred_at\": \"first_occurred_at\",\n      \"first_sequence\": 1,\n      \"last_occurred_at\": \"last_occurred_at\",\n      \"last_sequence\": 1,\n      \"omitted_sequence_ranges\": [\n        {}\n      ],\n      \"outcome\": \"succeeded\",\n      \"parent_version_uuid\": \"parent_version_uuid\",\n      \"structured_summary\": {\n        \"key\": \"value\"\n      },\n      \"text\": \"text\",\n      \"trace_uuid\": \"trace_uuid\",\n      \"uuid\": \"uuid\",\n      \"verification\": \"none\",\n      \"version\": 1\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "a8cb013b-6f1c-44dd-b478-f39028b24ea6",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -4804,7 +4876,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"candidate_count\": 1,\n  \"candidates\": [\n    {\n      \"agent_versions\": [\n        \"agent_versions\"\n      ],\n      \"base_versions\": [\n        {}\n      ],\n      \"confidence\": 1.1,\n      \"decision\": \"decision\",\n      \"description\": \"description\",\n      \"do_not_use_when\": [\n        \"do_not_use_when\"\n      ],\n      \"evidence\": [\n        {\n          \"imported_provider\": \"braintrust\",\n          \"occurred_at\": \"2026-01-01T00:00:00Z\",\n          \"outcome\": \"succeeded\",\n          \"polarity\": \"supporting\",\n          \"source_kind\": \"summary\",\n          \"trajectory_uuid\": \"6a906e70-50ca-4e43-a874-5fcae02a71fa\",\n          \"verification\": \"external\"\n        }\n      ],\n      \"kind\": \"kind\",\n      \"markdown\": \"markdown\",\n      \"name\": \"name\",\n      \"package_name\": \"package_name\",\n      \"task_family\": \"task_family\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"created_at\": \"created_at\",\n  \"import_review_required\": false,\n  \"reason_code\": \"reason_code\",\n  \"results\": [\n    {\n      \"base_versions\": [\n        {}\n      ],\n      \"candidate_uuids\": [\n        \"candidate_uuids\"\n      ],\n      \"decision\": \"decision\",\n      \"target_skill_uuids\": [\n        \"target_skill_uuids\"\n      ],\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"reviewed_at\": \"reviewed_at\",\n  \"revision\": 1,\n  \"status\": \"status\",\n  \"task_family\": \"task_family\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"candidate_count\": 1,\n  \"candidates\": [\n    {\n      \"agent_versions\": [\n        \"agent_versions\"\n      ],\n      \"base_versions\": [\n        {}\n      ],\n      \"confidence\": 1.1,\n      \"decision\": \"decision\",\n      \"description\": \"description\",\n      \"do_not_use_when\": [\n        \"do_not_use_when\"\n      ],\n      \"evidence\": [\n        {\n          \"imported_provider\": \"braintrust\",\n          \"occurred_at\": \"2026-01-01T00:00:00Z\",\n          \"outcome\": \"succeeded\",\n          \"polarity\": \"supporting\",\n          \"source_kind\": \"summary\",\n          \"trace_uuid\": \"6a906e70-50ca-4e43-a874-5fcae02a71fa\",\n          \"verification\": \"external\"\n        }\n      ],\n      \"kind\": \"kind\",\n      \"markdown\": \"markdown\",\n      \"name\": \"name\",\n      \"package_name\": \"package_name\",\n      \"task_family\": \"task_family\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"created_at\": \"created_at\",\n  \"import_review_required\": false,\n  \"reason_code\": \"reason_code\",\n  \"results\": [\n    {\n      \"base_versions\": [\n        {}\n      ],\n      \"candidate_uuids\": [\n        \"candidate_uuids\"\n      ],\n      \"decision\": \"decision\",\n      \"target_skill_uuids\": [\n        \"target_skill_uuids\"\n      ],\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"reviewed_at\": \"reviewed_at\",\n  \"revision\": 1,\n  \"status\": \"status\",\n  \"task_family\": \"task_family\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -4885,7 +4957,7 @@
       },
       "response": {
         "status": 201,
-        "body": "{\n  \"controlled_test\": true,\n  \"created_at\": \"created_at\",\n  \"environment\": \"environment\",\n  \"evaluated_by\": \"evaluated_by\",\n  \"evaluator_version\": \"evaluator_version\",\n  \"evidence_reference\": \"evidence_reference\",\n  \"metrics\": {\n    \"key\": 1.1\n  },\n  \"skill_uuid\": \"skill_uuid\",\n  \"skill_version\": 1,\n  \"trajectory_uuid\": \"trajectory_uuid\",\n  \"use_uuid\": \"use_uuid\",\n  \"uuid\": \"uuid\",\n  \"verdict\": \"verdict\"\n}",
+        "body": "{\n  \"controlled_test\": true,\n  \"created_at\": \"created_at\",\n  \"environment\": \"environment\",\n  \"evaluated_by\": \"evaluated_by\",\n  \"evaluator_version\": \"evaluator_version\",\n  \"evidence_reference\": \"evidence_reference\",\n  \"metrics\": {\n    \"key\": 1.1\n  },\n  \"skill_uuid\": \"skill_uuid\",\n  \"skill_version\": 1,\n  \"trace_uuid\": \"trace_uuid\",\n  \"use_uuid\": \"use_uuid\",\n  \"uuid\": \"uuid\",\n  \"verdict\": \"verdict\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5010,7 +5082,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"created_at\": \"created_at\",\n      \"occurred_at\": \"occurred_at\",\n      \"polarity\": \"polarity\",\n      \"source_kind\": \"source_kind\",\n      \"summary_version_uuid\": \"summary_version_uuid\",\n      \"trajectory_event_uuid\": \"trajectory_event_uuid\",\n      \"trajectory_uuid\": \"trajectory_uuid\",\n      \"verification\": \"verification\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"assertion_uuid\": \"assertion_uuid\",\n      \"created_at\": \"created_at\",\n      \"occurred_at\": \"occurred_at\",\n      \"polarity\": \"polarity\",\n      \"source_kind\": \"source_kind\",\n      \"summary_version_uuid\": \"summary_version_uuid\",\n      \"trace_event_uuid\": \"trace_event_uuid\",\n      \"trace_uuid\": \"trace_uuid\",\n      \"verification\": \"verification\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5049,7 +5121,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"application_state\": \"application_state\",\n      \"kind\": \"kind\",\n      \"related_package_name\": \"related_package_name\",\n      \"related_skill_kind\": \"related_skill_kind\",\n      \"related_skill_name\": \"related_skill_name\",\n      \"related_skill_task_family\": \"related_skill_task_family\",\n      \"related_skill_uuid\": \"related_skill_uuid\",\n      \"related_skill_version\": 1,\n      \"related_version_constraint\": \"related_version_constraint\",\n      \"resource_name\": \"resource_name\",\n      \"resource_version_constraint\": \"resource_version_constraint\",\n      \"trajectory_outcome\": \"trajectory_outcome\",\n      \"trajectory_task_family\": \"trajectory_task_family\",\n      \"trajectory_uuid\": \"trajectory_uuid\",\n      \"trajectory_verification\": \"trajectory_verification\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"application_state\": \"application_state\",\n      \"kind\": \"kind\",\n      \"related_package_name\": \"related_package_name\",\n      \"related_skill_kind\": \"related_skill_kind\",\n      \"related_skill_name\": \"related_skill_name\",\n      \"related_skill_task_family\": \"related_skill_task_family\",\n      \"related_skill_uuid\": \"related_skill_uuid\",\n      \"related_skill_version\": 1,\n      \"related_version_constraint\": \"related_version_constraint\",\n      \"resource_name\": \"resource_name\",\n      \"resource_version_constraint\": \"resource_version_constraint\",\n      \"trace_outcome\": \"trace_outcome\",\n      \"trace_task_family\": \"trace_task_family\",\n      \"trace_uuid\": \"trace_uuid\",\n      \"trace_verification\": \"trace_verification\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5247,7 +5319,7 @@
       },
       "response": {
         "status": 201,
-        "body": "{\n  \"agent_version\": \"agent_version\",\n  \"created_at\": \"created_at\",\n  \"outcome\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"created_at\": \"created_at\",\n    \"outcome\": \"outcome\",\n    \"trajectory_uuid\": \"trajectory_uuid\",\n    \"use_uuid\": \"use_uuid\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"verification\"\n  },\n  \"reason_code\": \"reason_code\",\n  \"skill_uuid\": \"skill_uuid\",\n  \"skill_version\": 1,\n  \"trajectory_uuid\": \"trajectory_uuid\",\n  \"usage\": \"usage\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"agent_version\": \"agent_version\",\n  \"created_at\": \"created_at\",\n  \"outcome\": {\n    \"assertion_uuid\": \"assertion_uuid\",\n    \"created_at\": \"created_at\",\n    \"outcome\": \"outcome\",\n    \"trace_uuid\": \"trace_uuid\",\n    \"use_uuid\": \"use_uuid\",\n    \"uuid\": \"uuid\",\n    \"verification\": \"verification\"\n  },\n  \"reason_code\": \"reason_code\",\n  \"skill_uuid\": \"skill_uuid\",\n  \"skill_version\": 1,\n  \"trace_uuid\": \"trace_uuid\",\n  \"usage\": \"usage\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5289,7 +5361,7 @@
       },
       "response": {
         "status": 201,
-        "body": "{\n  \"assertion_uuid\": \"assertion_uuid\",\n  \"created_at\": \"created_at\",\n  \"outcome\": \"outcome\",\n  \"trajectory_uuid\": \"trajectory_uuid\",\n  \"use_uuid\": \"use_uuid\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"verification\"\n}",
+        "body": "{\n  \"assertion_uuid\": \"assertion_uuid\",\n  \"created_at\": \"created_at\",\n  \"outcome\": \"outcome\",\n  \"trace_uuid\": \"trace_uuid\",\n  \"use_uuid\": \"use_uuid\",\n  \"uuid\": \"uuid\",\n  \"verification\": \"verification\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5394,10 +5466,10 @@
       }
     },
     {
-      "id": "60bda7ea-abd8-460b-9c77-24a5e7896348",
-      "name": "List trajectory import runs - default",
+      "id": "b4066c86-c17a-42da-895e-08ff5f64f464",
+      "name": "List trace import runs - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}/runs",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}/runs",
         "method": "GET",
         "headers": {
           "Authorization": {
@@ -5420,7 +5492,7 @@
           "Content-Type": "application/json"
         }
       },
-      "uuid": "60bda7ea-abd8-460b-9c77-24a5e7896348",
+      "uuid": "b4066c86-c17a-42da-895e-08ff5f64f464",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -5433,10 +5505,10 @@
       }
     },
     {
-      "id": "393660c1-de7e-463a-a6ea-37aaa0b0d086",
-      "name": "Create a trajectory import run - default",
+      "id": "ecd61893-8ae5-4138-970e-77758860aa2a",
+      "name": "Create a trace import run - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}/runs",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}/runs",
         "method": "POST",
         "headers": {
           "Authorization": {
@@ -5459,7 +5531,7 @@
           "Content-Type": "application/json"
         }
       },
-      "uuid": "393660c1-de7e-463a-a6ea-37aaa0b0d086",
+      "uuid": "ecd61893-8ae5-4138-970e-77758860aa2a",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -5472,10 +5544,10 @@
       }
     },
     {
-      "id": "28f3b40c-fe0f-4b43-9652-80da244688e7",
-      "name": "Get a trajectory import run - default",
+      "id": "a79b4efb-bddf-4c4d-b42a-d716dd36f174",
+      "name": "Get a trace import run - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}/runs/{run_uuid}",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}/runs/{run_uuid}",
         "method": "GET",
         "headers": {
           "Authorization": {
@@ -5501,7 +5573,7 @@
           "Content-Type": "application/json"
         }
       },
-      "uuid": "28f3b40c-fe0f-4b43-9652-80da244688e7",
+      "uuid": "a79b4efb-bddf-4c4d-b42a-d716dd36f174",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -5514,10 +5586,10 @@
       }
     },
     {
-      "id": "290be354-a88c-4dd9-af67-1242db8db50a",
-      "name": "List trajectory import run items - default",
+      "id": "99710e97-6944-4020-91d4-f83f2da2e1f2",
+      "name": "List trace import run items - default",
       "request": {
-        "urlPathTemplate": "/agents/{agent_uuid}/trajectory-imports/{import_uuid}/runs/{run_uuid}/items",
+        "urlPathTemplate": "/agents/{agent_uuid}/trace-imports/{import_uuid}/runs/{run_uuid}/items",
         "method": "GET",
         "headers": {
           "Authorization": {
@@ -5538,12 +5610,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"2026-01-01T00:00:00Z\",\n      \"reason\": \"trace_not_closed\",\n      \"source_revision\": \"123456789\",\n      \"status\": \"imported\",\n      \"trace_id\": \"trace_123\",\n      \"trajectory_uuid\": \"6a906e70-50ca-4e43-a874-5fcae02a71fa\"\n    }\n  ],\n  \"next_cursor\": \"eyJvZmZzZXQiOjI1fQ\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"2026-01-01T00:00:00Z\",\n      \"reason\": \"trace_not_closed\",\n      \"source_revision\": \"123456789\",\n      \"status\": \"imported\",\n      \"trace_id\": \"trace_123\",\n      \"trace_uuid\": \"6a906e70-50ca-4e43-a874-5fcae02a71fa\"\n    }\n  ],\n  \"next_cursor\": \"eyJvZmZzZXQiOjI1fQ\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "290be354-a88c-4dd9-af67-1242db8db50a",
+      "uuid": "99710e97-6944-4020-91d4-f83f2da2e1f2",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -5613,7 +5685,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5649,7 +5721,7 @@
       },
       "response": {
         "status": 202,
-        "body": "{\n  \"episode\": {\n    \"content\": \"content\",\n    \"content_policy\": {\n      \"category_keys\": [\n        \"health\"\n      ],\n      \"dropped_count\": 0,\n      \"retained_count\": 7,\n      \"revision\": 3,\n      \"status\": \"pending\",\n      \"violated\": false\n    },\n    \"created_at\": \"created_at\",\n    \"document_id\": \"document_id\",\n    \"graph_uuid\": \"graph_uuid\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"processed\": true,\n    \"relevance\": 1.1,\n    \"role\": \"system\",\n    \"role_name\": \"role_name\",\n    \"score\": 1.1,\n    \"source\": \"text\",\n    \"source_description\": \"source_description\",\n    \"thread_uuid\": \"thread_uuid\",\n    \"uuid\": \"uuid\",\n    \"valid_at\": \"valid_at\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "body": "{\n  \"episode\": {\n    \"content\": \"content\",\n    \"content_policy\": {\n      \"category_keys\": [\n        \"health\"\n      ],\n      \"dropped_count\": 0,\n      \"retained_count\": 7,\n      \"revision\": 3,\n      \"status\": \"pending\",\n      \"violated\": false\n    },\n    \"created_at\": \"created_at\",\n    \"document_id\": \"document_id\",\n    \"graph_uuid\": \"graph_uuid\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"processed\": true,\n    \"reference_time\": \"reference_time\",\n    \"relevance\": 1.1,\n    \"role\": \"system\",\n    \"role_name\": \"role_name\",\n    \"score\": 1.1,\n    \"source\": \"text\",\n    \"source_description\": \"source_description\",\n    \"thread_uuid\": \"thread_uuid\",\n    \"uuid\": \"uuid\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"key\": \"value\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"status\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5685,7 +5757,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5724,7 +5796,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"content_policy\": {\n    \"category_keys\": [\n      \"health\"\n    ],\n    \"dropped_count\": 0,\n    \"retained_count\": 7,\n    \"revision\": 3,\n    \"status\": \"pending\",\n    \"violated\": false\n  },\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"content_policy\": {\n    \"category_keys\": [\n      \"health\"\n    ],\n    \"dropped_count\": 0,\n    \"retained_count\": 7,\n    \"revision\": 3,\n    \"status\": \"pending\",\n    \"violated\": false\n  },\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"reference_time\": \"reference_time\",\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5802,7 +5874,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"content_policy\": {\n    \"category_keys\": [\n      \"health\"\n    ],\n    \"dropped_count\": 0,\n    \"retained_count\": 7,\n    \"revision\": 3,\n    \"status\": \"pending\",\n    \"violated\": false\n  },\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"content_policy\": {\n    \"category_keys\": [\n      \"health\"\n    ],\n    \"dropped_count\": 0,\n    \"retained_count\": 7,\n    \"revision\": 3,\n    \"status\": \"pending\",\n    \"violated\": false\n  },\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"reference_time\": \"reference_time\",\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -5880,7 +5952,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"error\": \"error\",\n      \"status\": \"recorded\",\n      \"step\": \"combined_extraction\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\"\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"error\": \"error\",\n      \"input\": {\n        \"edge_types\": [\n          {\n            \"properties\": [\n              {\n                \"protected\": true\n              }\n            ]\n          }\n        ],\n        \"entity_types\": [\n          {\n            \"properties\": [\n              {\n                \"protected\": true\n              }\n            ]\n          }\n        ]\n      },\n      \"status\": \"recorded\",\n      \"step\": \"combined_extraction\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6717,7 +6789,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"role\": \"system\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"reference_time\": \"reference_time\",\n  \"role\": \"system\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6756,7 +6828,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"role\": \"system\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"created_at\": \"created_at\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"name\": \"name\",\n  \"processed\": true,\n  \"reference_time\": \"reference_time\",\n  \"role\": \"system\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"uuid\": \"uuid\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6828,7 +6900,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"preview\": {\n    \"event_count\": 4,\n    \"mapping_result\": {\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"objective\": \"Help the customer receive a refund\",\n      \"outcome\": \"succeeded\",\n      \"outcome_rule\": \"score\",\n      \"scores\": {\n        \"quality\": 0.9\n      },\n      \"task_family\": \"support/refund\",\n      \"verification\": \"external\"\n    },\n    \"skip_reason\": \"trace_not_closed\"\n  },\n  \"trace\": {\n    \"closed\": true,\n    \"ended_at\": \"2026-01-01T00:01:00Z\",\n    \"has_error\": false,\n    \"imported_trajectories\": [\n      {\n        \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n        \"import_uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\",\n        \"trajectory_uuid\": \"6a906e70-50ca-4e43-a874-5fcae02a71fa\"\n      }\n    ],\n    \"last_activity_at\": \"2026-01-01T00:01:00Z\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"name\": \"Handle support request\",\n    \"scores\": {\n      \"quality\": 0.9\n    },\n    \"source_revision\": \"123456789\",\n    \"source_url\": \"https://app.braintrust.dev/app/trace_123\",\n    \"span_count\": 4,\n    \"spans\": [\n      {\n        \"created_at\": \"2026-01-01T00:00:00Z\",\n        \"ended_at\": \"2026-01-01T00:00:01Z\",\n        \"error\": \"provider request failed\",\n        \"kind\": \"llm\",\n        \"model\": \"gpt-4o\",\n        \"name\": \"assistant_response\",\n        \"parent_span_id\": \"span_parent\",\n        \"span_id\": \"span_123\",\n        \"started_at\": \"2026-01-01T00:00:00Z\",\n        \"tool_name\": \"search\"\n      }\n    ],\n    \"started_at\": \"2026-01-01T00:00:00Z\",\n    \"tags\": [\n      \"support\",\n      \"prod\"\n    ],\n    \"trace_id\": \"trace_123\"\n  }\n}",
+        "body": "{\n  \"preview\": {\n    \"event_count\": 4,\n    \"mapping_result\": {\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"objective\": \"Help the customer receive a refund\",\n      \"outcome\": \"succeeded\",\n      \"outcome_rule\": \"score\",\n      \"scores\": {\n        \"quality\": 0.9\n      },\n      \"task_family\": \"support/refund\",\n      \"verification\": \"external\"\n    },\n    \"skip_reason\": \"trace_not_closed\"\n  },\n  \"trace\": {\n    \"closed\": true,\n    \"ended_at\": \"2026-01-01T00:01:00Z\",\n    \"has_error\": false,\n    \"imported_traces\": [\n      {\n        \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n        \"import_uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\",\n        \"trace_uuid\": \"6a906e70-50ca-4e43-a874-5fcae02a71fa\"\n      }\n    ],\n    \"last_activity_at\": \"2026-01-01T00:01:00Z\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"name\": \"Handle support request\",\n    \"scores\": {\n      \"quality\": 0.9\n    },\n    \"source_revision\": \"123456789\",\n    \"source_url\": \"https://smith.langchain.com/o/workspace_uuid/projects/p/project_uuid/trace/trace_uuid/run/trace_uuid\",\n    \"span_count\": 4,\n    \"spans\": [\n      {\n        \"created_at\": \"2026-01-01T00:00:00Z\",\n        \"ended_at\": \"2026-01-01T00:00:01Z\",\n        \"error\": \"provider request failed\",\n        \"kind\": \"llm\",\n        \"model\": \"gpt-4o\",\n        \"name\": \"assistant_response\",\n        \"parent_span_id\": \"span_parent\",\n        \"span_id\": \"span_123\",\n        \"started_at\": \"2026-01-01T00:00:00Z\",\n        \"tool_name\": \"search\"\n      }\n    ],\n    \"started_at\": \"2026-01-01T00:00:00Z\",\n    \"tags\": [\n      \"support\",\n      \"prod\"\n    ],\n    \"trace_id\": \"trace_123\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6864,7 +6936,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"closed\": true,\n      \"ended_at\": \"2026-01-01T00:01:00Z\",\n      \"has_error\": false,\n      \"imported_trajectories\": [\n        {\n          \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n          \"import_uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\",\n          \"trajectory_uuid\": \"6a906e70-50ca-4e43-a874-5fcae02a71fa\"\n        }\n      ],\n      \"last_activity_at\": \"2026-01-01T00:01:00Z\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": {\n        \"quality\": 0.9\n      },\n      \"source_revision\": \"123456789\",\n      \"source_url\": \"https://app.braintrust.dev/app/trace_123\",\n      \"span_count\": 4,\n      \"started_at\": \"2026-01-01T00:00:00Z\",\n      \"tags\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"trace_id\": \"trace_123\"\n    }\n  ],\n  \"next_cursor\": \"page-2\"\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"closed\": true,\n      \"ended_at\": \"2026-01-01T00:01:00Z\",\n      \"has_error\": false,\n      \"imported_traces\": [\n        {\n          \"agent_uuid\": \"f8b28f94-4f5a-4b3a-b782-87aa8464ac04\",\n          \"import_uuid\": \"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa\",\n          \"trace_uuid\": \"6a906e70-50ca-4e43-a874-5fcae02a71fa\"\n        }\n      ],\n      \"last_activity_at\": \"2026-01-01T00:01:00Z\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"name\": \"Handle support request\",\n      \"scores\": {\n        \"quality\": 0.9\n      },\n      \"source_revision\": \"123456789\",\n      \"source_url\": \"https://smith.langchain.com/o/workspace_uuid/projects/p/project_uuid/trace/trace_uuid/run/trace_uuid\",\n      \"span_count\": 4,\n      \"started_at\": \"2026-01-01T00:00:00Z\",\n      \"tags\": [\n        \"support\",\n        \"prod\"\n      ],\n      \"trace_id\": \"trace_123\"\n    }\n  ],\n  \"next_cursor\": \"page-2\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6883,6 +6955,6 @@
     }
   ],
   "meta": {
-    "total": 189
+    "total": 191
   }
 }
