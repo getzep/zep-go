@@ -32,12 +32,12 @@ type CreateTraceImportRequest struct {
 	// Name is the import display name.
 	Name *string `json:"name,omitempty" url:"-"`
 	// OnSourceChange defines how changed source traces are handled.
-	OnSourceChange *string `json:"on_source_change,omitempty" url:"-"`
+	OnSourceChange *v4.TraceImportOnSourceChange `json:"on_source_change,omitempty" url:"-"`
 	// ProviderProjectID is the source provider project identifier.
 	ProviderProjectID *string `json:"provider_project_id,omitempty" url:"-"`
 	// RequireReview requires review for candidates backed by this import.
 	RequireReview *bool `json:"require_review,omitempty" url:"-"`
-	// Schedule enables recurring imports when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+	// Schedule enables recurring imports when supplied. Example: {"interval_hours":4,"start_from":"now","settle_minutes":5,"max_open_hours":24}.
 	Schedule *v4.TraceImportSchedule `json:"schedule,omitempty" url:"-"`
 	// Selection defines the traces to import. Example: {"trace_ids":["trace_123"]}.
 	Selection *v4.TraceImportSelection `json:"selection,omitempty" url:"-"`
@@ -85,7 +85,7 @@ func (c *CreateTraceImportRequest) SetName(name *string) {
 
 // SetOnSourceChange sets the OnSourceChange field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *CreateTraceImportRequest) SetOnSourceChange(onSourceChange *string) {
+func (c *CreateTraceImportRequest) SetOnSourceChange(onSourceChange *v4.TraceImportOnSourceChange) {
 	c.OnSourceChange = onSourceChange
 	c.require(createTraceImportRequestFieldOnSourceChange)
 }
@@ -168,13 +168,13 @@ func (t *TraceImportDeleteRequest) SetTraces(traces *TraceImportDeleteRequestTra
 }
 
 var (
-	traceImportListRequestFieldLimit  = big.NewInt(1 << 0)
-	traceImportListRequestFieldCursor = big.NewInt(1 << 1)
+	traceImportListRequestFieldPageSize = big.NewInt(1 << 0)
+	traceImportListRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type TraceImportListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -191,11 +191,11 @@ func (t *TraceImportListRequest) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TraceImportListRequest) SetLimit(limit *int) {
-	t.Limit = limit
-	t.require(traceImportListRequestFieldLimit)
+func (t *TraceImportListRequest) SetPageSize(pageSize *int) {
+	t.PageSize = pageSize
+	t.require(traceImportListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -227,6 +227,29 @@ func (t TraceImportDeleteRequestTraces) Ptr() *TraceImportDeleteRequestTraces {
 	return &t
 }
 
+// OnSourceChange is the new change policy, when supplied.
+type UpdateTraceImportRequestOnSourceChange string
+
+const (
+	UpdateTraceImportRequestOnSourceChangeIgnore  UpdateTraceImportRequestOnSourceChange = "ignore"
+	UpdateTraceImportRequestOnSourceChangeReplace UpdateTraceImportRequestOnSourceChange = "replace"
+)
+
+func NewUpdateTraceImportRequestOnSourceChangeFromString(s string) (UpdateTraceImportRequestOnSourceChange, error) {
+	switch s {
+	case "ignore":
+		return UpdateTraceImportRequestOnSourceChangeIgnore, nil
+	case "replace":
+		return UpdateTraceImportRequestOnSourceChangeReplace, nil
+	}
+	var t UpdateTraceImportRequestOnSourceChange
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (u UpdateTraceImportRequestOnSourceChange) Ptr() *UpdateTraceImportRequestOnSourceChange {
+	return &u
+}
+
 var (
 	updateTraceImportRequestFieldExpectedRevision = big.NewInt(1 << 0)
 	updateTraceImportRequestFieldLearnFrom        = big.NewInt(1 << 1)
@@ -248,10 +271,10 @@ type UpdateTraceImportRequest struct {
 	// Name is the new import name, when supplied.
 	Name *string `json:"name,omitempty" url:"-"`
 	// OnSourceChange is the new change policy, when supplied.
-	OnSourceChange *string `json:"on_source_change,omitempty" url:"-"`
+	OnSourceChange *UpdateTraceImportRequestOnSourceChange `json:"on_source_change,omitempty" url:"-"`
 	// RequireReview is the new review setting, when supplied.
 	RequireReview *bool `json:"require_review,omitempty" url:"-"`
-	// Schedule is the new schedule, when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+	// Schedule is the new schedule, when supplied. Example: {"interval_hours":4,"start_from":"now","settle_minutes":5,"max_open_hours":24}.
 	Schedule *v4.TraceImportSchedule `json:"schedule,omitempty" url:"-"`
 	// Selection is the new selection, when supplied. Example: {"trace_ids":["trace_123"]}.
 	Selection *v4.TraceImportSelection `json:"selection,omitempty" url:"-"`
@@ -299,7 +322,7 @@ func (u *UpdateTraceImportRequest) SetName(name *string) {
 
 // SetOnSourceChange sets the OnSourceChange field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UpdateTraceImportRequest) SetOnSourceChange(onSourceChange *string) {
+func (u *UpdateTraceImportRequest) SetOnSourceChange(onSourceChange *UpdateTraceImportRequestOnSourceChange) {
 	u.OnSourceChange = onSourceChange
 	u.require(updateTraceImportRequestFieldOnSourceChange)
 }

@@ -173,7 +173,7 @@ func (c *CreateAgentSkillVersionRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	agentSkillListRequestFieldLimit        = big.NewInt(1 << 0)
+	agentSkillListRequestFieldPageSize     = big.NewInt(1 << 0)
 	agentSkillListRequestFieldCursor       = big.NewInt(1 << 1)
 	agentSkillListRequestFieldEnvironments = big.NewInt(1 << 2)
 	agentSkillListRequestFieldKind         = big.NewInt(1 << 3)
@@ -182,8 +182,8 @@ var (
 )
 
 type AgentSkillListRequest struct {
-	// Page size (maximum 20)
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor       *string  `json:"-" url:"cursor,omitempty"`
 	Environments []string `json:"environments,omitempty" url:"-"`
@@ -204,11 +204,11 @@ func (a *AgentSkillListRequest) require(field *big.Int) {
 	a.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillListRequest) SetLimit(limit *int) {
-	a.Limit = limit
-	a.require(agentSkillListRequestFieldLimit)
+func (a *AgentSkillListRequest) SetPageSize(pageSize *int) {
+	a.PageSize = pageSize
+	a.require(agentSkillListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -316,7 +316,7 @@ func (r *RetireAgentSkillRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	agentSkillSearchRequestFieldLimit           = big.NewInt(1 << 0)
+	agentSkillSearchRequestFieldPageSize        = big.NewInt(1 << 0)
 	agentSkillSearchRequestFieldCursor          = big.NewInt(1 << 1)
 	agentSkillSearchRequestFieldEnvironments    = big.NewInt(1 << 2)
 	agentSkillSearchRequestFieldIncludeMarkdown = big.NewInt(1 << 3)
@@ -328,8 +328,8 @@ var (
 )
 
 type AgentSkillSearchRequest struct {
-	// Page size (maximum 20)
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor          *string  `json:"-" url:"cursor,omitempty"`
 	Environments    []string `json:"environments,omitempty" url:"-"`
@@ -357,11 +357,11 @@ func (a *AgentSkillSearchRequest) require(field *big.Int) {
 	a.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillSearchRequest) SetLimit(limit *int) {
-	a.Limit = limit
-	a.require(agentSkillSearchRequestFieldLimit)
+func (a *AgentSkillSearchRequest) SetPageSize(pageSize *int) {
+	a.PageSize = pageSize
+	a.require(agentSkillSearchRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

@@ -17,6 +17,7 @@ var (
 	createUserRequestFieldLastName               = big.NewInt(1 << 4)
 	createUserRequestFieldMetadata               = big.NewInt(1 << 5)
 	createUserRequestFieldTimeZone               = big.NewInt(1 << 6)
+	createUserRequestFieldUserID                 = big.NewInt(1 << 7)
 )
 
 type CreateUserRequest struct {
@@ -36,6 +37,12 @@ type CreateUserRequest struct {
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
 	// The user's IANA time zone.
 	TimeZone *string `json:"time_zone,omitempty" url:"-"`
+	// An optional external identity identifier, such as an identity-provider
+	// subject claim. Zep uses it to match an identity-provider sign-in to this
+	// user. It is not an address; use uuid to address the user in v4. It is
+	// unique within the project, can contain at most 500 characters, and
+	// cannot be changed after creation.
+	UserID *string `json:"user_id,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -99,6 +106,13 @@ func (c *CreateUserRequest) SetTimeZone(timeZone *string) {
 	c.require(createUserRequestFieldTimeZone)
 }
 
+// SetUserID sets the UserID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateUserRequest) SetUserID(userID *string) {
+	c.UserID = userID
+	c.require(createUserRequestFieldUserID)
+}
+
 func (c *CreateUserRequest) UnmarshalJSON(data []byte) error {
 	type unmarshaler CreateUserRequest
 	var body unmarshaler
@@ -121,16 +135,16 @@ func (c *CreateUserRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	userListRequestFieldLimit   = big.NewInt(1 << 0)
-	userListRequestFieldCursor  = big.NewInt(1 << 1)
-	userListRequestFieldOrderBy = big.NewInt(1 << 2)
-	userListRequestFieldOrder   = big.NewInt(1 << 3)
-	userListRequestFieldSearch  = big.NewInt(1 << 4)
+	userListRequestFieldPageSize = big.NewInt(1 << 0)
+	userListRequestFieldCursor   = big.NewInt(1 << 1)
+	userListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	userListRequestFieldOrder    = big.NewInt(1 << 3)
+	userListRequestFieldSearch   = big.NewInt(1 << 4)
 )
 
 type UserListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
@@ -153,11 +167,11 @@ func (u *UserListRequest) require(field *big.Int) {
 	u.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UserListRequest) SetLimit(limit *int) {
-	u.Limit = limit
-	u.require(userListRequestFieldLimit)
+func (u *UserListRequest) SetPageSize(pageSize *int) {
+	u.PageSize = pageSize
+	u.require(userListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

@@ -69,13 +69,13 @@ func (c *CreateUserGroupRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	userGroupListRequestFieldLimit  = big.NewInt(1 << 0)
-	userGroupListRequestFieldCursor = big.NewInt(1 << 1)
+	userGroupListRequestFieldPageSize = big.NewInt(1 << 0)
+	userGroupListRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type UserGroupListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string            `json:"-" url:"cursor,omitempty"`
 	Body   *SearchListRequest `json:"-" url:"-"`
@@ -93,11 +93,11 @@ func (u *UserGroupListRequest) require(field *big.Int) {
 	u.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UserGroupListRequest) SetLimit(limit *int) {
-	u.Limit = limit
-	u.require(userGroupListRequestFieldLimit)
+func (u *UserGroupListRequest) SetPageSize(pageSize *int) {
+	u.PageSize = pageSize
+	u.require(userGroupListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -121,13 +121,13 @@ func (u *UserGroupListRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	userGroupListForUserRequestFieldLimit  = big.NewInt(1 << 0)
-	userGroupListForUserRequestFieldCursor = big.NewInt(1 << 1)
+	userGroupListForUserRequestFieldPageSize = big.NewInt(1 << 0)
+	userGroupListForUserRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type UserGroupListForUserRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -144,11 +144,11 @@ func (u *UserGroupListForUserRequest) require(field *big.Int) {
 	u.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UserGroupListForUserRequest) SetLimit(limit *int) {
-	u.Limit = limit
-	u.require(userGroupListForUserRequestFieldLimit)
+func (u *UserGroupListForUserRequest) SetPageSize(pageSize *int) {
+	u.PageSize = pageSize
+	u.require(userGroupListForUserRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -159,13 +159,13 @@ func (u *UserGroupListForUserRequest) SetCursor(cursor *string) {
 }
 
 var (
-	userGroupListMemberCandidatesRequestFieldLimit  = big.NewInt(1 << 0)
-	userGroupListMemberCandidatesRequestFieldCursor = big.NewInt(1 << 1)
+	userGroupListMemberCandidatesRequestFieldPageSize = big.NewInt(1 << 0)
+	userGroupListMemberCandidatesRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type UserGroupListMemberCandidatesRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string            `json:"-" url:"cursor,omitempty"`
 	Body   *SearchListRequest `json:"-" url:"-"`
@@ -183,11 +183,11 @@ func (u *UserGroupListMemberCandidatesRequest) require(field *big.Int) {
 	u.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UserGroupListMemberCandidatesRequest) SetLimit(limit *int) {
-	u.Limit = limit
-	u.require(userGroupListMemberCandidatesRequestFieldLimit)
+func (u *UserGroupListMemberCandidatesRequest) SetPageSize(pageSize *int) {
+	u.PageSize = pageSize
+	u.require(userGroupListMemberCandidatesRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -211,13 +211,13 @@ func (u *UserGroupListMemberCandidatesRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	userGroupListMembersRequestFieldLimit  = big.NewInt(1 << 0)
-	userGroupListMembersRequestFieldCursor = big.NewInt(1 << 1)
+	userGroupListMembersRequestFieldPageSize = big.NewInt(1 << 0)
+	userGroupListMembersRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type UserGroupListMembersRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string            `json:"-" url:"cursor,omitempty"`
 	Body   *SearchListRequest `json:"-" url:"-"`
@@ -235,11 +235,11 @@ func (u *UserGroupListMembersRequest) require(field *big.Int) {
 	u.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (u *UserGroupListMembersRequest) SetLimit(limit *int) {
-	u.Limit = limit
-	u.require(userGroupListMembersRequestFieldLimit)
+func (u *UserGroupListMembersRequest) SetPageSize(pageSize *int) {
+	u.PageSize = pageSize
+	u.require(userGroupListMembersRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

@@ -7,13 +7,13 @@ import (
 )
 
 var (
-	evidenceListRequestFieldLimit  = big.NewInt(1 << 0)
-	evidenceListRequestFieldCursor = big.NewInt(1 << 1)
+	evidenceListRequestFieldPageSize = big.NewInt(1 << 0)
+	evidenceListRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type EvidenceListRequest struct {
-	// Page size (maximum 100)
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -30,11 +30,11 @@ func (e *EvidenceListRequest) require(field *big.Int) {
 	e.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EvidenceListRequest) SetLimit(limit *int) {
-	e.Limit = limit
-	e.require(evidenceListRequestFieldLimit)
+func (e *EvidenceListRequest) SetPageSize(pageSize *int) {
+	e.PageSize = pageSize
+	e.require(evidenceListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

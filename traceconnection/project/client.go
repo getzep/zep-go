@@ -40,7 +40,7 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
-// List provider projects with the `limit` and `cursor` query parameters.
+// List provider projects with the `page_size` and `cursor` query parameters.
 //
 // Example:
 //

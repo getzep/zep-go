@@ -120,9 +120,7 @@ func TestGraphNodeListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.NodeListRequest{
-		Body: &zep.ArtifactListRequest{},
-	}
+	request := &graph.NodeListRequest{}
 	_, invocationErr := client.Graph.Node.List(
 		context.TODO(),
 		"graph_uuid",

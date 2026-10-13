@@ -60,22 +60,25 @@ func (a *AddNodesRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	nodeListRequestFieldLimit   = big.NewInt(1 << 0)
-	nodeListRequestFieldCursor  = big.NewInt(1 << 1)
-	nodeListRequestFieldOrderBy = big.NewInt(1 << 2)
-	nodeListRequestFieldOrder   = big.NewInt(1 << 3)
+	nodeListRequestFieldPageSize = big.NewInt(1 << 0)
+	nodeListRequestFieldCursor   = big.NewInt(1 << 1)
+	nodeListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	nodeListRequestFieldOrder    = big.NewInt(1 << 3)
+	nodeListRequestFieldFilters  = big.NewInt(1 << 4)
 )
 
 type NodeListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
-	// Sort key: uuid (default) or degree
+	// Sort key: uuid (default), created_at, or degree
 	OrderBy *NodeListRequestOrderBy `json:"-" url:"order_by,omitempty"`
 	// Sort direction: asc or desc (default desc)
-	Order *NodeListRequestOrder   `json:"-" url:"order,omitempty"`
-	Body  *v4.ArtifactListRequest `json:"-" url:"-"`
+	Order *NodeListRequestOrder `json:"-" url:"order,omitempty"`
+	// Filters that limit the items in the list. The operation description
+	// names the filter fields that the operation does not support.
+	Filters *v4.NodeListFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -90,11 +93,11 @@ func (n *NodeListRequest) require(field *big.Int) {
 	n.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (n *NodeListRequest) SetLimit(limit *int) {
-	n.Limit = limit
-	n.require(nodeListRequestFieldLimit)
+func (n *NodeListRequest) SetPageSize(pageSize *int) {
+	n.PageSize = pageSize
+	n.require(nodeListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -118,21 +121,36 @@ func (n *NodeListRequest) SetOrder(order *NodeListRequestOrder) {
 	n.require(nodeListRequestFieldOrder)
 }
 
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListRequest) SetFilters(filters *v4.NodeListFilters) {
+	n.Filters = filters
+	n.require(nodeListRequestFieldFilters)
+}
+
 func (n *NodeListRequest) UnmarshalJSON(data []byte) error {
-	body := new(v4.ArtifactListRequest)
+	type unmarshaler NodeListRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	n.Body = body
+	*n = NodeListRequest(body)
 	return nil
 }
 
 func (n *NodeListRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(n.Body)
+	type embed NodeListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, n.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }
 
 var (
-	neighborsRequestFieldLimit     = big.NewInt(1 << 0)
+	neighborsRequestFieldPageSize  = big.NewInt(1 << 0)
 	neighborsRequestFieldCursor    = big.NewInt(1 << 1)
 	neighborsRequestFieldOrderBy   = big.NewInt(1 << 2)
 	neighborsRequestFieldOrder     = big.NewInt(1 << 3)
@@ -141,8 +159,8 @@ var (
 )
 
 type NeighborsRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
@@ -167,11 +185,11 @@ func (n *NeighborsRequest) require(field *big.Int) {
 	n.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (n *NeighborsRequest) SetLimit(limit *int) {
-	n.Limit = limit
-	n.require(neighborsRequestFieldLimit)
+func (n *NeighborsRequest) SetPageSize(pageSize *int) {
+	n.PageSize = pageSize
+	n.require(neighborsRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -325,14 +343,17 @@ func (n NodeListRequestOrder) Ptr() *NodeListRequestOrder {
 type NodeListRequestOrderBy string
 
 const (
-	NodeListRequestOrderByUUID   NodeListRequestOrderBy = "uuid"
-	NodeListRequestOrderByDegree NodeListRequestOrderBy = "degree"
+	NodeListRequestOrderByUUID      NodeListRequestOrderBy = "uuid"
+	NodeListRequestOrderByCreatedAt NodeListRequestOrderBy = "created_at"
+	NodeListRequestOrderByDegree    NodeListRequestOrderBy = "degree"
 )
 
 func NewNodeListRequestOrderByFromString(s string) (NodeListRequestOrderBy, error) {
 	switch s {
 	case "uuid":
 		return NodeListRequestOrderByUUID, nil
+	case "created_at":
+		return NodeListRequestOrderByCreatedAt, nil
 	case "degree":
 		return NodeListRequestOrderByDegree, nil
 	}

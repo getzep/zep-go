@@ -123,9 +123,7 @@ func TestGraphHyperedgeListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.HyperedgeListRequest{
-		Body: &zep.ArtifactListRequest{},
-	}
+	request := &graph.HyperedgeListRequest{}
 	_, invocationErr := client.Graph.Hyperedge.List(
 		context.TODO(),
 		"graph_uuid",

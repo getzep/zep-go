@@ -232,7 +232,7 @@ func TestSettersLookupItem(t *testing.T) {
 
 	t.Run("SetResourceType", func(t *testing.T) {
 		obj := &LookupItem{}
-		var fernTestValueResourceType *string
+		var fernTestValueResourceType *LookupItemResourceType
 		obj.SetResourceType(fernTestValueResourceType)
 		assert.Equal(t, fernTestValueResourceType, obj.ResourceType)
 		assert.NotNil(t, obj.explicitFields)
@@ -319,7 +319,7 @@ func TestGettersLookupItem(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &LookupItem{}
-		var expected *string
+		var expected *LookupItemResourceType
 		obj.ResourceType = expected
 
 		// Act & Assert
@@ -450,7 +450,7 @@ func TestSettersMarkExplicitLookupItem(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &LookupItem{}
-		var fernTestValueResourceType *string
+		var fernTestValueResourceType *LookupItemResourceType
 
 		// Act
 		obj.SetResourceType(fernTestValueResourceType)
@@ -605,6 +605,42 @@ func TestStringLookupItem(t *testing.T) {
 		var obj *LookupItem
 		result := obj.String()
 		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
+	})
+}
+
+func TestEnumLookupItemResourceType(t *testing.T) {
+	t.Run("NewFromString_user", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewLookupItemResourceTypeFromString("user")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, LookupItemResourceType("user"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_thread", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewLookupItemResourceTypeFromString("thread")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, LookupItemResourceType("thread"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewLookupItemResourceTypeFromString("graph")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, LookupItemResourceType("graph"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewLookupItemResourceTypeFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewLookupItemResourceTypeFromString("user")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
 	})
 }
 

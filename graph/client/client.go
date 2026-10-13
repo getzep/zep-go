@@ -185,7 +185,7 @@ func (c *Client) Lookup(
 //	)
 func (c *Client) Get(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*zep.Graph, error) {
@@ -208,7 +208,7 @@ func (c *Client) Get(
 //	)
 func (c *Client) Delete(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.IdempotentRequestOption,
 ) (*zep.GraphDeleteResult, error) {
@@ -233,7 +233,7 @@ func (c *Client) Delete(
 //	)
 func (c *Client) Update(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.PatchGraphRequest,
 	opts ...option.IdempotentRequestOption,
@@ -262,7 +262,7 @@ func (c *Client) Update(
 //	)
 func (c *Client) Clone(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request zep.CloneGraphRequest,
 	opts ...option.IdempotentRequestOption,
@@ -289,7 +289,7 @@ func (c *Client) Clone(
 //	)
 func (c *Client) GetContentPolicy(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*zep.GraphContentPolicy, error) {
@@ -316,7 +316,7 @@ func (c *Client) GetContentPolicy(
 //	)
 func (c *Client) ListContentPolicyEvents(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.ContentPolicyEventListRequest,
 	opts ...option.RequestOption,
@@ -395,7 +395,7 @@ func (c *Client) ListContentPolicyEvents(
 //	)
 func (c *Client) GetContext(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.GraphContextRequest,
 	opts ...option.RequestOption,
@@ -420,7 +420,7 @@ func (c *Client) GetContext(
 //	)
 func (c *Client) GetInstructions(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*zep.Instructions, error) {
@@ -445,7 +445,7 @@ func (c *Client) GetInstructions(
 //	)
 func (c *Client) SetInstructions(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.Instructions,
 	opts ...option.IdempotentRequestOption,
@@ -470,7 +470,7 @@ func (c *Client) SetInstructions(
 //	)
 func (c *Client) GetObservationSteering(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*zep.ObservationSteering, error) {
@@ -495,7 +495,7 @@ func (c *Client) GetObservationSteering(
 //	)
 func (c *Client) SetObservationSteering(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.ObservationSteering,
 	opts ...option.IdempotentRequestOption,
@@ -520,7 +520,7 @@ func (c *Client) SetObservationSteering(
 //	)
 func (c *Client) GetOntology(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*zep.Ontology, error) {
@@ -545,7 +545,7 @@ func (c *Client) GetOntology(
 //	)
 func (c *Client) SetOntology(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.Ontology,
 	opts ...option.IdempotentRequestOption,
@@ -576,7 +576,7 @@ func (c *Client) SetOntology(
 //	)
 func (c *Client) SearchEdges(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.SearchEdgesRequest,
 	opts ...option.RequestOption,
@@ -645,10 +645,8 @@ func (c *Client) SearchEdges(
 
 // Example:
 //
-//	request := &zep.GraphSearchEpisodesRequest{
-//	    Body: &zep.SearchRequest{
-//	        Query: "query",
-//	    },
+//	request := &zep.SearchEpisodesRequest{
+//	    Query: "query",
 //	}
 //	client.Graph.SearchEpisodes(
 //	    context.TODO(),
@@ -657,9 +655,9 @@ func (c *Client) SearchEdges(
 //	)
 func (c *Client) SearchEpisodes(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
-	request *zep.GraphSearchEpisodesRequest,
+	request *zep.SearchEpisodesRequest,
 	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
 	options := core.NewRequestOptions(opts...)
@@ -738,7 +736,7 @@ func (c *Client) SearchEpisodes(
 //	)
 func (c *Client) SearchNodes(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.SearchNodesRequest,
 	opts ...option.RequestOption,
@@ -807,10 +805,8 @@ func (c *Client) SearchNodes(
 
 // Example:
 //
-//	request := &zep.GraphSearchObservationsRequest{
-//	    Body: &zep.SearchRequest{
-//	        Query: "query",
-//	    },
+//	request := &zep.SearchObservationsRequest{
+//	    Query: "query",
 //	}
 //	client.Graph.SearchObservations(
 //	    context.TODO(),
@@ -819,9 +815,9 @@ func (c *Client) SearchNodes(
 //	)
 func (c *Client) SearchObservations(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
-	request *zep.GraphSearchObservationsRequest,
+	request *zep.SearchObservationsRequest,
 	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.Observation, *zep.ObservationPage], error) {
 	options := core.NewRequestOptions(opts...)
@@ -888,10 +884,8 @@ func (c *Client) SearchObservations(
 
 // Example:
 //
-//	request := &zep.GraphSearchThreadSummariesRequest{
-//	    Body: &zep.SearchRequest{
-//	        Query: "query",
-//	    },
+//	request := &zep.SearchThreadSummariesRequest{
+//	    Query: "query",
 //	}
 //	client.Graph.SearchThreadSummaries(
 //	    context.TODO(),
@@ -900,9 +894,9 @@ func (c *Client) SearchObservations(
 //	)
 func (c *Client) SearchThreadSummaries(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
-	request *zep.GraphSearchThreadSummariesRequest,
+	request *zep.SearchThreadSummariesRequest,
 	opts ...option.RequestOption,
 ) (*core.Page[*string, *zep.ThreadSummary, *zep.ThreadSummaryPage], error) {
 	options := core.NewRequestOptions(opts...)
@@ -981,7 +975,7 @@ func (c *Client) SearchThreadSummaries(
 //	)
 func (c *Client) GetSubgraph(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.SubgraphRequest,
 	opts ...option.RequestOption,
@@ -1006,7 +1000,7 @@ func (c *Client) GetSubgraph(
 //	)
 func (c *Client) Warm(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.IdempotentRequestOption,
 ) (*zep.AsyncResult, error) {

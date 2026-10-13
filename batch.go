@@ -130,14 +130,14 @@ func (c *CreateBatchRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	batchListRequestFieldLimit  = big.NewInt(1 << 0)
-	batchListRequestFieldCursor = big.NewInt(1 << 1)
-	batchListRequestFieldStatus = big.NewInt(1 << 2)
+	batchListRequestFieldPageSize = big.NewInt(1 << 0)
+	batchListRequestFieldCursor   = big.NewInt(1 << 1)
+	batchListRequestFieldStatus   = big.NewInt(1 << 2)
 )
 
 type BatchListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Batch status filter
@@ -156,11 +156,11 @@ func (b *BatchListRequest) require(field *big.Int) {
 	b.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (b *BatchListRequest) SetLimit(limit *int) {
-	b.Limit = limit
-	b.require(batchListRequestFieldLimit)
+func (b *BatchListRequest) SetPageSize(pageSize *int) {
+	b.PageSize = pageSize
+	b.require(batchListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -178,13 +178,13 @@ func (b *BatchListRequest) SetStatus(status *BatchListRequestStatus) {
 }
 
 var (
-	batchListItemsRequestFieldLimit  = big.NewInt(1 << 0)
-	batchListItemsRequestFieldCursor = big.NewInt(1 << 1)
+	batchListItemsRequestFieldPageSize = big.NewInt(1 << 0)
+	batchListItemsRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type BatchListItemsRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -201,11 +201,11 @@ func (b *BatchListItemsRequest) require(field *big.Int) {
 	b.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (b *BatchListItemsRequest) SetLimit(limit *int) {
-	b.Limit = limit
-	b.require(batchListItemsRequestFieldLimit)
+func (b *BatchListItemsRequest) SetPageSize(pageSize *int) {
+	b.PageSize = pageSize
+	b.require(batchListItemsRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -231,10 +231,10 @@ type Batch struct {
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// The batch's processing progress, including its current stage and item
 	// counts. Present only once processing has started.
-	Progress map[string]any `json:"progress,omitempty" url:"progress,omitempty"`
+	Progress *BatchProgress `json:"progress,omitempty" url:"progress,omitempty"`
 	// The processing status of the batch: draft, invalid, queued, processing,
 	// succeeded, partial, failed, or canceled.
-	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	Status *BatchStatus `json:"status,omitempty" url:"status,omitempty"`
 	// Whether ontology enforcement is applied when this batch is processed,
 	// rejecting entities that do not match the configured ontology.
 	StrictOntology *bool `json:"strict_ontology,omitempty" url:"strict_ontology,omitempty"`
@@ -262,14 +262,14 @@ func (b *Batch) GetMetadata() map[string]any {
 	return b.Metadata
 }
 
-func (b *Batch) GetProgress() map[string]any {
+func (b *Batch) GetProgress() *BatchProgress {
 	if b == nil {
 		return nil
 	}
 	return b.Progress
 }
 
-func (b *Batch) GetStatus() *string {
+func (b *Batch) GetStatus() *BatchStatus {
 	if b == nil {
 		return nil
 	}
@@ -322,14 +322,14 @@ func (b *Batch) SetMetadata(metadata map[string]any) {
 
 // SetProgress sets the Progress field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (b *Batch) SetProgress(progress map[string]any) {
+func (b *Batch) SetProgress(progress *BatchProgress) {
 	b.Progress = progress
 	b.require(batchFieldProgress)
 }
 
 // SetStatus sets the Status field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (b *Batch) SetStatus(status *string) {
+func (b *Batch) SetStatus(status *BatchStatus) {
 	b.Status = status
 	b.require(batchFieldStatus)
 }
@@ -400,7 +400,8 @@ var (
 	batchItemFieldStatus        = big.NewInt(1 << 6)
 	batchItemFieldThreadUUID    = big.NewInt(1 << 7)
 	batchItemFieldType          = big.NewInt(1 << 8)
-	batchItemFieldUUID          = big.NewInt(1 << 9)
+	batchItemFieldUserUUID      = big.NewInt(1 << 9)
+	batchItemFieldUUID          = big.NewInt(1 << 10)
 )
 
 type BatchItem struct {
@@ -425,6 +426,9 @@ type BatchItem struct {
 	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
 	// The kind of item: graph_episode or thread_message.
 	Type *BatchItemKind `json:"type,omitempty" url:"type,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the batch item.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -496,6 +500,13 @@ func (b *BatchItem) GetType() *BatchItemKind {
 		return nil
 	}
 	return b.Type
+}
+
+func (b *BatchItem) GetUserUUID() *string {
+	if b == nil {
+		return nil
+	}
+	return b.UserUUID
 }
 
 func (b *BatchItem) GetUUID() *string {
@@ -582,6 +593,13 @@ func (b *BatchItem) SetThreadUUID(threadUUID *string) {
 func (b *BatchItem) SetType(type_ *BatchItemKind) {
 	b.Type = type_
 	b.require(batchItemFieldType)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItem) SetUserUUID(userUUID *string) {
+	b.UserUUID = userUUID
+	b.require(batchItemFieldUserUUID)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
@@ -1395,6 +1413,203 @@ func (b *BatchPage) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+var (
+	batchProgressFieldFailedItems     = big.NewInt(1 << 0)
+	batchProgressFieldProcessingItems = big.NewInt(1 << 1)
+	batchProgressFieldStage           = big.NewInt(1 << 2)
+	batchProgressFieldSucceededItems  = big.NewInt(1 << 3)
+	batchProgressFieldTotalItems      = big.NewInt(1 << 4)
+)
+
+type BatchProgress struct {
+	// The number of items that failed.
+	FailedItems *int `json:"failed_items,omitempty" url:"failed_items,omitempty"`
+	// The number of items that are in processing now.
+	ProcessingItems *int `json:"processing_items,omitempty" url:"processing_items,omitempty"`
+	// The processing stage that the batch is in.
+	Stage *string `json:"stage,omitempty" url:"stage,omitempty"`
+	// The number of items that were processed successfully.
+	SucceededItems *int `json:"succeeded_items,omitempty" url:"succeeded_items,omitempty"`
+	// The number of items in the batch.
+	TotalItems *int `json:"total_items,omitempty" url:"total_items,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (b *BatchProgress) GetFailedItems() *int {
+	if b == nil {
+		return nil
+	}
+	return b.FailedItems
+}
+
+func (b *BatchProgress) GetProcessingItems() *int {
+	if b == nil {
+		return nil
+	}
+	return b.ProcessingItems
+}
+
+func (b *BatchProgress) GetStage() *string {
+	if b == nil {
+		return nil
+	}
+	return b.Stage
+}
+
+func (b *BatchProgress) GetSucceededItems() *int {
+	if b == nil {
+		return nil
+	}
+	return b.SucceededItems
+}
+
+func (b *BatchProgress) GetTotalItems() *int {
+	if b == nil {
+		return nil
+	}
+	return b.TotalItems
+}
+
+func (b *BatchProgress) GetExtraProperties() map[string]interface{} {
+	if b == nil {
+		return nil
+	}
+	return b.extraProperties
+}
+
+func (b *BatchProgress) require(field *big.Int) {
+	next := new(big.Int)
+	if b.explicitFields != nil {
+		next.Set(b.explicitFields)
+	}
+	next.Or(next, field)
+	b.explicitFields = next
+}
+
+// SetFailedItems sets the FailedItems field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchProgress) SetFailedItems(failedItems *int) {
+	b.FailedItems = failedItems
+	b.require(batchProgressFieldFailedItems)
+}
+
+// SetProcessingItems sets the ProcessingItems field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchProgress) SetProcessingItems(processingItems *int) {
+	b.ProcessingItems = processingItems
+	b.require(batchProgressFieldProcessingItems)
+}
+
+// SetStage sets the Stage field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchProgress) SetStage(stage *string) {
+	b.Stage = stage
+	b.require(batchProgressFieldStage)
+}
+
+// SetSucceededItems sets the SucceededItems field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchProgress) SetSucceededItems(succeededItems *int) {
+	b.SucceededItems = succeededItems
+	b.require(batchProgressFieldSucceededItems)
+}
+
+// SetTotalItems sets the TotalItems field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchProgress) SetTotalItems(totalItems *int) {
+	b.TotalItems = totalItems
+	b.require(batchProgressFieldTotalItems)
+}
+
+func (b *BatchProgress) UnmarshalJSON(data []byte) error {
+	type unmarshaler BatchProgress
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BatchProgress(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+	b.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BatchProgress) MarshalJSON() ([]byte, error) {
+	type embed BatchProgress
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, b.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (b *BatchProgress) String() string {
+	if b == nil {
+		return "<nil>"
+	}
+	if len(b.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+// The processing status of the batch: draft, invalid, queued, processing,
+// succeeded, partial, failed, or canceled.
+type BatchStatus string
+
+const (
+	BatchStatusDraft      BatchStatus = "draft"
+	BatchStatusInvalid    BatchStatus = "invalid"
+	BatchStatusQueued     BatchStatus = "queued"
+	BatchStatusProcessing BatchStatus = "processing"
+	BatchStatusSucceeded  BatchStatus = "succeeded"
+	BatchStatusPartial    BatchStatus = "partial"
+	BatchStatusFailed     BatchStatus = "failed"
+	BatchStatusCanceled   BatchStatus = "canceled"
+)
+
+func NewBatchStatusFromString(s string) (BatchStatus, error) {
+	switch s {
+	case "draft":
+		return BatchStatusDraft, nil
+	case "invalid":
+		return BatchStatusInvalid, nil
+	case "queued":
+		return BatchStatusQueued, nil
+	case "processing":
+		return BatchStatusProcessing, nil
+	case "succeeded":
+		return BatchStatusSucceeded, nil
+	case "partial":
+		return BatchStatusPartial, nil
+	case "failed":
+		return BatchStatusFailed, nil
+	case "canceled":
+		return BatchStatusCanceled, nil
+	}
+	var t BatchStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BatchStatus) Ptr() *BatchStatus {
+	return &b
 }
 
 var (

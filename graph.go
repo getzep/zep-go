@@ -291,16 +291,16 @@ func (s *SubgraphRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	graphListRequestFieldLimit   = big.NewInt(1 << 0)
-	graphListRequestFieldCursor  = big.NewInt(1 << 1)
-	graphListRequestFieldOrderBy = big.NewInt(1 << 2)
-	graphListRequestFieldOrder   = big.NewInt(1 << 3)
-	graphListRequestFieldSearch  = big.NewInt(1 << 4)
+	graphListRequestFieldPageSize = big.NewInt(1 << 0)
+	graphListRequestFieldCursor   = big.NewInt(1 << 1)
+	graphListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	graphListRequestFieldOrder    = big.NewInt(1 << 3)
+	graphListRequestFieldSearch   = big.NewInt(1 << 4)
 )
 
 type GraphListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
@@ -324,11 +324,11 @@ func (g *GraphListRequest) require(field *big.Int) {
 	g.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphListRequest) SetLimit(limit *int) {
-	g.Limit = limit
-	g.require(graphListRequestFieldLimit)
+func (g *GraphListRequest) SetPageSize(pageSize *int) {
+	g.PageSize = pageSize
+	g.require(graphListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -381,18 +381,18 @@ func (g *GraphListRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	contentPolicyEventListRequestFieldLimit   = big.NewInt(1 << 0)
-	contentPolicyEventListRequestFieldCursor  = big.NewInt(1 << 1)
-	contentPolicyEventListRequestFieldFilters = big.NewInt(1 << 2)
+	contentPolicyEventListRequestFieldPageSize = big.NewInt(1 << 0)
+	contentPolicyEventListRequestFieldCursor   = big.NewInt(1 << 1)
+	contentPolicyEventListRequestFieldFilters  = big.NewInt(1 << 2)
 )
 
 type ContentPolicyEventListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
-	// Exact-match filters. Supported keys: episode_uuid and drop_reason.
-	Filters map[string]any `json:"filters,omitempty" url:"-"`
+	// Exact-match filters that limit the events in the list.
+	Filters *ContentPolicyEventListFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -407,11 +407,11 @@ func (c *ContentPolicyEventListRequest) require(field *big.Int) {
 	c.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *ContentPolicyEventListRequest) SetLimit(limit *int) {
-	c.Limit = limit
-	c.require(contentPolicyEventListRequestFieldLimit)
+func (c *ContentPolicyEventListRequest) SetPageSize(pageSize *int) {
+	c.PageSize = pageSize
+	c.require(contentPolicyEventListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -423,7 +423,7 @@ func (c *ContentPolicyEventListRequest) SetCursor(cursor *string) {
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *ContentPolicyEventListRequest) SetFilters(filters map[string]any) {
+func (c *ContentPolicyEventListRequest) SetFilters(filters *ContentPolicyEventListFilters) {
 	c.Filters = filters
 	c.require(contentPolicyEventListRequestFieldFilters)
 }
@@ -450,33 +450,44 @@ func (c *ContentPolicyEventListRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	searchEdgesRequestFieldLimit              = big.NewInt(1 << 0)
-	searchEdgesRequestFieldCursor             = big.NewInt(1 << 1)
-	searchEdgesRequestFieldBfsOriginNodeUUIDs = big.NewInt(1 << 2)
-	searchEdgesRequestFieldCenterNodeUUID     = big.NewInt(1 << 3)
-	searchEdgesRequestFieldFilters            = big.NewInt(1 << 4)
-	searchEdgesRequestFieldMmrLambda          = big.NewInt(1 << 5)
-	searchEdgesRequestFieldQuery              = big.NewInt(1 << 6)
-	searchEdgesRequestFieldReranker           = big.NewInt(1 << 7)
+	searchEdgesRequestFieldPageSize                = big.NewInt(1 << 0)
+	searchEdgesRequestFieldCursor                  = big.NewInt(1 << 1)
+	searchEdgesRequestFieldQuery                   = big.NewInt(1 << 2)
+	searchEdgesRequestFieldBfsOriginNodeUUIDs      = big.NewInt(1 << 3)
+	searchEdgesRequestFieldCenterNodeUUID          = big.NewInt(1 << 4)
+	searchEdgesRequestFieldFilterLowQualityResults = big.NewInt(1 << 5)
+	searchEdgesRequestFieldFilters                 = big.NewInt(1 << 6)
+	searchEdgesRequestFieldMmrLambda               = big.NewInt(1 << 7)
+	searchEdgesRequestFieldReranker                = big.NewInt(1 << 8)
 )
 
 type SearchEdgesRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// The search query.
+	Query string `json:"query" url:"-"`
 	// Nodes used as BFS origins for graph-distance-aware retrieval.
 	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
 	// The node to rank results by distance from. Required when reranker is
 	// node_distance.
 	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
+	// The default is false. When true, Zep removes low-quality results at the knee of the
+	// cross-encoder score curve. The filter never removes a result with a score
+	// of 0.9 or more. It keeps at least 5 results, or all results when fewer
+	// than 5 are available. The filter only removes results, so a page still
+	// returns up to page_size results. Use this field only with reranker
+	// cross_encoder. It is not supported for episode search. Invalid
+	// combinations return a 400 error. The cutoff is approximate, not guaranteed.
+	// When the cross-encoder does not score the results, for example after a
+	// timeout, Zep returns the results without the filter.
+	FilterLowQualityResults *bool `json:"filter_low_quality_results,omitempty" url:"-"`
 	// Filters constraining which items are returned.
 	Filters *EdgeSearchFilters `json:"filters,omitempty" url:"-"`
 	// The diversity weighting used for maximal marginal relevance reranking.
 	// Required when reranker is mmr.
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
-	// The search query.
-	Query string `json:"query" url:"-"`
 	// The reranking strategy applied to retrieved results. Defaults to rrf.
 	Reranker *SearchEdgesRequestReranker `json:"reranker,omitempty" url:"-"`
 
@@ -493,11 +504,11 @@ func (s *SearchEdgesRequest) require(field *big.Int) {
 	s.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchEdgesRequest) SetLimit(limit *int) {
-	s.Limit = limit
-	s.require(searchEdgesRequestFieldLimit)
+func (s *SearchEdgesRequest) SetPageSize(pageSize *int) {
+	s.PageSize = pageSize
+	s.require(searchEdgesRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -505,6 +516,13 @@ func (s *SearchEdgesRequest) SetLimit(limit *int) {
 func (s *SearchEdgesRequest) SetCursor(cursor *string) {
 	s.Cursor = cursor
 	s.require(searchEdgesRequestFieldCursor)
+}
+
+// SetQuery sets the Query field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEdgesRequest) SetQuery(query string) {
+	s.Query = query
+	s.require(searchEdgesRequestFieldQuery)
 }
 
 // SetBfsOriginNodeUUIDs sets the BfsOriginNodeUUIDs field and marks it as non-optional;
@@ -521,6 +539,13 @@ func (s *SearchEdgesRequest) SetCenterNodeUUID(centerNodeUUID *string) {
 	s.require(searchEdgesRequestFieldCenterNodeUUID)
 }
 
+// SetFilterLowQualityResults sets the FilterLowQualityResults field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEdgesRequest) SetFilterLowQualityResults(filterLowQualityResults *bool) {
+	s.FilterLowQualityResults = filterLowQualityResults
+	s.require(searchEdgesRequestFieldFilterLowQualityResults)
+}
+
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (s *SearchEdgesRequest) SetFilters(filters *EdgeSearchFilters) {
@@ -533,13 +558,6 @@ func (s *SearchEdgesRequest) SetFilters(filters *EdgeSearchFilters) {
 func (s *SearchEdgesRequest) SetMmrLambda(mmrLambda *float64) {
 	s.MmrLambda = mmrLambda
 	s.require(searchEdgesRequestFieldMmrLambda)
-}
-
-// SetQuery sets the Query field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchEdgesRequest) SetQuery(query string) {
-	s.Query = query
-	s.require(searchEdgesRequestFieldQuery)
 }
 
 // SetReranker sets the Reranker field and marks it as non-optional;
@@ -571,85 +589,183 @@ func (s *SearchEdgesRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	graphSearchEpisodesRequestFieldLimit  = big.NewInt(1 << 0)
-	graphSearchEpisodesRequestFieldCursor = big.NewInt(1 << 1)
+	searchEpisodesRequestFieldPageSize                = big.NewInt(1 << 0)
+	searchEpisodesRequestFieldCursor                  = big.NewInt(1 << 1)
+	searchEpisodesRequestFieldQuery                   = big.NewInt(1 << 2)
+	searchEpisodesRequestFieldBfsOriginNodeUUIDs      = big.NewInt(1 << 3)
+	searchEpisodesRequestFieldCenterNodeUUID          = big.NewInt(1 << 4)
+	searchEpisodesRequestFieldFilterLowQualityResults = big.NewInt(1 << 5)
+	searchEpisodesRequestFieldFilters                 = big.NewInt(1 << 6)
+	searchEpisodesRequestFieldMmrLambda               = big.NewInt(1 << 7)
+	searchEpisodesRequestFieldReranker                = big.NewInt(1 << 8)
 )
 
-type GraphSearchEpisodesRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
-	// Opaque page cursor
-	Cursor *string        `json:"-" url:"cursor,omitempty"`
-	Body   *SearchRequest `json:"-" url:"-"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-}
-
-func (g *GraphSearchEpisodesRequest) require(field *big.Int) {
-	next := new(big.Int)
-	if g.explicitFields != nil {
-		next.Set(g.explicitFields)
-	}
-	next.Or(next, field)
-	g.explicitFields = next
-}
-
-// SetLimit sets the Limit field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphSearchEpisodesRequest) SetLimit(limit *int) {
-	g.Limit = limit
-	g.require(graphSearchEpisodesRequestFieldLimit)
-}
-
-// SetCursor sets the Cursor field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphSearchEpisodesRequest) SetCursor(cursor *string) {
-	g.Cursor = cursor
-	g.require(graphSearchEpisodesRequestFieldCursor)
-}
-
-func (g *GraphSearchEpisodesRequest) UnmarshalJSON(data []byte) error {
-	body := new(SearchRequest)
-	if err := json.Unmarshal(data, &body); err != nil {
-		return err
-	}
-	g.Body = body
-	return nil
-}
-
-func (g *GraphSearchEpisodesRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(g.Body)
-}
-
-var (
-	searchNodesRequestFieldLimit              = big.NewInt(1 << 0)
-	searchNodesRequestFieldCursor             = big.NewInt(1 << 1)
-	searchNodesRequestFieldBfsOriginNodeUUIDs = big.NewInt(1 << 2)
-	searchNodesRequestFieldCenterNodeUUID     = big.NewInt(1 << 3)
-	searchNodesRequestFieldFilters            = big.NewInt(1 << 4)
-	searchNodesRequestFieldMmrLambda          = big.NewInt(1 << 5)
-	searchNodesRequestFieldQuery              = big.NewInt(1 << 6)
-	searchNodesRequestFieldReranker           = big.NewInt(1 << 7)
-)
-
-type SearchNodesRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+type SearchEpisodesRequest struct {
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// The search query.
+	Query string `json:"query" url:"-"`
 	// Nodes used as BFS origins for graph-distance-aware retrieval.
 	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
 	// The node to rank results by distance from. Required when reranker is
 	// node_distance.
 	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
+	// The default is false. When true, Zep removes low-quality results at the knee of the
+	// cross-encoder score curve. The filter never removes a result with a score
+	// of 0.9 or more. It keeps at least 5 results, or all results when fewer
+	// than 5 are available. The filter only removes results, so a page still
+	// returns up to page_size results. Use this field only with reranker
+	// cross_encoder. It is not supported for episode search. Invalid
+	// combinations return a 400 error. The cutoff is approximate, not guaranteed.
+	// When the cross-encoder does not score the results, for example after a
+	// timeout, Zep returns the results without the filter.
+	FilterLowQualityResults *bool `json:"filter_low_quality_results,omitempty" url:"-"`
+	// Filters constraining which items are returned.
+	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
+	// The diversity weighting used for maximal marginal relevance reranking.
+	// Required when reranker is mmr.
+	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
+	// The reranking strategy applied to retrieved results. Defaults to rrf.
+	Reranker *SearchEpisodesRequestReranker `json:"reranker,omitempty" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (s *SearchEpisodesRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetPageSize sets the PageSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetPageSize(pageSize *int) {
+	s.PageSize = pageSize
+	s.require(searchEpisodesRequestFieldPageSize)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetCursor(cursor *string) {
+	s.Cursor = cursor
+	s.require(searchEpisodesRequestFieldCursor)
+}
+
+// SetQuery sets the Query field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetQuery(query string) {
+	s.Query = query
+	s.require(searchEpisodesRequestFieldQuery)
+}
+
+// SetBfsOriginNodeUUIDs sets the BfsOriginNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetBfsOriginNodeUUIDs(bfsOriginNodeUUIDs []string) {
+	s.BfsOriginNodeUUIDs = bfsOriginNodeUUIDs
+	s.require(searchEpisodesRequestFieldBfsOriginNodeUUIDs)
+}
+
+// SetCenterNodeUUID sets the CenterNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetCenterNodeUUID(centerNodeUUID *string) {
+	s.CenterNodeUUID = centerNodeUUID
+	s.require(searchEpisodesRequestFieldCenterNodeUUID)
+}
+
+// SetFilterLowQualityResults sets the FilterLowQualityResults field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetFilterLowQualityResults(filterLowQualityResults *bool) {
+	s.FilterLowQualityResults = filterLowQualityResults
+	s.require(searchEpisodesRequestFieldFilterLowQualityResults)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetFilters(filters *SearchFilters) {
+	s.Filters = filters
+	s.require(searchEpisodesRequestFieldFilters)
+}
+
+// SetMmrLambda sets the MmrLambda field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetMmrLambda(mmrLambda *float64) {
+	s.MmrLambda = mmrLambda
+	s.require(searchEpisodesRequestFieldMmrLambda)
+}
+
+// SetReranker sets the Reranker field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchEpisodesRequest) SetReranker(reranker *SearchEpisodesRequestReranker) {
+	s.Reranker = reranker
+	s.require(searchEpisodesRequestFieldReranker)
+}
+
+func (s *SearchEpisodesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler SearchEpisodesRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*s = SearchEpisodesRequest(body)
+	return nil
+}
+
+func (s *SearchEpisodesRequest) MarshalJSON() ([]byte, error) {
+	type embed SearchEpisodesRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	searchNodesRequestFieldPageSize                = big.NewInt(1 << 0)
+	searchNodesRequestFieldCursor                  = big.NewInt(1 << 1)
+	searchNodesRequestFieldQuery                   = big.NewInt(1 << 2)
+	searchNodesRequestFieldBfsOriginNodeUUIDs      = big.NewInt(1 << 3)
+	searchNodesRequestFieldCenterNodeUUID          = big.NewInt(1 << 4)
+	searchNodesRequestFieldFilterLowQualityResults = big.NewInt(1 << 5)
+	searchNodesRequestFieldFilters                 = big.NewInt(1 << 6)
+	searchNodesRequestFieldMmrLambda               = big.NewInt(1 << 7)
+	searchNodesRequestFieldReranker                = big.NewInt(1 << 8)
+)
+
+type SearchNodesRequest struct {
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// The search query.
+	Query string `json:"query" url:"-"`
+	// Nodes used as BFS origins for graph-distance-aware retrieval.
+	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
+	// The node to rank results by distance from. Required when reranker is
+	// node_distance.
+	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
+	// The default is false. When true, Zep removes low-quality results at the knee of the
+	// cross-encoder score curve. The filter never removes a result with a score
+	// of 0.9 or more. It keeps at least 5 results, or all results when fewer
+	// than 5 are available. The filter only removes results, so a page still
+	// returns up to page_size results. Use this field only with reranker
+	// cross_encoder. It is not supported for episode search. Invalid
+	// combinations return a 400 error. The cutoff is approximate, not guaranteed.
+	// When the cross-encoder does not score the results, for example after a
+	// timeout, Zep returns the results without the filter.
+	FilterLowQualityResults *bool `json:"filter_low_quality_results,omitempty" url:"-"`
 	// Filters constraining which items are returned.
 	Filters *NodeSearchFilters `json:"filters,omitempty" url:"-"`
 	// The diversity weighting used for maximal marginal relevance reranking.
 	// Required when reranker is mmr.
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
-	// The search query.
-	Query string `json:"query" url:"-"`
 	// The reranking strategy applied to retrieved results. Defaults to rrf.
 	Reranker *SearchNodesRequestReranker `json:"reranker,omitempty" url:"-"`
 
@@ -666,11 +782,11 @@ func (s *SearchNodesRequest) require(field *big.Int) {
 	s.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchNodesRequest) SetLimit(limit *int) {
-	s.Limit = limit
-	s.require(searchNodesRequestFieldLimit)
+func (s *SearchNodesRequest) SetPageSize(pageSize *int) {
+	s.PageSize = pageSize
+	s.require(searchNodesRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -678,6 +794,13 @@ func (s *SearchNodesRequest) SetLimit(limit *int) {
 func (s *SearchNodesRequest) SetCursor(cursor *string) {
 	s.Cursor = cursor
 	s.require(searchNodesRequestFieldCursor)
+}
+
+// SetQuery sets the Query field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchNodesRequest) SetQuery(query string) {
+	s.Query = query
+	s.require(searchNodesRequestFieldQuery)
 }
 
 // SetBfsOriginNodeUUIDs sets the BfsOriginNodeUUIDs field and marks it as non-optional;
@@ -694,6 +817,13 @@ func (s *SearchNodesRequest) SetCenterNodeUUID(centerNodeUUID *string) {
 	s.require(searchNodesRequestFieldCenterNodeUUID)
 }
 
+// SetFilterLowQualityResults sets the FilterLowQualityResults field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchNodesRequest) SetFilterLowQualityResults(filterLowQualityResults *bool) {
+	s.FilterLowQualityResults = filterLowQualityResults
+	s.require(searchNodesRequestFieldFilterLowQualityResults)
+}
+
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (s *SearchNodesRequest) SetFilters(filters *NodeSearchFilters) {
@@ -706,13 +836,6 @@ func (s *SearchNodesRequest) SetFilters(filters *NodeSearchFilters) {
 func (s *SearchNodesRequest) SetMmrLambda(mmrLambda *float64) {
 	s.MmrLambda = mmrLambda
 	s.require(searchNodesRequestFieldMmrLambda)
-}
-
-// SetQuery sets the Query field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchNodesRequest) SetQuery(query string) {
-	s.Query = query
-	s.require(searchNodesRequestFieldQuery)
 }
 
 // SetReranker sets the Reranker field and marks it as non-optional;
@@ -744,107 +867,281 @@ func (s *SearchNodesRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	graphSearchObservationsRequestFieldLimit  = big.NewInt(1 << 0)
-	graphSearchObservationsRequestFieldCursor = big.NewInt(1 << 1)
+	searchObservationsRequestFieldPageSize                = big.NewInt(1 << 0)
+	searchObservationsRequestFieldCursor                  = big.NewInt(1 << 1)
+	searchObservationsRequestFieldQuery                   = big.NewInt(1 << 2)
+	searchObservationsRequestFieldBfsOriginNodeUUIDs      = big.NewInt(1 << 3)
+	searchObservationsRequestFieldCenterNodeUUID          = big.NewInt(1 << 4)
+	searchObservationsRequestFieldFilterLowQualityResults = big.NewInt(1 << 5)
+	searchObservationsRequestFieldFilters                 = big.NewInt(1 << 6)
+	searchObservationsRequestFieldMmrLambda               = big.NewInt(1 << 7)
+	searchObservationsRequestFieldReranker                = big.NewInt(1 << 8)
 )
 
-type GraphSearchObservationsRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+type SearchObservationsRequest struct {
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
-	Cursor *string        `json:"-" url:"cursor,omitempty"`
-	Body   *SearchRequest `json:"-" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// The search query.
+	Query string `json:"query" url:"-"`
+	// Nodes used as BFS origins for graph-distance-aware retrieval.
+	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
+	// The node to rank results by distance from. Required when reranker is
+	// node_distance.
+	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
+	// The default is false. When true, Zep removes low-quality results at the knee of the
+	// cross-encoder score curve. The filter never removes a result with a score
+	// of 0.9 or more. It keeps at least 5 results, or all results when fewer
+	// than 5 are available. The filter only removes results, so a page still
+	// returns up to page_size results. Use this field only with reranker
+	// cross_encoder. It is not supported for episode search. Invalid
+	// combinations return a 400 error. The cutoff is approximate, not guaranteed.
+	// When the cross-encoder does not score the results, for example after a
+	// timeout, Zep returns the results without the filter.
+	FilterLowQualityResults *bool `json:"filter_low_quality_results,omitempty" url:"-"`
+	// Filters constraining which items are returned.
+	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
+	// The diversity weighting used for maximal marginal relevance reranking.
+	// Required when reranker is mmr.
+	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
+	// The reranking strategy applied to retrieved results. Defaults to rrf.
+	Reranker *SearchObservationsRequestReranker `json:"reranker,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-func (g *GraphSearchObservationsRequest) require(field *big.Int) {
+func (s *SearchObservationsRequest) require(field *big.Int) {
 	next := new(big.Int)
-	if g.explicitFields != nil {
-		next.Set(g.explicitFields)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
 	}
 	next.Or(next, field)
-	g.explicitFields = next
+	s.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphSearchObservationsRequest) SetLimit(limit *int) {
-	g.Limit = limit
-	g.require(graphSearchObservationsRequestFieldLimit)
+func (s *SearchObservationsRequest) SetPageSize(pageSize *int) {
+	s.PageSize = pageSize
+	s.require(searchObservationsRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphSearchObservationsRequest) SetCursor(cursor *string) {
-	g.Cursor = cursor
-	g.require(graphSearchObservationsRequestFieldCursor)
+func (s *SearchObservationsRequest) SetCursor(cursor *string) {
+	s.Cursor = cursor
+	s.require(searchObservationsRequestFieldCursor)
 }
 
-func (g *GraphSearchObservationsRequest) UnmarshalJSON(data []byte) error {
-	body := new(SearchRequest)
+// SetQuery sets the Query field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchObservationsRequest) SetQuery(query string) {
+	s.Query = query
+	s.require(searchObservationsRequestFieldQuery)
+}
+
+// SetBfsOriginNodeUUIDs sets the BfsOriginNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchObservationsRequest) SetBfsOriginNodeUUIDs(bfsOriginNodeUUIDs []string) {
+	s.BfsOriginNodeUUIDs = bfsOriginNodeUUIDs
+	s.require(searchObservationsRequestFieldBfsOriginNodeUUIDs)
+}
+
+// SetCenterNodeUUID sets the CenterNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchObservationsRequest) SetCenterNodeUUID(centerNodeUUID *string) {
+	s.CenterNodeUUID = centerNodeUUID
+	s.require(searchObservationsRequestFieldCenterNodeUUID)
+}
+
+// SetFilterLowQualityResults sets the FilterLowQualityResults field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchObservationsRequest) SetFilterLowQualityResults(filterLowQualityResults *bool) {
+	s.FilterLowQualityResults = filterLowQualityResults
+	s.require(searchObservationsRequestFieldFilterLowQualityResults)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchObservationsRequest) SetFilters(filters *SearchFilters) {
+	s.Filters = filters
+	s.require(searchObservationsRequestFieldFilters)
+}
+
+// SetMmrLambda sets the MmrLambda field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchObservationsRequest) SetMmrLambda(mmrLambda *float64) {
+	s.MmrLambda = mmrLambda
+	s.require(searchObservationsRequestFieldMmrLambda)
+}
+
+// SetReranker sets the Reranker field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchObservationsRequest) SetReranker(reranker *SearchObservationsRequestReranker) {
+	s.Reranker = reranker
+	s.require(searchObservationsRequestFieldReranker)
+}
+
+func (s *SearchObservationsRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler SearchObservationsRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	g.Body = body
+	*s = SearchObservationsRequest(body)
 	return nil
 }
 
-func (g *GraphSearchObservationsRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(g.Body)
+func (s *SearchObservationsRequest) MarshalJSON() ([]byte, error) {
+	type embed SearchObservationsRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }
 
 var (
-	graphSearchThreadSummariesRequestFieldLimit  = big.NewInt(1 << 0)
-	graphSearchThreadSummariesRequestFieldCursor = big.NewInt(1 << 1)
+	searchThreadSummariesRequestFieldPageSize                = big.NewInt(1 << 0)
+	searchThreadSummariesRequestFieldCursor                  = big.NewInt(1 << 1)
+	searchThreadSummariesRequestFieldQuery                   = big.NewInt(1 << 2)
+	searchThreadSummariesRequestFieldBfsOriginNodeUUIDs      = big.NewInt(1 << 3)
+	searchThreadSummariesRequestFieldCenterNodeUUID          = big.NewInt(1 << 4)
+	searchThreadSummariesRequestFieldFilterLowQualityResults = big.NewInt(1 << 5)
+	searchThreadSummariesRequestFieldFilters                 = big.NewInt(1 << 6)
+	searchThreadSummariesRequestFieldMmrLambda               = big.NewInt(1 << 7)
+	searchThreadSummariesRequestFieldReranker                = big.NewInt(1 << 8)
 )
 
-type GraphSearchThreadSummariesRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+type SearchThreadSummariesRequest struct {
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
-	Cursor *string        `json:"-" url:"cursor,omitempty"`
-	Body   *SearchRequest `json:"-" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// The search query.
+	Query string `json:"query" url:"-"`
+	// Nodes used as BFS origins for graph-distance-aware retrieval.
+	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"-"`
+	// The node to rank results by distance from. Required when reranker is
+	// node_distance.
+	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"-"`
+	// The default is false. When true, Zep removes low-quality results at the knee of the
+	// cross-encoder score curve. The filter never removes a result with a score
+	// of 0.9 or more. It keeps at least 5 results, or all results when fewer
+	// than 5 are available. The filter only removes results, so a page still
+	// returns up to page_size results. Use this field only with reranker
+	// cross_encoder. It is not supported for episode search. Invalid
+	// combinations return a 400 error. The cutoff is approximate, not guaranteed.
+	// When the cross-encoder does not score the results, for example after a
+	// timeout, Zep returns the results without the filter.
+	FilterLowQualityResults *bool `json:"filter_low_quality_results,omitempty" url:"-"`
+	// Filters constraining which items are returned.
+	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
+	// The diversity weighting used for maximal marginal relevance reranking.
+	// Required when reranker is mmr.
+	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
+	// The reranking strategy applied to retrieved results. Defaults to rrf.
+	Reranker *SearchThreadSummariesRequestReranker `json:"reranker,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 }
 
-func (g *GraphSearchThreadSummariesRequest) require(field *big.Int) {
+func (s *SearchThreadSummariesRequest) require(field *big.Int) {
 	next := new(big.Int)
-	if g.explicitFields != nil {
-		next.Set(g.explicitFields)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
 	}
 	next.Or(next, field)
-	g.explicitFields = next
+	s.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphSearchThreadSummariesRequest) SetLimit(limit *int) {
-	g.Limit = limit
-	g.require(graphSearchThreadSummariesRequestFieldLimit)
+func (s *SearchThreadSummariesRequest) SetPageSize(pageSize *int) {
+	s.PageSize = pageSize
+	s.require(searchThreadSummariesRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (g *GraphSearchThreadSummariesRequest) SetCursor(cursor *string) {
-	g.Cursor = cursor
-	g.require(graphSearchThreadSummariesRequestFieldCursor)
+func (s *SearchThreadSummariesRequest) SetCursor(cursor *string) {
+	s.Cursor = cursor
+	s.require(searchThreadSummariesRequestFieldCursor)
 }
 
-func (g *GraphSearchThreadSummariesRequest) UnmarshalJSON(data []byte) error {
-	body := new(SearchRequest)
+// SetQuery sets the Query field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchThreadSummariesRequest) SetQuery(query string) {
+	s.Query = query
+	s.require(searchThreadSummariesRequestFieldQuery)
+}
+
+// SetBfsOriginNodeUUIDs sets the BfsOriginNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchThreadSummariesRequest) SetBfsOriginNodeUUIDs(bfsOriginNodeUUIDs []string) {
+	s.BfsOriginNodeUUIDs = bfsOriginNodeUUIDs
+	s.require(searchThreadSummariesRequestFieldBfsOriginNodeUUIDs)
+}
+
+// SetCenterNodeUUID sets the CenterNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchThreadSummariesRequest) SetCenterNodeUUID(centerNodeUUID *string) {
+	s.CenterNodeUUID = centerNodeUUID
+	s.require(searchThreadSummariesRequestFieldCenterNodeUUID)
+}
+
+// SetFilterLowQualityResults sets the FilterLowQualityResults field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchThreadSummariesRequest) SetFilterLowQualityResults(filterLowQualityResults *bool) {
+	s.FilterLowQualityResults = filterLowQualityResults
+	s.require(searchThreadSummariesRequestFieldFilterLowQualityResults)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchThreadSummariesRequest) SetFilters(filters *SearchFilters) {
+	s.Filters = filters
+	s.require(searchThreadSummariesRequestFieldFilters)
+}
+
+// SetMmrLambda sets the MmrLambda field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchThreadSummariesRequest) SetMmrLambda(mmrLambda *float64) {
+	s.MmrLambda = mmrLambda
+	s.require(searchThreadSummariesRequestFieldMmrLambda)
+}
+
+// SetReranker sets the Reranker field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SearchThreadSummariesRequest) SetReranker(reranker *SearchThreadSummariesRequestReranker) {
+	s.Reranker = reranker
+	s.require(searchThreadSummariesRequestFieldReranker)
+}
+
+func (s *SearchThreadSummariesRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler SearchThreadSummariesRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	g.Body = body
+	*s = SearchThreadSummariesRequest(body)
 	return nil
 }
 
-func (g *GraphSearchThreadSummariesRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(g.Body)
+func (s *SearchThreadSummariesRequest) MarshalJSON() ([]byte, error) {
+	type embed SearchThreadSummariesRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }
 
 type CloneGraphRequest = map[string]any
@@ -1234,6 +1531,139 @@ func (c ContentPolicyEventDropReason) Ptr() *ContentPolicyEventDropReason {
 }
 
 var (
+	contentPolicyEventListFiltersFieldDropReason  = big.NewInt(1 << 0)
+	contentPolicyEventListFiltersFieldEpisodeUUID = big.NewInt(1 << 1)
+)
+
+type ContentPolicyEventListFilters struct {
+	// Include only the events with this drop reason.
+	DropReason *ContentPolicyEventListFiltersDropReason `json:"drop_reason,omitempty" url:"drop_reason,omitempty"`
+	// Include only the events of this episode.
+	EpisodeUUID *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ContentPolicyEventListFilters) GetDropReason() *ContentPolicyEventListFiltersDropReason {
+	if c == nil {
+		return nil
+	}
+	return c.DropReason
+}
+
+func (c *ContentPolicyEventListFilters) GetEpisodeUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.EpisodeUUID
+}
+
+func (c *ContentPolicyEventListFilters) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ContentPolicyEventListFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if c.explicitFields != nil {
+		next.Set(c.explicitFields)
+	}
+	next.Or(next, field)
+	c.explicitFields = next
+}
+
+// SetDropReason sets the DropReason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEventListFilters) SetDropReason(dropReason *ContentPolicyEventListFiltersDropReason) {
+	c.DropReason = dropReason
+	c.require(contentPolicyEventListFiltersFieldDropReason)
+}
+
+// SetEpisodeUUID sets the EpisodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEventListFilters) SetEpisodeUUID(episodeUUID *string) {
+	c.EpisodeUUID = episodeUUID
+	c.require(contentPolicyEventListFiltersFieldEpisodeUUID)
+}
+
+func (c *ContentPolicyEventListFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler ContentPolicyEventListFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ContentPolicyEventListFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ContentPolicyEventListFilters) MarshalJSON() ([]byte, error) {
+	type embed ContentPolicyEventListFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ContentPolicyEventListFilters) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Include only the events with this drop reason.
+type ContentPolicyEventListFiltersDropReason string
+
+const (
+	ContentPolicyEventListFiltersDropReasonMatch         ContentPolicyEventListFiltersDropReason = "match"
+	ContentPolicyEventListFiltersDropReasonIndeterminate ContentPolicyEventListFiltersDropReason = "indeterminate"
+	ContentPolicyEventListFiltersDropReasonOversize      ContentPolicyEventListFiltersDropReason = "oversize"
+	ContentPolicyEventListFiltersDropReasonDependent     ContentPolicyEventListFiltersDropReason = "dependent"
+)
+
+func NewContentPolicyEventListFiltersDropReasonFromString(s string) (ContentPolicyEventListFiltersDropReason, error) {
+	switch s {
+	case "match":
+		return ContentPolicyEventListFiltersDropReasonMatch, nil
+	case "indeterminate":
+		return ContentPolicyEventListFiltersDropReasonIndeterminate, nil
+	case "oversize":
+		return ContentPolicyEventListFiltersDropReasonOversize, nil
+	case "dependent":
+		return ContentPolicyEventListFiltersDropReasonDependent, nil
+	}
+	var t ContentPolicyEventListFiltersDropReason
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ContentPolicyEventListFiltersDropReason) Ptr() *ContentPolicyEventListFiltersDropReason {
+	return &c
+}
+
+var (
 	contentPolicyEventPageFieldItems      = big.NewInt(1 << 0)
 	contentPolicyEventPageFieldNextCursor = big.NewInt(1 << 1)
 	contentPolicyEventPageFieldTotalSize  = big.NewInt(1 << 2)
@@ -1375,8 +1805,9 @@ var (
 	contextEdgeFieldTargetNodeLabels = big.NewInt(1 << 16)
 	contextEdgeFieldTargetNodeName   = big.NewInt(1 << 17)
 	contextEdgeFieldTargetNodeUUID   = big.NewInt(1 << 18)
-	contextEdgeFieldUUID             = big.NewInt(1 << 19)
-	contextEdgeFieldValidAt          = big.NewInt(1 << 20)
+	contextEdgeFieldUserUUID         = big.NewInt(1 << 19)
+	contextEdgeFieldUUID             = big.NewInt(1 << 20)
+	contextEdgeFieldValidAt          = big.NewInt(1 << 21)
 )
 
 type ContextEdge struct {
@@ -1431,6 +1862,9 @@ type ContextEdge struct {
 	TargetNodeName *string `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
 	// The unique identifier of the edge's target node.
 	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the edge.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 	// The time from which the fact is considered true.
@@ -1574,6 +2008,13 @@ func (c *ContextEdge) GetTargetNodeUUID() *string {
 		return nil
 	}
 	return c.TargetNodeUUID
+}
+
+func (c *ContextEdge) GetUserUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.UserUUID
 }
 
 func (c *ContextEdge) GetUUID() *string {
@@ -1739,6 +2180,13 @@ func (c *ContextEdge) SetTargetNodeUUID(targetNodeUUID *string) {
 	c.require(contextEdgeFieldTargetNodeUUID)
 }
 
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextEdge) SetUserUUID(userUUID *string) {
+	c.UserUUID = userUUID
+	c.require(contextEdgeFieldUserUUID)
+}
+
 // SetUUID sets the UUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *ContextEdge) SetUUID(uuid *string) {
@@ -1812,7 +2260,8 @@ var (
 	contextEpisodeFieldSource            = big.NewInt(1 << 13)
 	contextEpisodeFieldSourceDescription = big.NewInt(1 << 14)
 	contextEpisodeFieldThreadUUID        = big.NewInt(1 << 15)
-	contextEpisodeFieldUUID              = big.NewInt(1 << 16)
+	contextEpisodeFieldUserUUID          = big.NewInt(1 << 16)
+	contextEpisodeFieldUUID              = big.NewInt(1 << 17)
 )
 
 type ContextEpisode struct {
@@ -1859,6 +2308,9 @@ type ContextEpisode struct {
 	// The thread this episode belongs to, present only for episodes added to a
 	// thread.
 	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the episode.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -1979,6 +2431,13 @@ func (c *ContextEpisode) GetThreadUUID() *string {
 		return nil
 	}
 	return c.ThreadUUID
+}
+
+func (c *ContextEpisode) GetUserUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.UserUUID
 }
 
 func (c *ContextEpisode) GetUUID() *string {
@@ -2116,6 +2575,13 @@ func (c *ContextEpisode) SetThreadUUID(threadUUID *string) {
 	c.require(contextEpisodeFieldThreadUUID)
 }
 
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextEpisode) SetUserUUID(userUUID *string) {
+	c.UserUUID = userUUID
+	c.require(contextEpisodeFieldUserUUID)
+}
+
 // SetUUID sets the UUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *ContextEpisode) SetUUID(uuid *string) {
@@ -2178,7 +2644,8 @@ var (
 	contextNodeFieldScore                 = big.NewInt(1 << 9)
 	contextNodeFieldSelectionRank         = big.NewInt(1 << 10)
 	contextNodeFieldSummary               = big.NewInt(1 << 11)
-	contextNodeFieldUUID                  = big.NewInt(1 << 12)
+	contextNodeFieldUserUUID              = big.NewInt(1 << 12)
+	contextNodeFieldUUID                  = big.NewInt(1 << 13)
 )
 
 type ContextNode struct {
@@ -2216,6 +2683,9 @@ type ContextNode struct {
 	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
 	// A generated summary of the entity that the node represents.
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The node UUID, assigned by Zep.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -2308,6 +2778,13 @@ func (c *ContextNode) GetSummary() *string {
 		return nil
 	}
 	return c.Summary
+}
+
+func (c *ContextNode) GetUserUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.UserUUID
 }
 
 func (c *ContextNode) GetUUID() *string {
@@ -2417,6 +2894,13 @@ func (c *ContextNode) SetSummary(summary *string) {
 	c.require(contextNodeFieldSummary)
 }
 
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextNode) SetUserUUID(userUUID *string) {
+	c.UserUUID = userUUID
+	c.require(contextNodeFieldUserUUID)
+}
+
 // SetUUID sets the UUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *ContextNode) SetUUID(uuid *string) {
@@ -2477,7 +2961,8 @@ var (
 	contextObservationFieldScore         = big.NewInt(1 << 7)
 	contextObservationFieldSelectionRank = big.NewInt(1 << 8)
 	contextObservationFieldSummary       = big.NewInt(1 << 9)
-	contextObservationFieldUUID          = big.NewInt(1 << 10)
+	contextObservationFieldUserUUID      = big.NewInt(1 << 10)
+	contextObservationFieldUUID          = big.NewInt(1 << 11)
 )
 
 type ContextObservation struct {
@@ -2505,6 +2990,9 @@ type ContextObservation struct {
 	SelectionRank *int `json:"selection_rank,omitempty" url:"selection_rank,omitempty"`
 	// A generated summary of the observation.
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the observation, assigned by Zep.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -2583,6 +3071,13 @@ func (c *ContextObservation) GetSummary() *string {
 		return nil
 	}
 	return c.Summary
+}
+
+func (c *ContextObservation) GetUserUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.UserUUID
 }
 
 func (c *ContextObservation) GetUUID() *string {
@@ -2676,6 +3171,13 @@ func (c *ContextObservation) SetSelectionRank(selectionRank *int) {
 func (c *ContextObservation) SetSummary(summary *string) {
 	c.Summary = summary
 	c.require(contextObservationFieldSummary)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextObservation) SetUserUUID(userUUID *string) {
+	c.UserUUID = userUUID
+	c.require(contextObservationFieldUserUUID)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
@@ -4307,212 +4809,6 @@ func (n *NodeSearchFilters) String() string {
 }
 
 var (
-	searchRequestFieldBfsOriginNodeUUIDs = big.NewInt(1 << 0)
-	searchRequestFieldCenterNodeUUID     = big.NewInt(1 << 1)
-	searchRequestFieldFilters            = big.NewInt(1 << 2)
-	searchRequestFieldMmrLambda          = big.NewInt(1 << 3)
-	searchRequestFieldQuery              = big.NewInt(1 << 4)
-	searchRequestFieldReranker           = big.NewInt(1 << 5)
-)
-
-type SearchRequest struct {
-	// Nodes used as BFS origins for graph-distance-aware retrieval.
-	BfsOriginNodeUUIDs []string `json:"bfs_origin_node_uuids,omitempty" url:"bfs_origin_node_uuids,omitempty"`
-	// The node to rank results by distance from. Required when reranker is
-	// node_distance.
-	CenterNodeUUID *string `json:"center_node_uuid,omitempty" url:"center_node_uuid,omitempty"`
-	// Filters constraining which items are returned.
-	Filters *SearchFilters `json:"filters,omitempty" url:"filters,omitempty"`
-	// The diversity weighting used for maximal marginal relevance reranking.
-	// Required when reranker is mmr.
-	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"mmr_lambda,omitempty"`
-	// The search query.
-	Query string `json:"query" url:"query"`
-	// The reranking strategy applied to retrieved results. Defaults to rrf.
-	Reranker *SearchRequestReranker `json:"reranker,omitempty" url:"reranker,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (s *SearchRequest) GetBfsOriginNodeUUIDs() []string {
-	if s == nil {
-		return nil
-	}
-	return s.BfsOriginNodeUUIDs
-}
-
-func (s *SearchRequest) GetCenterNodeUUID() *string {
-	if s == nil {
-		return nil
-	}
-	return s.CenterNodeUUID
-}
-
-func (s *SearchRequest) GetFilters() *SearchFilters {
-	if s == nil {
-		return nil
-	}
-	return s.Filters
-}
-
-func (s *SearchRequest) GetMmrLambda() *float64 {
-	if s == nil {
-		return nil
-	}
-	return s.MmrLambda
-}
-
-func (s *SearchRequest) GetQuery() string {
-	if s == nil {
-		return ""
-	}
-	return s.Query
-}
-
-func (s *SearchRequest) GetReranker() *SearchRequestReranker {
-	if s == nil {
-		return nil
-	}
-	return s.Reranker
-}
-
-func (s *SearchRequest) GetExtraProperties() map[string]interface{} {
-	if s == nil {
-		return nil
-	}
-	return s.extraProperties
-}
-
-func (s *SearchRequest) require(field *big.Int) {
-	next := new(big.Int)
-	if s.explicitFields != nil {
-		next.Set(s.explicitFields)
-	}
-	next.Or(next, field)
-	s.explicitFields = next
-}
-
-// SetBfsOriginNodeUUIDs sets the BfsOriginNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetBfsOriginNodeUUIDs(bfsOriginNodeUUIDs []string) {
-	s.BfsOriginNodeUUIDs = bfsOriginNodeUUIDs
-	s.require(searchRequestFieldBfsOriginNodeUUIDs)
-}
-
-// SetCenterNodeUUID sets the CenterNodeUUID field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetCenterNodeUUID(centerNodeUUID *string) {
-	s.CenterNodeUUID = centerNodeUUID
-	s.require(searchRequestFieldCenterNodeUUID)
-}
-
-// SetFilters sets the Filters field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetFilters(filters *SearchFilters) {
-	s.Filters = filters
-	s.require(searchRequestFieldFilters)
-}
-
-// SetMmrLambda sets the MmrLambda field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetMmrLambda(mmrLambda *float64) {
-	s.MmrLambda = mmrLambda
-	s.require(searchRequestFieldMmrLambda)
-}
-
-// SetQuery sets the Query field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetQuery(query string) {
-	s.Query = query
-	s.require(searchRequestFieldQuery)
-}
-
-// SetReranker sets the Reranker field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchRequest) SetReranker(reranker *SearchRequestReranker) {
-	s.Reranker = reranker
-	s.require(searchRequestFieldReranker)
-}
-
-func (s *SearchRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler SearchRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*s = SearchRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *s)
-	if err != nil {
-		return err
-	}
-	s.extraProperties = extraProperties
-	s.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (s *SearchRequest) MarshalJSON() ([]byte, error) {
-	type embed SearchRequest
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*s),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (s *SearchRequest) String() string {
-	if s == nil {
-		return "<nil>"
-	}
-	if len(s.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(s); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", s)
-}
-
-// The reranking strategy applied to retrieved results. Defaults to rrf.
-type SearchRequestReranker string
-
-const (
-	SearchRequestRerankerRrf             SearchRequestReranker = "rrf"
-	SearchRequestRerankerMmr             SearchRequestReranker = "mmr"
-	SearchRequestRerankerNodeDistance    SearchRequestReranker = "node_distance"
-	SearchRequestRerankerEpisodeMentions SearchRequestReranker = "episode_mentions"
-	SearchRequestRerankerCrossEncoder    SearchRequestReranker = "cross_encoder"
-)
-
-func NewSearchRequestRerankerFromString(s string) (SearchRequestReranker, error) {
-	switch s {
-	case "rrf":
-		return SearchRequestRerankerRrf, nil
-	case "mmr":
-		return SearchRequestRerankerMmr, nil
-	case "node_distance":
-		return SearchRequestRerankerNodeDistance, nil
-	case "episode_mentions":
-		return SearchRequestRerankerEpisodeMentions, nil
-	case "cross_encoder":
-		return SearchRequestRerankerCrossEncoder, nil
-	}
-	var t SearchRequestReranker
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (s SearchRequestReranker) Ptr() *SearchRequestReranker {
-	return &s
-}
-
-var (
 	subgraphResponseFieldEdges            = big.NewInt(1 << 0)
 	subgraphResponseFieldNodes            = big.NewInt(1 << 1)
 	subgraphResponseFieldTruncated        = big.NewInt(1 << 2)
@@ -4759,6 +5055,38 @@ func (s SearchEdgesRequestReranker) Ptr() *SearchEdgesRequestReranker {
 }
 
 // The reranking strategy applied to retrieved results. Defaults to rrf.
+type SearchEpisodesRequestReranker string
+
+const (
+	SearchEpisodesRequestRerankerRrf             SearchEpisodesRequestReranker = "rrf"
+	SearchEpisodesRequestRerankerMmr             SearchEpisodesRequestReranker = "mmr"
+	SearchEpisodesRequestRerankerNodeDistance    SearchEpisodesRequestReranker = "node_distance"
+	SearchEpisodesRequestRerankerEpisodeMentions SearchEpisodesRequestReranker = "episode_mentions"
+	SearchEpisodesRequestRerankerCrossEncoder    SearchEpisodesRequestReranker = "cross_encoder"
+)
+
+func NewSearchEpisodesRequestRerankerFromString(s string) (SearchEpisodesRequestReranker, error) {
+	switch s {
+	case "rrf":
+		return SearchEpisodesRequestRerankerRrf, nil
+	case "mmr":
+		return SearchEpisodesRequestRerankerMmr, nil
+	case "node_distance":
+		return SearchEpisodesRequestRerankerNodeDistance, nil
+	case "episode_mentions":
+		return SearchEpisodesRequestRerankerEpisodeMentions, nil
+	case "cross_encoder":
+		return SearchEpisodesRequestRerankerCrossEncoder, nil
+	}
+	var t SearchEpisodesRequestReranker
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SearchEpisodesRequestReranker) Ptr() *SearchEpisodesRequestReranker {
+	return &s
+}
+
+// The reranking strategy applied to retrieved results. Defaults to rrf.
 type SearchNodesRequestReranker string
 
 const (
@@ -4787,6 +5115,70 @@ func NewSearchNodesRequestRerankerFromString(s string) (SearchNodesRequestRerank
 }
 
 func (s SearchNodesRequestReranker) Ptr() *SearchNodesRequestReranker {
+	return &s
+}
+
+// The reranking strategy applied to retrieved results. Defaults to rrf.
+type SearchObservationsRequestReranker string
+
+const (
+	SearchObservationsRequestRerankerRrf             SearchObservationsRequestReranker = "rrf"
+	SearchObservationsRequestRerankerMmr             SearchObservationsRequestReranker = "mmr"
+	SearchObservationsRequestRerankerNodeDistance    SearchObservationsRequestReranker = "node_distance"
+	SearchObservationsRequestRerankerEpisodeMentions SearchObservationsRequestReranker = "episode_mentions"
+	SearchObservationsRequestRerankerCrossEncoder    SearchObservationsRequestReranker = "cross_encoder"
+)
+
+func NewSearchObservationsRequestRerankerFromString(s string) (SearchObservationsRequestReranker, error) {
+	switch s {
+	case "rrf":
+		return SearchObservationsRequestRerankerRrf, nil
+	case "mmr":
+		return SearchObservationsRequestRerankerMmr, nil
+	case "node_distance":
+		return SearchObservationsRequestRerankerNodeDistance, nil
+	case "episode_mentions":
+		return SearchObservationsRequestRerankerEpisodeMentions, nil
+	case "cross_encoder":
+		return SearchObservationsRequestRerankerCrossEncoder, nil
+	}
+	var t SearchObservationsRequestReranker
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SearchObservationsRequestReranker) Ptr() *SearchObservationsRequestReranker {
+	return &s
+}
+
+// The reranking strategy applied to retrieved results. Defaults to rrf.
+type SearchThreadSummariesRequestReranker string
+
+const (
+	SearchThreadSummariesRequestRerankerRrf             SearchThreadSummariesRequestReranker = "rrf"
+	SearchThreadSummariesRequestRerankerMmr             SearchThreadSummariesRequestReranker = "mmr"
+	SearchThreadSummariesRequestRerankerNodeDistance    SearchThreadSummariesRequestReranker = "node_distance"
+	SearchThreadSummariesRequestRerankerEpisodeMentions SearchThreadSummariesRequestReranker = "episode_mentions"
+	SearchThreadSummariesRequestRerankerCrossEncoder    SearchThreadSummariesRequestReranker = "cross_encoder"
+)
+
+func NewSearchThreadSummariesRequestRerankerFromString(s string) (SearchThreadSummariesRequestReranker, error) {
+	switch s {
+	case "rrf":
+		return SearchThreadSummariesRequestRerankerRrf, nil
+	case "mmr":
+		return SearchThreadSummariesRequestRerankerMmr, nil
+	case "node_distance":
+		return SearchThreadSummariesRequestRerankerNodeDistance, nil
+	case "episode_mentions":
+		return SearchThreadSummariesRequestRerankerEpisodeMentions, nil
+	case "cross_encoder":
+		return SearchThreadSummariesRequestRerankerCrossEncoder, nil
+	}
+	var t SearchThreadSummariesRequestReranker
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SearchThreadSummariesRequestReranker) Ptr() *SearchThreadSummariesRequestReranker {
 	return &s
 }
 

@@ -190,22 +190,24 @@ func (a *AddHyperedgeEdgeRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	hyperedgeListRequestFieldLimit   = big.NewInt(1 << 0)
-	hyperedgeListRequestFieldCursor  = big.NewInt(1 << 1)
-	hyperedgeListRequestFieldOrderBy = big.NewInt(1 << 2)
-	hyperedgeListRequestFieldOrder   = big.NewInt(1 << 3)
+	hyperedgeListRequestFieldPageSize = big.NewInt(1 << 0)
+	hyperedgeListRequestFieldCursor   = big.NewInt(1 << 1)
+	hyperedgeListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	hyperedgeListRequestFieldOrder    = big.NewInt(1 << 3)
+	hyperedgeListRequestFieldFilters  = big.NewInt(1 << 4)
 )
 
 type HyperedgeListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort key: uuid or created_at
 	OrderBy *HyperedgeListRequestOrderBy `json:"-" url:"order_by,omitempty"`
 	// Sort direction: asc or desc
 	Order *HyperedgeListRequestOrder `json:"-" url:"order,omitempty"`
-	Body  *v4.ArtifactListRequest    `json:"-" url:"-"`
+	// Filters that limit the hyperedges in the list.
+	Filters *v4.HyperedgeListFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -220,11 +222,11 @@ func (h *HyperedgeListRequest) require(field *big.Int) {
 	h.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (h *HyperedgeListRequest) SetLimit(limit *int) {
-	h.Limit = limit
-	h.require(hyperedgeListRequestFieldLimit)
+func (h *HyperedgeListRequest) SetPageSize(pageSize *int) {
+	h.PageSize = pageSize
+	h.require(hyperedgeListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -248,17 +250,32 @@ func (h *HyperedgeListRequest) SetOrder(order *HyperedgeListRequestOrder) {
 	h.require(hyperedgeListRequestFieldOrder)
 }
 
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeListRequest) SetFilters(filters *v4.HyperedgeListFilters) {
+	h.Filters = filters
+	h.require(hyperedgeListRequestFieldFilters)
+}
+
 func (h *HyperedgeListRequest) UnmarshalJSON(data []byte) error {
-	body := new(v4.ArtifactListRequest)
+	type unmarshaler HyperedgeListRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	h.Body = body
+	*h = HyperedgeListRequest(body)
 	return nil
 }
 
 func (h *HyperedgeListRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(h.Body)
+	type embed HyperedgeListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*h),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, h.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }
 
 type HyperedgeListRequestOrder string

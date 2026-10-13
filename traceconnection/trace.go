@@ -79,15 +79,15 @@ func (s *SourceTraceGetRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	sourceTraceListRequestFieldLimit             = big.NewInt(1 << 0)
+	sourceTraceListRequestFieldPageSize          = big.NewInt(1 << 0)
 	sourceTraceListRequestFieldCursor            = big.NewInt(1 << 1)
 	sourceTraceListRequestFieldFilter            = big.NewInt(1 << 2)
 	sourceTraceListRequestFieldProviderProjectID = big.NewInt(1 << 3)
 )
 
 type SourceTraceListRequest struct {
-	// Page size from 1 to 100; default 25
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Filter contains provider trace filters. Example: {"started_after":"2026-01-01T00:00:00Z"}.
@@ -108,11 +108,11 @@ func (s *SourceTraceListRequest) require(field *big.Int) {
 	s.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SourceTraceListRequest) SetLimit(limit *int) {
-	s.Limit = limit
-	s.require(sourceTraceListRequestFieldLimit)
+func (s *SourceTraceListRequest) SetPageSize(pageSize *int) {
+	s.PageSize = pageSize
+	s.require(sourceTraceListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

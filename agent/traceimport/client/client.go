@@ -118,7 +118,7 @@ func (c *Client) List(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Create a scheduled import or queue a one-time import. Example request: `{"connection_uuid":"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1","provider_project_id":"project-123","name":"Support traces","selection":{"trace_ids":["trace-123"]},"mapping":{"task_family":{"source":"fixed","value":"support"}}}`.
+// Create a scheduled import or queue a one-time import. A scheduled import returns HTTP 201 with `import`. A one-time import returns HTTP 202 with `import`, `run`, and `task`. Example request: `{"connection_uuid":"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1","provider_project_id":"project-123","name":"Support traces","selection":{"trace_ids":["trace-123"]},"mapping":{"task_family":{"source":"fixed","value":"support"}}}`.
 //
 // Example:
 //
@@ -134,7 +134,7 @@ func (c *Client) Create(
 	agentUUID string,
 	request *agent.CreateTraceImportRequest,
 	opts ...option.IdempotentRequestOption,
-) (*zep.TraceImport, error) {
+) (*zep.TraceImportCreateResult, error) {
 	response, err := c.WithRawResponse.Create(
 		ctx,
 		agentUUID,

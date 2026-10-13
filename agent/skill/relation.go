@@ -8,16 +8,16 @@ import (
 )
 
 var (
-	relationListRequestFieldKind   = big.NewInt(1 << 0)
-	relationListRequestFieldLimit  = big.NewInt(1 << 1)
-	relationListRequestFieldCursor = big.NewInt(1 << 2)
+	relationListRequestFieldKind     = big.NewInt(1 << 0)
+	relationListRequestFieldPageSize = big.NewInt(1 << 1)
+	relationListRequestFieldCursor   = big.NewInt(1 << 2)
 )
 
 type RelationListRequest struct {
 	// Relationship kinds
 	Kind []*RelationListRequestKindItem `json:"-" url:"kind,omitempty"`
-	// Page size (maximum 100)
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -41,11 +41,11 @@ func (r *RelationListRequest) SetKind(kind []*RelationListRequestKindItem) {
 	r.require(relationListRequestFieldKind)
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (r *RelationListRequest) SetLimit(limit *int) {
-	r.Limit = limit
-	r.require(relationListRequestFieldLimit)
+func (r *RelationListRequest) SetPageSize(pageSize *int) {
+	r.PageSize = pageSize
+	r.require(relationListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

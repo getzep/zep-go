@@ -35,7 +35,7 @@ func NewRawClient(options *core.RequestOptions) *RawClient {
 
 func (r *RawClient) Add(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.AddHyperedgeRequest,
 	opts ...option.IdempotentRequestOption,
@@ -86,7 +86,7 @@ func (r *RawClient) Add(
 
 func (r *RawClient) Get(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,
@@ -135,7 +135,7 @@ func (r *RawClient) Get(
 
 func (r *RawClient) Delete(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,
@@ -186,7 +186,7 @@ func (r *RawClient) Delete(
 
 func (r *RawClient) Update(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,
@@ -240,7 +240,7 @@ func (r *RawClient) Update(
 
 func (r *RawClient) CreateEdge(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,
@@ -294,7 +294,7 @@ func (r *RawClient) CreateEdge(
 
 func (r *RawClient) DeleteEdge(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,

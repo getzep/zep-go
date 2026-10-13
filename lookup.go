@@ -179,7 +179,7 @@ type LookupItem struct {
 	// The developer-assigned identifier that was looked up.
 	LegacyID *string `json:"legacy_id,omitempty" url:"legacy_id,omitempty"`
 	// The type of resource this entry resolves: user, thread, or graph.
-	ResourceType *string `json:"resource_type,omitempty" url:"resource_type,omitempty"`
+	ResourceType *LookupItemResourceType `json:"resource_type,omitempty" url:"resource_type,omitempty"`
 	// The resource's unique identifier; present only when found is true.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -204,7 +204,7 @@ func (l *LookupItem) GetLegacyID() *string {
 	return l.LegacyID
 }
 
-func (l *LookupItem) GetResourceType() *string {
+func (l *LookupItem) GetResourceType() *LookupItemResourceType {
 	if l == nil {
 		return nil
 	}
@@ -250,7 +250,7 @@ func (l *LookupItem) SetLegacyID(legacyID *string) {
 
 // SetResourceType sets the ResourceType field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (l *LookupItem) SetResourceType(resourceType *string) {
+func (l *LookupItem) SetResourceType(resourceType *LookupItemResourceType) {
 	l.ResourceType = resourceType
 	l.require(lookupItemFieldResourceType)
 }
@@ -302,4 +302,30 @@ func (l *LookupItem) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
+}
+
+// The type of resource this entry resolves: user, thread, or graph.
+type LookupItemResourceType string
+
+const (
+	LookupItemResourceTypeUser   LookupItemResourceType = "user"
+	LookupItemResourceTypeThread LookupItemResourceType = "thread"
+	LookupItemResourceTypeGraph  LookupItemResourceType = "graph"
+)
+
+func NewLookupItemResourceTypeFromString(s string) (LookupItemResourceType, error) {
+	switch s {
+	case "user":
+		return LookupItemResourceTypeUser, nil
+	case "thread":
+		return LookupItemResourceTypeThread, nil
+	case "graph":
+		return LookupItemResourceTypeGraph, nil
+	}
+	var t LookupItemResourceType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (l LookupItemResourceType) Ptr() *LookupItemResourceType {
+	return &l
 }

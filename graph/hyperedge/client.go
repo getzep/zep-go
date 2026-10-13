@@ -66,7 +66,7 @@ func NewClient(options *core.RequestOptions) *Client {
 //	)
 func (c *Client) Add(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.AddHyperedgeRequest,
 	opts ...option.IdempotentRequestOption,
@@ -90,9 +90,7 @@ func (c *Client) Add(
 //
 // Example:
 //
-//	request := &graph.HyperedgeListRequest{
-//	    Body: &zep.ArtifactListRequest{},
-//	}
+//	request := &graph.HyperedgeListRequest{}
 //	client.Graph.Hyperedge.List(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -100,7 +98,7 @@ func (c *Client) Add(
 //	)
 func (c *Client) List(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.HyperedgeListRequest,
 	opts ...option.RequestOption,
@@ -180,7 +178,7 @@ func (c *Client) List(
 //	)
 func (c *Client) Get(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,
@@ -210,7 +208,7 @@ func (c *Client) Get(
 //	)
 func (c *Client) Delete(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,
@@ -246,7 +244,7 @@ func (c *Client) Delete(
 //	)
 func (c *Client) Update(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,
@@ -285,7 +283,7 @@ func (c *Client) Update(
 //	)
 func (c *Client) CreateEdge(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,
@@ -318,7 +316,7 @@ func (c *Client) CreateEdge(
 //	)
 func (c *Client) DeleteEdge(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Hyperedge UUID
 	hyperedgeUUID string,

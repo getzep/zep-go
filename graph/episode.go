@@ -122,22 +122,24 @@ func (a *AddEpisodeRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	episodeListRequestFieldLimit   = big.NewInt(1 << 0)
-	episodeListRequestFieldCursor  = big.NewInt(1 << 1)
-	episodeListRequestFieldOrderBy = big.NewInt(1 << 2)
-	episodeListRequestFieldOrder   = big.NewInt(1 << 3)
+	episodeListRequestFieldPageSize = big.NewInt(1 << 0)
+	episodeListRequestFieldCursor   = big.NewInt(1 << 1)
+	episodeListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	episodeListRequestFieldOrder    = big.NewInt(1 << 3)
+	episodeListRequestFieldFilters  = big.NewInt(1 << 4)
 )
 
 type EpisodeListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
 	OrderBy *EpisodeListRequestOrderBy `json:"-" url:"order_by,omitempty"`
 	// Sort direction: asc or desc
 	Order *EpisodeListRequestOrder `json:"-" url:"order,omitempty"`
-	Body  *v4.ArtifactListRequest  `json:"-" url:"-"`
+	// Filters that limit the episodes in the list.
+	Filters *v4.EpisodeListFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -152,11 +154,11 @@ func (e *EpisodeListRequest) require(field *big.Int) {
 	e.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EpisodeListRequest) SetLimit(limit *int) {
-	e.Limit = limit
-	e.require(episodeListRequestFieldLimit)
+func (e *EpisodeListRequest) SetPageSize(pageSize *int) {
+	e.PageSize = pageSize
+	e.require(episodeListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -180,27 +182,42 @@ func (e *EpisodeListRequest) SetOrder(order *EpisodeListRequestOrder) {
 	e.require(episodeListRequestFieldOrder)
 }
 
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListRequest) SetFilters(filters *v4.EpisodeListFilters) {
+	e.Filters = filters
+	e.require(episodeListRequestFieldFilters)
+}
+
 func (e *EpisodeListRequest) UnmarshalJSON(data []byte) error {
-	body := new(v4.ArtifactListRequest)
+	type unmarshaler EpisodeListRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	e.Body = body
+	*e = EpisodeListRequest(body)
 	return nil
 }
 
 func (e *EpisodeListRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(e.Body)
+	type embed EpisodeListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
 }
 
 var (
-	episodeListForDocumentRequestFieldLimit  = big.NewInt(1 << 0)
-	episodeListForDocumentRequestFieldCursor = big.NewInt(1 << 1)
+	episodeListForDocumentRequestFieldPageSize = big.NewInt(1 << 0)
+	episodeListForDocumentRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type EpisodeListForDocumentRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -217,11 +234,11 @@ func (e *EpisodeListForDocumentRequest) require(field *big.Int) {
 	e.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EpisodeListForDocumentRequest) SetLimit(limit *int) {
-	e.Limit = limit
-	e.require(episodeListForDocumentRequestFieldLimit)
+func (e *EpisodeListForDocumentRequest) SetPageSize(pageSize *int) {
+	e.PageSize = pageSize
+	e.require(episodeListForDocumentRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -232,13 +249,13 @@ func (e *EpisodeListForDocumentRequest) SetCursor(cursor *string) {
 }
 
 var (
-	episodeListIngestionTracesRequestFieldLimit  = big.NewInt(1 << 0)
-	episodeListIngestionTracesRequestFieldCursor = big.NewInt(1 << 1)
+	episodeListIngestionTracesRequestFieldPageSize = big.NewInt(1 << 0)
+	episodeListIngestionTracesRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type EpisodeListIngestionTracesRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -255,11 +272,11 @@ func (e *EpisodeListIngestionTracesRequest) require(field *big.Int) {
 	e.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EpisodeListIngestionTracesRequest) SetLimit(limit *int) {
-	e.Limit = limit
-	e.require(episodeListIngestionTracesRequestFieldLimit)
+func (e *EpisodeListIngestionTracesRequest) SetPageSize(pageSize *int) {
+	e.PageSize = pageSize
+	e.require(episodeListIngestionTracesRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

@@ -45,7 +45,7 @@ func TestSettersCreateTraceImportRequest(t *testing.T) {
 
 	t.Run("SetOnSourceChange", func(t *testing.T) {
 		obj := &CreateTraceImportRequest{}
-		var fernTestValueOnSourceChange *string
+		var fernTestValueOnSourceChange *v4.TraceImportOnSourceChange
 		obj.SetOnSourceChange(fernTestValueOnSourceChange)
 		assert.Equal(t, fernTestValueOnSourceChange, obj.OnSourceChange)
 		assert.NotNil(t, obj.explicitFields)
@@ -214,7 +214,7 @@ func TestSettersMarkExplicitCreateTraceImportRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &CreateTraceImportRequest{}
-		var fernTestValueOnSourceChange *string
+		var fernTestValueOnSourceChange *v4.TraceImportOnSourceChange
 
 		// Act
 		obj.SetOnSourceChange(fernTestValueOnSourceChange)
@@ -413,11 +413,11 @@ func TestSettersMarkExplicitTraceImportDeleteRequest(t *testing.T) {
 }
 
 func TestSettersTraceImportListRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &TraceImportListRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -432,14 +432,14 @@ func TestSettersTraceImportListRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitTraceImportListRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &TraceImportListRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -531,7 +531,7 @@ func TestSettersUpdateTraceImportRequest(t *testing.T) {
 
 	t.Run("SetOnSourceChange", func(t *testing.T) {
 		obj := &UpdateTraceImportRequest{}
-		var fernTestValueOnSourceChange *string
+		var fernTestValueOnSourceChange *UpdateTraceImportRequestOnSourceChange
 		obj.SetOnSourceChange(fernTestValueOnSourceChange)
 		assert.Equal(t, fernTestValueOnSourceChange, obj.OnSourceChange)
 		assert.NotNil(t, obj.explicitFields)
@@ -692,7 +692,7 @@ func TestSettersMarkExplicitUpdateTraceImportRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &UpdateTraceImportRequest{}
-		var fernTestValueOnSourceChange *string
+		var fernTestValueOnSourceChange *UpdateTraceImportRequestOnSourceChange
 
 		// Act
 		obj.SetOnSourceChange(fernTestValueOnSourceChange)
@@ -836,6 +836,35 @@ func TestEnumTraceImportDeleteRequestTraces(t *testing.T) {
 
 	t.Run("Ptr", func(t *testing.T) {
 		val, err := NewTraceImportDeleteRequestTracesFromString("keep")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumUpdateTraceImportRequestOnSourceChange(t *testing.T) {
+	t.Run("NewFromString_ignore", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewUpdateTraceImportRequestOnSourceChangeFromString("ignore")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, UpdateTraceImportRequestOnSourceChange("ignore"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_replace", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewUpdateTraceImportRequestOnSourceChangeFromString("replace")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, UpdateTraceImportRequestOnSourceChange("replace"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewUpdateTraceImportRequestOnSourceChangeFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewUpdateTraceImportRequestOnSourceChangeFromString("ignore")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)
