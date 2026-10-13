@@ -262,11 +262,11 @@ func TestSettersMarkExplicitThreadGetContextRequest(t *testing.T) {
 }
 
 func TestSettersThreadListRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &ThreadListRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -305,14 +305,14 @@ func TestSettersThreadListRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitThreadListRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &ThreadListRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -463,11 +463,11 @@ func TestSettersMarkExplicitThreadListRequest(t *testing.T) {
 }
 
 func TestSettersThreadListEpisodesRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &ThreadListEpisodesRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -482,14 +482,14 @@ func TestSettersThreadListEpisodesRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitThreadListEpisodesRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &ThreadListEpisodesRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -547,11 +547,11 @@ func TestSettersMarkExplicitThreadListEpisodesRequest(t *testing.T) {
 }
 
 func TestSettersThreadListMessagesRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &ThreadListMessagesRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -582,14 +582,14 @@ func TestSettersThreadListMessagesRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitThreadListMessagesRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &ThreadListMessagesRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)

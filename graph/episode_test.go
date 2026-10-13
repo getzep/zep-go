@@ -4,6 +4,7 @@ package graph
 
 import (
 	json "encoding/json"
+	v4 "github.com/getzep/zep-go/v4"
 	assert "github.com/stretchr/testify/assert"
 	require "github.com/stretchr/testify/require"
 	testing "testing"
@@ -289,11 +290,11 @@ func TestSettersMarkExplicitAddEpisodeRequest(t *testing.T) {
 }
 
 func TestSettersEpisodeListRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &EpisodeListRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -321,17 +322,25 @@ func TestSettersEpisodeListRequest(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetFilters", func(t *testing.T) {
+		obj := &EpisodeListRequest{}
+		var fernTestValueFilters *v4.EpisodeListFilters
+		obj.SetFilters(fernTestValueFilters)
+		assert.Equal(t, fernTestValueFilters, obj.Filters)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 }
 
 func TestSettersMarkExplicitEpisodeListRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EpisodeListRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -448,14 +457,45 @@ func TestSettersMarkExplicitEpisodeListRequest(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
+	t.Run("SetFilters_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeListRequest{}
+		var fernTestValueFilters *v4.EpisodeListFilters
+
+		// Act
+		obj.SetFilters(fernTestValueFilters)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
 }
 
 func TestSettersEpisodeListForDocumentRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &EpisodeListForDocumentRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -470,14 +510,14 @@ func TestSettersEpisodeListForDocumentRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitEpisodeListForDocumentRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EpisodeListForDocumentRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -535,11 +575,11 @@ func TestSettersMarkExplicitEpisodeListForDocumentRequest(t *testing.T) {
 }
 
 func TestSettersEpisodeListIngestionTracesRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &EpisodeListIngestionTracesRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -554,14 +594,14 @@ func TestSettersEpisodeListIngestionTracesRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitEpisodeListIngestionTracesRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &EpisodeListIngestionTracesRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)

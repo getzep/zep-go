@@ -62,7 +62,7 @@ func NewClient(options *core.RequestOptions) *Client {
 //	)
 func (c *Client) Add(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.AddEdgesRequest,
 	opts ...option.IdempotentRequestOption,
@@ -79,11 +79,14 @@ func (c *Client) Add(
 	return response.Body, nil
 }
 
+// Lists the edges of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+// You can sort by `uuid`, `created_at`, or `valid_at`. The default sort is `uuid` in descending order. An edge with no `valid_at` sorts as if its `valid_at` is 1970-01-01T00:00:00Z. Thus it comes before an edge with a later `valid_at` in ascending order, and after an edge with an earlier `valid_at`.
+// You can use all `filters` fields except `content_policy_violated`.
+// If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+//
 // Example:
 //
-//	request := &graph.EdgeListRequest{
-//	    Body: &zep.ArtifactListRequest{},
-//	}
+//	request := &graph.EdgeListRequest{}
 //	client.Graph.Edge.List(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -91,7 +94,7 @@ func (c *Client) Add(
 //	)
 func (c *Client) List(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.EdgeListRequest,
 	opts ...option.RequestOption,
@@ -167,7 +170,7 @@ func (c *Client) List(
 //	)
 func (c *Client) Get(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Edge UUID
 	edgeUUID string,
@@ -194,7 +197,7 @@ func (c *Client) Get(
 //	)
 func (c *Client) Delete(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Edge UUID
 	edgeUUID string,
@@ -228,7 +231,7 @@ func (c *Client) Delete(
 //	)
 func (c *Client) Update(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Edge UUID
 	edgeUUID string,

@@ -80,7 +80,7 @@ client.Agent.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -574,7 +574,7 @@ client.Batch.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -795,7 +795,7 @@ client.Batch.ListItems(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -994,7 +994,7 @@ client.Context.ListTemplates(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -1308,7 +1308,7 @@ client.Graph.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -1430,7 +1430,7 @@ client.Graph.Get(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1473,7 +1473,7 @@ client.Graph.Delete(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1518,7 +1518,7 @@ client.Graph.Update(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1589,7 +1589,7 @@ client.Graph.Clone(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1654,7 +1654,7 @@ client.Graph.GetContentPolicy(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1713,7 +1713,7 @@ client.Graph.ListContentPolicyEvents(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1721,7 +1721,7 @@ client.Graph.ListContentPolicyEvents(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -1737,7 +1737,7 @@ client.Graph.ListContentPolicyEvents(
 <dl>
 <dd>
 
-**filters:** `map[string]any` — Exact-match filters. Supported keys: episode_uuid and drop_reason.
+**filters:** `*zep.ContentPolicyEventListFilters` — Exact-match filters that limit the events in the list.
     
 </dd>
 </dl>
@@ -1784,7 +1784,7 @@ client.Graph.GetContext(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1878,7 +1878,7 @@ client.Graph.GetInstructions(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1923,7 +1923,7 @@ client.Graph.SetInstructions(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -1974,7 +1974,7 @@ client.Graph.GetObservationSteering(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2019,7 +2019,7 @@ client.Graph.SetObservationSteering(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2070,7 +2070,7 @@ client.Graph.GetOntology(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2115,7 +2115,7 @@ client.Graph.SetOntology(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2184,7 +2184,7 @@ client.Graph.SearchEdges(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2192,7 +2192,7 @@ client.Graph.SearchEdges(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
     
 </dd>
 </dl>
@@ -2201,6 +2201,14 @@ client.Graph.SearchEdges(
 <dd>
 
 **cursor:** `*string` — Opaque page cursor
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**query:** `string` — The search query.
     
 </dd>
 </dl>
@@ -2227,6 +2235,24 @@ node_distance.
 <dl>
 <dd>
 
+**filterLowQualityResults:** `*bool` 
+
+The default is false. When true, Zep removes low-quality results at the knee of the
+cross-encoder score curve. The filter never removes a result with a score
+of 0.9 or more. It keeps at least 5 results, or all results when fewer
+than 5 are available. The filter only removes results, so a page still
+returns up to page_size results. Use this field only with reranker
+cross_encoder. It is not supported for episode search. Invalid
+combinations return a 400 error. The cutoff is approximate, not guaranteed.
+When the cross-encoder does not score the results, for example after a
+timeout, Zep returns the results without the filter.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **filters:** `*zep.EdgeSearchFilters` — Filters constraining which items are returned.
     
 </dd>
@@ -2239,14 +2265,6 @@ node_distance.
 
 The diversity weighting used for maximal marginal relevance reranking.
 Required when reranker is mmr.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**query:** `string` — The search query.
     
 </dd>
 </dl>
@@ -2279,10 +2297,8 @@ Required when reranker is mmr.
 <dd>
 
 ```go
-request := &zep.GraphSearchEpisodesRequest{
-    Body: &zep.SearchRequest{
-        Query: "query",
-    },
+request := &zep.SearchEpisodesRequest{
+    Query: "query",
 }
 client.Graph.SearchEpisodes(
     context.TODO(),
@@ -2303,7 +2319,7 @@ client.Graph.SearchEpisodes(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2311,7 +2327,7 @@ client.Graph.SearchEpisodes(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
     
 </dd>
 </dl>
@@ -2327,7 +2343,71 @@ client.Graph.SearchEpisodes(
 <dl>
 <dd>
 
-**request:** `*zep.SearchRequest` 
+**query:** `string` — The search query.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**bfsOriginNodeUUIDs:** `[]string` — Nodes used as BFS origins for graph-distance-aware retrieval.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**centerNodeUUID:** `*string` 
+
+The node to rank results by distance from. Required when reranker is
+node_distance.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filterLowQualityResults:** `*bool` 
+
+The default is false. When true, Zep removes low-quality results at the knee of the
+cross-encoder score curve. The filter never removes a result with a score
+of 0.9 or more. It keeps at least 5 results, or all results when fewer
+than 5 are available. The filter only removes results, so a page still
+returns up to page_size results. Use this field only with reranker
+cross_encoder. It is not supported for episode search. Invalid
+combinations return a 400 error. The cutoff is approximate, not guaranteed.
+When the cross-encoder does not score the results, for example after a
+timeout, Zep returns the results without the filter.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.SearchFilters` — Filters constraining which items are returned.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**mmrLambda:** `*float64` 
+
+The diversity weighting used for maximal marginal relevance reranking.
+Required when reranker is mmr.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reranker:** `*zep.SearchEpisodesRequestReranker` — The reranking strategy applied to retrieved results. Defaults to rrf.
     
 </dd>
 </dl>
@@ -2388,7 +2468,7 @@ client.Graph.SearchNodes(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2396,7 +2476,7 @@ client.Graph.SearchNodes(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
     
 </dd>
 </dl>
@@ -2405,6 +2485,14 @@ client.Graph.SearchNodes(
 <dd>
 
 **cursor:** `*string` — Opaque page cursor
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**query:** `string` — The search query.
     
 </dd>
 </dl>
@@ -2431,6 +2519,24 @@ node_distance.
 <dl>
 <dd>
 
+**filterLowQualityResults:** `*bool` 
+
+The default is false. When true, Zep removes low-quality results at the knee of the
+cross-encoder score curve. The filter never removes a result with a score
+of 0.9 or more. It keeps at least 5 results, or all results when fewer
+than 5 are available. The filter only removes results, so a page still
+returns up to page_size results. Use this field only with reranker
+cross_encoder. It is not supported for episode search. Invalid
+combinations return a 400 error. The cutoff is approximate, not guaranteed.
+When the cross-encoder does not score the results, for example after a
+timeout, Zep returns the results without the filter.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **filters:** `*zep.NodeSearchFilters` — Filters constraining which items are returned.
     
 </dd>
@@ -2443,14 +2549,6 @@ node_distance.
 
 The diversity weighting used for maximal marginal relevance reranking.
 Required when reranker is mmr.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**query:** `string` — The search query.
     
 </dd>
 </dl>
@@ -2483,10 +2581,8 @@ Required when reranker is mmr.
 <dd>
 
 ```go
-request := &zep.GraphSearchObservationsRequest{
-    Body: &zep.SearchRequest{
-        Query: "query",
-    },
+request := &zep.SearchObservationsRequest{
+    Query: "query",
 }
 client.Graph.SearchObservations(
     context.TODO(),
@@ -2507,7 +2603,7 @@ client.Graph.SearchObservations(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2515,7 +2611,7 @@ client.Graph.SearchObservations(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
     
 </dd>
 </dl>
@@ -2531,7 +2627,71 @@ client.Graph.SearchObservations(
 <dl>
 <dd>
 
-**request:** `*zep.SearchRequest` 
+**query:** `string` — The search query.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**bfsOriginNodeUUIDs:** `[]string` — Nodes used as BFS origins for graph-distance-aware retrieval.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**centerNodeUUID:** `*string` 
+
+The node to rank results by distance from. Required when reranker is
+node_distance.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filterLowQualityResults:** `*bool` 
+
+The default is false. When true, Zep removes low-quality results at the knee of the
+cross-encoder score curve. The filter never removes a result with a score
+of 0.9 or more. It keeps at least 5 results, or all results when fewer
+than 5 are available. The filter only removes results, so a page still
+returns up to page_size results. Use this field only with reranker
+cross_encoder. It is not supported for episode search. Invalid
+combinations return a 400 error. The cutoff is approximate, not guaranteed.
+When the cross-encoder does not score the results, for example after a
+timeout, Zep returns the results without the filter.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.SearchFilters` — Filters constraining which items are returned.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**mmrLambda:** `*float64` 
+
+The diversity weighting used for maximal marginal relevance reranking.
+Required when reranker is mmr.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reranker:** `*zep.SearchObservationsRequestReranker` — The reranking strategy applied to retrieved results. Defaults to rrf.
     
 </dd>
 </dl>
@@ -2556,10 +2716,8 @@ client.Graph.SearchObservations(
 <dd>
 
 ```go
-request := &zep.GraphSearchThreadSummariesRequest{
-    Body: &zep.SearchRequest{
-        Query: "query",
-    },
+request := &zep.SearchThreadSummariesRequest{
+    Query: "query",
 }
 client.Graph.SearchThreadSummaries(
     context.TODO(),
@@ -2580,7 +2738,7 @@ client.Graph.SearchThreadSummaries(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2588,7 +2746,7 @@ client.Graph.SearchThreadSummaries(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages. Search ranks a limited set of results, so iteration ends after that set. To get the top N results, set `page_size` to N and read the first page.
     
 </dd>
 </dl>
@@ -2604,7 +2762,71 @@ client.Graph.SearchThreadSummaries(
 <dl>
 <dd>
 
-**request:** `*zep.SearchRequest` 
+**query:** `string` — The search query.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**bfsOriginNodeUUIDs:** `[]string` — Nodes used as BFS origins for graph-distance-aware retrieval.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**centerNodeUUID:** `*string` 
+
+The node to rank results by distance from. Required when reranker is
+node_distance.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filterLowQualityResults:** `*bool` 
+
+The default is false. When true, Zep removes low-quality results at the knee of the
+cross-encoder score curve. The filter never removes a result with a score
+of 0.9 or more. It keeps at least 5 results, or all results when fewer
+than 5 are available. The filter only removes results, so a page still
+returns up to page_size results. Use this field only with reranker
+cross_encoder. It is not supported for episode search. Invalid
+combinations return a 400 error. The cutoff is approximate, not guaranteed.
+When the cross-encoder does not score the results, for example after a
+timeout, Zep returns the results without the filter.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.SearchFilters` — Filters constraining which items are returned.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**mmrLambda:** `*float64` 
+
+The diversity weighting used for maximal marginal relevance reranking.
+Required when reranker is mmr.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reranker:** `*zep.SearchThreadSummariesRequestReranker` — The reranking strategy applied to retrieved results. Defaults to rrf.
     
 </dd>
 </dl>
@@ -2653,7 +2875,7 @@ client.Graph.GetSubgraph(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -2747,7 +2969,7 @@ client.Graph.Warm(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -3087,7 +3309,7 @@ client.Project.ListContentPolicyRevisions(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -3481,7 +3703,7 @@ client.Task.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -3577,7 +3799,7 @@ client.Thread.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -3891,7 +4113,7 @@ client.Thread.ListEpisodes(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -3952,7 +4174,7 @@ client.Thread.ListMessages(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -4168,7 +4390,7 @@ client.TraceConnection.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -4673,7 +4895,7 @@ client.UserGroup.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -4955,7 +5177,7 @@ client.UserGroup.ListMemberCandidates(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -5111,7 +5333,7 @@ client.UserGroup.ListMembers(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -5331,7 +5553,7 @@ client.UserGroup.ListForUser(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -5440,6 +5662,20 @@ does not change after creation.
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**userID:** `*string` 
+
+An optional external identity identifier, such as an identity-provider
+subject claim. Zep uses it to match an identity-provider sign-in to this
+user. It is not an address; use uuid to address the user in v4. It is
+unique within the project, can contain at most 500 characters, and
+cannot be changed after creation.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -5480,7 +5716,7 @@ client.User.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -5991,7 +6227,7 @@ client.Agent.Learning.ListRuns(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -6255,7 +6491,7 @@ client.Agent.Skill.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 20)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -6350,7 +6586,7 @@ client.Agent.Skill.Search(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 20)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -6824,7 +7060,7 @@ client.Agent.TaskFamily.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -6964,7 +7200,7 @@ client.Agent.TraceImport.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -6984,7 +7220,7 @@ client.Agent.TraceImport.List(
 </dl>
 </details>
 
-<details><summary><code>client.Agent.TraceImport.Create(AgentUUID, request) -> *zep.TraceImport</code></summary>
+<details><summary><code>client.Agent.TraceImport.Create(AgentUUID, request) -> *zep.TraceImportCreateResult</code></summary>
 <dl>
 <dd>
 
@@ -6996,7 +7232,7 @@ client.Agent.TraceImport.List(
 <dl>
 <dd>
 
-Create a scheduled import or queue a one-time import. Example request: `{"connection_uuid":"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1","provider_project_id":"project-123","name":"Support traces","selection":{"trace_ids":["trace-123"]},"mapping":{"task_family":{"source":"fixed","value":"support"}}}`.
+Create a scheduled import or queue a one-time import. A scheduled import returns HTTP 201 with `import`. A one-time import returns HTTP 202 with `import`, `run`, and `task`. Example request: `{"connection_uuid":"8c78a85e-eac2-4f57-b5f5-59a68a1e77a1","provider_project_id":"project-123","name":"Support traces","selection":{"trace_ids":["trace-123"]},"mapping":{"task_family":{"source":"fixed","value":"support"}}}`.
 </dd>
 </dl>
 </dd>
@@ -7071,7 +7307,7 @@ client.Agent.TraceImport.Create(
 <dl>
 <dd>
 
-**onSourceChange:** `*string` — OnSourceChange defines how changed source traces are handled.
+**onSourceChange:** `*zep.TraceImportOnSourceChange` — OnSourceChange defines how changed source traces are handled.
     
 </dd>
 </dl>
@@ -7095,7 +7331,7 @@ client.Agent.TraceImport.Create(
 <dl>
 <dd>
 
-**schedule:** `*zep.TraceImportSchedule` — Schedule enables recurring imports when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+**schedule:** `*zep.TraceImportSchedule` — Schedule enables recurring imports when supplied. Example: {"interval_hours":4,"start_from":"now","settle_minutes":5,"max_open_hours":24}.
     
 </dd>
 </dl>
@@ -7353,7 +7589,7 @@ client.Agent.TraceImport.Update(
 <dl>
 <dd>
 
-**onSourceChange:** `*string` — OnSourceChange is the new change policy, when supplied.
+**onSourceChange:** `*agent.UpdateTraceImportRequestOnSourceChange` — OnSourceChange is the new change policy, when supplied.
     
 </dd>
 </dl>
@@ -7369,7 +7605,7 @@ client.Agent.TraceImport.Update(
 <dl>
 <dd>
 
-**schedule:** `*zep.TraceImportSchedule` — Schedule is the new schedule, when supplied. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+**schedule:** `*zep.TraceImportSchedule` — Schedule is the new schedule, when supplied. Example: {"interval_hours":4,"start_from":"now","settle_minutes":5,"max_open_hours":24}.
     
 </dd>
 </dl>
@@ -7661,7 +7897,7 @@ client.Agent.Trace.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -8302,7 +8538,7 @@ client.Agent.Trace.ListEvents(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -8681,7 +8917,7 @@ client.Agent.Trace.ListSummaryVersions(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -8743,7 +8979,7 @@ client.Agent.Verifier.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -9132,7 +9368,7 @@ client.Agent.Skill.Candidate.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -9673,7 +9909,7 @@ client.Agent.Skill.Evidence.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -9752,7 +9988,7 @@ client.Agent.Skill.Relation.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -9896,7 +10132,7 @@ client.Agent.Skill.Version.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size (maximum 100)
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -10437,7 +10673,7 @@ client.Agent.TraceImport.Run.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -10672,7 +10908,7 @@ client.Agent.TraceImport.Run.Item.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -10697,6 +10933,23 @@ client.Agent.TraceImport.Run.Item.List(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists the document summaries of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+You can sort by `uuid` or `created_at`. The default sort is `uuid` in descending order.
+You cannot use these `filters` fields: `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -10706,9 +10959,7 @@ client.Agent.TraceImport.Run.Item.List(
 <dd>
 
 ```go
-request := &graph.DocumentSummaryListRequest{
-    Body: &zep.ArtifactListRequest{},
-}
+request := &graph.DocumentSummaryListRequest{}
 client.Graph.DocumentSummary.List(
     context.TODO(),
     "graph_uuid",
@@ -10728,7 +10979,7 @@ client.Graph.DocumentSummary.List(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -10736,7 +10987,7 @@ client.Graph.DocumentSummary.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -10752,7 +11003,26 @@ client.Graph.DocumentSummary.List(
 <dl>
 <dd>
 
-**request:** `*zep.ArtifactListRequest` 
+**orderBy:** `*graph.DocumentSummaryListRequestOrderBy` — Sort key: uuid (default) or created_at
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**order:** `*graph.DocumentSummaryListRequestOrder` — Sort direction: asc or desc (default desc)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.DocumentSummaryListFilters` 
+
+Filters that limit the items in the list. The operation description
+names the filter fields that the operation does not support.
     
 </dd>
 </dl>
@@ -10799,7 +11069,7 @@ client.Graph.Episode.ListForDocument(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -10815,7 +11085,7 @@ client.Graph.Episode.ListForDocument(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -10870,7 +11140,7 @@ client.Graph.Episode.Add(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -10976,9 +11246,7 @@ metadata matches the predicate.
 <dd>
 
 ```go
-request := &graph.EpisodeListRequest{
-    Body: &zep.ArtifactListRequest{},
-}
+request := &graph.EpisodeListRequest{}
 client.Graph.Episode.List(
     context.TODO(),
     "graph_uuid",
@@ -10998,7 +11266,7 @@ client.Graph.Episode.List(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11006,7 +11274,7 @@ client.Graph.Episode.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -11038,7 +11306,7 @@ client.Graph.Episode.List(
 <dl>
 <dd>
 
-**request:** `*zep.ArtifactListRequest` 
+**filters:** `*zep.EpisodeListFilters` — Filters that limit the episodes in the list.
     
 </dd>
 </dl>
@@ -11082,7 +11350,7 @@ client.Graph.Episode.Get(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11134,7 +11402,7 @@ client.Graph.Episode.Delete(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11188,7 +11456,7 @@ client.Graph.Episode.Update(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11262,7 +11530,7 @@ client.Graph.Episode.GetDebugLogs(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11330,7 +11598,7 @@ client.Graph.Episode.ListIngestionTraces(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11346,7 +11614,7 @@ client.Graph.Episode.ListIngestionTraces(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -11424,7 +11692,7 @@ client.Graph.Edge.Add(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11460,6 +11728,23 @@ edge. The default is false.
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists the edges of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+You can sort by `uuid`, `created_at`, or `valid_at`. The default sort is `uuid` in descending order. An edge with no `valid_at` sorts as if its `valid_at` is 1970-01-01T00:00:00Z. Thus it comes before an edge with a later `valid_at` in ascending order, and after an edge with an earlier `valid_at`.
+You can use all `filters` fields except `content_policy_violated`.
+If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -11469,9 +11754,7 @@ edge. The default is false.
 <dd>
 
 ```go
-request := &graph.EdgeListRequest{
-    Body: &zep.ArtifactListRequest{},
-}
+request := &graph.EdgeListRequest{}
 client.Graph.Edge.List(
     context.TODO(),
     "graph_uuid",
@@ -11491,7 +11774,7 @@ client.Graph.Edge.List(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11499,7 +11782,7 @@ client.Graph.Edge.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -11515,7 +11798,26 @@ client.Graph.Edge.List(
 <dl>
 <dd>
 
-**request:** `*zep.ArtifactListRequest` 
+**orderBy:** `*graph.EdgeListRequestOrderBy` — Sort key: uuid (default), created_at, or valid_at
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**order:** `*graph.EdgeListRequestOrder` — Sort direction: asc or desc (default desc)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.EdgeListFilters` 
+
+Filters that limit the items in the list. The operation description
+names the filter fields that the operation does not support.
     
 </dd>
 </dl>
@@ -11559,7 +11861,7 @@ client.Graph.Edge.Get(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11611,7 +11913,7 @@ client.Graph.Edge.Delete(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11682,7 +11984,7 @@ client.Graph.Edge.Update(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11786,7 +12088,7 @@ client.Graph.Hyperedge.Add(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11887,9 +12189,7 @@ and must match every list supplied.
 <dd>
 
 ```go
-request := &graph.HyperedgeListRequest{
-    Body: &zep.ArtifactListRequest{},
-}
+request := &graph.HyperedgeListRequest{}
 client.Graph.Hyperedge.List(
     context.TODO(),
     "graph_uuid",
@@ -11909,7 +12209,7 @@ client.Graph.Hyperedge.List(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11917,7 +12217,7 @@ client.Graph.Hyperedge.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -11949,7 +12249,7 @@ client.Graph.Hyperedge.List(
 <dl>
 <dd>
 
-**request:** `*zep.ArtifactListRequest` 
+**filters:** `*zep.HyperedgeListFilters` — Filters that limit the hyperedges in the list.
     
 </dd>
 </dl>
@@ -12009,7 +12309,7 @@ client.Graph.Hyperedge.Get(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12076,7 +12376,7 @@ client.Graph.Hyperedge.Delete(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12149,7 +12449,7 @@ client.Graph.Hyperedge.Update(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12231,7 +12531,7 @@ client.Graph.Hyperedge.CreateEdge(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12323,7 +12623,7 @@ client.Graph.Hyperedge.DeleteEdge(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12391,7 +12691,7 @@ client.Graph.Node.Add(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12415,6 +12715,23 @@ client.Graph.Node.Add(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists the nodes of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+You can sort by `uuid`, `created_at`, or `degree`. The default sort is `uuid` in descending order.
+You cannot use these `filters` fields: `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -12424,9 +12741,7 @@ client.Graph.Node.Add(
 <dd>
 
 ```go
-request := &graph.NodeListRequest{
-    Body: &zep.ArtifactListRequest{},
-}
+request := &graph.NodeListRequest{}
 client.Graph.Node.List(
     context.TODO(),
     "graph_uuid",
@@ -12446,7 +12761,7 @@ client.Graph.Node.List(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12454,7 +12769,7 @@ client.Graph.Node.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -12470,7 +12785,7 @@ client.Graph.Node.List(
 <dl>
 <dd>
 
-**orderBy:** `*graph.NodeListRequestOrderBy` — Sort key: uuid (default) or degree
+**orderBy:** `*graph.NodeListRequestOrderBy` — Sort key: uuid (default), created_at, or degree
     
 </dd>
 </dl>
@@ -12486,7 +12801,10 @@ client.Graph.Node.List(
 <dl>
 <dd>
 
-**request:** `*zep.ArtifactListRequest` 
+**filters:** `*zep.NodeListFilters` 
+
+Filters that limit the items in the list. The operation description
+names the filter fields that the operation does not support.
     
 </dd>
 </dl>
@@ -12530,7 +12848,7 @@ client.Graph.Node.Get(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12582,7 +12900,7 @@ client.Graph.Node.Delete(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12636,7 +12954,7 @@ client.Graph.Node.Update(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12717,7 +13035,7 @@ client.Graph.Node.ListNeighbors(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12733,7 +13051,7 @@ client.Graph.Node.ListNeighbors(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -12790,6 +13108,23 @@ client.Graph.Node.ListNeighbors(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists the observations of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+You can sort by `uuid` or `created_at`. The default sort is `uuid` in descending order.
+You cannot use these `filters` fields: `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -12799,9 +13134,7 @@ client.Graph.Node.ListNeighbors(
 <dd>
 
 ```go
-request := &graph.ObservationListRequest{
-    Body: &zep.ArtifactListRequest{},
-}
+request := &graph.ObservationListRequest{}
 client.Graph.Observation.List(
     context.TODO(),
     "graph_uuid",
@@ -12821,7 +13154,7 @@ client.Graph.Observation.List(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12829,7 +13162,7 @@ client.Graph.Observation.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -12845,7 +13178,26 @@ client.Graph.Observation.List(
 <dl>
 <dd>
 
-**request:** `*zep.ArtifactListRequest` 
+**orderBy:** `*graph.ObservationListRequestOrderBy` — Sort key: uuid (default) or created_at
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**order:** `*graph.ObservationListRequestOrder` — Sort direction: asc or desc (default desc)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.ObservationListFilters` 
+
+Filters that limit the items in the list. The operation description
+names the filter fields that the operation does not support.
     
 </dd>
 </dl>
@@ -12889,7 +13241,7 @@ client.Graph.Observation.Get(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12914,6 +13266,23 @@ client.Graph.Observation.Get(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists the thread summaries of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+You can sort by `uuid` or `created_at`. The default sort is `uuid` in descending order.
+You cannot use these `filters` fields: `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -12923,9 +13292,7 @@ client.Graph.Observation.Get(
 <dd>
 
 ```go
-request := &graph.ThreadSummaryListRequest{
-    Body: &zep.ArtifactListRequest{},
-}
+request := &graph.ThreadSummaryListRequest{}
 client.Graph.ThreadSummary.List(
     context.TODO(),
     "graph_uuid",
@@ -12945,7 +13312,7 @@ client.Graph.ThreadSummary.List(
 <dl>
 <dd>
 
-**graphUUID:** `string` — Graph UUID
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -12953,7 +13320,7 @@ client.Graph.ThreadSummary.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -12969,7 +13336,26 @@ client.Graph.ThreadSummary.List(
 <dl>
 <dd>
 
-**request:** `*zep.ArtifactListRequest` 
+**orderBy:** `*graph.ThreadSummaryListRequestOrderBy` — Sort key: uuid (default) or created_at
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**order:** `*graph.ThreadSummaryListRequestOrder` — Sort direction: asc or desc (default desc)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.ThreadSummaryListFilters` 
+
+Filters that limit the items in the list. The operation description
+names the filter fields that the operation does not support.
     
 </dd>
 </dl>
@@ -13109,7 +13495,7 @@ client.Thread.Message.Update(
 <dl>
 <dd>
 
-List provider projects with the `limit` and `cursor` query parameters.
+List provider projects with the `page_size` and `cursor` query parameters.
 </dd>
 </dl>
 </dd>
@@ -13152,7 +13538,7 @@ client.TraceConnection.Project.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size from 1 to 100; default 50
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>
@@ -13316,7 +13702,7 @@ client.TraceConnection.Trace.List(
 <dl>
 <dd>
 
-**limit:** `*int` — Page size from 1 to 100; default 25
+**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
     
 </dd>
 </dl>

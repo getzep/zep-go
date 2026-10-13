@@ -139,11 +139,11 @@ func TestSettersMarkExplicitVersionGetRequest(t *testing.T) {
 }
 
 func TestSettersVersionListRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &VersionListRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -166,14 +166,14 @@ func TestSettersVersionListRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitVersionListRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &VersionListRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)

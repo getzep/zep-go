@@ -125,7 +125,7 @@ func (r *RawClient) Lookup(
 
 func (r *RawClient) Get(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*core.Response[*zep.Graph], error) {
@@ -171,7 +171,7 @@ func (r *RawClient) Get(
 
 func (r *RawClient) Delete(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.IdempotentRequestOption,
 ) (*core.Response[*zep.GraphDeleteResult], error) {
@@ -219,7 +219,7 @@ func (r *RawClient) Delete(
 
 func (r *RawClient) Update(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.PatchGraphRequest,
 	opts ...option.IdempotentRequestOption,
@@ -270,7 +270,7 @@ func (r *RawClient) Update(
 
 func (r *RawClient) Clone(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request zep.CloneGraphRequest,
 	opts ...option.IdempotentRequestOption,
@@ -320,7 +320,7 @@ func (r *RawClient) Clone(
 
 func (r *RawClient) GetContentPolicy(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*core.Response[*zep.GraphContentPolicy], error) {
@@ -366,7 +366,7 @@ func (r *RawClient) GetContentPolicy(
 
 func (r *RawClient) GetContext(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.GraphContextRequest,
 	opts ...option.RequestOption,
@@ -417,7 +417,7 @@ func (r *RawClient) GetContext(
 
 func (r *RawClient) GetInstructions(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*core.Response[*zep.Instructions], error) {
@@ -463,7 +463,7 @@ func (r *RawClient) GetInstructions(
 
 func (r *RawClient) SetInstructions(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.Instructions,
 	opts ...option.IdempotentRequestOption,
@@ -513,7 +513,7 @@ func (r *RawClient) SetInstructions(
 
 func (r *RawClient) GetObservationSteering(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*core.Response[*zep.ObservationSteering], error) {
@@ -559,7 +559,7 @@ func (r *RawClient) GetObservationSteering(
 
 func (r *RawClient) SetObservationSteering(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.ObservationSteering,
 	opts ...option.IdempotentRequestOption,
@@ -609,7 +609,7 @@ func (r *RawClient) SetObservationSteering(
 
 func (r *RawClient) GetOntology(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.RequestOption,
 ) (*core.Response[*zep.Ontology], error) {
@@ -655,7 +655,7 @@ func (r *RawClient) GetOntology(
 
 func (r *RawClient) SetOntology(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.Ontology,
 	opts ...option.IdempotentRequestOption,
@@ -705,7 +705,7 @@ func (r *RawClient) SetOntology(
 
 func (r *RawClient) GetSubgraph(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *zep.SubgraphRequest,
 	opts ...option.RequestOption,
@@ -756,7 +756,7 @@ func (r *RawClient) GetSubgraph(
 
 func (r *RawClient) Warm(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	opts ...option.IdempotentRequestOption,
 ) (*core.Response[*zep.AsyncResult], error) {

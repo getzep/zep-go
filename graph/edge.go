@@ -4,6 +4,7 @@ package graph
 
 import (
 	json "encoding/json"
+	fmt "fmt"
 	v4 "github.com/getzep/zep-go/v4"
 	internal "github.com/getzep/zep-go/v4/internal"
 	big "math/big"
@@ -71,16 +72,25 @@ func (a *AddEdgesRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	edgeListRequestFieldLimit  = big.NewInt(1 << 0)
-	edgeListRequestFieldCursor = big.NewInt(1 << 1)
+	edgeListRequestFieldPageSize = big.NewInt(1 << 0)
+	edgeListRequestFieldCursor   = big.NewInt(1 << 1)
+	edgeListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	edgeListRequestFieldOrder    = big.NewInt(1 << 3)
+	edgeListRequestFieldFilters  = big.NewInt(1 << 4)
 )
 
 type EdgeListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
-	Cursor *string                 `json:"-" url:"cursor,omitempty"`
-	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort key: uuid (default), created_at, or valid_at
+	OrderBy *EdgeListRequestOrderBy `json:"-" url:"order_by,omitempty"`
+	// Sort direction: asc or desc (default desc)
+	Order *EdgeListRequestOrder `json:"-" url:"order,omitempty"`
+	// Filters that limit the items in the list. The operation description
+	// names the filter fields that the operation does not support.
+	Filters *v4.EdgeListFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -95,11 +105,11 @@ func (e *EdgeListRequest) require(field *big.Int) {
 	e.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EdgeListRequest) SetLimit(limit *int) {
-	e.Limit = limit
-	e.require(edgeListRequestFieldLimit)
+func (e *EdgeListRequest) SetPageSize(pageSize *int) {
+	e.PageSize = pageSize
+	e.require(edgeListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -109,17 +119,93 @@ func (e *EdgeListRequest) SetCursor(cursor *string) {
 	e.require(edgeListRequestFieldCursor)
 }
 
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListRequest) SetOrderBy(orderBy *EdgeListRequestOrderBy) {
+	e.OrderBy = orderBy
+	e.require(edgeListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListRequest) SetOrder(order *EdgeListRequestOrder) {
+	e.Order = order
+	e.require(edgeListRequestFieldOrder)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListRequest) SetFilters(filters *v4.EdgeListFilters) {
+	e.Filters = filters
+	e.require(edgeListRequestFieldFilters)
+}
+
 func (e *EdgeListRequest) UnmarshalJSON(data []byte) error {
-	body := new(v4.ArtifactListRequest)
+	type unmarshaler EdgeListRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	e.Body = body
+	*e = EdgeListRequest(body)
 	return nil
 }
 
 func (e *EdgeListRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(e.Body)
+	type embed EdgeListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+type EdgeListRequestOrder string
+
+const (
+	EdgeListRequestOrderAsc  EdgeListRequestOrder = "asc"
+	EdgeListRequestOrderDesc EdgeListRequestOrder = "desc"
+)
+
+func NewEdgeListRequestOrderFromString(s string) (EdgeListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return EdgeListRequestOrderAsc, nil
+	case "desc":
+		return EdgeListRequestOrderDesc, nil
+	}
+	var t EdgeListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EdgeListRequestOrder) Ptr() *EdgeListRequestOrder {
+	return &e
+}
+
+type EdgeListRequestOrderBy string
+
+const (
+	EdgeListRequestOrderByUUID      EdgeListRequestOrderBy = "uuid"
+	EdgeListRequestOrderByCreatedAt EdgeListRequestOrderBy = "created_at"
+	EdgeListRequestOrderByValidAt   EdgeListRequestOrderBy = "valid_at"
+)
+
+func NewEdgeListRequestOrderByFromString(s string) (EdgeListRequestOrderBy, error) {
+	switch s {
+	case "uuid":
+		return EdgeListRequestOrderByUUID, nil
+	case "created_at":
+		return EdgeListRequestOrderByCreatedAt, nil
+	case "valid_at":
+		return EdgeListRequestOrderByValidAt, nil
+	}
+	var t EdgeListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EdgeListRequestOrderBy) Ptr() *EdgeListRequestOrderBy {
+	return &e
 }
 
 var (

@@ -56,7 +56,7 @@ func NewClient(options *core.RequestOptions) *Client {
 //	)
 func (c *Client) Add(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.AddNodesRequest,
 	opts ...option.IdempotentRequestOption,
@@ -73,11 +73,14 @@ func (c *Client) Add(
 	return response.Body, nil
 }
 
+// Lists the nodes of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+// You can sort by `uuid`, `created_at`, or `degree`. The default sort is `uuid` in descending order.
+// You cannot use these `filters` fields: `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+// If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+//
 // Example:
 //
-//	request := &graph.NodeListRequest{
-//	    Body: &zep.ArtifactListRequest{},
-//	}
+//	request := &graph.NodeListRequest{}
 //	client.Graph.Node.List(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -85,7 +88,7 @@ func (c *Client) Add(
 //	)
 func (c *Client) List(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.NodeListRequest,
 	opts ...option.RequestOption,
@@ -161,7 +164,7 @@ func (c *Client) List(
 //	)
 func (c *Client) Get(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Node UUID
 	nodeUUID string,
@@ -188,7 +191,7 @@ func (c *Client) Get(
 //	)
 func (c *Client) Delete(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Node UUID
 	nodeUUID string,
@@ -217,7 +220,7 @@ func (c *Client) Delete(
 //	)
 func (c *Client) Update(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Node UUID
 	nodeUUID string,
@@ -248,7 +251,7 @@ func (c *Client) Update(
 //	)
 func (c *Client) ListNeighbors(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Node UUID
 	nodeUUID string,

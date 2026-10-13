@@ -4970,6 +4970,1893 @@ func (a AgentSkillCompilationOutcomeRejectionClass) Ptr() *AgentSkillCompilation
 }
 
 var (
+	agentSkillContractFieldAliases               = big.NewInt(1 << 0)
+	agentSkillContractFieldApplicability         = big.NewInt(1 << 1)
+	agentSkillContractFieldCitations             = big.NewInt(1 << 2)
+	agentSkillContractFieldConfidence            = big.NewInt(1 << 3)
+	agentSkillContractFieldContraindications     = big.NewInt(1 << 4)
+	agentSkillContractFieldCustomerSections      = big.NewInt(1 << 5)
+	agentSkillContractFieldDependencies          = big.NewInt(1 << 6)
+	agentSkillContractFieldDescription           = big.NewInt(1 << 7)
+	agentSkillContractFieldEnvironments          = big.NewInt(1 << 8)
+	agentSkillContractFieldEvidence              = big.NewInt(1 << 9)
+	agentSkillContractFieldFailures              = big.NewInt(1 << 10)
+	agentSkillContractFieldInvocation            = big.NewInt(1 << 11)
+	agentSkillContractFieldKind                  = big.NewInt(1 << 12)
+	agentSkillContractFieldName                  = big.NewInt(1 << 13)
+	agentSkillContractFieldOrigin                = big.NewInt(1 << 14)
+	agentSkillContractFieldOutputs               = big.NewInt(1 << 15)
+	agentSkillContractFieldPackageName           = big.NewInt(1 << 16)
+	agentSkillContractFieldPreconditions         = big.NewInt(1 << 17)
+	agentSkillContractFieldProcedure             = big.NewInt(1 << 18)
+	agentSkillContractFieldRelations             = big.NewInt(1 << 19)
+	agentSkillContractFieldSchemaVersion         = big.NewInt(1 << 20)
+	agentSkillContractFieldSuccessCriteria       = big.NewInt(1 << 21)
+	agentSkillContractFieldTaskFamily            = big.NewInt(1 << 22)
+	agentSkillContractFieldTerminationConditions = big.NewInt(1 << 23)
+	agentSkillContractFieldTools                 = big.NewInt(1 << 24)
+)
+
+type AgentSkillContract struct {
+	Aliases               []string                         `json:"aliases,omitempty" url:"aliases,omitempty"`
+	Applicability         *AgentSkillContractApplicability `json:"applicability,omitempty" url:"applicability,omitempty"`
+	Citations             []string                         `json:"citations,omitempty" url:"citations,omitempty"`
+	Confidence            *float64                         `json:"confidence,omitempty" url:"confidence,omitempty"`
+	Contraindications     []*AgentSkillContractText        `json:"contraindications,omitempty" url:"contraindications,omitempty"`
+	CustomerSections      []*AgentSkillContractSection     `json:"customer_sections,omitempty" url:"customer_sections,omitempty"`
+	Dependencies          []*AgentSkillContractDependency  `json:"dependencies,omitempty" url:"dependencies,omitempty"`
+	Description           *string                          `json:"description,omitempty" url:"description,omitempty"`
+	Environments          []*AgentSkillContractResource    `json:"environments,omitempty" url:"environments,omitempty"`
+	Evidence              []*AgentSkillContractEvidence    `json:"evidence,omitempty" url:"evidence,omitempty"`
+	Failures              []*AgentSkillContractFailure     `json:"failures,omitempty" url:"failures,omitempty"`
+	Invocation            *AgentSkillContractInvocation    `json:"invocation,omitempty" url:"invocation,omitempty"`
+	Kind                  *SkillKind                       `json:"kind,omitempty" url:"kind,omitempty"`
+	Name                  *string                          `json:"name,omitempty" url:"name,omitempty"`
+	Origin                *AgentSkillContractOrigin        `json:"origin,omitempty" url:"origin,omitempty"`
+	Outputs               []*AgentSkillContractText        `json:"outputs,omitempty" url:"outputs,omitempty"`
+	PackageName           *string                          `json:"package_name,omitempty" url:"package_name,omitempty"`
+	Preconditions         []*AgentSkillContractText        `json:"preconditions,omitempty" url:"preconditions,omitempty"`
+	Procedure             []*AgentSkillContractStep        `json:"procedure,omitempty" url:"procedure,omitempty"`
+	Relations             []*AgentSkillContractRelation    `json:"relations,omitempty" url:"relations,omitempty"`
+	SchemaVersion         *string                          `json:"schema_version,omitempty" url:"schema_version,omitempty"`
+	SuccessCriteria       []*AgentSkillContractText        `json:"success_criteria,omitempty" url:"success_criteria,omitempty"`
+	TaskFamily            *string                          `json:"task_family,omitempty" url:"task_family,omitempty"`
+	TerminationConditions []*AgentSkillContractText        `json:"termination_conditions,omitempty" url:"termination_conditions,omitempty"`
+	Tools                 []*AgentSkillContractResource    `json:"tools,omitempty" url:"tools,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContract) GetAliases() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Aliases
+}
+
+func (a *AgentSkillContract) GetApplicability() *AgentSkillContractApplicability {
+	if a == nil {
+		return nil
+	}
+	return a.Applicability
+}
+
+func (a *AgentSkillContract) GetCitations() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Citations
+}
+
+func (a *AgentSkillContract) GetConfidence() *float64 {
+	if a == nil {
+		return nil
+	}
+	return a.Confidence
+}
+
+func (a *AgentSkillContract) GetContraindications() []*AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Contraindications
+}
+
+func (a *AgentSkillContract) GetCustomerSections() []*AgentSkillContractSection {
+	if a == nil {
+		return nil
+	}
+	return a.CustomerSections
+}
+
+func (a *AgentSkillContract) GetDependencies() []*AgentSkillContractDependency {
+	if a == nil {
+		return nil
+	}
+	return a.Dependencies
+}
+
+func (a *AgentSkillContract) GetDescription() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Description
+}
+
+func (a *AgentSkillContract) GetEnvironments() []*AgentSkillContractResource {
+	if a == nil {
+		return nil
+	}
+	return a.Environments
+}
+
+func (a *AgentSkillContract) GetEvidence() []*AgentSkillContractEvidence {
+	if a == nil {
+		return nil
+	}
+	return a.Evidence
+}
+
+func (a *AgentSkillContract) GetFailures() []*AgentSkillContractFailure {
+	if a == nil {
+		return nil
+	}
+	return a.Failures
+}
+
+func (a *AgentSkillContract) GetInvocation() *AgentSkillContractInvocation {
+	if a == nil {
+		return nil
+	}
+	return a.Invocation
+}
+
+func (a *AgentSkillContract) GetKind() *SkillKind {
+	if a == nil {
+		return nil
+	}
+	return a.Kind
+}
+
+func (a *AgentSkillContract) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *AgentSkillContract) GetOrigin() *AgentSkillContractOrigin {
+	if a == nil {
+		return nil
+	}
+	return a.Origin
+}
+
+func (a *AgentSkillContract) GetOutputs() []*AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Outputs
+}
+
+func (a *AgentSkillContract) GetPackageName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PackageName
+}
+
+func (a *AgentSkillContract) GetPreconditions() []*AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Preconditions
+}
+
+func (a *AgentSkillContract) GetProcedure() []*AgentSkillContractStep {
+	if a == nil {
+		return nil
+	}
+	return a.Procedure
+}
+
+func (a *AgentSkillContract) GetRelations() []*AgentSkillContractRelation {
+	if a == nil {
+		return nil
+	}
+	return a.Relations
+}
+
+func (a *AgentSkillContract) GetSchemaVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SchemaVersion
+}
+
+func (a *AgentSkillContract) GetSuccessCriteria() []*AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.SuccessCriteria
+}
+
+func (a *AgentSkillContract) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentSkillContract) GetTerminationConditions() []*AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.TerminationConditions
+}
+
+func (a *AgentSkillContract) GetTools() []*AgentSkillContractResource {
+	if a == nil {
+		return nil
+	}
+	return a.Tools
+}
+
+func (a *AgentSkillContract) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContract) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAliases sets the Aliases field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetAliases(aliases []string) {
+	a.Aliases = aliases
+	a.require(agentSkillContractFieldAliases)
+}
+
+// SetApplicability sets the Applicability field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetApplicability(applicability *AgentSkillContractApplicability) {
+	a.Applicability = applicability
+	a.require(agentSkillContractFieldApplicability)
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetCitations(citations []string) {
+	a.Citations = citations
+	a.require(agentSkillContractFieldCitations)
+}
+
+// SetConfidence sets the Confidence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetConfidence(confidence *float64) {
+	a.Confidence = confidence
+	a.require(agentSkillContractFieldConfidence)
+}
+
+// SetContraindications sets the Contraindications field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetContraindications(contraindications []*AgentSkillContractText) {
+	a.Contraindications = contraindications
+	a.require(agentSkillContractFieldContraindications)
+}
+
+// SetCustomerSections sets the CustomerSections field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetCustomerSections(customerSections []*AgentSkillContractSection) {
+	a.CustomerSections = customerSections
+	a.require(agentSkillContractFieldCustomerSections)
+}
+
+// SetDependencies sets the Dependencies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetDependencies(dependencies []*AgentSkillContractDependency) {
+	a.Dependencies = dependencies
+	a.require(agentSkillContractFieldDependencies)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetDescription(description *string) {
+	a.Description = description
+	a.require(agentSkillContractFieldDescription)
+}
+
+// SetEnvironments sets the Environments field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetEnvironments(environments []*AgentSkillContractResource) {
+	a.Environments = environments
+	a.require(agentSkillContractFieldEnvironments)
+}
+
+// SetEvidence sets the Evidence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetEvidence(evidence []*AgentSkillContractEvidence) {
+	a.Evidence = evidence
+	a.require(agentSkillContractFieldEvidence)
+}
+
+// SetFailures sets the Failures field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetFailures(failures []*AgentSkillContractFailure) {
+	a.Failures = failures
+	a.require(agentSkillContractFieldFailures)
+}
+
+// SetInvocation sets the Invocation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetInvocation(invocation *AgentSkillContractInvocation) {
+	a.Invocation = invocation
+	a.require(agentSkillContractFieldInvocation)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetKind(kind *SkillKind) {
+	a.Kind = kind
+	a.require(agentSkillContractFieldKind)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetName(name *string) {
+	a.Name = name
+	a.require(agentSkillContractFieldName)
+}
+
+// SetOrigin sets the Origin field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetOrigin(origin *AgentSkillContractOrigin) {
+	a.Origin = origin
+	a.require(agentSkillContractFieldOrigin)
+}
+
+// SetOutputs sets the Outputs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetOutputs(outputs []*AgentSkillContractText) {
+	a.Outputs = outputs
+	a.require(agentSkillContractFieldOutputs)
+}
+
+// SetPackageName sets the PackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetPackageName(packageName *string) {
+	a.PackageName = packageName
+	a.require(agentSkillContractFieldPackageName)
+}
+
+// SetPreconditions sets the Preconditions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetPreconditions(preconditions []*AgentSkillContractText) {
+	a.Preconditions = preconditions
+	a.require(agentSkillContractFieldPreconditions)
+}
+
+// SetProcedure sets the Procedure field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetProcedure(procedure []*AgentSkillContractStep) {
+	a.Procedure = procedure
+	a.require(agentSkillContractFieldProcedure)
+}
+
+// SetRelations sets the Relations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetRelations(relations []*AgentSkillContractRelation) {
+	a.Relations = relations
+	a.require(agentSkillContractFieldRelations)
+}
+
+// SetSchemaVersion sets the SchemaVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetSchemaVersion(schemaVersion *string) {
+	a.SchemaVersion = schemaVersion
+	a.require(agentSkillContractFieldSchemaVersion)
+}
+
+// SetSuccessCriteria sets the SuccessCriteria field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetSuccessCriteria(successCriteria []*AgentSkillContractText) {
+	a.SuccessCriteria = successCriteria
+	a.require(agentSkillContractFieldSuccessCriteria)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentSkillContractFieldTaskFamily)
+}
+
+// SetTerminationConditions sets the TerminationConditions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetTerminationConditions(terminationConditions []*AgentSkillContractText) {
+	a.TerminationConditions = terminationConditions
+	a.require(agentSkillContractFieldTerminationConditions)
+}
+
+// SetTools sets the Tools field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContract) SetTools(tools []*AgentSkillContractResource) {
+	a.Tools = tools
+	a.require(agentSkillContractFieldTools)
+}
+
+func (a *AgentSkillContract) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContract
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContract(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContract) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContract
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContract) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillContractApplicabilityFieldAgentVersions = big.NewInt(1 << 0)
+	agentSkillContractApplicabilityFieldCitations     = big.NewInt(1 << 1)
+	agentSkillContractApplicabilityFieldModels        = big.NewInt(1 << 2)
+)
+
+type AgentSkillContractApplicability struct {
+	AgentVersions []string                               `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	Citations     []string                               `json:"citations,omitempty" url:"citations,omitempty"`
+	Models        []*AgentSkillContractVersionConstraint `json:"models,omitempty" url:"models,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractApplicability) GetAgentVersions() []string {
+	if a == nil {
+		return nil
+	}
+	return a.AgentVersions
+}
+
+func (a *AgentSkillContractApplicability) GetCitations() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Citations
+}
+
+func (a *AgentSkillContractApplicability) GetModels() []*AgentSkillContractVersionConstraint {
+	if a == nil {
+		return nil
+	}
+	return a.Models
+}
+
+func (a *AgentSkillContractApplicability) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractApplicability) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAgentVersions sets the AgentVersions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractApplicability) SetAgentVersions(agentVersions []string) {
+	a.AgentVersions = agentVersions
+	a.require(agentSkillContractApplicabilityFieldAgentVersions)
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractApplicability) SetCitations(citations []string) {
+	a.Citations = citations
+	a.require(agentSkillContractApplicabilityFieldCitations)
+}
+
+// SetModels sets the Models field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractApplicability) SetModels(models []*AgentSkillContractVersionConstraint) {
+	a.Models = models
+	a.require(agentSkillContractApplicabilityFieldModels)
+}
+
+func (a *AgentSkillContractApplicability) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractApplicability
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractApplicability(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractApplicability) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractApplicability
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractApplicability) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillContractDependencyFieldPackageName       = big.NewInt(1 << 0)
+	agentSkillContractDependencyFieldVersionConstraint = big.NewInt(1 << 1)
+)
+
+type AgentSkillContractDependency struct {
+	PackageName       *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	VersionConstraint *string `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractDependency) GetPackageName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PackageName
+}
+
+func (a *AgentSkillContractDependency) GetVersionConstraint() *string {
+	if a == nil {
+		return nil
+	}
+	return a.VersionConstraint
+}
+
+func (a *AgentSkillContractDependency) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractDependency) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetPackageName sets the PackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractDependency) SetPackageName(packageName *string) {
+	a.PackageName = packageName
+	a.require(agentSkillContractDependencyFieldPackageName)
+}
+
+// SetVersionConstraint sets the VersionConstraint field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractDependency) SetVersionConstraint(versionConstraint *string) {
+	a.VersionConstraint = versionConstraint
+	a.require(agentSkillContractDependencyFieldVersionConstraint)
+}
+
+func (a *AgentSkillContractDependency) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractDependency
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractDependency(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractDependency) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractDependency
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractDependency) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillContractEvidenceFieldAttemptFamilyID = big.NewInt(1 << 0)
+	agentSkillContractEvidenceFieldID              = big.NewInt(1 << 1)
+	agentSkillContractEvidenceFieldPolarity        = big.NewInt(1 << 2)
+	agentSkillContractEvidenceFieldSourceID        = big.NewInt(1 << 3)
+	agentSkillContractEvidenceFieldSourceKind      = big.NewInt(1 << 4)
+	agentSkillContractEvidenceFieldTrajectoryID    = big.NewInt(1 << 5)
+)
+
+type AgentSkillContractEvidence struct {
+	AttemptFamilyID *string                               `json:"attempt_family_id,omitempty" url:"attempt_family_id,omitempty"`
+	ID              *string                               `json:"id,omitempty" url:"id,omitempty"`
+	Polarity        *AgentSkillContractEvidencePolarity   `json:"polarity,omitempty" url:"polarity,omitempty"`
+	SourceID        *string                               `json:"source_id,omitempty" url:"source_id,omitempty"`
+	SourceKind      *AgentSkillContractEvidenceSourceKind `json:"source_kind,omitempty" url:"source_kind,omitempty"`
+	TrajectoryID    *string                               `json:"trajectory_id,omitempty" url:"trajectory_id,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractEvidence) GetAttemptFamilyID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AttemptFamilyID
+}
+
+func (a *AgentSkillContractEvidence) GetID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ID
+}
+
+func (a *AgentSkillContractEvidence) GetPolarity() *AgentSkillContractEvidencePolarity {
+	if a == nil {
+		return nil
+	}
+	return a.Polarity
+}
+
+func (a *AgentSkillContractEvidence) GetSourceID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceID
+}
+
+func (a *AgentSkillContractEvidence) GetSourceKind() *AgentSkillContractEvidenceSourceKind {
+	if a == nil {
+		return nil
+	}
+	return a.SourceKind
+}
+
+func (a *AgentSkillContractEvidence) GetTrajectoryID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TrajectoryID
+}
+
+func (a *AgentSkillContractEvidence) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractEvidence) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAttemptFamilyID sets the AttemptFamilyID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractEvidence) SetAttemptFamilyID(attemptFamilyID *string) {
+	a.AttemptFamilyID = attemptFamilyID
+	a.require(agentSkillContractEvidenceFieldAttemptFamilyID)
+}
+
+// SetID sets the ID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractEvidence) SetID(id *string) {
+	a.ID = id
+	a.require(agentSkillContractEvidenceFieldID)
+}
+
+// SetPolarity sets the Polarity field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractEvidence) SetPolarity(polarity *AgentSkillContractEvidencePolarity) {
+	a.Polarity = polarity
+	a.require(agentSkillContractEvidenceFieldPolarity)
+}
+
+// SetSourceID sets the SourceID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractEvidence) SetSourceID(sourceID *string) {
+	a.SourceID = sourceID
+	a.require(agentSkillContractEvidenceFieldSourceID)
+}
+
+// SetSourceKind sets the SourceKind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractEvidence) SetSourceKind(sourceKind *AgentSkillContractEvidenceSourceKind) {
+	a.SourceKind = sourceKind
+	a.require(agentSkillContractEvidenceFieldSourceKind)
+}
+
+// SetTrajectoryID sets the TrajectoryID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractEvidence) SetTrajectoryID(trajectoryID *string) {
+	a.TrajectoryID = trajectoryID
+	a.require(agentSkillContractEvidenceFieldTrajectoryID)
+}
+
+func (a *AgentSkillContractEvidence) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractEvidence
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractEvidence(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractEvidence) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractEvidence
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractEvidence) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentSkillContractEvidencePolarity string
+
+const (
+	AgentSkillContractEvidencePolaritySupporting    AgentSkillContractEvidencePolarity = "supporting"
+	AgentSkillContractEvidencePolarityContradicting AgentSkillContractEvidencePolarity = "contradicting"
+	AgentSkillContractEvidencePolarityNeutral       AgentSkillContractEvidencePolarity = "neutral"
+)
+
+func NewAgentSkillContractEvidencePolarityFromString(s string) (AgentSkillContractEvidencePolarity, error) {
+	switch s {
+	case "supporting":
+		return AgentSkillContractEvidencePolaritySupporting, nil
+	case "contradicting":
+		return AgentSkillContractEvidencePolarityContradicting, nil
+	case "neutral":
+		return AgentSkillContractEvidencePolarityNeutral, nil
+	}
+	var t AgentSkillContractEvidencePolarity
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentSkillContractEvidencePolarity) Ptr() *AgentSkillContractEvidencePolarity {
+	return &a
+}
+
+type AgentSkillContractEvidenceSourceKind string
+
+const (
+	AgentSkillContractEvidenceSourceKindTrajectory AgentSkillContractEvidenceSourceKind = "trajectory"
+	AgentSkillContractEvidenceSourceKindEvent      AgentSkillContractEvidenceSourceKind = "event"
+	AgentSkillContractEvidenceSourceKindSummary    AgentSkillContractEvidenceSourceKind = "summary"
+)
+
+func NewAgentSkillContractEvidenceSourceKindFromString(s string) (AgentSkillContractEvidenceSourceKind, error) {
+	switch s {
+	case "trajectory":
+		return AgentSkillContractEvidenceSourceKindTrajectory, nil
+	case "event":
+		return AgentSkillContractEvidenceSourceKindEvent, nil
+	case "summary":
+		return AgentSkillContractEvidenceSourceKindSummary, nil
+	}
+	var t AgentSkillContractEvidenceSourceKind
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentSkillContractEvidenceSourceKind) Ptr() *AgentSkillContractEvidenceSourceKind {
+	return &a
+}
+
+var (
+	agentSkillContractFailureFieldCondition = big.NewInt(1 << 0)
+	agentSkillContractFailureFieldRecovery  = big.NewInt(1 << 1)
+)
+
+type AgentSkillContractFailure struct {
+	Condition *AgentSkillContractText   `json:"condition,omitempty" url:"condition,omitempty"`
+	Recovery  []*AgentSkillContractText `json:"recovery,omitempty" url:"recovery,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractFailure) GetCondition() *AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Condition
+}
+
+func (a *AgentSkillContractFailure) GetRecovery() []*AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Recovery
+}
+
+func (a *AgentSkillContractFailure) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractFailure) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCondition sets the Condition field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractFailure) SetCondition(condition *AgentSkillContractText) {
+	a.Condition = condition
+	a.require(agentSkillContractFailureFieldCondition)
+}
+
+// SetRecovery sets the Recovery field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractFailure) SetRecovery(recovery []*AgentSkillContractText) {
+	a.Recovery = recovery
+	a.require(agentSkillContractFailureFieldRecovery)
+}
+
+func (a *AgentSkillContractFailure) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractFailure
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractFailure(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractFailure) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractFailure
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractFailure) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillContractInvocationFieldConditions = big.NewInt(1 << 0)
+	agentSkillContractInvocationFieldSummary    = big.NewInt(1 << 1)
+)
+
+type AgentSkillContractInvocation struct {
+	Conditions []*AgentSkillContractText `json:"conditions,omitempty" url:"conditions,omitempty"`
+	Summary    *AgentSkillContractText   `json:"summary,omitempty" url:"summary,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractInvocation) GetConditions() []*AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Conditions
+}
+
+func (a *AgentSkillContractInvocation) GetSummary() *AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Summary
+}
+
+func (a *AgentSkillContractInvocation) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractInvocation) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetConditions sets the Conditions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractInvocation) SetConditions(conditions []*AgentSkillContractText) {
+	a.Conditions = conditions
+	a.require(agentSkillContractInvocationFieldConditions)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractInvocation) SetSummary(summary *AgentSkillContractText) {
+	a.Summary = summary
+	a.require(agentSkillContractInvocationFieldSummary)
+}
+
+func (a *AgentSkillContractInvocation) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractInvocation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractInvocation(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractInvocation) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractInvocation
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractInvocation) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentSkillContractOrigin string
+
+const (
+	AgentSkillContractOriginEvidenceDerived  AgentSkillContractOrigin = "evidence_derived"
+	AgentSkillContractOriginCustomerAuthored AgentSkillContractOrigin = "customer_authored"
+)
+
+func NewAgentSkillContractOriginFromString(s string) (AgentSkillContractOrigin, error) {
+	switch s {
+	case "evidence_derived":
+		return AgentSkillContractOriginEvidenceDerived, nil
+	case "customer_authored":
+		return AgentSkillContractOriginCustomerAuthored, nil
+	}
+	var t AgentSkillContractOrigin
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentSkillContractOrigin) Ptr() *AgentSkillContractOrigin {
+	return &a
+}
+
+var (
+	agentSkillContractRelationFieldCitations         = big.NewInt(1 << 0)
+	agentSkillContractRelationFieldKind              = big.NewInt(1 << 1)
+	agentSkillContractRelationFieldTargetPackageName = big.NewInt(1 << 2)
+	agentSkillContractRelationFieldVersionConstraint = big.NewInt(1 << 3)
+)
+
+type AgentSkillContractRelation struct {
+	Citations         []string                        `json:"citations,omitempty" url:"citations,omitempty"`
+	Kind              *AgentSkillContractRelationKind `json:"kind,omitempty" url:"kind,omitempty"`
+	TargetPackageName *string                         `json:"target_package_name,omitempty" url:"target_package_name,omitempty"`
+	VersionConstraint *string                         `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractRelation) GetCitations() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Citations
+}
+
+func (a *AgentSkillContractRelation) GetKind() *AgentSkillContractRelationKind {
+	if a == nil {
+		return nil
+	}
+	return a.Kind
+}
+
+func (a *AgentSkillContractRelation) GetTargetPackageName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TargetPackageName
+}
+
+func (a *AgentSkillContractRelation) GetVersionConstraint() *string {
+	if a == nil {
+		return nil
+	}
+	return a.VersionConstraint
+}
+
+func (a *AgentSkillContractRelation) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractRelation) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractRelation) SetCitations(citations []string) {
+	a.Citations = citations
+	a.require(agentSkillContractRelationFieldCitations)
+}
+
+// SetKind sets the Kind field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractRelation) SetKind(kind *AgentSkillContractRelationKind) {
+	a.Kind = kind
+	a.require(agentSkillContractRelationFieldKind)
+}
+
+// SetTargetPackageName sets the TargetPackageName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractRelation) SetTargetPackageName(targetPackageName *string) {
+	a.TargetPackageName = targetPackageName
+	a.require(agentSkillContractRelationFieldTargetPackageName)
+}
+
+// SetVersionConstraint sets the VersionConstraint field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractRelation) SetVersionConstraint(versionConstraint *string) {
+	a.VersionConstraint = versionConstraint
+	a.require(agentSkillContractRelationFieldVersionConstraint)
+}
+
+func (a *AgentSkillContractRelation) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractRelation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractRelation(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractRelation) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractRelation
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractRelation) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentSkillContractRelationKind string
+
+const (
+	AgentSkillContractRelationKindComposes      AgentSkillContractRelationKind = "composes"
+	AgentSkillContractRelationKindRequires      AgentSkillContractRelationKind = "requires"
+	AgentSkillContractRelationKindConflictsWith AgentSkillContractRelationKind = "conflicts_with"
+	AgentSkillContractRelationKindSupersedes    AgentSkillContractRelationKind = "supersedes"
+	AgentSkillContractRelationKindRelated       AgentSkillContractRelationKind = "related"
+)
+
+func NewAgentSkillContractRelationKindFromString(s string) (AgentSkillContractRelationKind, error) {
+	switch s {
+	case "composes":
+		return AgentSkillContractRelationKindComposes, nil
+	case "requires":
+		return AgentSkillContractRelationKindRequires, nil
+	case "conflicts_with":
+		return AgentSkillContractRelationKindConflictsWith, nil
+	case "supersedes":
+		return AgentSkillContractRelationKindSupersedes, nil
+	case "related":
+		return AgentSkillContractRelationKindRelated, nil
+	}
+	var t AgentSkillContractRelationKind
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentSkillContractRelationKind) Ptr() *AgentSkillContractRelationKind {
+	return &a
+}
+
+var (
+	agentSkillContractResourceFieldAliases           = big.NewInt(1 << 0)
+	agentSkillContractResourceFieldCitations         = big.NewInt(1 << 1)
+	agentSkillContractResourceFieldName              = big.NewInt(1 << 2)
+	agentSkillContractResourceFieldVersionConstraint = big.NewInt(1 << 3)
+)
+
+type AgentSkillContractResource struct {
+	Aliases           []string `json:"aliases,omitempty" url:"aliases,omitempty"`
+	Citations         []string `json:"citations,omitempty" url:"citations,omitempty"`
+	Name              *string  `json:"name,omitempty" url:"name,omitempty"`
+	VersionConstraint *string  `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractResource) GetAliases() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Aliases
+}
+
+func (a *AgentSkillContractResource) GetCitations() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Citations
+}
+
+func (a *AgentSkillContractResource) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *AgentSkillContractResource) GetVersionConstraint() *string {
+	if a == nil {
+		return nil
+	}
+	return a.VersionConstraint
+}
+
+func (a *AgentSkillContractResource) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractResource) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAliases sets the Aliases field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractResource) SetAliases(aliases []string) {
+	a.Aliases = aliases
+	a.require(agentSkillContractResourceFieldAliases)
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractResource) SetCitations(citations []string) {
+	a.Citations = citations
+	a.require(agentSkillContractResourceFieldCitations)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractResource) SetName(name *string) {
+	a.Name = name
+	a.require(agentSkillContractResourceFieldName)
+}
+
+// SetVersionConstraint sets the VersionConstraint field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractResource) SetVersionConstraint(versionConstraint *string) {
+	a.VersionConstraint = versionConstraint
+	a.require(agentSkillContractResourceFieldVersionConstraint)
+}
+
+func (a *AgentSkillContractResource) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractResource
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractResource(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractResource) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractResource
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractResource) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillContractSectionFieldHeading       = big.NewInt(1 << 0)
+	agentSkillContractSectionFieldMarkdown      = big.NewInt(1 << 1)
+	agentSkillContractSectionFieldSchemaVersion = big.NewInt(1 << 2)
+	agentSkillContractSectionFieldSectionID     = big.NewInt(1 << 3)
+)
+
+type AgentSkillContractSection struct {
+	Heading       *string `json:"heading,omitempty" url:"heading,omitempty"`
+	Markdown      *string `json:"markdown,omitempty" url:"markdown,omitempty"`
+	SchemaVersion *string `json:"schema_version,omitempty" url:"schema_version,omitempty"`
+	SectionID     *string `json:"section_id,omitempty" url:"section_id,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractSection) GetHeading() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Heading
+}
+
+func (a *AgentSkillContractSection) GetMarkdown() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Markdown
+}
+
+func (a *AgentSkillContractSection) GetSchemaVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SchemaVersion
+}
+
+func (a *AgentSkillContractSection) GetSectionID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SectionID
+}
+
+func (a *AgentSkillContractSection) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractSection) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetHeading sets the Heading field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractSection) SetHeading(heading *string) {
+	a.Heading = heading
+	a.require(agentSkillContractSectionFieldHeading)
+}
+
+// SetMarkdown sets the Markdown field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractSection) SetMarkdown(markdown *string) {
+	a.Markdown = markdown
+	a.require(agentSkillContractSectionFieldMarkdown)
+}
+
+// SetSchemaVersion sets the SchemaVersion field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractSection) SetSchemaVersion(schemaVersion *string) {
+	a.SchemaVersion = schemaVersion
+	a.require(agentSkillContractSectionFieldSchemaVersion)
+}
+
+// SetSectionID sets the SectionID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractSection) SetSectionID(sectionID *string) {
+	a.SectionID = sectionID
+	a.require(agentSkillContractSectionFieldSectionID)
+}
+
+func (a *AgentSkillContractSection) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractSection
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractSection(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractSection) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractSection
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractSection) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillContractStepFieldDecision             = big.NewInt(1 << 0)
+	agentSkillContractStepFieldExpectedObservations = big.NewInt(1 << 1)
+	agentSkillContractStepFieldInstruction          = big.NewInt(1 << 2)
+)
+
+type AgentSkillContractStep struct {
+	Decision             *AgentSkillContractText   `json:"decision,omitempty" url:"decision,omitempty"`
+	ExpectedObservations []*AgentSkillContractText `json:"expected_observations,omitempty" url:"expected_observations,omitempty"`
+	Instruction          *AgentSkillContractText   `json:"instruction,omitempty" url:"instruction,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractStep) GetDecision() *AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Decision
+}
+
+func (a *AgentSkillContractStep) GetExpectedObservations() []*AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.ExpectedObservations
+}
+
+func (a *AgentSkillContractStep) GetInstruction() *AgentSkillContractText {
+	if a == nil {
+		return nil
+	}
+	return a.Instruction
+}
+
+func (a *AgentSkillContractStep) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractStep) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetDecision sets the Decision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractStep) SetDecision(decision *AgentSkillContractText) {
+	a.Decision = decision
+	a.require(agentSkillContractStepFieldDecision)
+}
+
+// SetExpectedObservations sets the ExpectedObservations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractStep) SetExpectedObservations(expectedObservations []*AgentSkillContractText) {
+	a.ExpectedObservations = expectedObservations
+	a.require(agentSkillContractStepFieldExpectedObservations)
+}
+
+// SetInstruction sets the Instruction field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractStep) SetInstruction(instruction *AgentSkillContractText) {
+	a.Instruction = instruction
+	a.require(agentSkillContractStepFieldInstruction)
+}
+
+func (a *AgentSkillContractStep) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractStep
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractStep(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractStep) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractStep
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractStep) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillContractTextFieldCitations = big.NewInt(1 << 0)
+	agentSkillContractTextFieldText      = big.NewInt(1 << 1)
+)
+
+type AgentSkillContractText struct {
+	Citations []string `json:"citations,omitempty" url:"citations,omitempty"`
+	Text      *string  `json:"text,omitempty" url:"text,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractText) GetCitations() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Citations
+}
+
+func (a *AgentSkillContractText) GetText() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Text
+}
+
+func (a *AgentSkillContractText) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractText) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractText) SetCitations(citations []string) {
+	a.Citations = citations
+	a.require(agentSkillContractTextFieldCitations)
+}
+
+// SetText sets the Text field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractText) SetText(text *string) {
+	a.Text = text
+	a.require(agentSkillContractTextFieldText)
+}
+
+func (a *AgentSkillContractText) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractText
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractText(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractText) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractText
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractText) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentSkillContractVersionConstraintFieldName              = big.NewInt(1 << 0)
+	agentSkillContractVersionConstraintFieldVersionConstraint = big.NewInt(1 << 1)
+)
+
+type AgentSkillContractVersionConstraint struct {
+	Name              *string `json:"name,omitempty" url:"name,omitempty"`
+	VersionConstraint *string `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentSkillContractVersionConstraint) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *AgentSkillContractVersionConstraint) GetVersionConstraint() *string {
+	if a == nil {
+		return nil
+	}
+	return a.VersionConstraint
+}
+
+func (a *AgentSkillContractVersionConstraint) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentSkillContractVersionConstraint) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractVersionConstraint) SetName(name *string) {
+	a.Name = name
+	a.require(agentSkillContractVersionConstraintFieldName)
+}
+
+// SetVersionConstraint sets the VersionConstraint field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillContractVersionConstraint) SetVersionConstraint(versionConstraint *string) {
+	a.VersionConstraint = versionConstraint
+	a.require(agentSkillContractVersionConstraintFieldVersionConstraint)
+}
+
+func (a *AgentSkillContractVersionConstraint) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentSkillContractVersionConstraint
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentSkillContractVersionConstraint(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentSkillContractVersionConstraint) MarshalJSON() ([]byte, error) {
+	type embed AgentSkillContractVersionConstraint
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentSkillContractVersionConstraint) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
 	agentSkillEvaluationFieldControlledTest    = big.NewInt(1 << 0)
 	agentSkillEvaluationFieldCreatedAt         = big.NewInt(1 << 1)
 	agentSkillEvaluationFieldEnvironment       = big.NewInt(1 << 2)
@@ -6918,9 +8805,9 @@ var (
 )
 
 type AgentSkillVersion struct {
-	Contract   map[string]any   `json:"contract,omitempty" url:"contract,omitempty"`
-	CreatedAt  *string          `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Definition *SkillDefinition `json:"definition,omitempty" url:"definition,omitempty"`
+	Contract   *AgentSkillContract `json:"contract,omitempty" url:"contract,omitempty"`
+	CreatedAt  *string             `json:"created_at,omitempty" url:"created_at,omitempty"`
+	Definition *SkillDefinition    `json:"definition,omitempty" url:"definition,omitempty"`
 	// Markdown is the agent view of the Skill unless the request selects
 	// `markdown_format=full`.
 	Markdown      *string `json:"markdown,omitempty" url:"markdown,omitempty"`
@@ -6934,7 +8821,7 @@ type AgentSkillVersion struct {
 	rawJSON         json.RawMessage
 }
 
-func (a *AgentSkillVersion) GetContract() map[string]any {
+func (a *AgentSkillVersion) GetContract() *AgentSkillContract {
 	if a == nil {
 		return nil
 	}
@@ -6994,7 +8881,7 @@ func (a *AgentSkillVersion) require(field *big.Int) {
 
 // SetContract sets the Contract field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillVersion) SetContract(contract map[string]any) {
+func (a *AgentSkillVersion) SetContract(contract *AgentSkillContract) {
 	a.Contract = contract
 	a.require(agentSkillVersionFieldContract)
 }
@@ -9263,7 +11150,7 @@ type AgentTraceEventContext struct {
 	Environments []*AgentTraceResourceRef `json:"environments,omitempty" url:"environments,omitempty"`
 	Model        *AgentTraceResourceRef   `json:"model,omitempty" url:"model,omitempty"`
 	Tools        []*AgentTraceResourceRef `json:"tools,omitempty" url:"tools,omitempty"`
-	Verification *string                  `json:"verification,omitempty" url:"verification,omitempty"`
+	Verification *AgentTraceVerification  `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9300,7 +11187,7 @@ func (a *AgentTraceEventContext) GetTools() []*AgentTraceResourceRef {
 	return a.Tools
 }
 
-func (a *AgentTraceEventContext) GetVerification() *string {
+func (a *AgentTraceEventContext) GetVerification() *AgentTraceVerification {
 	if a == nil {
 		return nil
 	}
@@ -9353,7 +11240,7 @@ func (a *AgentTraceEventContext) SetTools(tools []*AgentTraceResourceRef) {
 
 // SetVerification sets the Verification field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTraceEventContext) SetVerification(verification *string) {
+func (a *AgentTraceEventContext) SetVerification(verification *AgentTraceVerification) {
 	a.Verification = verification
 	a.require(agentTraceEventContextFieldVerification)
 }
@@ -10474,14 +12361,14 @@ var (
 )
 
 type AgentTraceSource struct {
-	ConnectionUUID    *string        `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
-	ImportUUID        *string        `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
-	ImportedAt        *string        `json:"imported_at,omitempty" url:"imported_at,omitempty"`
-	Kind              *string        `json:"kind,omitempty" url:"kind,omitempty"`
-	Provider          *string        `json:"provider,omitempty" url:"provider,omitempty"`
-	ProviderProjectID *string        `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
-	RunUUID           *string        `json:"run_uuid,omitempty" url:"run_uuid,omitempty"`
-	Scores            map[string]any `json:"scores,omitempty" url:"scores,omitempty"`
+	ConnectionUUID    *string            `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
+	ImportUUID        *string            `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
+	ImportedAt        *string            `json:"imported_at,omitempty" url:"imported_at,omitempty"`
+	Kind              *string            `json:"kind,omitempty" url:"kind,omitempty"`
+	Provider          *string            `json:"provider,omitempty" url:"provider,omitempty"`
+	ProviderProjectID *string            `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
+	RunUUID           *string            `json:"run_uuid,omitempty" url:"run_uuid,omitempty"`
+	Scores            map[string]float64 `json:"scores,omitempty" url:"scores,omitempty"`
 	// SourceChanged reports whether the provider trace changed after import.
 	SourceChanged  *bool   `json:"source_changed,omitempty" url:"source_changed,omitempty"`
 	SourceRevision *string `json:"source_revision,omitempty" url:"source_revision,omitempty"`
@@ -10539,7 +12426,7 @@ func (a *AgentTraceSource) GetRunUUID() *string {
 	return a.RunUUID
 }
 
-func (a *AgentTraceSource) GetScores() map[string]any {
+func (a *AgentTraceSource) GetScores() map[string]float64 {
 	if a == nil {
 		return nil
 	}
@@ -10655,7 +12542,7 @@ func (a *AgentTraceSource) SetRunUUID(runUUID *string) {
 
 // SetScores sets the Scores field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTraceSource) SetScores(scores map[string]any) {
+func (a *AgentTraceSource) SetScores(scores map[string]float64) {
 	a.Scores = scores
 	a.require(agentTraceSourceFieldScores)
 }
@@ -10894,6 +12781,734 @@ func (a *AgentTraceSourceDeletionResult) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+var (
+	agentTraceStructuredSummaryFieldAmbiguities      = big.NewInt(1 << 0)
+	agentTraceStructuredSummaryFieldApproach         = big.NewInt(1 << 1)
+	agentTraceStructuredSummaryFieldArtifacts        = big.NewInt(1 << 2)
+	agentTraceStructuredSummaryFieldCandidateLessons = big.NewInt(1 << 3)
+	agentTraceStructuredSummaryFieldCorrections      = big.NewInt(1 << 4)
+	agentTraceStructuredSummaryFieldCoverage         = big.NewInt(1 << 5)
+	agentTraceStructuredSummaryFieldEffectiveSteps   = big.NewInt(1 << 6)
+	agentTraceStructuredSummaryFieldEnvironments     = big.NewInt(1 << 7)
+	agentTraceStructuredSummaryFieldErrors           = big.NewInt(1 << 8)
+	agentTraceStructuredSummaryFieldEventTimeBasis   = big.NewInt(1 << 9)
+	agentTraceStructuredSummaryFieldFirstEventTime   = big.NewInt(1 << 10)
+	agentTraceStructuredSummaryFieldIneffectiveSteps = big.NewInt(1 << 11)
+	agentTraceStructuredSummaryFieldLastEventTime    = big.NewInt(1 << 12)
+	agentTraceStructuredSummaryFieldObjective        = big.NewInt(1 << 13)
+	agentTraceStructuredSummaryFieldRecoveries       = big.NewInt(1 << 14)
+	agentTraceStructuredSummaryFieldReportedOutcome  = big.NewInt(1 << 15)
+	agentTraceStructuredSummaryFieldResult           = big.NewInt(1 << 16)
+	agentTraceStructuredSummaryFieldTaskFamily       = big.NewInt(1 << 17)
+	agentTraceStructuredSummaryFieldTools            = big.NewInt(1 << 18)
+	agentTraceStructuredSummaryFieldVerification     = big.NewInt(1 << 19)
+)
+
+type AgentTraceStructuredSummary struct {
+	Ambiguities      []*AgentTraceSummaryStatement  `json:"ambiguities,omitempty" url:"ambiguities,omitempty"`
+	Approach         []*AgentTraceSummaryStatement  `json:"approach,omitempty" url:"approach,omitempty"`
+	Artifacts        []*AgentTraceSummaryResource   `json:"artifacts,omitempty" url:"artifacts,omitempty"`
+	CandidateLessons []*AgentTraceSummaryStatement  `json:"candidate_lessons,omitempty" url:"candidate_lessons,omitempty"`
+	Corrections      []*AgentTraceSummaryStatement  `json:"corrections,omitempty" url:"corrections,omitempty"`
+	Coverage         *AgentTraceSummaryCoverage     `json:"coverage,omitempty" url:"coverage,omitempty"`
+	EffectiveSteps   []*AgentTraceSummaryStatement  `json:"effective_steps,omitempty" url:"effective_steps,omitempty"`
+	Environments     []*AgentTraceSummaryResource   `json:"environments,omitempty" url:"environments,omitempty"`
+	Errors           []*AgentTraceSummaryStatement  `json:"errors,omitempty" url:"errors,omitempty"`
+	EventTimeBasis   *string                        `json:"event_time_basis,omitempty" url:"event_time_basis,omitempty"`
+	FirstEventTime   *string                        `json:"first_event_time,omitempty" url:"first_event_time,omitempty"`
+	IneffectiveSteps []*AgentTraceSummaryStatement  `json:"ineffective_steps,omitempty" url:"ineffective_steps,omitempty"`
+	LastEventTime    *string                        `json:"last_event_time,omitempty" url:"last_event_time,omitempty"`
+	Objective        *string                        `json:"objective,omitempty" url:"objective,omitempty"`
+	Recoveries       []*AgentTraceSummaryStatement  `json:"recoveries,omitempty" url:"recoveries,omitempty"`
+	ReportedOutcome  *AgentTraceOutcome             `json:"reported_outcome,omitempty" url:"reported_outcome,omitempty"`
+	Result           *AgentTraceSummaryStatement    `json:"result,omitempty" url:"result,omitempty"`
+	TaskFamily       *string                        `json:"task_family,omitempty" url:"task_family,omitempty"`
+	Tools            []*AgentTraceSummaryResource   `json:"tools,omitempty" url:"tools,omitempty"`
+	Verification     *AgentTraceSummaryVerification `json:"verification,omitempty" url:"verification,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceStructuredSummary) GetAmbiguities() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.Ambiguities
+}
+
+func (a *AgentTraceStructuredSummary) GetApproach() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.Approach
+}
+
+func (a *AgentTraceStructuredSummary) GetArtifacts() []*AgentTraceSummaryResource {
+	if a == nil {
+		return nil
+	}
+	return a.Artifacts
+}
+
+func (a *AgentTraceStructuredSummary) GetCandidateLessons() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.CandidateLessons
+}
+
+func (a *AgentTraceStructuredSummary) GetCorrections() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.Corrections
+}
+
+func (a *AgentTraceStructuredSummary) GetCoverage() *AgentTraceSummaryCoverage {
+	if a == nil {
+		return nil
+	}
+	return a.Coverage
+}
+
+func (a *AgentTraceStructuredSummary) GetEffectiveSteps() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.EffectiveSteps
+}
+
+func (a *AgentTraceStructuredSummary) GetEnvironments() []*AgentTraceSummaryResource {
+	if a == nil {
+		return nil
+	}
+	return a.Environments
+}
+
+func (a *AgentTraceStructuredSummary) GetErrors() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.Errors
+}
+
+func (a *AgentTraceStructuredSummary) GetEventTimeBasis() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EventTimeBasis
+}
+
+func (a *AgentTraceStructuredSummary) GetFirstEventTime() *string {
+	if a == nil {
+		return nil
+	}
+	return a.FirstEventTime
+}
+
+func (a *AgentTraceStructuredSummary) GetIneffectiveSteps() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.IneffectiveSteps
+}
+
+func (a *AgentTraceStructuredSummary) GetLastEventTime() *string {
+	if a == nil {
+		return nil
+	}
+	return a.LastEventTime
+}
+
+func (a *AgentTraceStructuredSummary) GetObjective() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Objective
+}
+
+func (a *AgentTraceStructuredSummary) GetRecoveries() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.Recoveries
+}
+
+func (a *AgentTraceStructuredSummary) GetReportedOutcome() *AgentTraceOutcome {
+	if a == nil {
+		return nil
+	}
+	return a.ReportedOutcome
+}
+
+func (a *AgentTraceStructuredSummary) GetResult() *AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.Result
+}
+
+func (a *AgentTraceStructuredSummary) GetTaskFamily() *string {
+	if a == nil {
+		return nil
+	}
+	return a.TaskFamily
+}
+
+func (a *AgentTraceStructuredSummary) GetTools() []*AgentTraceSummaryResource {
+	if a == nil {
+		return nil
+	}
+	return a.Tools
+}
+
+func (a *AgentTraceStructuredSummary) GetVerification() *AgentTraceSummaryVerification {
+	if a == nil {
+		return nil
+	}
+	return a.Verification
+}
+
+func (a *AgentTraceStructuredSummary) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceStructuredSummary) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetAmbiguities sets the Ambiguities field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetAmbiguities(ambiguities []*AgentTraceSummaryStatement) {
+	a.Ambiguities = ambiguities
+	a.require(agentTraceStructuredSummaryFieldAmbiguities)
+}
+
+// SetApproach sets the Approach field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetApproach(approach []*AgentTraceSummaryStatement) {
+	a.Approach = approach
+	a.require(agentTraceStructuredSummaryFieldApproach)
+}
+
+// SetArtifacts sets the Artifacts field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetArtifacts(artifacts []*AgentTraceSummaryResource) {
+	a.Artifacts = artifacts
+	a.require(agentTraceStructuredSummaryFieldArtifacts)
+}
+
+// SetCandidateLessons sets the CandidateLessons field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetCandidateLessons(candidateLessons []*AgentTraceSummaryStatement) {
+	a.CandidateLessons = candidateLessons
+	a.require(agentTraceStructuredSummaryFieldCandidateLessons)
+}
+
+// SetCorrections sets the Corrections field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetCorrections(corrections []*AgentTraceSummaryStatement) {
+	a.Corrections = corrections
+	a.require(agentTraceStructuredSummaryFieldCorrections)
+}
+
+// SetCoverage sets the Coverage field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetCoverage(coverage *AgentTraceSummaryCoverage) {
+	a.Coverage = coverage
+	a.require(agentTraceStructuredSummaryFieldCoverage)
+}
+
+// SetEffectiveSteps sets the EffectiveSteps field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetEffectiveSteps(effectiveSteps []*AgentTraceSummaryStatement) {
+	a.EffectiveSteps = effectiveSteps
+	a.require(agentTraceStructuredSummaryFieldEffectiveSteps)
+}
+
+// SetEnvironments sets the Environments field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetEnvironments(environments []*AgentTraceSummaryResource) {
+	a.Environments = environments
+	a.require(agentTraceStructuredSummaryFieldEnvironments)
+}
+
+// SetErrors sets the Errors field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetErrors(errors []*AgentTraceSummaryStatement) {
+	a.Errors = errors
+	a.require(agentTraceStructuredSummaryFieldErrors)
+}
+
+// SetEventTimeBasis sets the EventTimeBasis field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetEventTimeBasis(eventTimeBasis *string) {
+	a.EventTimeBasis = eventTimeBasis
+	a.require(agentTraceStructuredSummaryFieldEventTimeBasis)
+}
+
+// SetFirstEventTime sets the FirstEventTime field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetFirstEventTime(firstEventTime *string) {
+	a.FirstEventTime = firstEventTime
+	a.require(agentTraceStructuredSummaryFieldFirstEventTime)
+}
+
+// SetIneffectiveSteps sets the IneffectiveSteps field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetIneffectiveSteps(ineffectiveSteps []*AgentTraceSummaryStatement) {
+	a.IneffectiveSteps = ineffectiveSteps
+	a.require(agentTraceStructuredSummaryFieldIneffectiveSteps)
+}
+
+// SetLastEventTime sets the LastEventTime field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetLastEventTime(lastEventTime *string) {
+	a.LastEventTime = lastEventTime
+	a.require(agentTraceStructuredSummaryFieldLastEventTime)
+}
+
+// SetObjective sets the Objective field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetObjective(objective *string) {
+	a.Objective = objective
+	a.require(agentTraceStructuredSummaryFieldObjective)
+}
+
+// SetRecoveries sets the Recoveries field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetRecoveries(recoveries []*AgentTraceSummaryStatement) {
+	a.Recoveries = recoveries
+	a.require(agentTraceStructuredSummaryFieldRecoveries)
+}
+
+// SetReportedOutcome sets the ReportedOutcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetReportedOutcome(reportedOutcome *AgentTraceOutcome) {
+	a.ReportedOutcome = reportedOutcome
+	a.require(agentTraceStructuredSummaryFieldReportedOutcome)
+}
+
+// SetResult sets the Result field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetResult(result *AgentTraceSummaryStatement) {
+	a.Result = result
+	a.require(agentTraceStructuredSummaryFieldResult)
+}
+
+// SetTaskFamily sets the TaskFamily field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetTaskFamily(taskFamily *string) {
+	a.TaskFamily = taskFamily
+	a.require(agentTraceStructuredSummaryFieldTaskFamily)
+}
+
+// SetTools sets the Tools field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetTools(tools []*AgentTraceSummaryResource) {
+	a.Tools = tools
+	a.require(agentTraceStructuredSummaryFieldTools)
+}
+
+// SetVerification sets the Verification field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceStructuredSummary) SetVerification(verification *AgentTraceSummaryVerification) {
+	a.Verification = verification
+	a.require(agentTraceStructuredSummaryFieldVerification)
+}
+
+func (a *AgentTraceStructuredSummary) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceStructuredSummary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceStructuredSummary(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceStructuredSummary) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceStructuredSummary
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceStructuredSummary) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTraceSummaryByteRangeFieldEnd   = big.NewInt(1 << 0)
+	agentTraceSummaryByteRangeFieldStart = big.NewInt(1 << 1)
+)
+
+type AgentTraceSummaryByteRange struct {
+	End   *int `json:"end,omitempty" url:"end,omitempty"`
+	Start *int `json:"start,omitempty" url:"start,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceSummaryByteRange) GetEnd() *int {
+	if a == nil {
+		return nil
+	}
+	return a.End
+}
+
+func (a *AgentTraceSummaryByteRange) GetStart() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Start
+}
+
+func (a *AgentTraceSummaryByteRange) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceSummaryByteRange) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetEnd sets the End field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryByteRange) SetEnd(end *int) {
+	a.End = end
+	a.require(agentTraceSummaryByteRangeFieldEnd)
+}
+
+// SetStart sets the Start field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryByteRange) SetStart(start *int) {
+	a.Start = start
+	a.require(agentTraceSummaryByteRangeFieldStart)
+}
+
+func (a *AgentTraceSummaryByteRange) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryByteRange
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceSummaryByteRange(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceSummaryByteRange) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryByteRange
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceSummaryByteRange) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTraceSummaryCitationFieldEventID  = big.NewInt(1 << 0)
+	agentTraceSummaryCitationFieldSequence = big.NewInt(1 << 1)
+)
+
+type AgentTraceSummaryCitation struct {
+	EventID  *string `json:"event_id,omitempty" url:"event_id,omitempty"`
+	Sequence *int    `json:"sequence,omitempty" url:"sequence,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceSummaryCitation) GetEventID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EventID
+}
+
+func (a *AgentTraceSummaryCitation) GetSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Sequence
+}
+
+func (a *AgentTraceSummaryCitation) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceSummaryCitation) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetEventID sets the EventID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryCitation) SetEventID(eventID *string) {
+	a.EventID = eventID
+	a.require(agentTraceSummaryCitationFieldEventID)
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryCitation) SetSequence(sequence *int) {
+	a.Sequence = sequence
+	a.require(agentTraceSummaryCitationFieldSequence)
+}
+
+func (a *AgentTraceSummaryCitation) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryCitation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceSummaryCitation(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceSummaryCitation) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryCitation
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceSummaryCitation) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTraceSummaryCoverageFieldExcerptedEvents       = big.NewInt(1 << 0)
+	agentTraceSummaryCoverageFieldFirstSequence         = big.NewInt(1 << 1)
+	agentTraceSummaryCoverageFieldLastSequence          = big.NewInt(1 << 2)
+	agentTraceSummaryCoverageFieldOmittedSequenceRanges = big.NewInt(1 << 3)
+)
+
+type AgentTraceSummaryCoverage struct {
+	ExcerptedEvents       []*AgentTraceSummaryExcerptedEvent `json:"excerpted_events,omitempty" url:"excerpted_events,omitempty"`
+	FirstSequence         *int                               `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
+	LastSequence          *int                               `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	OmittedSequenceRanges []*AgentTraceSummaryOmittedRange   `json:"omitted_sequence_ranges,omitempty" url:"omitted_sequence_ranges,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceSummaryCoverage) GetExcerptedEvents() []*AgentTraceSummaryExcerptedEvent {
+	if a == nil {
+		return nil
+	}
+	return a.ExcerptedEvents
+}
+
+func (a *AgentTraceSummaryCoverage) GetFirstSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.FirstSequence
+}
+
+func (a *AgentTraceSummaryCoverage) GetLastSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.LastSequence
+}
+
+func (a *AgentTraceSummaryCoverage) GetOmittedSequenceRanges() []*AgentTraceSummaryOmittedRange {
+	if a == nil {
+		return nil
+	}
+	return a.OmittedSequenceRanges
+}
+
+func (a *AgentTraceSummaryCoverage) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceSummaryCoverage) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetExcerptedEvents sets the ExcerptedEvents field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryCoverage) SetExcerptedEvents(excerptedEvents []*AgentTraceSummaryExcerptedEvent) {
+	a.ExcerptedEvents = excerptedEvents
+	a.require(agentTraceSummaryCoverageFieldExcerptedEvents)
+}
+
+// SetFirstSequence sets the FirstSequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryCoverage) SetFirstSequence(firstSequence *int) {
+	a.FirstSequence = firstSequence
+	a.require(agentTraceSummaryCoverageFieldFirstSequence)
+}
+
+// SetLastSequence sets the LastSequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryCoverage) SetLastSequence(lastSequence *int) {
+	a.LastSequence = lastSequence
+	a.require(agentTraceSummaryCoverageFieldLastSequence)
+}
+
+// SetOmittedSequenceRanges sets the OmittedSequenceRanges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryCoverage) SetOmittedSequenceRanges(omittedSequenceRanges []*AgentTraceSummaryOmittedRange) {
+	a.OmittedSequenceRanges = omittedSequenceRanges
+	a.require(agentTraceSummaryCoverageFieldOmittedSequenceRanges)
+}
+
+func (a *AgentTraceSummaryCoverage) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryCoverage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceSummaryCoverage(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceSummaryCoverage) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryCoverage
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceSummaryCoverage) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 type AgentTraceSummaryCreationReason string
 
 const (
@@ -10926,6 +13541,140 @@ func NewAgentTraceSummaryCreationReasonFromString(s string) (AgentTraceSummaryCr
 
 func (a AgentTraceSummaryCreationReason) Ptr() *AgentTraceSummaryCreationReason {
 	return &a
+}
+
+var (
+	agentTraceSummaryExcerptedEventFieldContentBytes      = big.NewInt(1 << 0)
+	agentTraceSummaryExcerptedEventFieldEventID           = big.NewInt(1 << 1)
+	agentTraceSummaryExcerptedEventFieldOmittedByteRanges = big.NewInt(1 << 2)
+	agentTraceSummaryExcerptedEventFieldSequence          = big.NewInt(1 << 3)
+)
+
+type AgentTraceSummaryExcerptedEvent struct {
+	ContentBytes      *int                          `json:"content_bytes,omitempty" url:"content_bytes,omitempty"`
+	EventID           *string                       `json:"event_id,omitempty" url:"event_id,omitempty"`
+	OmittedByteRanges []*AgentTraceSummaryByteRange `json:"omitted_byte_ranges,omitempty" url:"omitted_byte_ranges,omitempty"`
+	Sequence          *int                          `json:"sequence,omitempty" url:"sequence,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) GetContentBytes() *int {
+	if a == nil {
+		return nil
+	}
+	return a.ContentBytes
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) GetEventID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.EventID
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) GetOmittedByteRanges() []*AgentTraceSummaryByteRange {
+	if a == nil {
+		return nil
+	}
+	return a.OmittedByteRanges
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) GetSequence() *int {
+	if a == nil {
+		return nil
+	}
+	return a.Sequence
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetContentBytes sets the ContentBytes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryExcerptedEvent) SetContentBytes(contentBytes *int) {
+	a.ContentBytes = contentBytes
+	a.require(agentTraceSummaryExcerptedEventFieldContentBytes)
+}
+
+// SetEventID sets the EventID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryExcerptedEvent) SetEventID(eventID *string) {
+	a.EventID = eventID
+	a.require(agentTraceSummaryExcerptedEventFieldEventID)
+}
+
+// SetOmittedByteRanges sets the OmittedByteRanges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryExcerptedEvent) SetOmittedByteRanges(omittedByteRanges []*AgentTraceSummaryByteRange) {
+	a.OmittedByteRanges = omittedByteRanges
+	a.require(agentTraceSummaryExcerptedEventFieldOmittedByteRanges)
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryExcerptedEvent) SetSequence(sequence *int) {
+	a.Sequence = sequence
+	a.require(agentTraceSummaryExcerptedEventFieldSequence)
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryExcerptedEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceSummaryExcerptedEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryExcerptedEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceSummaryExcerptedEvent) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
 }
 
 type AgentTraceSummaryOmissionReason string
@@ -11196,6 +13945,391 @@ func (a *AgentTraceSummaryPage) String() string {
 }
 
 var (
+	agentTraceSummaryResourceFieldCitations = big.NewInt(1 << 0)
+	agentTraceSummaryResourceFieldName      = big.NewInt(1 << 1)
+	agentTraceSummaryResourceFieldVersion   = big.NewInt(1 << 2)
+)
+
+type AgentTraceSummaryResource struct {
+	Citations []*AgentTraceSummaryCitation `json:"citations,omitempty" url:"citations,omitempty"`
+	Name      *string                      `json:"name,omitempty" url:"name,omitempty"`
+	Version   *string                      `json:"version,omitempty" url:"version,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceSummaryResource) GetCitations() []*AgentTraceSummaryCitation {
+	if a == nil {
+		return nil
+	}
+	return a.Citations
+}
+
+func (a *AgentTraceSummaryResource) GetName() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Name
+}
+
+func (a *AgentTraceSummaryResource) GetVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Version
+}
+
+func (a *AgentTraceSummaryResource) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceSummaryResource) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryResource) SetCitations(citations []*AgentTraceSummaryCitation) {
+	a.Citations = citations
+	a.require(agentTraceSummaryResourceFieldCitations)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryResource) SetName(name *string) {
+	a.Name = name
+	a.require(agentTraceSummaryResourceFieldName)
+}
+
+// SetVersion sets the Version field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryResource) SetVersion(version *string) {
+	a.Version = version
+	a.require(agentTraceSummaryResourceFieldVersion)
+}
+
+func (a *AgentTraceSummaryResource) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryResource
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceSummaryResource(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceSummaryResource) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryResource
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceSummaryResource) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTraceSummaryStatementFieldCitations = big.NewInt(1 << 0)
+	agentTraceSummaryStatementFieldText      = big.NewInt(1 << 1)
+)
+
+type AgentTraceSummaryStatement struct {
+	Citations []*AgentTraceSummaryCitation `json:"citations,omitempty" url:"citations,omitempty"`
+	Text      *string                      `json:"text,omitempty" url:"text,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceSummaryStatement) GetCitations() []*AgentTraceSummaryCitation {
+	if a == nil {
+		return nil
+	}
+	return a.Citations
+}
+
+func (a *AgentTraceSummaryStatement) GetText() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Text
+}
+
+func (a *AgentTraceSummaryStatement) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceSummaryStatement) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryStatement) SetCitations(citations []*AgentTraceSummaryCitation) {
+	a.Citations = citations
+	a.require(agentTraceSummaryStatementFieldCitations)
+}
+
+// SetText sets the Text field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryStatement) SetText(text *string) {
+	a.Text = text
+	a.require(agentTraceSummaryStatementFieldText)
+}
+
+func (a *AgentTraceSummaryStatement) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryStatement
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceSummaryStatement(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceSummaryStatement) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryStatement
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceSummaryStatement) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+var (
+	agentTraceSummaryVerificationFieldCitations   = big.NewInt(1 << 0)
+	agentTraceSummaryVerificationFieldDetails     = big.NewInt(1 << 1)
+	agentTraceSummaryVerificationFieldStatus      = big.NewInt(1 << 2)
+	agentTraceSummaryVerificationFieldVerifierIDs = big.NewInt(1 << 3)
+)
+
+type AgentTraceSummaryVerification struct {
+	Citations   []*AgentTraceSummaryCitation         `json:"citations,omitempty" url:"citations,omitempty"`
+	Details     []*AgentTraceSummaryStatement        `json:"details,omitempty" url:"details,omitempty"`
+	Status      *AgentTraceSummaryVerificationStatus `json:"status,omitempty" url:"status,omitempty"`
+	VerifierIDs []string                             `json:"verifier_ids,omitempty" url:"verifier_ids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (a *AgentTraceSummaryVerification) GetCitations() []*AgentTraceSummaryCitation {
+	if a == nil {
+		return nil
+	}
+	return a.Citations
+}
+
+func (a *AgentTraceSummaryVerification) GetDetails() []*AgentTraceSummaryStatement {
+	if a == nil {
+		return nil
+	}
+	return a.Details
+}
+
+func (a *AgentTraceSummaryVerification) GetStatus() *AgentTraceSummaryVerificationStatus {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AgentTraceSummaryVerification) GetVerifierIDs() []string {
+	if a == nil {
+		return nil
+	}
+	return a.VerifierIDs
+}
+
+func (a *AgentTraceSummaryVerification) GetExtraProperties() map[string]interface{} {
+	if a == nil {
+		return nil
+	}
+	return a.extraProperties
+}
+
+func (a *AgentTraceSummaryVerification) require(field *big.Int) {
+	next := new(big.Int)
+	if a.explicitFields != nil {
+		next.Set(a.explicitFields)
+	}
+	next.Or(next, field)
+	a.explicitFields = next
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryVerification) SetCitations(citations []*AgentTraceSummaryCitation) {
+	a.Citations = citations
+	a.require(agentTraceSummaryVerificationFieldCitations)
+}
+
+// SetDetails sets the Details field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryVerification) SetDetails(details []*AgentTraceSummaryStatement) {
+	a.Details = details
+	a.require(agentTraceSummaryVerificationFieldDetails)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryVerification) SetStatus(status *AgentTraceSummaryVerificationStatus) {
+	a.Status = status
+	a.require(agentTraceSummaryVerificationFieldStatus)
+}
+
+// SetVerifierIDs sets the VerifierIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceSummaryVerification) SetVerifierIDs(verifierIDs []string) {
+	a.VerifierIDs = verifierIDs
+	a.require(agentTraceSummaryVerificationFieldVerifierIDs)
+}
+
+func (a *AgentTraceSummaryVerification) UnmarshalJSON(data []byte) error {
+	type unmarshaler AgentTraceSummaryVerification
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AgentTraceSummaryVerification(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+	a.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AgentTraceSummaryVerification) MarshalJSON() ([]byte, error) {
+	type embed AgentTraceSummaryVerification
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (a *AgentTraceSummaryVerification) String() string {
+	if a == nil {
+		return "<nil>"
+	}
+	if len(a.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AgentTraceSummaryVerificationStatus string
+
+const (
+	AgentTraceSummaryVerificationStatusUnverified         AgentTraceSummaryVerificationStatus = "unverified"
+	AgentTraceSummaryVerificationStatusAgentVerified      AgentTraceSummaryVerificationStatus = "agent_verified"
+	AgentTraceSummaryVerificationStatusToolVerified       AgentTraceSummaryVerificationStatus = "tool_verified"
+	AgentTraceSummaryVerificationStatusCustomerVerified   AgentTraceSummaryVerificationStatus = "customer_verified"
+	AgentTraceSummaryVerificationStatusExternallyVerified AgentTraceSummaryVerificationStatus = "externally_verified"
+)
+
+func NewAgentTraceSummaryVerificationStatusFromString(s string) (AgentTraceSummaryVerificationStatus, error) {
+	switch s {
+	case "unverified":
+		return AgentTraceSummaryVerificationStatusUnverified, nil
+	case "agent_verified":
+		return AgentTraceSummaryVerificationStatusAgentVerified, nil
+	case "tool_verified":
+		return AgentTraceSummaryVerificationStatusToolVerified, nil
+	case "customer_verified":
+		return AgentTraceSummaryVerificationStatusCustomerVerified, nil
+	case "externally_verified":
+		return AgentTraceSummaryVerificationStatusExternallyVerified, nil
+	}
+	var t AgentTraceSummaryVerificationStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AgentTraceSummaryVerificationStatus) Ptr() *AgentTraceSummaryVerificationStatus {
+	return &a
+}
+
+var (
 	agentTraceSummaryVersionFieldAgentUUID             = big.NewInt(1 << 0)
 	agentTraceSummaryVersionFieldAssertionUUID         = big.NewInt(1 << 1)
 	agentTraceSummaryVersionFieldCreatedAt             = big.NewInt(1 << 2)
@@ -11227,7 +14361,7 @@ type AgentTraceSummaryVersion struct {
 	OmittedSequenceRanges []*AgentTraceSummaryOmittedRange `json:"omitted_sequence_ranges,omitempty" url:"omitted_sequence_ranges,omitempty"`
 	Outcome               *AgentTraceOutcome               `json:"outcome,omitempty" url:"outcome,omitempty"`
 	ParentVersionUUID     *string                          `json:"parent_version_uuid,omitempty" url:"parent_version_uuid,omitempty"`
-	StructuredSummary     map[string]any                   `json:"structured_summary,omitempty" url:"structured_summary,omitempty"`
+	StructuredSummary     *AgentTraceStructuredSummary     `json:"structured_summary,omitempty" url:"structured_summary,omitempty"`
 	Text                  *string                          `json:"text,omitempty" url:"text,omitempty"`
 	TraceUUID             *string                          `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
 	UUID                  *string                          `json:"uuid,omitempty" url:"uuid,omitempty"`
@@ -11318,7 +14452,7 @@ func (a *AgentTraceSummaryVersion) GetParentVersionUUID() *string {
 	return a.ParentVersionUUID
 }
 
-func (a *AgentTraceSummaryVersion) GetStructuredSummary() map[string]any {
+func (a *AgentTraceSummaryVersion) GetStructuredSummary() *AgentTraceStructuredSummary {
 	if a == nil {
 		return nil
 	}
@@ -11455,7 +14589,7 @@ func (a *AgentTraceSummaryVersion) SetParentVersionUUID(parentVersionUUID *strin
 
 // SetStructuredSummary sets the StructuredSummary field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTraceSummaryVersion) SetStructuredSummary(structuredSummary map[string]any) {
+func (a *AgentTraceSummaryVersion) SetStructuredSummary(structuredSummary *AgentTraceStructuredSummary) {
 	a.StructuredSummary = structuredSummary
 	a.require(agentTraceSummaryVersionFieldStructuredSummary)
 }
@@ -12701,93 +15835,6 @@ func NewAgentVerifierStatusFromString(s string) (AgentVerifierStatus, error) {
 
 func (a AgentVerifierStatus) Ptr() *AgentVerifierStatus {
 	return &a
-}
-
-var (
-	artifactListRequestFieldFilters = big.NewInt(1 << 0)
-)
-
-type ArtifactListRequest struct {
-	// Filters constraining which items are returned.
-	Filters map[string]any `json:"filters,omitempty" url:"filters,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-
-	extraProperties map[string]interface{}
-	rawJSON         json.RawMessage
-}
-
-func (a *ArtifactListRequest) GetFilters() map[string]any {
-	if a == nil {
-		return nil
-	}
-	return a.Filters
-}
-
-func (a *ArtifactListRequest) GetExtraProperties() map[string]interface{} {
-	if a == nil {
-		return nil
-	}
-	return a.extraProperties
-}
-
-func (a *ArtifactListRequest) require(field *big.Int) {
-	next := new(big.Int)
-	if a.explicitFields != nil {
-		next.Set(a.explicitFields)
-	}
-	next.Or(next, field)
-	a.explicitFields = next
-}
-
-// SetFilters sets the Filters field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (a *ArtifactListRequest) SetFilters(filters map[string]any) {
-	a.Filters = filters
-	a.require(artifactListRequestFieldFilters)
-}
-
-func (a *ArtifactListRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler ArtifactListRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = ArtifactListRequest(value)
-	extraProperties, err := internal.ExtractExtraProperties(data, *a)
-	if err != nil {
-		return err
-	}
-	a.extraProperties = extraProperties
-	a.rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *ArtifactListRequest) MarshalJSON() ([]byte, error) {
-	type embed ArtifactListRequest
-	var marshaler = struct {
-		embed
-	}{
-		embed: embed(*a),
-	}
-	explicitMarshaler := internal.HandleExplicitFields(marshaler, a.explicitFields)
-	return json.Marshal(explicitMarshaler)
-}
-
-func (a *ArtifactListRequest) String() string {
-	if a == nil {
-		return "<nil>"
-	}
-	if len(a.rawJSON) > 0 {
-		if value, err := internal.StringifyJSON(a.rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := internal.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
 }
 
 var (
@@ -14518,6 +17565,301 @@ func (d *DocumentSummary) String() string {
 }
 
 var (
+	documentSummaryListFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
+	documentSummaryListFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
+	documentSummaryListFiltersFieldDateFilters           = big.NewInt(1 << 2)
+	documentSummaryListFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
+	documentSummaryListFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
+	documentSummaryListFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
+	documentSummaryListFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
+	documentSummaryListFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
+	documentSummaryListFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
+	documentSummaryListFiltersFieldNodeLabels            = big.NewInt(1 << 9)
+	documentSummaryListFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
+	documentSummaryListFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
+	documentSummaryListFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
+)
+
+type DocumentSummaryListFilters struct {
+	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
+	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
+	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Filter results by temporal values.
+	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
+	// Include results with any of these edge types. Node search does not support this filter.
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// Include results with any of these edge UUIDs. Node search does not support this filter.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Include results derived from any of these episode UUIDs.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// Exclude results with any of these edge types. Node search does not support this filter.
+	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
+	// Exclude nodes that have any of these labels. On an edge list, the API
+	// excludes an edge when its source node or its target node has one of
+	// these labels. Edge search does not support this filter.
+	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
+	// Filter results by episode metadata.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+	// Include only nodes that have at least one of these labels. On an edge
+	// list, the source node and the target node of each edge must each have
+	// at least one of these labels. Edge search does not support this filter.
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// Filter results by node or edge properties.
+	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
+	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
+	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
+	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
+	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (d *DocumentSummaryListFilters) GetConnectedNodeUUIDs() []string {
+	if d == nil {
+		return nil
+	}
+	return d.ConnectedNodeUUIDs
+}
+
+func (d *DocumentSummaryListFilters) GetContentPolicyViolated() *bool {
+	if d == nil {
+		return nil
+	}
+	return d.ContentPolicyViolated
+}
+
+func (d *DocumentSummaryListFilters) GetDateFilters() *DateFilters {
+	if d == nil {
+		return nil
+	}
+	return d.DateFilters
+}
+
+func (d *DocumentSummaryListFilters) GetEdgeTypes() []string {
+	if d == nil {
+		return nil
+	}
+	return d.EdgeTypes
+}
+
+func (d *DocumentSummaryListFilters) GetEdgeUUIDs() []string {
+	if d == nil {
+		return nil
+	}
+	return d.EdgeUUIDs
+}
+
+func (d *DocumentSummaryListFilters) GetEpisodeUUIDs() []string {
+	if d == nil {
+		return nil
+	}
+	return d.EpisodeUUIDs
+}
+
+func (d *DocumentSummaryListFilters) GetExcludeEdgeTypes() []string {
+	if d == nil {
+		return nil
+	}
+	return d.ExcludeEdgeTypes
+}
+
+func (d *DocumentSummaryListFilters) GetExcludeNodeLabels() []string {
+	if d == nil {
+		return nil
+	}
+	return d.ExcludeNodeLabels
+}
+
+func (d *DocumentSummaryListFilters) GetMetadataFilters() *MetadataFilterGroup {
+	if d == nil {
+		return nil
+	}
+	return d.MetadataFilters
+}
+
+func (d *DocumentSummaryListFilters) GetNodeLabels() []string {
+	if d == nil {
+		return nil
+	}
+	return d.NodeLabels
+}
+
+func (d *DocumentSummaryListFilters) GetPropertyFilters() []*PropertyFilter {
+	if d == nil {
+		return nil
+	}
+	return d.PropertyFilters
+}
+
+func (d *DocumentSummaryListFilters) GetSourceNodeUUIDs() []string {
+	if d == nil {
+		return nil
+	}
+	return d.SourceNodeUUIDs
+}
+
+func (d *DocumentSummaryListFilters) GetTargetNodeUUIDs() []string {
+	if d == nil {
+		return nil
+	}
+	return d.TargetNodeUUIDs
+}
+
+func (d *DocumentSummaryListFilters) GetExtraProperties() map[string]interface{} {
+	if d == nil {
+		return nil
+	}
+	return d.extraProperties
+}
+
+func (d *DocumentSummaryListFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if d.explicitFields != nil {
+		next.Set(d.explicitFields)
+	}
+	next.Or(next, field)
+	d.explicitFields = next
+}
+
+// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
+	d.ConnectedNodeUUIDs = connectedNodeUUIDs
+	d.require(documentSummaryListFiltersFieldConnectedNodeUUIDs)
+}
+
+// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
+	d.ContentPolicyViolated = contentPolicyViolated
+	d.require(documentSummaryListFiltersFieldContentPolicyViolated)
+}
+
+// SetDateFilters sets the DateFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetDateFilters(dateFilters *DateFilters) {
+	d.DateFilters = dateFilters
+	d.require(documentSummaryListFiltersFieldDateFilters)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetEdgeTypes(edgeTypes []string) {
+	d.EdgeTypes = edgeTypes
+	d.require(documentSummaryListFiltersFieldEdgeTypes)
+}
+
+// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
+	d.EdgeUUIDs = edgeUUIDs
+	d.require(documentSummaryListFiltersFieldEdgeUUIDs)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
+	d.EpisodeUUIDs = episodeUUIDs
+	d.require(documentSummaryListFiltersFieldEpisodeUUIDs)
+}
+
+// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
+	d.ExcludeEdgeTypes = excludeEdgeTypes
+	d.require(documentSummaryListFiltersFieldExcludeEdgeTypes)
+}
+
+// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
+	d.ExcludeNodeLabels = excludeNodeLabels
+	d.require(documentSummaryListFiltersFieldExcludeNodeLabels)
+}
+
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	d.MetadataFilters = metadataFilters
+	d.require(documentSummaryListFiltersFieldMetadataFilters)
+}
+
+// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetNodeLabels(nodeLabels []string) {
+	d.NodeLabels = nodeLabels
+	d.require(documentSummaryListFiltersFieldNodeLabels)
+}
+
+// SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
+	d.PropertyFilters = propertyFilters
+	d.require(documentSummaryListFiltersFieldPropertyFilters)
+}
+
+// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
+	d.SourceNodeUUIDs = sourceNodeUUIDs
+	d.require(documentSummaryListFiltersFieldSourceNodeUUIDs)
+}
+
+// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
+	d.TargetNodeUUIDs = targetNodeUUIDs
+	d.require(documentSummaryListFiltersFieldTargetNodeUUIDs)
+}
+
+func (d *DocumentSummaryListFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler DocumentSummaryListFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DocumentSummaryListFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+	d.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DocumentSummaryListFilters) MarshalJSON() ([]byte, error) {
+	type embed DocumentSummaryListFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (d *DocumentSummaryListFilters) String() string {
+	if d == nil {
+		return "<nil>"
+	}
+	if len(d.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(d.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+var (
 	documentSummaryPageFieldItems      = big.NewInt(1 << 0)
 	documentSummaryPageFieldNextCursor = big.NewInt(1 << 1)
 	documentSummaryPageFieldTotalSize  = big.NewInt(1 << 2)
@@ -14659,8 +18001,9 @@ var (
 	edgeFieldTargetNodeLabels = big.NewInt(1 << 15)
 	edgeFieldTargetNodeName   = big.NewInt(1 << 16)
 	edgeFieldTargetNodeUUID   = big.NewInt(1 << 17)
-	edgeFieldUUID             = big.NewInt(1 << 18)
-	edgeFieldValidAt          = big.NewInt(1 << 19)
+	edgeFieldUserUUID         = big.NewInt(1 << 18)
+	edgeFieldUUID             = big.NewInt(1 << 19)
+	edgeFieldValidAt          = big.NewInt(1 << 20)
 )
 
 type Edge struct {
@@ -14712,6 +18055,9 @@ type Edge struct {
 	TargetNodeName *string `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
 	// The unique identifier of the edge's target node.
 	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the edge.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 	// The time from which the fact is considered true.
@@ -14848,6 +18194,13 @@ func (e *Edge) GetTargetNodeUUID() *string {
 		return nil
 	}
 	return e.TargetNodeUUID
+}
+
+func (e *Edge) GetUserUUID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.UserUUID
 }
 
 func (e *Edge) GetUUID() *string {
@@ -15004,6 +18357,13 @@ func (e *Edge) SetTargetNodeName(targetNodeName *string) {
 func (e *Edge) SetTargetNodeUUID(targetNodeUUID *string) {
 	e.TargetNodeUUID = targetNodeUUID
 	e.require(edgeFieldTargetNodeUUID)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Edge) SetUserUUID(userUUID *string) {
+	e.UserUUID = userUUID
+	e.require(edgeFieldUserUUID)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
@@ -15274,6 +18634,301 @@ func (e *EdgeInput) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EdgeInput) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
+	edgeListFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
+	edgeListFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
+	edgeListFiltersFieldDateFilters           = big.NewInt(1 << 2)
+	edgeListFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
+	edgeListFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
+	edgeListFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
+	edgeListFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
+	edgeListFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
+	edgeListFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
+	edgeListFiltersFieldNodeLabels            = big.NewInt(1 << 9)
+	edgeListFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
+	edgeListFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
+	edgeListFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
+)
+
+type EdgeListFilters struct {
+	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
+	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
+	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Filter results by temporal values.
+	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
+	// Include results with any of these edge types. Node search does not support this filter.
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// Include results with any of these edge UUIDs. Node search does not support this filter.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Include results derived from any of these episode UUIDs.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// Exclude results with any of these edge types. Node search does not support this filter.
+	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
+	// Exclude nodes that have any of these labels. On an edge list, the API
+	// excludes an edge when its source node or its target node has one of
+	// these labels. Edge search does not support this filter.
+	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
+	// Filter results by episode metadata.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+	// Include only nodes that have at least one of these labels. On an edge
+	// list, the source node and the target node of each edge must each have
+	// at least one of these labels. Edge search does not support this filter.
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// Filter results by node or edge properties.
+	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
+	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
+	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
+	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
+	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EdgeListFilters) GetConnectedNodeUUIDs() []string {
+	if e == nil {
+		return nil
+	}
+	return e.ConnectedNodeUUIDs
+}
+
+func (e *EdgeListFilters) GetContentPolicyViolated() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.ContentPolicyViolated
+}
+
+func (e *EdgeListFilters) GetDateFilters() *DateFilters {
+	if e == nil {
+		return nil
+	}
+	return e.DateFilters
+}
+
+func (e *EdgeListFilters) GetEdgeTypes() []string {
+	if e == nil {
+		return nil
+	}
+	return e.EdgeTypes
+}
+
+func (e *EdgeListFilters) GetEdgeUUIDs() []string {
+	if e == nil {
+		return nil
+	}
+	return e.EdgeUUIDs
+}
+
+func (e *EdgeListFilters) GetEpisodeUUIDs() []string {
+	if e == nil {
+		return nil
+	}
+	return e.EpisodeUUIDs
+}
+
+func (e *EdgeListFilters) GetExcludeEdgeTypes() []string {
+	if e == nil {
+		return nil
+	}
+	return e.ExcludeEdgeTypes
+}
+
+func (e *EdgeListFilters) GetExcludeNodeLabels() []string {
+	if e == nil {
+		return nil
+	}
+	return e.ExcludeNodeLabels
+}
+
+func (e *EdgeListFilters) GetMetadataFilters() *MetadataFilterGroup {
+	if e == nil {
+		return nil
+	}
+	return e.MetadataFilters
+}
+
+func (e *EdgeListFilters) GetNodeLabels() []string {
+	if e == nil {
+		return nil
+	}
+	return e.NodeLabels
+}
+
+func (e *EdgeListFilters) GetPropertyFilters() []*PropertyFilter {
+	if e == nil {
+		return nil
+	}
+	return e.PropertyFilters
+}
+
+func (e *EdgeListFilters) GetSourceNodeUUIDs() []string {
+	if e == nil {
+		return nil
+	}
+	return e.SourceNodeUUIDs
+}
+
+func (e *EdgeListFilters) GetTargetNodeUUIDs() []string {
+	if e == nil {
+		return nil
+	}
+	return e.TargetNodeUUIDs
+}
+
+func (e *EdgeListFilters) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EdgeListFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
+	}
+	next.Or(next, field)
+	e.explicitFields = next
+}
+
+// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
+	e.ConnectedNodeUUIDs = connectedNodeUUIDs
+	e.require(edgeListFiltersFieldConnectedNodeUUIDs)
+}
+
+// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
+	e.ContentPolicyViolated = contentPolicyViolated
+	e.require(edgeListFiltersFieldContentPolicyViolated)
+}
+
+// SetDateFilters sets the DateFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetDateFilters(dateFilters *DateFilters) {
+	e.DateFilters = dateFilters
+	e.require(edgeListFiltersFieldDateFilters)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetEdgeTypes(edgeTypes []string) {
+	e.EdgeTypes = edgeTypes
+	e.require(edgeListFiltersFieldEdgeTypes)
+}
+
+// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
+	e.EdgeUUIDs = edgeUUIDs
+	e.require(edgeListFiltersFieldEdgeUUIDs)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
+	e.EpisodeUUIDs = episodeUUIDs
+	e.require(edgeListFiltersFieldEpisodeUUIDs)
+}
+
+// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
+	e.ExcludeEdgeTypes = excludeEdgeTypes
+	e.require(edgeListFiltersFieldExcludeEdgeTypes)
+}
+
+// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
+	e.ExcludeNodeLabels = excludeNodeLabels
+	e.require(edgeListFiltersFieldExcludeNodeLabels)
+}
+
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	e.MetadataFilters = metadataFilters
+	e.require(edgeListFiltersFieldMetadataFilters)
+}
+
+// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetNodeLabels(nodeLabels []string) {
+	e.NodeLabels = nodeLabels
+	e.require(edgeListFiltersFieldNodeLabels)
+}
+
+// SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
+	e.PropertyFilters = propertyFilters
+	e.require(edgeListFiltersFieldPropertyFilters)
+}
+
+// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
+	e.SourceNodeUUIDs = sourceNodeUUIDs
+	e.require(edgeListFiltersFieldSourceNodeUUIDs)
+}
+
+// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EdgeListFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
+	e.TargetNodeUUIDs = targetNodeUUIDs
+	e.require(edgeListFiltersFieldTargetNodeUUIDs)
+}
+
+func (e *EdgeListFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler EdgeListFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EdgeListFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EdgeListFilters) MarshalJSON() ([]byte, error) {
+	type embed EdgeListFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EdgeListFilters) String() string {
 	if e == nil {
 		return "<nil>"
 	}
@@ -16132,7 +19787,8 @@ var (
 	episodeFieldSource            = big.NewInt(1 << 12)
 	episodeFieldSourceDescription = big.NewInt(1 << 13)
 	episodeFieldThreadUUID        = big.NewInt(1 << 14)
-	episodeFieldUUID              = big.NewInt(1 << 15)
+	episodeFieldUserUUID          = big.NewInt(1 << 15)
+	episodeFieldUUID              = big.NewInt(1 << 16)
 )
 
 type Episode struct {
@@ -16176,6 +19832,9 @@ type Episode struct {
 	// The thread this episode belongs to, present only for episodes added to a
 	// thread.
 	ThreadUUID *string `json:"thread_uuid,omitempty" url:"thread_uuid,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the episode.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -16289,6 +19948,13 @@ func (e *Episode) GetThreadUUID() *string {
 		return nil
 	}
 	return e.ThreadUUID
+}
+
+func (e *Episode) GetUserUUID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.UserUUID
 }
 
 func (e *Episode) GetUUID() *string {
@@ -16417,6 +20083,13 @@ func (e *Episode) SetSourceDescription(sourceDescription *string) {
 func (e *Episode) SetThreadUUID(threadUUID *string) {
 	e.ThreadUUID = threadUUID
 	e.require(episodeFieldThreadUUID)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetUserUUID(userUUID *string) {
+	e.UserUUID = userUUID
+	e.require(episodeFieldUserUUID)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
@@ -16812,6 +20485,130 @@ func (e *EpisodeDebugLog) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EpisodeDebugLog) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
+	episodeListFiltersFieldContentPolicyViolated = big.NewInt(1 << 0)
+	episodeListFiltersFieldMentionedNodeUUIDs    = big.NewInt(1 << 1)
+	episodeListFiltersFieldMetadataFilters       = big.NewInt(1 << 2)
+)
+
+type EpisodeListFilters struct {
+	// When true, include only episodes that a content policy flagged. When
+	// false, include only episodes that no content policy flagged. The
+	// project setting include_policy_violating_episodes must be on.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Include only episodes that mention at least one of these nodes. At
+	// most 256 node UUIDs.
+	MentionedNodeUUIDs []string `json:"mentioned_node_uuids,omitempty" url:"mentioned_node_uuids,omitempty"`
+	// Include only episodes whose metadata matches this filter group.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeListFilters) GetContentPolicyViolated() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.ContentPolicyViolated
+}
+
+func (e *EpisodeListFilters) GetMentionedNodeUUIDs() []string {
+	if e == nil {
+		return nil
+	}
+	return e.MentionedNodeUUIDs
+}
+
+func (e *EpisodeListFilters) GetMetadataFilters() *MetadataFilterGroup {
+	if e == nil {
+		return nil
+	}
+	return e.MetadataFilters
+}
+
+func (e *EpisodeListFilters) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EpisodeListFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
+	}
+	next.Or(next, field)
+	e.explicitFields = next
+}
+
+// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
+	e.ContentPolicyViolated = contentPolicyViolated
+	e.require(episodeListFiltersFieldContentPolicyViolated)
+}
+
+// SetMentionedNodeUUIDs sets the MentionedNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListFilters) SetMentionedNodeUUIDs(mentionedNodeUUIDs []string) {
+	e.MentionedNodeUUIDs = mentionedNodeUUIDs
+	e.require(episodeListFiltersFieldMentionedNodeUUIDs)
+}
+
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	e.MetadataFilters = metadataFilters
+	e.require(episodeListFiltersFieldMetadataFilters)
+}
+
+func (e *EpisodeListFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeListFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeListFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeListFilters) MarshalJSON() ([]byte, error) {
+	type embed EpisodeListFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EpisodeListFilters) String() string {
 	if e == nil {
 		return "<nil>"
 	}
@@ -17258,8 +21055,9 @@ var (
 	hyperedgeFieldFact      = big.NewInt(1 << 3)
 	hyperedgeFieldGraphUUID = big.NewInt(1 << 4)
 	hyperedgeFieldInvalidAt = big.NewInt(1 << 5)
-	hyperedgeFieldUUID      = big.NewInt(1 << 6)
-	hyperedgeFieldValidAt   = big.NewInt(1 << 7)
+	hyperedgeFieldUserUUID  = big.NewInt(1 << 6)
+	hyperedgeFieldUUID      = big.NewInt(1 << 7)
+	hyperedgeFieldValidAt   = big.NewInt(1 << 8)
 )
 
 type Hyperedge struct {
@@ -17277,6 +21075,9 @@ type Hyperedge struct {
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	// The time at which the fact stopped being true.
 	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the hyperedge.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 	// The time from which the fact is considered true.
@@ -17329,6 +21130,13 @@ func (h *Hyperedge) GetInvalidAt() *string {
 		return nil
 	}
 	return h.InvalidAt
+}
+
+func (h *Hyperedge) GetUserUUID() *string {
+	if h == nil {
+		return nil
+	}
+	return h.UserUUID
 }
 
 func (h *Hyperedge) GetUUID() *string {
@@ -17401,6 +21209,13 @@ func (h *Hyperedge) SetGraphUUID(graphUUID *string) {
 func (h *Hyperedge) SetInvalidAt(invalidAt *string) {
 	h.InvalidAt = invalidAt
 	h.require(hyperedgeFieldInvalidAt)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *Hyperedge) SetUserUUID(userUUID *string) {
+	h.UserUUID = userUUID
+	h.require(hyperedgeFieldUserUUID)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
@@ -17706,6 +21521,130 @@ func (h *HyperedgeInput) MarshalJSON() ([]byte, error) {
 }
 
 func (h *HyperedgeInput) String() string {
+	if h == nil {
+		return "<nil>"
+	}
+	if len(h.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(h.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(h); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", h)
+}
+
+var (
+	hyperedgeListFiltersFieldEdgeUUIDs    = big.NewInt(1 << 0)
+	hyperedgeListFiltersFieldEpisodeUUIDs = big.NewInt(1 << 1)
+	hyperedgeListFiltersFieldNodeUUIDs    = big.NewInt(1 << 2)
+)
+
+type HyperedgeListFilters struct {
+	// Include only hyperedges that have one of these member edges. At most
+	// 256 edge UUIDs.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Include only hyperedges that have a member edge from one of these
+	// episodes. At most 256 episode UUIDs.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// Include only hyperedges that have a member edge connected to one of
+	// these nodes. At most 256 node UUIDs.
+	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (h *HyperedgeListFilters) GetEdgeUUIDs() []string {
+	if h == nil {
+		return nil
+	}
+	return h.EdgeUUIDs
+}
+
+func (h *HyperedgeListFilters) GetEpisodeUUIDs() []string {
+	if h == nil {
+		return nil
+	}
+	return h.EpisodeUUIDs
+}
+
+func (h *HyperedgeListFilters) GetNodeUUIDs() []string {
+	if h == nil {
+		return nil
+	}
+	return h.NodeUUIDs
+}
+
+func (h *HyperedgeListFilters) GetExtraProperties() map[string]interface{} {
+	if h == nil {
+		return nil
+	}
+	return h.extraProperties
+}
+
+func (h *HyperedgeListFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if h.explicitFields != nil {
+		next.Set(h.explicitFields)
+	}
+	next.Or(next, field)
+	h.explicitFields = next
+}
+
+// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
+	h.EdgeUUIDs = edgeUUIDs
+	h.require(hyperedgeListFiltersFieldEdgeUUIDs)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
+	h.EpisodeUUIDs = episodeUUIDs
+	h.require(hyperedgeListFiltersFieldEpisodeUUIDs)
+}
+
+// SetNodeUUIDs sets the NodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (h *HyperedgeListFilters) SetNodeUUIDs(nodeUUIDs []string) {
+	h.NodeUUIDs = nodeUUIDs
+	h.require(hyperedgeListFiltersFieldNodeUUIDs)
+}
+
+func (h *HyperedgeListFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler HyperedgeListFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*h = HyperedgeListFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *h)
+	if err != nil {
+		return err
+	}
+	h.extraProperties = extraProperties
+	h.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (h *HyperedgeListFilters) MarshalJSON() ([]byte, error) {
+	type embed HyperedgeListFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*h),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, h.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (h *HyperedgeListFilters) String() string {
 	if h == nil {
 		return "<nil>"
 	}
@@ -21342,7 +25281,8 @@ var (
 	nodeFieldRelevance             = big.NewInt(1 << 8)
 	nodeFieldScore                 = big.NewInt(1 << 9)
 	nodeFieldSummary               = big.NewInt(1 << 10)
-	nodeFieldUUID                  = big.NewInt(1 << 11)
+	nodeFieldUserUUID              = big.NewInt(1 << 11)
+	nodeFieldUUID                  = big.NewInt(1 << 12)
 )
 
 type Node struct {
@@ -21377,6 +25317,9 @@ type Node struct {
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// A generated summary of the entity that the node represents.
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The node UUID, assigned by Zep.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -21462,6 +25405,13 @@ func (n *Node) GetSummary() *string {
 		return nil
 	}
 	return n.Summary
+}
+
+func (n *Node) GetUserUUID() *string {
+	if n == nil {
+		return nil
+	}
+	return n.UserUUID
 }
 
 func (n *Node) GetUUID() *string {
@@ -21562,6 +25512,13 @@ func (n *Node) SetScore(score *float64) {
 func (n *Node) SetSummary(summary *string) {
 	n.Summary = summary
 	n.require(nodeFieldSummary)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *Node) SetUserUUID(userUUID *string) {
+	n.UserUUID = userUUID
+	n.require(nodeFieldUserUUID)
 }
 
 // SetUUID sets the UUID field and marks it as non-optional;
@@ -21754,6 +25711,301 @@ func (n *NodeInput) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NodeInput) String() string {
+	if n == nil {
+		return "<nil>"
+	}
+	if len(n.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+var (
+	nodeListFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
+	nodeListFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
+	nodeListFiltersFieldDateFilters           = big.NewInt(1 << 2)
+	nodeListFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
+	nodeListFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
+	nodeListFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
+	nodeListFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
+	nodeListFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
+	nodeListFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
+	nodeListFiltersFieldNodeLabels            = big.NewInt(1 << 9)
+	nodeListFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
+	nodeListFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
+	nodeListFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
+)
+
+type NodeListFilters struct {
+	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
+	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
+	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Filter results by temporal values.
+	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
+	// Include results with any of these edge types. Node search does not support this filter.
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// Include results with any of these edge UUIDs. Node search does not support this filter.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Include results derived from any of these episode UUIDs.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// Exclude results with any of these edge types. Node search does not support this filter.
+	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
+	// Exclude nodes that have any of these labels. On an edge list, the API
+	// excludes an edge when its source node or its target node has one of
+	// these labels. Edge search does not support this filter.
+	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
+	// Filter results by episode metadata.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+	// Include only nodes that have at least one of these labels. On an edge
+	// list, the source node and the target node of each edge must each have
+	// at least one of these labels. Edge search does not support this filter.
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// Filter results by node or edge properties.
+	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
+	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
+	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
+	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
+	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (n *NodeListFilters) GetConnectedNodeUUIDs() []string {
+	if n == nil {
+		return nil
+	}
+	return n.ConnectedNodeUUIDs
+}
+
+func (n *NodeListFilters) GetContentPolicyViolated() *bool {
+	if n == nil {
+		return nil
+	}
+	return n.ContentPolicyViolated
+}
+
+func (n *NodeListFilters) GetDateFilters() *DateFilters {
+	if n == nil {
+		return nil
+	}
+	return n.DateFilters
+}
+
+func (n *NodeListFilters) GetEdgeTypes() []string {
+	if n == nil {
+		return nil
+	}
+	return n.EdgeTypes
+}
+
+func (n *NodeListFilters) GetEdgeUUIDs() []string {
+	if n == nil {
+		return nil
+	}
+	return n.EdgeUUIDs
+}
+
+func (n *NodeListFilters) GetEpisodeUUIDs() []string {
+	if n == nil {
+		return nil
+	}
+	return n.EpisodeUUIDs
+}
+
+func (n *NodeListFilters) GetExcludeEdgeTypes() []string {
+	if n == nil {
+		return nil
+	}
+	return n.ExcludeEdgeTypes
+}
+
+func (n *NodeListFilters) GetExcludeNodeLabels() []string {
+	if n == nil {
+		return nil
+	}
+	return n.ExcludeNodeLabels
+}
+
+func (n *NodeListFilters) GetMetadataFilters() *MetadataFilterGroup {
+	if n == nil {
+		return nil
+	}
+	return n.MetadataFilters
+}
+
+func (n *NodeListFilters) GetNodeLabels() []string {
+	if n == nil {
+		return nil
+	}
+	return n.NodeLabels
+}
+
+func (n *NodeListFilters) GetPropertyFilters() []*PropertyFilter {
+	if n == nil {
+		return nil
+	}
+	return n.PropertyFilters
+}
+
+func (n *NodeListFilters) GetSourceNodeUUIDs() []string {
+	if n == nil {
+		return nil
+	}
+	return n.SourceNodeUUIDs
+}
+
+func (n *NodeListFilters) GetTargetNodeUUIDs() []string {
+	if n == nil {
+		return nil
+	}
+	return n.TargetNodeUUIDs
+}
+
+func (n *NodeListFilters) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
+	return n.extraProperties
+}
+
+func (n *NodeListFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if n.explicitFields != nil {
+		next.Set(n.explicitFields)
+	}
+	next.Or(next, field)
+	n.explicitFields = next
+}
+
+// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
+	n.ConnectedNodeUUIDs = connectedNodeUUIDs
+	n.require(nodeListFiltersFieldConnectedNodeUUIDs)
+}
+
+// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
+	n.ContentPolicyViolated = contentPolicyViolated
+	n.require(nodeListFiltersFieldContentPolicyViolated)
+}
+
+// SetDateFilters sets the DateFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetDateFilters(dateFilters *DateFilters) {
+	n.DateFilters = dateFilters
+	n.require(nodeListFiltersFieldDateFilters)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetEdgeTypes(edgeTypes []string) {
+	n.EdgeTypes = edgeTypes
+	n.require(nodeListFiltersFieldEdgeTypes)
+}
+
+// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
+	n.EdgeUUIDs = edgeUUIDs
+	n.require(nodeListFiltersFieldEdgeUUIDs)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
+	n.EpisodeUUIDs = episodeUUIDs
+	n.require(nodeListFiltersFieldEpisodeUUIDs)
+}
+
+// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
+	n.ExcludeEdgeTypes = excludeEdgeTypes
+	n.require(nodeListFiltersFieldExcludeEdgeTypes)
+}
+
+// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
+	n.ExcludeNodeLabels = excludeNodeLabels
+	n.require(nodeListFiltersFieldExcludeNodeLabels)
+}
+
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	n.MetadataFilters = metadataFilters
+	n.require(nodeListFiltersFieldMetadataFilters)
+}
+
+// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetNodeLabels(nodeLabels []string) {
+	n.NodeLabels = nodeLabels
+	n.require(nodeListFiltersFieldNodeLabels)
+}
+
+// SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
+	n.PropertyFilters = propertyFilters
+	n.require(nodeListFiltersFieldPropertyFilters)
+}
+
+// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
+	n.SourceNodeUUIDs = sourceNodeUUIDs
+	n.require(nodeListFiltersFieldSourceNodeUUIDs)
+}
+
+// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NodeListFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
+	n.TargetNodeUUIDs = targetNodeUUIDs
+	n.require(nodeListFiltersFieldTargetNodeUUIDs)
+}
+
+func (n *NodeListFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler NodeListFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NodeListFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *n)
+	if err != nil {
+		return err
+	}
+	n.extraProperties = extraProperties
+	n.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NodeListFilters) MarshalJSON() ([]byte, error) {
+	type embed NodeListFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, n.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (n *NodeListFilters) String() string {
 	if n == nil {
 		return "<nil>"
 	}
@@ -22031,7 +26283,8 @@ var (
 	observationFieldRelevance    = big.NewInt(1 << 6)
 	observationFieldScore        = big.NewInt(1 << 7)
 	observationFieldSummary      = big.NewInt(1 << 8)
-	observationFieldUUID         = big.NewInt(1 << 9)
+	observationFieldUserUUID     = big.NewInt(1 << 9)
+	observationFieldUUID         = big.NewInt(1 << 10)
 )
 
 type Observation struct {
@@ -22056,6 +26309,9 @@ type Observation struct {
 	Score *float64 `json:"score,omitempty" url:"score,omitempty"`
 	// A generated summary of the observation.
 	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the observation, assigned by Zep.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
@@ -22127,6 +26383,13 @@ func (o *Observation) GetSummary() *string {
 		return nil
 	}
 	return o.Summary
+}
+
+func (o *Observation) GetUserUUID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.UserUUID
 }
 
 func (o *Observation) GetUUID() *string {
@@ -22215,6 +26478,13 @@ func (o *Observation) SetSummary(summary *string) {
 	o.require(observationFieldSummary)
 }
 
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Observation) SetUserUUID(userUUID *string) {
+	o.UserUUID = userUUID
+	o.require(observationFieldUserUUID)
+}
+
 // SetUUID sets the UUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (o *Observation) SetUUID(uuid *string) {
@@ -22250,6 +26520,301 @@ func (o *Observation) MarshalJSON() ([]byte, error) {
 }
 
 func (o *Observation) String() string {
+	if o == nil {
+		return "<nil>"
+	}
+	if len(o.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(o.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(o); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", o)
+}
+
+var (
+	observationListFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
+	observationListFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
+	observationListFiltersFieldDateFilters           = big.NewInt(1 << 2)
+	observationListFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
+	observationListFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
+	observationListFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
+	observationListFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
+	observationListFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
+	observationListFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
+	observationListFiltersFieldNodeLabels            = big.NewInt(1 << 9)
+	observationListFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
+	observationListFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
+	observationListFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
+)
+
+type ObservationListFilters struct {
+	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
+	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
+	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Filter results by temporal values.
+	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
+	// Include results with any of these edge types. Node search does not support this filter.
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// Include results with any of these edge UUIDs. Node search does not support this filter.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Include results derived from any of these episode UUIDs.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// Exclude results with any of these edge types. Node search does not support this filter.
+	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
+	// Exclude nodes that have any of these labels. On an edge list, the API
+	// excludes an edge when its source node or its target node has one of
+	// these labels. Edge search does not support this filter.
+	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
+	// Filter results by episode metadata.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+	// Include only nodes that have at least one of these labels. On an edge
+	// list, the source node and the target node of each edge must each have
+	// at least one of these labels. Edge search does not support this filter.
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// Filter results by node or edge properties.
+	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
+	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
+	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
+	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
+	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (o *ObservationListFilters) GetConnectedNodeUUIDs() []string {
+	if o == nil {
+		return nil
+	}
+	return o.ConnectedNodeUUIDs
+}
+
+func (o *ObservationListFilters) GetContentPolicyViolated() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.ContentPolicyViolated
+}
+
+func (o *ObservationListFilters) GetDateFilters() *DateFilters {
+	if o == nil {
+		return nil
+	}
+	return o.DateFilters
+}
+
+func (o *ObservationListFilters) GetEdgeTypes() []string {
+	if o == nil {
+		return nil
+	}
+	return o.EdgeTypes
+}
+
+func (o *ObservationListFilters) GetEdgeUUIDs() []string {
+	if o == nil {
+		return nil
+	}
+	return o.EdgeUUIDs
+}
+
+func (o *ObservationListFilters) GetEpisodeUUIDs() []string {
+	if o == nil {
+		return nil
+	}
+	return o.EpisodeUUIDs
+}
+
+func (o *ObservationListFilters) GetExcludeEdgeTypes() []string {
+	if o == nil {
+		return nil
+	}
+	return o.ExcludeEdgeTypes
+}
+
+func (o *ObservationListFilters) GetExcludeNodeLabels() []string {
+	if o == nil {
+		return nil
+	}
+	return o.ExcludeNodeLabels
+}
+
+func (o *ObservationListFilters) GetMetadataFilters() *MetadataFilterGroup {
+	if o == nil {
+		return nil
+	}
+	return o.MetadataFilters
+}
+
+func (o *ObservationListFilters) GetNodeLabels() []string {
+	if o == nil {
+		return nil
+	}
+	return o.NodeLabels
+}
+
+func (o *ObservationListFilters) GetPropertyFilters() []*PropertyFilter {
+	if o == nil {
+		return nil
+	}
+	return o.PropertyFilters
+}
+
+func (o *ObservationListFilters) GetSourceNodeUUIDs() []string {
+	if o == nil {
+		return nil
+	}
+	return o.SourceNodeUUIDs
+}
+
+func (o *ObservationListFilters) GetTargetNodeUUIDs() []string {
+	if o == nil {
+		return nil
+	}
+	return o.TargetNodeUUIDs
+}
+
+func (o *ObservationListFilters) GetExtraProperties() map[string]interface{} {
+	if o == nil {
+		return nil
+	}
+	return o.extraProperties
+}
+
+func (o *ObservationListFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if o.explicitFields != nil {
+		next.Set(o.explicitFields)
+	}
+	next.Or(next, field)
+	o.explicitFields = next
+}
+
+// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
+	o.ConnectedNodeUUIDs = connectedNodeUUIDs
+	o.require(observationListFiltersFieldConnectedNodeUUIDs)
+}
+
+// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
+	o.ContentPolicyViolated = contentPolicyViolated
+	o.require(observationListFiltersFieldContentPolicyViolated)
+}
+
+// SetDateFilters sets the DateFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetDateFilters(dateFilters *DateFilters) {
+	o.DateFilters = dateFilters
+	o.require(observationListFiltersFieldDateFilters)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetEdgeTypes(edgeTypes []string) {
+	o.EdgeTypes = edgeTypes
+	o.require(observationListFiltersFieldEdgeTypes)
+}
+
+// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
+	o.EdgeUUIDs = edgeUUIDs
+	o.require(observationListFiltersFieldEdgeUUIDs)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
+	o.EpisodeUUIDs = episodeUUIDs
+	o.require(observationListFiltersFieldEpisodeUUIDs)
+}
+
+// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
+	o.ExcludeEdgeTypes = excludeEdgeTypes
+	o.require(observationListFiltersFieldExcludeEdgeTypes)
+}
+
+// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
+	o.ExcludeNodeLabels = excludeNodeLabels
+	o.require(observationListFiltersFieldExcludeNodeLabels)
+}
+
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	o.MetadataFilters = metadataFilters
+	o.require(observationListFiltersFieldMetadataFilters)
+}
+
+// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetNodeLabels(nodeLabels []string) {
+	o.NodeLabels = nodeLabels
+	o.require(observationListFiltersFieldNodeLabels)
+}
+
+// SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
+	o.PropertyFilters = propertyFilters
+	o.require(observationListFiltersFieldPropertyFilters)
+}
+
+// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
+	o.SourceNodeUUIDs = sourceNodeUUIDs
+	o.require(observationListFiltersFieldSourceNodeUUIDs)
+}
+
+// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
+	o.TargetNodeUUIDs = targetNodeUUIDs
+	o.require(observationListFiltersFieldTargetNodeUUIDs)
+}
+
+func (o *ObservationListFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler ObservationListFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*o = ObservationListFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *o)
+	if err != nil {
+		return err
+	}
+	o.extraProperties = extraProperties
+	o.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (o *ObservationListFilters) MarshalJSON() ([]byte, error) {
+	type embed ObservationListFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (o *ObservationListFilters) String() string {
 	if o == nil {
 		return "<nil>"
 	}
@@ -24296,11 +28861,15 @@ type SearchFilters struct {
 	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
 	// Exclude results with any of these edge types. Node search does not support this filter.
 	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
-	// Exclude results with any of these node labels. Edge search does not support this filter.
+	// Exclude nodes that have any of these labels. On an edge list, the API
+	// excludes an edge when its source node or its target node has one of
+	// these labels. Edge search does not support this filter.
 	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
 	// Filter results by episode metadata.
 	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
-	// Include results with any of these node labels. Edge search does not support this filter.
+	// Include only nodes that have at least one of these labels. On an edge
+	// list, the source node and the target node of each edge must each have
+	// at least one of these labels. Edge search does not support this filter.
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 	// Filter results by node or edge properties.
 	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
@@ -24586,7 +29155,7 @@ type SkillDefinition struct {
 	DoneWhen      []string                  `json:"done_when,omitempty" url:"done_when,omitempty"`
 	Environments  []*SkillResource          `json:"environments,omitempty" url:"environments,omitempty"`
 	Failures      []*SkillFailure           `json:"failures,omitempty" url:"failures,omitempty"`
-	Kind          *string                   `json:"kind,omitempty" url:"kind,omitempty"`
+	Kind          *SkillKind                `json:"kind,omitempty" url:"kind,omitempty"`
 	Name          *string                   `json:"name,omitempty" url:"name,omitempty"`
 	Outputs       []string                  `json:"outputs,omitempty" url:"outputs,omitempty"`
 	PackageName   *string                   `json:"package_name,omitempty" url:"package_name,omitempty"`
@@ -24655,7 +29224,7 @@ func (s *SkillDefinition) GetFailures() []*SkillFailure {
 	return s.Failures
 }
 
-func (s *SkillDefinition) GetKind() *string {
+func (s *SkillDefinition) GetKind() *SkillKind {
 	if s == nil {
 		return nil
 	}
@@ -24806,7 +29375,7 @@ func (s *SkillDefinition) SetFailures(failures []*SkillFailure) {
 
 // SetKind sets the Kind field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SkillDefinition) SetKind(kind *string) {
+func (s *SkillDefinition) SetKind(kind *SkillKind) {
 	s.Kind = kind
 	s.require(skillDefinitionFieldKind)
 }
@@ -25148,6 +29717,40 @@ func (s *SkillFailure) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
+}
+
+type SkillKind string
+
+const (
+	SkillKindPrinciple   SkillKind = "principle"
+	SkillKindProcedure   SkillKind = "procedure"
+	SkillKindWorkflow    SkillKind = "workflow"
+	SkillKindFailureMode SkillKind = "failure_mode"
+	SkillKindRecovery    SkillKind = "recovery"
+	SkillKindConstraint  SkillKind = "constraint"
+)
+
+func NewSkillKindFromString(s string) (SkillKind, error) {
+	switch s {
+	case "principle":
+		return SkillKindPrinciple, nil
+	case "procedure":
+		return SkillKindProcedure, nil
+	case "workflow":
+		return SkillKindWorkflow, nil
+	case "failure_mode":
+		return SkillKindFailureMode, nil
+	case "recovery":
+		return SkillKindRecovery, nil
+	case "constraint":
+		return SkillKindConstraint, nil
+	}
+	var t SkillKind
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SkillKind) Ptr() *SkillKind {
+	return &s
 }
 
 var (
@@ -26664,12 +31267,12 @@ type Task struct {
 	Progress *TaskProgress `json:"progress,omitempty" url:"progress,omitempty"`
 	// Operation-specific output populated once the task reaches succeeded or
 	// partial, such as identifiers the operation could not return synchronously.
-	Result map[string]any `json:"result,omitempty" url:"result,omitempty"`
+	Result *TaskResult `json:"result,omitempty" url:"result,omitempty"`
 	// The time a worker began processing the task; absent until then.
 	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
 	// The task's current state: pending, processing, succeeded, partial, or
 	// failed.
-	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	Status *TaskStatus `json:"status,omitempty" url:"status,omitempty"`
 	// The kind of asynchronous operation the task represents.
 	Type *string `json:"type,omitempty" url:"type,omitempty"`
 	// The time the task was last updated.
@@ -26712,7 +31315,7 @@ func (t *Task) GetProgress() *TaskProgress {
 	return t.Progress
 }
 
-func (t *Task) GetResult() map[string]any {
+func (t *Task) GetResult() *TaskResult {
 	if t == nil {
 		return nil
 	}
@@ -26726,7 +31329,7 @@ func (t *Task) GetStartedAt() *string {
 	return t.StartedAt
 }
 
-func (t *Task) GetStatus() *string {
+func (t *Task) GetStatus() *TaskStatus {
 	if t == nil {
 		return nil
 	}
@@ -26800,7 +31403,7 @@ func (t *Task) SetProgress(progress *TaskProgress) {
 
 // SetResult sets the Result field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *Task) SetResult(result map[string]any) {
+func (t *Task) SetResult(result *TaskResult) {
 	t.Result = result
 	t.require(taskFieldResult)
 }
@@ -26814,7 +31417,7 @@ func (t *Task) SetStartedAt(startedAt *string) {
 
 // SetStatus sets the Status field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *Task) SetStatus(status *string) {
+func (t *Task) SetStatus(status *TaskStatus) {
 	t.Status = status
 	t.require(taskFieldStatus)
 }
@@ -27154,6 +31757,724 @@ func (t *TaskProgress) String() string {
 }
 
 var (
+	taskResultFieldContentPolicy  = big.NewInt(1 << 0)
+	taskResultFieldEdgeUUID       = big.NewInt(1 << 1)
+	taskResultFieldEdges          = big.NewInt(1 << 2)
+	taskResultFieldEpisodeUUID    = big.NewInt(1 << 3)
+	taskResultFieldEpisodes       = big.NewInt(1 << 4)
+	taskResultFieldHyperedgeUUID  = big.NewInt(1 << 5)
+	taskResultFieldSkillUUID      = big.NewInt(1 << 6)
+	taskResultFieldSourceNodeUUID = big.NewInt(1 << 7)
+	taskResultFieldTargetNodeUUID = big.NewInt(1 << 8)
+)
+
+type TaskResult struct {
+	// The content policy outcome of the task.
+	ContentPolicy *TaskResultContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
+	// The UUID of the edge that the task wrote.
+	EdgeUUID *string `json:"edge_uuid,omitempty" url:"edge_uuid,omitempty"`
+	// The edges that the task wrote.
+	Edges []*TaskResultEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	// The UUID of the episode that the task added.
+	EpisodeUUID *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
+	// The content policy outcome of each message that the task added.
+	Episodes []*TaskResultEpisode `json:"episodes,omitempty" url:"episodes,omitempty"`
+	// The UUID of the hyperedge that the task created.
+	HyperedgeUUID *string `json:"hyperedge_uuid,omitempty" url:"hyperedge_uuid,omitempty"`
+	// The UUID of the skill that the task imported.
+	SkillUUID *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	// The UUID of the source node of the edge that the task wrote.
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// The UUID of the target node of the edge that the task wrote.
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TaskResult) GetContentPolicy() *TaskResultContentPolicy {
+	if t == nil {
+		return nil
+	}
+	return t.ContentPolicy
+}
+
+func (t *TaskResult) GetEdgeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.EdgeUUID
+}
+
+func (t *TaskResult) GetEdges() []*TaskResultEdge {
+	if t == nil {
+		return nil
+	}
+	return t.Edges
+}
+
+func (t *TaskResult) GetEpisodeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.EpisodeUUID
+}
+
+func (t *TaskResult) GetEpisodes() []*TaskResultEpisode {
+	if t == nil {
+		return nil
+	}
+	return t.Episodes
+}
+
+func (t *TaskResult) GetHyperedgeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.HyperedgeUUID
+}
+
+func (t *TaskResult) GetSkillUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.SkillUUID
+}
+
+func (t *TaskResult) GetSourceNodeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.SourceNodeUUID
+}
+
+func (t *TaskResult) GetTargetNodeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TargetNodeUUID
+}
+
+func (t *TaskResult) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TaskResult) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetContentPolicy sets the ContentPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetContentPolicy(contentPolicy *TaskResultContentPolicy) {
+	t.ContentPolicy = contentPolicy
+	t.require(taskResultFieldContentPolicy)
+}
+
+// SetEdgeUUID sets the EdgeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetEdgeUUID(edgeUUID *string) {
+	t.EdgeUUID = edgeUUID
+	t.require(taskResultFieldEdgeUUID)
+}
+
+// SetEdges sets the Edges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetEdges(edges []*TaskResultEdge) {
+	t.Edges = edges
+	t.require(taskResultFieldEdges)
+}
+
+// SetEpisodeUUID sets the EpisodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetEpisodeUUID(episodeUUID *string) {
+	t.EpisodeUUID = episodeUUID
+	t.require(taskResultFieldEpisodeUUID)
+}
+
+// SetEpisodes sets the Episodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetEpisodes(episodes []*TaskResultEpisode) {
+	t.Episodes = episodes
+	t.require(taskResultFieldEpisodes)
+}
+
+// SetHyperedgeUUID sets the HyperedgeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetHyperedgeUUID(hyperedgeUUID *string) {
+	t.HyperedgeUUID = hyperedgeUUID
+	t.require(taskResultFieldHyperedgeUUID)
+}
+
+// SetSkillUUID sets the SkillUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetSkillUUID(skillUUID *string) {
+	t.SkillUUID = skillUUID
+	t.require(taskResultFieldSkillUUID)
+}
+
+// SetSourceNodeUUID sets the SourceNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetSourceNodeUUID(sourceNodeUUID *string) {
+	t.SourceNodeUUID = sourceNodeUUID
+	t.require(taskResultFieldSourceNodeUUID)
+}
+
+// SetTargetNodeUUID sets the TargetNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResult) SetTargetNodeUUID(targetNodeUUID *string) {
+	t.TargetNodeUUID = targetNodeUUID
+	t.require(taskResultFieldTargetNodeUUID)
+}
+
+func (t *TaskResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TaskResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TaskResult) MarshalJSON() ([]byte, error) {
+	type embed TaskResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TaskResult) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	taskResultContentPolicyFieldCategoryKeys  = big.NewInt(1 << 0)
+	taskResultContentPolicyFieldDroppedCount  = big.NewInt(1 << 1)
+	taskResultContentPolicyFieldFailedCount   = big.NewInt(1 << 2)
+	taskResultContentPolicyFieldRetainedCount = big.NewInt(1 << 3)
+	taskResultContentPolicyFieldRevision      = big.NewInt(1 << 4)
+	taskResultContentPolicyFieldStatus        = big.NewInt(1 << 5)
+	taskResultContentPolicyFieldViolated      = big.NewInt(1 << 6)
+	taskResultContentPolicyFieldViolatedCount = big.NewInt(1 << 7)
+)
+
+type TaskResultContentPolicy struct {
+	// The keys of the categories with a matched rule.
+	CategoryKeys []string `json:"category_keys,omitempty" url:"category_keys,omitempty"`
+	// The number of derived candidates of the episode that were dropped.
+	DroppedCount *int `json:"dropped_count,omitempty" url:"dropped_count,omitempty"`
+	// The number of episodes in the batch whose evaluation failed.
+	FailedCount *int `json:"failed_count,omitempty" url:"failed_count,omitempty"`
+	// The number of derived candidates of the episode that were published to
+	// the graph.
+	RetainedCount *int `json:"retained_count,omitempty" url:"retained_count,omitempty"`
+	// The project revision number of the policy that the graph bound.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The evaluation status of the episode. pending means the evaluation has
+	// not finished, complete means every candidate was evaluated, and failed
+	// means ingestion retries were exhausted.
+	Status *TaskResultContentPolicyStatus `json:"status,omitempty" url:"status,omitempty"`
+	// Whether at least one derived candidate of the episode matched a rule.
+	Violated *bool `json:"violated,omitempty" url:"violated,omitempty"`
+	// The number of episodes in the batch that a content policy flagged.
+	ViolatedCount *int `json:"violated_count,omitempty" url:"violated_count,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TaskResultContentPolicy) GetCategoryKeys() []string {
+	if t == nil {
+		return nil
+	}
+	return t.CategoryKeys
+}
+
+func (t *TaskResultContentPolicy) GetDroppedCount() *int {
+	if t == nil {
+		return nil
+	}
+	return t.DroppedCount
+}
+
+func (t *TaskResultContentPolicy) GetFailedCount() *int {
+	if t == nil {
+		return nil
+	}
+	return t.FailedCount
+}
+
+func (t *TaskResultContentPolicy) GetRetainedCount() *int {
+	if t == nil {
+		return nil
+	}
+	return t.RetainedCount
+}
+
+func (t *TaskResultContentPolicy) GetRevision() *int {
+	if t == nil {
+		return nil
+	}
+	return t.Revision
+}
+
+func (t *TaskResultContentPolicy) GetStatus() *TaskResultContentPolicyStatus {
+	if t == nil {
+		return nil
+	}
+	return t.Status
+}
+
+func (t *TaskResultContentPolicy) GetViolated() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.Violated
+}
+
+func (t *TaskResultContentPolicy) GetViolatedCount() *int {
+	if t == nil {
+		return nil
+	}
+	return t.ViolatedCount
+}
+
+func (t *TaskResultContentPolicy) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TaskResultContentPolicy) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetCategoryKeys sets the CategoryKeys field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultContentPolicy) SetCategoryKeys(categoryKeys []string) {
+	t.CategoryKeys = categoryKeys
+	t.require(taskResultContentPolicyFieldCategoryKeys)
+}
+
+// SetDroppedCount sets the DroppedCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultContentPolicy) SetDroppedCount(droppedCount *int) {
+	t.DroppedCount = droppedCount
+	t.require(taskResultContentPolicyFieldDroppedCount)
+}
+
+// SetFailedCount sets the FailedCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultContentPolicy) SetFailedCount(failedCount *int) {
+	t.FailedCount = failedCount
+	t.require(taskResultContentPolicyFieldFailedCount)
+}
+
+// SetRetainedCount sets the RetainedCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultContentPolicy) SetRetainedCount(retainedCount *int) {
+	t.RetainedCount = retainedCount
+	t.require(taskResultContentPolicyFieldRetainedCount)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultContentPolicy) SetRevision(revision *int) {
+	t.Revision = revision
+	t.require(taskResultContentPolicyFieldRevision)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultContentPolicy) SetStatus(status *TaskResultContentPolicyStatus) {
+	t.Status = status
+	t.require(taskResultContentPolicyFieldStatus)
+}
+
+// SetViolated sets the Violated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultContentPolicy) SetViolated(violated *bool) {
+	t.Violated = violated
+	t.require(taskResultContentPolicyFieldViolated)
+}
+
+// SetViolatedCount sets the ViolatedCount field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultContentPolicy) SetViolatedCount(violatedCount *int) {
+	t.ViolatedCount = violatedCount
+	t.require(taskResultContentPolicyFieldViolatedCount)
+}
+
+func (t *TaskResultContentPolicy) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskResultContentPolicy
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TaskResultContentPolicy(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TaskResultContentPolicy) MarshalJSON() ([]byte, error) {
+	type embed TaskResultContentPolicy
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TaskResultContentPolicy) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// The evaluation status of the episode. pending means the evaluation has
+// not finished, complete means every candidate was evaluated, and failed
+// means ingestion retries were exhausted.
+type TaskResultContentPolicyStatus string
+
+const (
+	TaskResultContentPolicyStatusPending  TaskResultContentPolicyStatus = "pending"
+	TaskResultContentPolicyStatusComplete TaskResultContentPolicyStatus = "complete"
+	TaskResultContentPolicyStatusFailed   TaskResultContentPolicyStatus = "failed"
+)
+
+func NewTaskResultContentPolicyStatusFromString(s string) (TaskResultContentPolicyStatus, error) {
+	switch s {
+	case "pending":
+		return TaskResultContentPolicyStatusPending, nil
+	case "complete":
+		return TaskResultContentPolicyStatusComplete, nil
+	case "failed":
+		return TaskResultContentPolicyStatusFailed, nil
+	}
+	var t TaskResultContentPolicyStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TaskResultContentPolicyStatus) Ptr() *TaskResultContentPolicyStatus {
+	return &t
+}
+
+var (
+	taskResultEdgeFieldEdgeUUID       = big.NewInt(1 << 0)
+	taskResultEdgeFieldSourceNodeUUID = big.NewInt(1 << 1)
+	taskResultEdgeFieldTargetNodeUUID = big.NewInt(1 << 2)
+)
+
+type TaskResultEdge struct {
+	// The UUID of the edge.
+	EdgeUUID *string `json:"edge_uuid,omitempty" url:"edge_uuid,omitempty"`
+	// The UUID of the source node of the edge.
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// The UUID of the target node of the edge.
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TaskResultEdge) GetEdgeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.EdgeUUID
+}
+
+func (t *TaskResultEdge) GetSourceNodeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.SourceNodeUUID
+}
+
+func (t *TaskResultEdge) GetTargetNodeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.TargetNodeUUID
+}
+
+func (t *TaskResultEdge) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TaskResultEdge) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetEdgeUUID sets the EdgeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultEdge) SetEdgeUUID(edgeUUID *string) {
+	t.EdgeUUID = edgeUUID
+	t.require(taskResultEdgeFieldEdgeUUID)
+}
+
+// SetSourceNodeUUID sets the SourceNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultEdge) SetSourceNodeUUID(sourceNodeUUID *string) {
+	t.SourceNodeUUID = sourceNodeUUID
+	t.require(taskResultEdgeFieldSourceNodeUUID)
+}
+
+// SetTargetNodeUUID sets the TargetNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultEdge) SetTargetNodeUUID(targetNodeUUID *string) {
+	t.TargetNodeUUID = targetNodeUUID
+	t.require(taskResultEdgeFieldTargetNodeUUID)
+}
+
+func (t *TaskResultEdge) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskResultEdge
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TaskResultEdge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TaskResultEdge) MarshalJSON() ([]byte, error) {
+	type embed TaskResultEdge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TaskResultEdge) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	taskResultEpisodeFieldContentPolicy = big.NewInt(1 << 0)
+	taskResultEpisodeFieldEpisodeUUID   = big.NewInt(1 << 1)
+)
+
+type TaskResultEpisode struct {
+	// The content policy state of the episode.
+	ContentPolicy *TaskResultContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
+	// The UUID of the episode of the message.
+	EpisodeUUID *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TaskResultEpisode) GetContentPolicy() *TaskResultContentPolicy {
+	if t == nil {
+		return nil
+	}
+	return t.ContentPolicy
+}
+
+func (t *TaskResultEpisode) GetEpisodeUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.EpisodeUUID
+}
+
+func (t *TaskResultEpisode) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TaskResultEpisode) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetContentPolicy sets the ContentPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultEpisode) SetContentPolicy(contentPolicy *TaskResultContentPolicy) {
+	t.ContentPolicy = contentPolicy
+	t.require(taskResultEpisodeFieldContentPolicy)
+}
+
+// SetEpisodeUUID sets the EpisodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskResultEpisode) SetEpisodeUUID(episodeUUID *string) {
+	t.EpisodeUUID = episodeUUID
+	t.require(taskResultEpisodeFieldEpisodeUUID)
+}
+
+func (t *TaskResultEpisode) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaskResultEpisode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TaskResultEpisode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TaskResultEpisode) MarshalJSON() ([]byte, error) {
+	type embed TaskResultEpisode
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TaskResultEpisode) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// The task's current state: pending, processing, succeeded, partial, or
+// failed.
+type TaskStatus string
+
+const (
+	TaskStatusPending    TaskStatus = "pending"
+	TaskStatusProcessing TaskStatus = "processing"
+	TaskStatusSucceeded  TaskStatus = "succeeded"
+	TaskStatusPartial    TaskStatus = "partial"
+	TaskStatusFailed     TaskStatus = "failed"
+)
+
+func NewTaskStatusFromString(s string) (TaskStatus, error) {
+	switch s {
+	case "pending":
+		return TaskStatusPending, nil
+	case "processing":
+		return TaskStatusProcessing, nil
+	case "succeeded":
+		return TaskStatusSucceeded, nil
+	case "partial":
+		return TaskStatusPartial, nil
+	case "failed":
+		return TaskStatusFailed, nil
+	}
+	var t TaskStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TaskStatus) Ptr() *TaskStatus {
+	return &t
+}
+
+var (
 	threadSummaryFieldCreatedAt                    = big.NewInt(1 << 0)
 	threadSummaryFieldLastSummarizedAt             = big.NewInt(1 << 1)
 	threadSummaryFieldLastSummarizedEpisodeValidAt = big.NewInt(1 << 2)
@@ -27349,6 +32670,301 @@ func (t *ThreadSummary) MarshalJSON() ([]byte, error) {
 }
 
 func (t *ThreadSummary) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	threadSummaryListFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
+	threadSummaryListFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
+	threadSummaryListFiltersFieldDateFilters           = big.NewInt(1 << 2)
+	threadSummaryListFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
+	threadSummaryListFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
+	threadSummaryListFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
+	threadSummaryListFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
+	threadSummaryListFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
+	threadSummaryListFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
+	threadSummaryListFiltersFieldNodeLabels            = big.NewInt(1 << 9)
+	threadSummaryListFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
+	threadSummaryListFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
+	threadSummaryListFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
+)
+
+type ThreadSummaryListFilters struct {
+	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
+	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
+	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Filter results by temporal values.
+	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
+	// Include results with any of these edge types. Node search does not support this filter.
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// Include results with any of these edge UUIDs. Node search does not support this filter.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// Include results derived from any of these episode UUIDs.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// Exclude results with any of these edge types. Node search does not support this filter.
+	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
+	// Exclude nodes that have any of these labels. On an edge list, the API
+	// excludes an edge when its source node or its target node has one of
+	// these labels. Edge search does not support this filter.
+	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
+	// Filter results by episode metadata.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+	// Include only nodes that have at least one of these labels. On an edge
+	// list, the source node and the target node of each edge must each have
+	// at least one of these labels. Edge search does not support this filter.
+	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
+	// Filter results by node or edge properties.
+	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
+	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
+	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
+	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
+	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *ThreadSummaryListFilters) GetConnectedNodeUUIDs() []string {
+	if t == nil {
+		return nil
+	}
+	return t.ConnectedNodeUUIDs
+}
+
+func (t *ThreadSummaryListFilters) GetContentPolicyViolated() *bool {
+	if t == nil {
+		return nil
+	}
+	return t.ContentPolicyViolated
+}
+
+func (t *ThreadSummaryListFilters) GetDateFilters() *DateFilters {
+	if t == nil {
+		return nil
+	}
+	return t.DateFilters
+}
+
+func (t *ThreadSummaryListFilters) GetEdgeTypes() []string {
+	if t == nil {
+		return nil
+	}
+	return t.EdgeTypes
+}
+
+func (t *ThreadSummaryListFilters) GetEdgeUUIDs() []string {
+	if t == nil {
+		return nil
+	}
+	return t.EdgeUUIDs
+}
+
+func (t *ThreadSummaryListFilters) GetEpisodeUUIDs() []string {
+	if t == nil {
+		return nil
+	}
+	return t.EpisodeUUIDs
+}
+
+func (t *ThreadSummaryListFilters) GetExcludeEdgeTypes() []string {
+	if t == nil {
+		return nil
+	}
+	return t.ExcludeEdgeTypes
+}
+
+func (t *ThreadSummaryListFilters) GetExcludeNodeLabels() []string {
+	if t == nil {
+		return nil
+	}
+	return t.ExcludeNodeLabels
+}
+
+func (t *ThreadSummaryListFilters) GetMetadataFilters() *MetadataFilterGroup {
+	if t == nil {
+		return nil
+	}
+	return t.MetadataFilters
+}
+
+func (t *ThreadSummaryListFilters) GetNodeLabels() []string {
+	if t == nil {
+		return nil
+	}
+	return t.NodeLabels
+}
+
+func (t *ThreadSummaryListFilters) GetPropertyFilters() []*PropertyFilter {
+	if t == nil {
+		return nil
+	}
+	return t.PropertyFilters
+}
+
+func (t *ThreadSummaryListFilters) GetSourceNodeUUIDs() []string {
+	if t == nil {
+		return nil
+	}
+	return t.SourceNodeUUIDs
+}
+
+func (t *ThreadSummaryListFilters) GetTargetNodeUUIDs() []string {
+	if t == nil {
+		return nil
+	}
+	return t.TargetNodeUUIDs
+}
+
+func (t *ThreadSummaryListFilters) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *ThreadSummaryListFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
+	t.ConnectedNodeUUIDs = connectedNodeUUIDs
+	t.require(threadSummaryListFiltersFieldConnectedNodeUUIDs)
+}
+
+// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
+	t.ContentPolicyViolated = contentPolicyViolated
+	t.require(threadSummaryListFiltersFieldContentPolicyViolated)
+}
+
+// SetDateFilters sets the DateFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetDateFilters(dateFilters *DateFilters) {
+	t.DateFilters = dateFilters
+	t.require(threadSummaryListFiltersFieldDateFilters)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetEdgeTypes(edgeTypes []string) {
+	t.EdgeTypes = edgeTypes
+	t.require(threadSummaryListFiltersFieldEdgeTypes)
+}
+
+// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
+	t.EdgeUUIDs = edgeUUIDs
+	t.require(threadSummaryListFiltersFieldEdgeUUIDs)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
+	t.EpisodeUUIDs = episodeUUIDs
+	t.require(threadSummaryListFiltersFieldEpisodeUUIDs)
+}
+
+// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
+	t.ExcludeEdgeTypes = excludeEdgeTypes
+	t.require(threadSummaryListFiltersFieldExcludeEdgeTypes)
+}
+
+// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
+	t.ExcludeNodeLabels = excludeNodeLabels
+	t.require(threadSummaryListFiltersFieldExcludeNodeLabels)
+}
+
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	t.MetadataFilters = metadataFilters
+	t.require(threadSummaryListFiltersFieldMetadataFilters)
+}
+
+// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetNodeLabels(nodeLabels []string) {
+	t.NodeLabels = nodeLabels
+	t.require(threadSummaryListFiltersFieldNodeLabels)
+}
+
+// SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
+	t.PropertyFilters = propertyFilters
+	t.require(threadSummaryListFiltersFieldPropertyFilters)
+}
+
+// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
+	t.SourceNodeUUIDs = sourceNodeUUIDs
+	t.require(threadSummaryListFiltersFieldSourceNodeUUIDs)
+}
+
+// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
+	t.TargetNodeUUIDs = targetNodeUUIDs
+	t.require(threadSummaryListFiltersFieldTargetNodeUUIDs)
+}
+
+func (t *ThreadSummaryListFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadSummaryListFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = ThreadSummaryListFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *ThreadSummaryListFilters) MarshalJSON() ([]byte, error) {
+	type embed ThreadSummaryListFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *ThreadSummaryListFilters) String() string {
 	if t == nil {
 		return "<nil>"
 	}
@@ -27841,7 +33457,7 @@ type TraceImport struct {
 	// NextRunAt is the next scheduled run time.
 	NextRunAt *string `json:"next_run_at,omitempty" url:"next_run_at,omitempty"`
 	// OnSourceChange defines how changed source traces are handled.
-	OnSourceChange *string `json:"on_source_change,omitempty" url:"on_source_change,omitempty"`
+	OnSourceChange *TraceImportOnSourceChange `json:"on_source_change,omitempty" url:"on_source_change,omitempty"`
 	// PauseReason is the reason for a paused import, when present.
 	PauseReason *TraceImportPauseReason `json:"pause_reason,omitempty" url:"pause_reason,omitempty"`
 	// Provider is the Braintrust or LangSmith provider.
@@ -27854,7 +33470,7 @@ type TraceImport struct {
 	RequireReview *bool `json:"require_review,omitempty" url:"require_review,omitempty"`
 	// Revision is the import update revision.
 	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
-	// Schedule contains recurring import settings, when enabled. Example: {"interval_hours":4,"start_from":"24h","settle_minutes":5,"max_open_hours":24}.
+	// Schedule contains recurring import settings, when enabled. Example: {"interval_hours":4,"start_from":"now","settle_minutes":5,"max_open_hours":24}.
 	Schedule *TraceImportSchedule `json:"schedule,omitempty" url:"schedule,omitempty"`
 	// Selection defines the source traces to import. Example: {"trace_ids":["trace_123"]}.
 	Selection *TraceImportSelection `json:"selection,omitempty" url:"selection,omitempty"`
@@ -27937,7 +33553,7 @@ func (t *TraceImport) GetNextRunAt() *string {
 	return t.NextRunAt
 }
 
-func (t *TraceImport) GetOnSourceChange() *string {
+func (t *TraceImport) GetOnSourceChange() *TraceImportOnSourceChange {
 	if t == nil {
 		return nil
 	}
@@ -28109,7 +33725,7 @@ func (t *TraceImport) SetNextRunAt(nextRunAt *string) {
 
 // SetOnSourceChange sets the OnSourceChange field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TraceImport) SetOnSourceChange(onSourceChange *string) {
+func (t *TraceImport) SetOnSourceChange(onSourceChange *TraceImportOnSourceChange) {
 	t.OnSourceChange = onSourceChange
 	t.require(traceImportFieldOnSourceChange)
 }
@@ -28238,6 +33854,149 @@ func (t *TraceImport) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+var (
+	traceImportCreateResultFieldImport = big.NewInt(1 << 0)
+	traceImportCreateResultFieldRun    = big.NewInt(1 << 1)
+	traceImportCreateResultFieldTask   = big.NewInt(1 << 2)
+)
+
+type TraceImportCreateResult struct {
+	// Import is the created import resource. Example: {"uuid":"332c28e1-e6a7-4bca-97b2-ef1ec82c65fa"}.
+	Import *TraceImport `json:"import,omitempty" url:"import,omitempty"`
+	// Run is the pending one-time run. The field is absent for a scheduled import. Example: {"uuid":"ea7e2724-9bfd-4ca1-aa5c-40a1dd72a688","status":"pending"}.
+	Run *TraceImportRun `json:"run,omitempty" url:"run,omitempty"`
+	// Task is the pending Task that will process the run. The field is absent for a scheduled import. Example: {"uuid":"3124c01a-8f49-4bfd-9758-6ce491a377c1","status":"pending"}.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *TraceImportCreateResult) GetImport() *TraceImport {
+	if t == nil {
+		return nil
+	}
+	return t.Import
+}
+
+func (t *TraceImportCreateResult) GetRun() *TraceImportRun {
+	if t == nil {
+		return nil
+	}
+	return t.Run
+}
+
+func (t *TraceImportCreateResult) GetTask() *Task {
+	if t == nil {
+		return nil
+	}
+	return t.Task
+}
+
+func (t *TraceImportCreateResult) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *TraceImportCreateResult) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetImport sets the Import field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportCreateResult) SetImport(import_ *TraceImport) {
+	t.Import = import_
+	t.require(traceImportCreateResultFieldImport)
+}
+
+// SetRun sets the Run field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportCreateResult) SetRun(run *TraceImportRun) {
+	t.Run = run
+	t.require(traceImportCreateResultFieldRun)
+}
+
+// SetTask sets the Task field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TraceImportCreateResult) SetTask(task *Task) {
+	t.Task = task
+	t.require(traceImportCreateResultFieldTask)
+}
+
+func (t *TraceImportCreateResult) UnmarshalJSON(data []byte) error {
+	type unmarshaler TraceImportCreateResult
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TraceImportCreateResult(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TraceImportCreateResult) MarshalJSON() ([]byte, error) {
+	type embed TraceImportCreateResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *TraceImportCreateResult) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type TraceImportOnSourceChange string
+
+const (
+	TraceImportOnSourceChangeIgnore  TraceImportOnSourceChange = "ignore"
+	TraceImportOnSourceChangeReplace TraceImportOnSourceChange = "replace"
+)
+
+func NewTraceImportOnSourceChangeFromString(s string) (TraceImportOnSourceChange, error) {
+	switch s {
+	case "ignore":
+		return TraceImportOnSourceChangeIgnore, nil
+	case "replace":
+		return TraceImportOnSourceChangeReplace, nil
+	}
+	var t TraceImportOnSourceChange
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TraceImportOnSourceChange) Ptr() *TraceImportOnSourceChange {
+	return &t
 }
 
 var (
@@ -29339,13 +35098,15 @@ var (
 
 type TraceImportSchedule struct {
 	// IntervalHours is the scheduled run interval.
-	IntervalHours *int `json:"interval_hours,omitempty" url:"interval_hours,omitempty"`
-	// MaxOpenHours is the maximum wait for an open trace.
+	IntervalHours int `json:"interval_hours" url:"interval_hours"`
+	// MaxOpenHours is the maximum wait for an open trace. The value must be 1 to 168 hours. The default is 24 hours.
 	MaxOpenHours *int `json:"max_open_hours,omitempty" url:"max_open_hours,omitempty"`
-	// SettleMinutes is the wait time for trace updates.
+	// SettleMinutes is the wait time for trace updates. The value must be 0 to 1,440 minutes. The default is 60 minutes.
 	SettleMinutes *int `json:"settle_minutes,omitempty" url:"settle_minutes,omitempty"`
-	// StartFrom selects the initial history window.
-	StartFrom *string `json:"start_from,omitempty" url:"start_from,omitempty"`
+	// StartFrom is the earliest trace start time that scheduled runs import.
+	// The value is "now", which is the time when the import was created, or an
+	// RFC 3339 timestamp.
+	StartFrom string `json:"start_from" url:"start_from"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -29354,9 +35115,9 @@ type TraceImportSchedule struct {
 	rawJSON         json.RawMessage
 }
 
-func (t *TraceImportSchedule) GetIntervalHours() *int {
+func (t *TraceImportSchedule) GetIntervalHours() int {
 	if t == nil {
-		return nil
+		return 0
 	}
 	return t.IntervalHours
 }
@@ -29375,9 +35136,9 @@ func (t *TraceImportSchedule) GetSettleMinutes() *int {
 	return t.SettleMinutes
 }
 
-func (t *TraceImportSchedule) GetStartFrom() *string {
+func (t *TraceImportSchedule) GetStartFrom() string {
 	if t == nil {
-		return nil
+		return ""
 	}
 	return t.StartFrom
 }
@@ -29400,7 +35161,7 @@ func (t *TraceImportSchedule) require(field *big.Int) {
 
 // SetIntervalHours sets the IntervalHours field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TraceImportSchedule) SetIntervalHours(intervalHours *int) {
+func (t *TraceImportSchedule) SetIntervalHours(intervalHours int) {
 	t.IntervalHours = intervalHours
 	t.require(traceImportScheduleFieldIntervalHours)
 }
@@ -29421,7 +35182,7 @@ func (t *TraceImportSchedule) SetSettleMinutes(settleMinutes *int) {
 
 // SetStartFrom sets the StartFrom field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TraceImportSchedule) SetStartFrom(startFrom *string) {
+func (t *TraceImportSchedule) SetStartFrom(startFrom string) {
 	t.StartFrom = startFrom
 	t.require(traceImportScheduleFieldStartFrom)
 }
@@ -30521,7 +36282,12 @@ type User struct {
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// The user's IANA time zone, used to localize dates in generated context.
 	TimeZone *string `json:"time_zone,omitempty" url:"time_zone,omitempty"`
-	// The developer-assigned identifier of the user.
+	// An optional external identity identifier, such as an identity-provider
+	// subject claim. Zep uses it to match an identity-provider sign-in to this
+	// user. It is not an address; use uuid to address the user in v4. It is
+	// unique within the project, can contain at most 500 characters, and
+	// cannot be changed after creation. v4 sets it on create; v3 users keep
+	// their existing value.
 	UserID *string `json:"user_id,omitempty" url:"user_id,omitempty"`
 	// The unique identifier of the user.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`

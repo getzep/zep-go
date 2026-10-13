@@ -123,9 +123,7 @@ func TestGraphEdgeListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.EdgeListRequest{
-		Body: &zep.ArtifactListRequest{},
-	}
+	request := &graph.EdgeListRequest{}
 	_, invocationErr := client.Graph.Edge.List(
 		context.TODO(),
 		"graph_uuid",

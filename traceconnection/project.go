@@ -7,13 +7,13 @@ import (
 )
 
 var (
-	projectListRequestFieldLimit  = big.NewInt(1 << 0)
-	projectListRequestFieldCursor = big.NewInt(1 << 1)
+	projectListRequestFieldPageSize = big.NewInt(1 << 0)
+	projectListRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type ProjectListRequest struct {
-	// Page size from 1 to 100; default 50
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Provider page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -30,11 +30,11 @@ func (p *ProjectListRequest) require(field *big.Int) {
 	p.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (p *ProjectListRequest) SetLimit(limit *int) {
-	p.Limit = limit
-	p.require(projectListRequestFieldLimit)
+func (p *ProjectListRequest) SetPageSize(pageSize *int) {
+	p.PageSize = pageSize
+	p.require(projectListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

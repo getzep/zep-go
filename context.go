@@ -10,14 +10,14 @@ import (
 )
 
 var (
-	contextTemplateListRequestFieldLimit  = big.NewInt(1 << 0)
-	contextTemplateListRequestFieldCursor = big.NewInt(1 << 1)
-	contextTemplateListRequestFieldName   = big.NewInt(1 << 2)
+	contextTemplateListRequestFieldPageSize = big.NewInt(1 << 0)
+	contextTemplateListRequestFieldCursor   = big.NewInt(1 << 1)
+	contextTemplateListRequestFieldName     = big.NewInt(1 << 2)
 )
 
 type ContextTemplateListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Filters results to the context template with this exact name.
@@ -36,11 +36,11 @@ func (c *ContextTemplateListRequest) require(field *big.Int) {
 	c.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (c *ContextTemplateListRequest) SetLimit(limit *int) {
-	c.Limit = limit
-	c.require(contextTemplateListRequestFieldLimit)
+func (c *ContextTemplateListRequest) SetPageSize(pageSize *int) {
+	c.PageSize = pageSize
+	c.require(contextTemplateListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

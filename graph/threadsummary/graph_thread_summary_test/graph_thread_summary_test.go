@@ -10,7 +10,6 @@ import (
 	os "os"
 	testing "testing"
 
-	zep "github.com/getzep/zep-go/v4"
 	client "github.com/getzep/zep-go/v4/client"
 	graph "github.com/getzep/zep-go/v4/graph"
 	option "github.com/getzep/zep-go/v4/option"
@@ -89,9 +88,7 @@ func TestGraphThreadSummaryListWithWireMock(
 		option.WithBaseURL(WireMockBaseURL),
 		option.WithAPIKey("test-value"),
 	)
-	request := &graph.ThreadSummaryListRequest{
-		Body: &zep.ArtifactListRequest{},
-	}
+	request := &graph.ThreadSummaryListRequest{}
 	_, invocationErr := client.Graph.ThreadSummary.List(
 		context.TODO(),
 		"graph_uuid",

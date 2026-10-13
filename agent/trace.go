@@ -495,7 +495,7 @@ func (c *CreateAgentTraceRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	agentTraceListRequestFieldLimit           = big.NewInt(1 << 0)
+	agentTraceListRequestFieldPageSize        = big.NewInt(1 << 0)
 	agentTraceListRequestFieldCursor          = big.NewInt(1 << 1)
 	agentTraceListRequestFieldOrderBy         = big.NewInt(1 << 2)
 	agentTraceListRequestFieldOrder           = big.NewInt(1 << 3)
@@ -510,8 +510,8 @@ var (
 )
 
 type AgentTraceListRequest struct {
-	// Page size (maximum 100)
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
@@ -548,11 +548,11 @@ func (a *AgentTraceListRequest) require(field *big.Int) {
 	a.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentTraceListRequest) SetLimit(limit *int) {
-	a.Limit = limit
-	a.require(agentTraceListRequestFieldLimit)
+func (a *AgentTraceListRequest) SetPageSize(pageSize *int) {
+	a.PageSize = pageSize
+	a.require(agentTraceListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -654,13 +654,13 @@ func (a *AgentTraceListRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	traceListEventsRequestFieldLimit  = big.NewInt(1 << 0)
-	traceListEventsRequestFieldCursor = big.NewInt(1 << 1)
+	traceListEventsRequestFieldPageSize = big.NewInt(1 << 0)
+	traceListEventsRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type TraceListEventsRequest struct {
-	// Page size (maximum 100)
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -677,11 +677,11 @@ func (t *TraceListEventsRequest) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TraceListEventsRequest) SetLimit(limit *int) {
-	t.Limit = limit
-	t.require(traceListEventsRequestFieldLimit)
+func (t *TraceListEventsRequest) SetPageSize(pageSize *int) {
+	t.PageSize = pageSize
+	t.require(traceListEventsRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -692,13 +692,13 @@ func (t *TraceListEventsRequest) SetCursor(cursor *string) {
 }
 
 var (
-	traceListSummaryVersionsRequestFieldLimit  = big.NewInt(1 << 0)
-	traceListSummaryVersionsRequestFieldCursor = big.NewInt(1 << 1)
+	traceListSummaryVersionsRequestFieldPageSize = big.NewInt(1 << 0)
+	traceListSummaryVersionsRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type TraceListSummaryVersionsRequest struct {
-	// Page size (maximum 100)
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -715,11 +715,11 @@ func (t *TraceListSummaryVersionsRequest) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *TraceListSummaryVersionsRequest) SetLimit(limit *int) {
-	t.Limit = limit
-	t.require(traceListSummaryVersionsRequestFieldLimit)
+func (t *TraceListSummaryVersionsRequest) SetPageSize(pageSize *int) {
+	t.PageSize = pageSize
+	t.require(traceListSummaryVersionsRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

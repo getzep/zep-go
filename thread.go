@@ -169,7 +169,7 @@ func (t *ThreadGetContextRequest) SetTemplateUUID(templateUUID *string) {
 }
 
 var (
-	threadListRequestFieldLimit    = big.NewInt(1 << 0)
+	threadListRequestFieldPageSize = big.NewInt(1 << 0)
 	threadListRequestFieldCursor   = big.NewInt(1 << 1)
 	threadListRequestFieldOrderBy  = big.NewInt(1 << 2)
 	threadListRequestFieldOrder    = big.NewInt(1 << 3)
@@ -177,8 +177,8 @@ var (
 )
 
 type ThreadListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
@@ -201,11 +201,11 @@ func (t *ThreadListRequest) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadListRequest) SetLimit(limit *int) {
-	t.Limit = limit
-	t.require(threadListRequestFieldLimit)
+func (t *ThreadListRequest) SetPageSize(pageSize *int) {
+	t.PageSize = pageSize
+	t.require(threadListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -237,13 +237,13 @@ func (t *ThreadListRequest) SetUserUUID(userUUID *string) {
 }
 
 var (
-	threadListEpisodesRequestFieldLimit  = big.NewInt(1 << 0)
-	threadListEpisodesRequestFieldCursor = big.NewInt(1 << 1)
+	threadListEpisodesRequestFieldPageSize = big.NewInt(1 << 0)
+	threadListEpisodesRequestFieldCursor   = big.NewInt(1 << 1)
 )
 
 type ThreadListEpisodesRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 
@@ -260,11 +260,11 @@ func (t *ThreadListEpisodesRequest) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadListEpisodesRequest) SetLimit(limit *int) {
-	t.Limit = limit
-	t.require(threadListEpisodesRequestFieldLimit)
+func (t *ThreadListEpisodesRequest) SetPageSize(pageSize *int) {
+	t.PageSize = pageSize
+	t.require(threadListEpisodesRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -275,15 +275,15 @@ func (t *ThreadListEpisodesRequest) SetCursor(cursor *string) {
 }
 
 var (
-	threadListMessagesRequestFieldLimit   = big.NewInt(1 << 0)
-	threadListMessagesRequestFieldCursor  = big.NewInt(1 << 1)
-	threadListMessagesRequestFieldOrderBy = big.NewInt(1 << 2)
-	threadListMessagesRequestFieldOrder   = big.NewInt(1 << 3)
+	threadListMessagesRequestFieldPageSize = big.NewInt(1 << 0)
+	threadListMessagesRequestFieldCursor   = big.NewInt(1 << 1)
+	threadListMessagesRequestFieldOrderBy  = big.NewInt(1 << 2)
+	threadListMessagesRequestFieldOrder    = big.NewInt(1 << 3)
 )
 
 type ThreadListMessagesRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Sort field
@@ -304,11 +304,11 @@ func (t *ThreadListMessagesRequest) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadListMessagesRequest) SetLimit(limit *int) {
-	t.Limit = limit
-	t.require(threadListMessagesRequestFieldLimit)
+func (t *ThreadListMessagesRequest) SetPageSize(pageSize *int) {
+	t.PageSize = pageSize
+	t.require(threadListMessagesRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

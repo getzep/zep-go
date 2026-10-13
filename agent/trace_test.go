@@ -1250,11 +1250,11 @@ func TestSettersMarkExplicitCreateAgentTraceRequest(t *testing.T) {
 }
 
 func TestSettersAgentTraceListRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &AgentTraceListRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -1349,14 +1349,14 @@ func TestSettersAgentTraceListRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitAgentTraceListRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AgentTraceListRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -1724,11 +1724,11 @@ func TestSettersMarkExplicitAgentTraceListRequest(t *testing.T) {
 }
 
 func TestSettersTraceListEventsRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &TraceListEventsRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -1743,14 +1743,14 @@ func TestSettersTraceListEventsRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitTraceListEventsRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &TraceListEventsRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -1808,11 +1808,11 @@ func TestSettersMarkExplicitTraceListEventsRequest(t *testing.T) {
 }
 
 func TestSettersTraceListSummaryVersionsRequest(t *testing.T) {
-	t.Run("SetLimit", func(t *testing.T) {
+	t.Run("SetPageSize", func(t *testing.T) {
 		obj := &TraceListSummaryVersionsRequest{}
-		var fernTestValueLimit *int
-		obj.SetLimit(fernTestValueLimit)
-		assert.Equal(t, fernTestValueLimit, obj.Limit)
+		var fernTestValuePageSize *int
+		obj.SetPageSize(fernTestValuePageSize)
+		assert.Equal(t, fernTestValuePageSize, obj.PageSize)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -1827,14 +1827,14 @@ func TestSettersTraceListSummaryVersionsRequest(t *testing.T) {
 }
 
 func TestSettersMarkExplicitTraceListSummaryVersionsRequest(t *testing.T) {
-	t.Run("SetLimit_MarksExplicit", func(t *testing.T) {
+	t.Run("SetPageSize_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &TraceListSummaryVersionsRequest{}
-		var fernTestValueLimit *int
+		var fernTestValuePageSize *int
 
 		// Act
-		obj.SetLimit(fernTestValueLimit)
+		obj.SetPageSize(fernTestValuePageSize)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)

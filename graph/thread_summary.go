@@ -4,21 +4,32 @@ package graph
 
 import (
 	json "encoding/json"
+	fmt "fmt"
 	v4 "github.com/getzep/zep-go/v4"
+	internal "github.com/getzep/zep-go/v4/internal"
 	big "math/big"
 )
 
 var (
-	threadSummaryListRequestFieldLimit  = big.NewInt(1 << 0)
-	threadSummaryListRequestFieldCursor = big.NewInt(1 << 1)
+	threadSummaryListRequestFieldPageSize = big.NewInt(1 << 0)
+	threadSummaryListRequestFieldCursor   = big.NewInt(1 << 1)
+	threadSummaryListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	threadSummaryListRequestFieldOrder    = big.NewInt(1 << 3)
+	threadSummaryListRequestFieldFilters  = big.NewInt(1 << 4)
 )
 
 type ThreadSummaryListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
-	Cursor *string                 `json:"-" url:"cursor,omitempty"`
-	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort key: uuid (default) or created_at
+	OrderBy *ThreadSummaryListRequestOrderBy `json:"-" url:"order_by,omitempty"`
+	// Sort direction: asc or desc (default desc)
+	Order *ThreadSummaryListRequestOrder `json:"-" url:"order,omitempty"`
+	// Filters that limit the items in the list. The operation description
+	// names the filter fields that the operation does not support.
+	Filters *v4.ThreadSummaryListFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -33,11 +44,11 @@ func (t *ThreadSummaryListRequest) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListRequest) SetLimit(limit *int) {
-	t.Limit = limit
-	t.require(threadSummaryListRequestFieldLimit)
+func (t *ThreadSummaryListRequest) SetPageSize(pageSize *int) {
+	t.PageSize = pageSize
+	t.require(threadSummaryListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -47,15 +58,88 @@ func (t *ThreadSummaryListRequest) SetCursor(cursor *string) {
 	t.require(threadSummaryListRequestFieldCursor)
 }
 
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListRequest) SetOrderBy(orderBy *ThreadSummaryListRequestOrderBy) {
+	t.OrderBy = orderBy
+	t.require(threadSummaryListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListRequest) SetOrder(order *ThreadSummaryListRequestOrder) {
+	t.Order = order
+	t.require(threadSummaryListRequestFieldOrder)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummaryListRequest) SetFilters(filters *v4.ThreadSummaryListFilters) {
+	t.Filters = filters
+	t.require(threadSummaryListRequestFieldFilters)
+}
+
 func (t *ThreadSummaryListRequest) UnmarshalJSON(data []byte) error {
-	body := new(v4.ArtifactListRequest)
+	type unmarshaler ThreadSummaryListRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	t.Body = body
+	*t = ThreadSummaryListRequest(body)
 	return nil
 }
 
 func (t *ThreadSummaryListRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.Body)
+	type embed ThreadSummaryListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+type ThreadSummaryListRequestOrder string
+
+const (
+	ThreadSummaryListRequestOrderAsc  ThreadSummaryListRequestOrder = "asc"
+	ThreadSummaryListRequestOrderDesc ThreadSummaryListRequestOrder = "desc"
+)
+
+func NewThreadSummaryListRequestOrderFromString(s string) (ThreadSummaryListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return ThreadSummaryListRequestOrderAsc, nil
+	case "desc":
+		return ThreadSummaryListRequestOrderDesc, nil
+	}
+	var t ThreadSummaryListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t ThreadSummaryListRequestOrder) Ptr() *ThreadSummaryListRequestOrder {
+	return &t
+}
+
+type ThreadSummaryListRequestOrderBy string
+
+const (
+	ThreadSummaryListRequestOrderByUUID      ThreadSummaryListRequestOrderBy = "uuid"
+	ThreadSummaryListRequestOrderByCreatedAt ThreadSummaryListRequestOrderBy = "created_at"
+)
+
+func NewThreadSummaryListRequestOrderByFromString(s string) (ThreadSummaryListRequestOrderBy, error) {
+	switch s {
+	case "uuid":
+		return ThreadSummaryListRequestOrderByUUID, nil
+	case "created_at":
+		return ThreadSummaryListRequestOrderByCreatedAt, nil
+	}
+	var t ThreadSummaryListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t ThreadSummaryListRequestOrderBy) Ptr() *ThreadSummaryListRequestOrderBy {
+	return &t
 }

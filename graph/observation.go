@@ -4,21 +4,32 @@ package graph
 
 import (
 	json "encoding/json"
+	fmt "fmt"
 	v4 "github.com/getzep/zep-go/v4"
+	internal "github.com/getzep/zep-go/v4/internal"
 	big "math/big"
 )
 
 var (
-	observationListRequestFieldLimit  = big.NewInt(1 << 0)
-	observationListRequestFieldCursor = big.NewInt(1 << 1)
+	observationListRequestFieldPageSize = big.NewInt(1 << 0)
+	observationListRequestFieldCursor   = big.NewInt(1 << 1)
+	observationListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	observationListRequestFieldOrder    = big.NewInt(1 << 3)
+	observationListRequestFieldFilters  = big.NewInt(1 << 4)
 )
 
 type ObservationListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
-	Cursor *string                 `json:"-" url:"cursor,omitempty"`
-	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort key: uuid (default) or created_at
+	OrderBy *ObservationListRequestOrderBy `json:"-" url:"order_by,omitempty"`
+	// Sort direction: asc or desc (default desc)
+	Order *ObservationListRequestOrder `json:"-" url:"order,omitempty"`
+	// Filters that limit the items in the list. The operation description
+	// names the filter fields that the operation does not support.
+	Filters *v4.ObservationListFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -33,11 +44,11 @@ func (o *ObservationListRequest) require(field *big.Int) {
 	o.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListRequest) SetLimit(limit *int) {
-	o.Limit = limit
-	o.require(observationListRequestFieldLimit)
+func (o *ObservationListRequest) SetPageSize(pageSize *int) {
+	o.PageSize = pageSize
+	o.require(observationListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -47,15 +58,88 @@ func (o *ObservationListRequest) SetCursor(cursor *string) {
 	o.require(observationListRequestFieldCursor)
 }
 
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListRequest) SetOrderBy(orderBy *ObservationListRequestOrderBy) {
+	o.OrderBy = orderBy
+	o.require(observationListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListRequest) SetOrder(order *ObservationListRequestOrder) {
+	o.Order = order
+	o.require(observationListRequestFieldOrder)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *ObservationListRequest) SetFilters(filters *v4.ObservationListFilters) {
+	o.Filters = filters
+	o.require(observationListRequestFieldFilters)
+}
+
 func (o *ObservationListRequest) UnmarshalJSON(data []byte) error {
-	body := new(v4.ArtifactListRequest)
+	type unmarshaler ObservationListRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	o.Body = body
+	*o = ObservationListRequest(body)
 	return nil
 }
 
 func (o *ObservationListRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(o.Body)
+	type embed ObservationListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*o),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, o.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+type ObservationListRequestOrder string
+
+const (
+	ObservationListRequestOrderAsc  ObservationListRequestOrder = "asc"
+	ObservationListRequestOrderDesc ObservationListRequestOrder = "desc"
+)
+
+func NewObservationListRequestOrderFromString(s string) (ObservationListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return ObservationListRequestOrderAsc, nil
+	case "desc":
+		return ObservationListRequestOrderDesc, nil
+	}
+	var t ObservationListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (o ObservationListRequestOrder) Ptr() *ObservationListRequestOrder {
+	return &o
+}
+
+type ObservationListRequestOrderBy string
+
+const (
+	ObservationListRequestOrderByUUID      ObservationListRequestOrderBy = "uuid"
+	ObservationListRequestOrderByCreatedAt ObservationListRequestOrderBy = "created_at"
+)
+
+func NewObservationListRequestOrderByFromString(s string) (ObservationListRequestOrderBy, error) {
+	switch s {
+	case "uuid":
+		return ObservationListRequestOrderByUUID, nil
+	case "created_at":
+		return ObservationListRequestOrderByCreatedAt, nil
+	}
+	var t ObservationListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (o ObservationListRequestOrderBy) Ptr() *ObservationListRequestOrderBy {
+	return &o
 }

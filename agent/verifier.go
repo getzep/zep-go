@@ -69,7 +69,7 @@ func (i *InvalidateAgentVerifierEvidenceRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	agentVerifierListRequestFieldLimit         = big.NewInt(1 << 0)
+	agentVerifierListRequestFieldPageSize      = big.NewInt(1 << 0)
 	agentVerifierListRequestFieldCursor        = big.NewInt(1 << 1)
 	agentVerifierListRequestFieldClass         = big.NewInt(1 << 2)
 	agentVerifierListRequestFieldPrincipalID   = big.NewInt(1 << 3)
@@ -79,8 +79,8 @@ var (
 )
 
 type AgentVerifierListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Filters to an exact immutable verifier class.
@@ -107,11 +107,11 @@ func (a *AgentVerifierListRequest) require(field *big.Int) {
 	a.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentVerifierListRequest) SetLimit(limit *int) {
-	a.Limit = limit
-	a.require(agentVerifierListRequestFieldLimit)
+func (a *AgentVerifierListRequest) SetPageSize(pageSize *int) {
+	a.PageSize = pageSize
+	a.require(agentVerifierListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;

@@ -39,7 +39,7 @@ func (r *RawClient) Create(
 	agentUUID string,
 	request *agent.CreateTraceImportRequest,
 	opts ...option.IdempotentRequestOption,
-) (*core.Response[*zep.TraceImport], error) {
+) (*core.Response[*zep.TraceImportCreateResult], error) {
 	options := core.NewIdempotentRequestOptions(opts...)
 	baseURL := internal.ResolveBaseURL(
 		options.BaseURL,
@@ -57,7 +57,7 @@ func (r *RawClient) Create(
 	headers.Add("Content-Type", "application/json")
 	core.SetIdempotencyKeyHeader(headers)
 
-	var response *zep.TraceImport
+	var response *zep.TraceImportCreateResult
 	raw, err := r.caller.Call(
 		ctx,
 		&internal.CallParams{
@@ -77,7 +77,7 @@ func (r *RawClient) Create(
 	if err != nil {
 		return nil, err
 	}
-	return &core.Response[*zep.TraceImport]{
+	return &core.Response[*zep.TraceImportCreateResult]{
 		StatusCode: raw.StatusCode,
 		Header:     raw.Header,
 		Body:       response,

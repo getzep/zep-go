@@ -51,7 +51,7 @@ func NewClient(options *core.RequestOptions) *Client {
 //	)
 func (c *Client) ListForDocument(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Document ID
 	documentID string,
@@ -129,7 +129,7 @@ func (c *Client) ListForDocument(
 //	)
 func (c *Client) Add(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.AddEpisodeRequest,
 	opts ...option.IdempotentRequestOption,
@@ -155,9 +155,7 @@ func (c *Client) Add(
 //
 // Example:
 //
-//	request := &graph.EpisodeListRequest{
-//	    Body: &zep.ArtifactListRequest{},
-//	}
+//	request := &graph.EpisodeListRequest{}
 //	client.Graph.Episode.List(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -165,7 +163,7 @@ func (c *Client) Add(
 //	)
 func (c *Client) List(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.EpisodeListRequest,
 	opts ...option.RequestOption,
@@ -241,7 +239,7 @@ func (c *Client) List(
 //	)
 func (c *Client) Get(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Episode UUID
 	episodeUUID string,
@@ -268,7 +266,7 @@ func (c *Client) Get(
 //	)
 func (c *Client) Delete(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Episode UUID
 	episodeUUID string,
@@ -297,7 +295,7 @@ func (c *Client) Delete(
 //	)
 func (c *Client) Update(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Episode UUID
 	episodeUUID string,
@@ -328,7 +326,7 @@ func (c *Client) Update(
 //	)
 func (c *Client) GetDebugLogs(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Episode UUID
 	episodeUUID string,
@@ -359,7 +357,7 @@ func (c *Client) GetDebugLogs(
 //	)
 func (c *Client) ListIngestionTraces(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Episode UUID
 	episodeUUID string,

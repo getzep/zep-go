@@ -4,21 +4,32 @@ package graph
 
 import (
 	json "encoding/json"
+	fmt "fmt"
 	v4 "github.com/getzep/zep-go/v4"
+	internal "github.com/getzep/zep-go/v4/internal"
 	big "math/big"
 )
 
 var (
-	documentSummaryListRequestFieldLimit  = big.NewInt(1 << 0)
-	documentSummaryListRequestFieldCursor = big.NewInt(1 << 1)
+	documentSummaryListRequestFieldPageSize = big.NewInt(1 << 0)
+	documentSummaryListRequestFieldCursor   = big.NewInt(1 << 1)
+	documentSummaryListRequestFieldOrderBy  = big.NewInt(1 << 2)
+	documentSummaryListRequestFieldOrder    = big.NewInt(1 << 3)
+	documentSummaryListRequestFieldFilters  = big.NewInt(1 << 4)
 )
 
 type DocumentSummaryListRequest struct {
-	// Page size
-	Limit *int `json:"-" url:"limit,omitempty"`
+	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
-	Cursor *string                 `json:"-" url:"cursor,omitempty"`
-	Body   *v4.ArtifactListRequest `json:"-" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Sort key: uuid (default) or created_at
+	OrderBy *DocumentSummaryListRequestOrderBy `json:"-" url:"order_by,omitempty"`
+	// Sort direction: asc or desc (default desc)
+	Order *DocumentSummaryListRequestOrder `json:"-" url:"order,omitempty"`
+	// Filters that limit the items in the list. The operation description
+	// names the filter fields that the operation does not support.
+	Filters *v4.DocumentSummaryListFilters `json:"filters,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -33,11 +44,11 @@ func (d *DocumentSummaryListRequest) require(field *big.Int) {
 	d.explicitFields = next
 }
 
-// SetLimit sets the Limit field and marks it as non-optional;
+// SetPageSize sets the PageSize field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListRequest) SetLimit(limit *int) {
-	d.Limit = limit
-	d.require(documentSummaryListRequestFieldLimit)
+func (d *DocumentSummaryListRequest) SetPageSize(pageSize *int) {
+	d.PageSize = pageSize
+	d.require(documentSummaryListRequestFieldPageSize)
 }
 
 // SetCursor sets the Cursor field and marks it as non-optional;
@@ -47,15 +58,88 @@ func (d *DocumentSummaryListRequest) SetCursor(cursor *string) {
 	d.require(documentSummaryListRequestFieldCursor)
 }
 
+// SetOrderBy sets the OrderBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListRequest) SetOrderBy(orderBy *DocumentSummaryListRequestOrderBy) {
+	d.OrderBy = orderBy
+	d.require(documentSummaryListRequestFieldOrderBy)
+}
+
+// SetOrder sets the Order field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListRequest) SetOrder(order *DocumentSummaryListRequestOrder) {
+	d.Order = order
+	d.require(documentSummaryListRequestFieldOrder)
+}
+
+// SetFilters sets the Filters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (d *DocumentSummaryListRequest) SetFilters(filters *v4.DocumentSummaryListFilters) {
+	d.Filters = filters
+	d.require(documentSummaryListRequestFieldFilters)
+}
+
 func (d *DocumentSummaryListRequest) UnmarshalJSON(data []byte) error {
-	body := new(v4.ArtifactListRequest)
+	type unmarshaler DocumentSummaryListRequest
+	var body unmarshaler
 	if err := json.Unmarshal(data, &body); err != nil {
 		return err
 	}
-	d.Body = body
+	*d = DocumentSummaryListRequest(body)
 	return nil
 }
 
 func (d *DocumentSummaryListRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(d.Body)
+	type embed DocumentSummaryListRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, d.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+type DocumentSummaryListRequestOrder string
+
+const (
+	DocumentSummaryListRequestOrderAsc  DocumentSummaryListRequestOrder = "asc"
+	DocumentSummaryListRequestOrderDesc DocumentSummaryListRequestOrder = "desc"
+)
+
+func NewDocumentSummaryListRequestOrderFromString(s string) (DocumentSummaryListRequestOrder, error) {
+	switch s {
+	case "asc":
+		return DocumentSummaryListRequestOrderAsc, nil
+	case "desc":
+		return DocumentSummaryListRequestOrderDesc, nil
+	}
+	var t DocumentSummaryListRequestOrder
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (d DocumentSummaryListRequestOrder) Ptr() *DocumentSummaryListRequestOrder {
+	return &d
+}
+
+type DocumentSummaryListRequestOrderBy string
+
+const (
+	DocumentSummaryListRequestOrderByUUID      DocumentSummaryListRequestOrderBy = "uuid"
+	DocumentSummaryListRequestOrderByCreatedAt DocumentSummaryListRequestOrderBy = "created_at"
+)
+
+func NewDocumentSummaryListRequestOrderByFromString(s string) (DocumentSummaryListRequestOrderBy, error) {
+	switch s {
+	case "uuid":
+		return DocumentSummaryListRequestOrderByUUID, nil
+	case "created_at":
+		return DocumentSummaryListRequestOrderByCreatedAt, nil
+	}
+	var t DocumentSummaryListRequestOrderBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (d DocumentSummaryListRequestOrderBy) Ptr() *DocumentSummaryListRequestOrderBy {
+	return &d
 }

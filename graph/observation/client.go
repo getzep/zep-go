@@ -40,11 +40,14 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// Lists the observations of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+// You can sort by `uuid` or `created_at`. The default sort is `uuid` in descending order.
+// You cannot use these `filters` fields: `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+// If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+//
 // Example:
 //
-//	request := &graph.ObservationListRequest{
-//	    Body: &zep.ArtifactListRequest{},
-//	}
+//	request := &graph.ObservationListRequest{}
 //	client.Graph.Observation.List(
 //	    context.TODO(),
 //	    "graph_uuid",
@@ -52,7 +55,7 @@ func NewClient(options *core.RequestOptions) *Client {
 //	)
 func (c *Client) List(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	request *graph.ObservationListRequest,
 	opts ...option.RequestOption,
@@ -128,7 +131,7 @@ func (c *Client) List(
 //	)
 func (c *Client) Get(
 	ctx context.Context,
-	// Graph UUID
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
 	graphUUID string,
 	// Observation UUID
 	observationUUID string,
