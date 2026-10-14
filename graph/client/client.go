@@ -562,7 +562,7 @@ func (c *Client) SetOntology(
 	return response.Body, nil
 }
 
-// Edge search does not support node_labels or exclude_node_labels. An edge has two nodes, so a node label filter is not defined for edge search. To filter edges by node label, use graph.edge.list, graph.node.list_neighbors, or graph.get_subgraph. To search the edges of nodes that have a label, do these two steps. First, call graph.search_nodes with node_labels. Then, call graph.search_edges with connected_node_uuids set to the UUIDs of the returned nodes.
+// Edge search does not support node_labels, exclude_node_labels, or content_policy_violated. content_policy_violated is supported on episode search only. An edge has two nodes, so a node label filter is not defined for edge search. To filter edges by node label, use graph.edge.list, graph.node.list_neighbors, or graph.get_subgraph. To search the edges of nodes that have a label, do these two steps. First, call graph.search_nodes with node_labels. Then, call graph.search_edges with connected_node_uuids set to the UUIDs of the returned nodes.
 //
 // Example:
 //
@@ -643,6 +643,8 @@ func (c *Client) SearchEdges(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// Episode search supports only the metadata_filters and content_policy_violated filters. Every other filter returns unsupported_filter.
+//
 // Example:
 //
 //	request := &zep.SearchEpisodesRequest{
@@ -722,7 +724,7 @@ func (c *Client) SearchEpisodes(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Node search does not support edge_types, exclude_edge_types, edge_uuids, connected_node_uuids, source_node_uuids, or target_node_uuids. These filters select edges. To get the nodes that an edge connects, use graph.search_edges or graph.node.list_neighbors.
+// Node search does not support edge_types, exclude_edge_types, edge_uuids, connected_node_uuids, source_node_uuids, target_node_uuids, date_filters, or content_policy_violated. content_policy_violated is supported on episode search only. The edge filters select edges. To get the nodes that an edge connects, use graph.search_edges or graph.node.list_neighbors. To filter nodes by created_at, use graph.node.list.
 //
 // Example:
 //
@@ -803,6 +805,8 @@ func (c *Client) SearchNodes(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// Observation search supports no filters. Every filter returns unsupported_filter.
+//
 // Example:
 //
 //	request := &zep.SearchObservationsRequest{
@@ -882,6 +886,8 @@ func (c *Client) SearchObservations(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// Thread-summary search supports only the metadata_filters filter, which matches the metadata of the thread episodes. Every other filter returns unsupported_filter.
+//
 // Example:
 //
 //	request := &zep.SearchThreadSummariesRequest{

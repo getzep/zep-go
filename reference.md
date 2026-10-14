@@ -2147,7 +2147,7 @@ client.Graph.SetOntology(
 <dl>
 <dd>
 
-Edge search does not support node_labels or exclude_node_labels. An edge has two nodes, so a node label filter is not defined for edge search. To filter edges by node label, use graph.edge.list, graph.node.list_neighbors, or graph.get_subgraph. To search the edges of nodes that have a label, do these two steps. First, call graph.search_nodes with node_labels. Then, call graph.search_edges with connected_node_uuids set to the UUIDs of the returned nodes.
+Edge search does not support node_labels, exclude_node_labels, or content_policy_violated. content_policy_violated is supported on episode search only. An edge has two nodes, so a node label filter is not defined for edge search. To filter edges by node label, use graph.edge.list, graph.node.list_neighbors, or graph.get_subgraph. To search the edges of nodes that have a label, do these two steps. First, call graph.search_nodes with node_labels. Then, call graph.search_edges with connected_node_uuids set to the UUIDs of the returned nodes.
 </dd>
 </dl>
 </dd>
@@ -2288,6 +2288,20 @@ Required when reranker is mmr.
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Episode search supports only the metadata_filters and content_policy_violated filters. Every other filter returns unsupported_filter.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -2388,7 +2402,7 @@ timeout, Zep returns the results without the filter.
 <dl>
 <dd>
 
-**filters:** `*zep.SearchFilters` — Filters constraining which items are returned.
+**filters:** `*zep.EpisodeSearchFilters` — Filters constraining which items are returned.
     
 </dd>
 </dl>
@@ -2431,7 +2445,7 @@ Required when reranker is mmr.
 <dl>
 <dd>
 
-Node search does not support edge_types, exclude_edge_types, edge_uuids, connected_node_uuids, source_node_uuids, or target_node_uuids. These filters select edges. To get the nodes that an edge connects, use graph.search_edges or graph.node.list_neighbors.
+Node search does not support edge_types, exclude_edge_types, edge_uuids, connected_node_uuids, source_node_uuids, target_node_uuids, date_filters, or content_policy_violated. content_policy_violated is supported on episode search only. The edge filters select edges. To get the nodes that an edge connects, use graph.search_edges or graph.node.list_neighbors. To filter nodes by created_at, use graph.node.list.
 </dd>
 </dl>
 </dd>
@@ -2572,6 +2586,20 @@ Required when reranker is mmr.
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Observation search supports no filters. Every filter returns unsupported_filter.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -2672,7 +2700,7 @@ timeout, Zep returns the results without the filter.
 <dl>
 <dd>
 
-**filters:** `*zep.SearchFilters` — Filters constraining which items are returned.
+**filters:** `*zep.ObservationSearchFilters` — Filters constraining which items are returned.
     
 </dd>
 </dl>
@@ -2706,6 +2734,20 @@ Required when reranker is mmr.
 <details><summary><code>client.Graph.SearchThreadSummaries(GraphUUID, request) -> *zep.ThreadSummaryPage</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Thread-summary search supports only the metadata_filters filter, which matches the metadata of the thread episodes. Every other filter returns unsupported_filter.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2807,7 +2849,7 @@ timeout, Zep returns the results without the filter.
 <dl>
 <dd>
 
-**filters:** `*zep.SearchFilters` — Filters constraining which items are returned.
+**filters:** `*zep.ThreadSummarySearchFilters` — Filters constraining which items are returned.
     
 </dd>
 </dl>
@@ -10943,7 +10985,8 @@ client.Agent.TraceImport.Run.Item.List(
 
 Lists the document summaries of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
 You can sort by `uuid` or `created_at`. The default sort is `uuid` in descending order.
-You cannot use these `filters` fields: `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+You cannot use these `filters` fields: `node_labels`, `exclude_node_labels`, `edge_types`, `exclude_edge_types`, `edge_uuids`, `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+`date_filters` supports only the `created_at` field.
 If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
 </dd>
 </dl>
@@ -13118,7 +13161,8 @@ client.Graph.Node.ListNeighbors(
 
 Lists the observations of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
 You can sort by `uuid` or `created_at`. The default sort is `uuid` in descending order.
-You cannot use these `filters` fields: `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+You cannot use these `filters` fields: `node_labels`, `exclude_node_labels`, `edge_types`, `exclude_edge_types`, `edge_uuids`, `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, `metadata_filters`, and `content_policy_violated`.
+`date_filters` supports only the `created_at` field.
 If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
 </dd>
 </dl>
@@ -13276,7 +13320,8 @@ client.Graph.Observation.Get(
 
 Lists the thread summaries of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
 You can sort by `uuid` or `created_at`. The default sort is `uuid` in descending order.
-You cannot use these `filters` fields: `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+You cannot use these `filters` fields: `node_labels`, `exclude_node_labels`, `edge_types`, `exclude_edge_types`, `edge_uuids`, `episode_uuids`, `connected_node_uuids`, `source_node_uuids`, `target_node_uuids`, and `content_policy_violated`.
+`date_filters` supports only the `created_at` field.
 If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
 </dd>
 </dl>

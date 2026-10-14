@@ -54,14 +54,20 @@ generations:
     cli_version: unknown
     generator_versions:
       fernapi/fern-go-sdk: 1.65.3
-current_generation: 1e0d6c90f07506b675ecf1422bf7f3f412514e96
+  - commit_sha: 41c7f000ea65bdecb8a2f11c8bcb7b9c815bca7a
+    tree_hash: 8a569700dba2db62546f27365180b5d5629afa7c
+    timestamp: 2026-10-14T01:00:34.106Z
+    cli_version: unknown
+    generator_versions:
+      fernapi/fern-go-sdk: 1.65.3
+current_generation: 41c7f000ea65bdecb8a2f11c8bcb7b9c815bca7a
 patches:
   - id: patch-29d0e2e3
     content_hash: sha256:02d78af0c9f9ba6e859d38651b828338b20d1ff5e9acdeb3a97cc4f34355382c
     original_commit: 29d0e2e335685cf44d3b031da38c8808ff6efc89
     original_message: Reject a misspelled ontology tag, and fix the README
     original_author: paulpaliychuk <pavlo.paliychuk.ca@gmail.com>
-    base_generation: 1e0d6c90f07506b675ecf1422bf7f3f412514e96
+    base_generation: 41c7f000ea65bdecb8a2f11c8bcb7b9c815bca7a
     files:
       - README.md
     patch_content: |

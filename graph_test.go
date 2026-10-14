@@ -1383,7 +1383,7 @@ func TestSettersSearchEpisodesRequest(t *testing.T) {
 
 	t.Run("SetFilters", func(t *testing.T) {
 		obj := &SearchEpisodesRequest{}
-		var fernTestValueFilters *SearchFilters
+		var fernTestValueFilters *EpisodeSearchFilters
 		obj.SetFilters(fernTestValueFilters)
 		assert.Equal(t, fernTestValueFilters, obj.Filters)
 		assert.NotNil(t, obj.explicitFields)
@@ -1598,7 +1598,7 @@ func TestSettersMarkExplicitSearchEpisodesRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchEpisodesRequest{}
-		var fernTestValueFilters *SearchFilters
+		var fernTestValueFilters *EpisodeSearchFilters
 
 		// Act
 		obj.SetFilters(fernTestValueFilters)
@@ -2097,7 +2097,7 @@ func TestSettersSearchObservationsRequest(t *testing.T) {
 
 	t.Run("SetFilters", func(t *testing.T) {
 		obj := &SearchObservationsRequest{}
-		var fernTestValueFilters *SearchFilters
+		var fernTestValueFilters *ObservationSearchFilters
 		obj.SetFilters(fernTestValueFilters)
 		assert.Equal(t, fernTestValueFilters, obj.Filters)
 		assert.NotNil(t, obj.explicitFields)
@@ -2312,7 +2312,7 @@ func TestSettersMarkExplicitSearchObservationsRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchObservationsRequest{}
-		var fernTestValueFilters *SearchFilters
+		var fernTestValueFilters *ObservationSearchFilters
 
 		// Act
 		obj.SetFilters(fernTestValueFilters)
@@ -2454,7 +2454,7 @@ func TestSettersSearchThreadSummariesRequest(t *testing.T) {
 
 	t.Run("SetFilters", func(t *testing.T) {
 		obj := &SearchThreadSummariesRequest{}
-		var fernTestValueFilters *SearchFilters
+		var fernTestValueFilters *ThreadSummarySearchFilters
 		obj.SetFilters(fernTestValueFilters)
 		assert.Equal(t, fernTestValueFilters, obj.Filters)
 		assert.NotNil(t, obj.explicitFields)
@@ -2669,7 +2669,7 @@ func TestSettersMarkExplicitSearchThreadSummariesRequest(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &SearchThreadSummariesRequest{}
-		var fernTestValueFilters *SearchFilters
+		var fernTestValueFilters *ThreadSummarySearchFilters
 
 		// Act
 		obj.SetFilters(fernTestValueFilters)
@@ -9689,14 +9689,6 @@ func TestSettersEdgeSearchFilters(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
-	t.Run("SetContentPolicyViolated", func(t *testing.T) {
-		obj := &EdgeSearchFilters{}
-		var fernTestValueContentPolicyViolated *bool
-		obj.SetContentPolicyViolated(fernTestValueContentPolicyViolated)
-		assert.Equal(t, fernTestValueContentPolicyViolated, obj.ContentPolicyViolated)
-		assert.NotNil(t, obj.explicitFields)
-	})
-
 	t.Run("SetDateFilters", func(t *testing.T) {
 		obj := &EdgeSearchFilters{}
 		var fernTestValueDateFilters *DateFilters
@@ -9803,39 +9795,6 @@ func TestGettersEdgeSearchFilters(t *testing.T) {
 			}
 		}()
 		_ = obj.GetConnectedNodeUUIDs() // Should return zero value
-	})
-
-	t.Run("GetContentPolicyViolated", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &EdgeSearchFilters{}
-		var expected *bool
-		obj.ContentPolicyViolated = expected
-
-		// Act & Assert
-		assert.Equal(t, expected, obj.GetContentPolicyViolated(), "getter should return the property value")
-	})
-
-	t.Run("GetContentPolicyViolated_NilValue", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &EdgeSearchFilters{}
-		obj.ContentPolicyViolated = nil
-
-		// Act & Assert
-		assert.Nil(t, obj.GetContentPolicyViolated(), "getter should return nil when property is nil")
-	})
-
-	t.Run("GetContentPolicyViolated_NilReceiver", func(t *testing.T) {
-		t.Parallel()
-		var obj *EdgeSearchFilters
-		// Should not panic - getters should handle nil receiver gracefully
-		defer func() {
-			if r := recover(); r != nil {
-				t.Errorf("Getter panicked on nil receiver: %v", r)
-			}
-		}()
-		_ = obj.GetContentPolicyViolated() // Should return zero value
 	})
 
 	t.Run("GetDateFilters", func(t *testing.T) {
@@ -10169,37 +10128,6 @@ func TestSettersMarkExplicitEdgeSearchFilters(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
-	t.Run("SetContentPolicyViolated_MarksExplicit", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &EdgeSearchFilters{}
-		var fernTestValueContentPolicyViolated *bool
-
-		// Act
-		obj.SetContentPolicyViolated(fernTestValueContentPolicyViolated)
-
-		// Assert - object with explicitly set field can be marshaled/unmarshaled
-		bytes, err := json.Marshal(obj)
-		require.NoError(t, err, "marshaling should succeed for test setup")
-
-		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
-		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
-		if len(bytes) > 0 && bytes[0] == '{' {
-			// JSON object - unmarshal into map
-			var unmarshaled map[string]interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		} else {
-			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
-			var unmarshaled interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		}
-
-		// Note: This does not explicitly assert the presence of a specific JSON field
-		// It verifies that setting a field via setter allows successful JSON round-trip
-	})
-
 	t.Run("SetDateFilters_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -10456,6 +10384,159 @@ func TestSettersMarkExplicitEdgeSearchFilters(t *testing.T) {
 
 		// Act
 		obj.SetTargetNodeUUIDs(fernTestValueTargetNodeUUIDs)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+}
+
+func TestSettersEpisodeSearchFilters(t *testing.T) {
+	t.Run("SetContentPolicyViolated", func(t *testing.T) {
+		obj := &EpisodeSearchFilters{}
+		var fernTestValueContentPolicyViolated *bool
+		obj.SetContentPolicyViolated(fernTestValueContentPolicyViolated)
+		assert.Equal(t, fernTestValueContentPolicyViolated, obj.ContentPolicyViolated)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+	t.Run("SetMetadataFilters", func(t *testing.T) {
+		obj := &EpisodeSearchFilters{}
+		var fernTestValueMetadataFilters *MetadataFilterGroup
+		obj.SetMetadataFilters(fernTestValueMetadataFilters)
+		assert.Equal(t, fernTestValueMetadataFilters, obj.MetadataFilters)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+}
+
+func TestGettersEpisodeSearchFilters(t *testing.T) {
+	t.Run("GetContentPolicyViolated", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeSearchFilters{}
+		var expected *bool
+		obj.ContentPolicyViolated = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetContentPolicyViolated(), "getter should return the property value")
+	})
+
+	t.Run("GetContentPolicyViolated_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeSearchFilters{}
+		obj.ContentPolicyViolated = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetContentPolicyViolated(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetContentPolicyViolated_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *EpisodeSearchFilters
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetContentPolicyViolated() // Should return zero value
+	})
+
+	t.Run("GetMetadataFilters", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeSearchFilters{}
+		var expected *MetadataFilterGroup
+		obj.MetadataFilters = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetMetadataFilters(), "getter should return the property value")
+	})
+
+	t.Run("GetMetadataFilters_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeSearchFilters{}
+		obj.MetadataFilters = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetMetadataFilters(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetMetadataFilters_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *EpisodeSearchFilters
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetMetadataFilters() // Should return zero value
+	})
+
+}
+
+func TestSettersMarkExplicitEpisodeSearchFilters(t *testing.T) {
+	t.Run("SetContentPolicyViolated_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeSearchFilters{}
+		var fernTestValueContentPolicyViolated *bool
+
+		// Act
+		obj.SetContentPolicyViolated(fernTestValueContentPolicyViolated)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetMetadataFilters_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeSearchFilters{}
+		var fernTestValueMetadataFilters *MetadataFilterGroup
+
+		// Act
+		obj.SetMetadataFilters(fernTestValueMetadataFilters)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -12183,22 +12264,6 @@ func TestSettersMarkExplicitGraphPage(t *testing.T) {
 }
 
 func TestSettersNodeSearchFilters(t *testing.T) {
-	t.Run("SetContentPolicyViolated", func(t *testing.T) {
-		obj := &NodeSearchFilters{}
-		var fernTestValueContentPolicyViolated *bool
-		obj.SetContentPolicyViolated(fernTestValueContentPolicyViolated)
-		assert.Equal(t, fernTestValueContentPolicyViolated, obj.ContentPolicyViolated)
-		assert.NotNil(t, obj.explicitFields)
-	})
-
-	t.Run("SetDateFilters", func(t *testing.T) {
-		obj := &NodeSearchFilters{}
-		var fernTestValueDateFilters *DateFilters
-		obj.SetDateFilters(fernTestValueDateFilters)
-		assert.Equal(t, fernTestValueDateFilters, obj.DateFilters)
-		assert.NotNil(t, obj.explicitFields)
-	})
-
 	t.Run("SetEpisodeUUIDs", func(t *testing.T) {
 		obj := &NodeSearchFilters{}
 		var fernTestValueEpisodeUUIDs []string
@@ -12242,72 +12307,6 @@ func TestSettersNodeSearchFilters(t *testing.T) {
 }
 
 func TestGettersNodeSearchFilters(t *testing.T) {
-	t.Run("GetContentPolicyViolated", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &NodeSearchFilters{}
-		var expected *bool
-		obj.ContentPolicyViolated = expected
-
-		// Act & Assert
-		assert.Equal(t, expected, obj.GetContentPolicyViolated(), "getter should return the property value")
-	})
-
-	t.Run("GetContentPolicyViolated_NilValue", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &NodeSearchFilters{}
-		obj.ContentPolicyViolated = nil
-
-		// Act & Assert
-		assert.Nil(t, obj.GetContentPolicyViolated(), "getter should return nil when property is nil")
-	})
-
-	t.Run("GetContentPolicyViolated_NilReceiver", func(t *testing.T) {
-		t.Parallel()
-		var obj *NodeSearchFilters
-		// Should not panic - getters should handle nil receiver gracefully
-		defer func() {
-			if r := recover(); r != nil {
-				t.Errorf("Getter panicked on nil receiver: %v", r)
-			}
-		}()
-		_ = obj.GetContentPolicyViolated() // Should return zero value
-	})
-
-	t.Run("GetDateFilters", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &NodeSearchFilters{}
-		var expected *DateFilters
-		obj.DateFilters = expected
-
-		// Act & Assert
-		assert.Equal(t, expected, obj.GetDateFilters(), "getter should return the property value")
-	})
-
-	t.Run("GetDateFilters_NilValue", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &NodeSearchFilters{}
-		obj.DateFilters = nil
-
-		// Act & Assert
-		assert.Nil(t, obj.GetDateFilters(), "getter should return nil when property is nil")
-	})
-
-	t.Run("GetDateFilters_NilReceiver", func(t *testing.T) {
-		t.Parallel()
-		var obj *NodeSearchFilters
-		// Should not panic - getters should handle nil receiver gracefully
-		defer func() {
-			if r := recover(); r != nil {
-				t.Errorf("Getter panicked on nil receiver: %v", r)
-			}
-		}()
-		_ = obj.GetDateFilters() // Should return zero value
-	})
-
 	t.Run("GetEpisodeUUIDs", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -12476,68 +12475,6 @@ func TestGettersNodeSearchFilters(t *testing.T) {
 }
 
 func TestSettersMarkExplicitNodeSearchFilters(t *testing.T) {
-	t.Run("SetContentPolicyViolated_MarksExplicit", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &NodeSearchFilters{}
-		var fernTestValueContentPolicyViolated *bool
-
-		// Act
-		obj.SetContentPolicyViolated(fernTestValueContentPolicyViolated)
-
-		// Assert - object with explicitly set field can be marshaled/unmarshaled
-		bytes, err := json.Marshal(obj)
-		require.NoError(t, err, "marshaling should succeed for test setup")
-
-		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
-		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
-		if len(bytes) > 0 && bytes[0] == '{' {
-			// JSON object - unmarshal into map
-			var unmarshaled map[string]interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		} else {
-			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
-			var unmarshaled interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		}
-
-		// Note: This does not explicitly assert the presence of a specific JSON field
-		// It verifies that setting a field via setter allows successful JSON round-trip
-	})
-
-	t.Run("SetDateFilters_MarksExplicit", func(t *testing.T) {
-		t.Parallel()
-		// Arrange
-		obj := &NodeSearchFilters{}
-		var fernTestValueDateFilters *DateFilters
-
-		// Act
-		obj.SetDateFilters(fernTestValueDateFilters)
-
-		// Assert - object with explicitly set field can be marshaled/unmarshaled
-		bytes, err := json.Marshal(obj)
-		require.NoError(t, err, "marshaling should succeed for test setup")
-
-		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
-		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
-		if len(bytes) > 0 && bytes[0] == '{' {
-			// JSON object - unmarshal into map
-			var unmarshaled map[string]interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		} else {
-			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
-			var unmarshaled interface{}
-			err = json.Unmarshal(bytes, &unmarshaled)
-			require.NoError(t, err, "unmarshaling should succeed for test verification")
-		}
-
-		// Note: This does not explicitly assert the presence of a specific JSON field
-		// It verifies that setting a field via setter allows successful JSON round-trip
-	})
-
 	t.Run("SetEpisodeUUIDs_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -12967,6 +12904,87 @@ func TestSettersMarkExplicitSubgraphResponse(t *testing.T) {
 
 		// Act
 		obj.SetTruncationReason(fernTestValueTruncationReason)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+}
+
+func TestSettersThreadSummarySearchFilters(t *testing.T) {
+	t.Run("SetMetadataFilters", func(t *testing.T) {
+		obj := &ThreadSummarySearchFilters{}
+		var fernTestValueMetadataFilters *MetadataFilterGroup
+		obj.SetMetadataFilters(fernTestValueMetadataFilters)
+		assert.Equal(t, fernTestValueMetadataFilters, obj.MetadataFilters)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+}
+
+func TestGettersThreadSummarySearchFilters(t *testing.T) {
+	t.Run("GetMetadataFilters", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ThreadSummarySearchFilters{}
+		var expected *MetadataFilterGroup
+		obj.MetadataFilters = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetMetadataFilters(), "getter should return the property value")
+	})
+
+	t.Run("GetMetadataFilters_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ThreadSummarySearchFilters{}
+		obj.MetadataFilters = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetMetadataFilters(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetMetadataFilters_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *ThreadSummarySearchFilters
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetMetadataFilters() // Should return zero value
+	})
+
+}
+
+func TestSettersMarkExplicitThreadSummarySearchFilters(t *testing.T) {
+	t.Run("SetMetadataFilters_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ThreadSummarySearchFilters{}
+		var fernTestValueMetadataFilters *MetadataFilterGroup
+
+		// Act
+		obj.SetMetadataFilters(fernTestValueMetadataFilters)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -13478,6 +13496,39 @@ func TestJSONMarshalingEdgeSearchFilters(t *testing.T) {
 	})
 }
 
+func TestJSONMarshalingEpisodeSearchFilters(t *testing.T) {
+	t.Run("MarshalUnmarshal", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeSearchFilters{}
+
+		// Act - Marshal to JSON
+		data, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed")
+		assert.NotNil(t, data, "marshaled data should not be nil")
+		assert.NotEmpty(t, data, "marshaled data should not be empty")
+
+		// Unmarshal back and verify round-trip
+		var unmarshaled EpisodeSearchFilters
+		err = json.Unmarshal(data, &unmarshaled)
+		assert.NoError(t, err, "round-trip unmarshal should succeed")
+	})
+
+	t.Run("UnmarshalInvalidJSON", func(t *testing.T) {
+		t.Parallel()
+		var obj EpisodeSearchFilters
+		err := json.Unmarshal([]byte(`{invalid json}`), &obj)
+		assert.Error(t, err, "unmarshaling invalid JSON should return an error")
+	})
+
+	t.Run("UnmarshalEmptyObject", func(t *testing.T) {
+		t.Parallel()
+		var obj EpisodeSearchFilters
+		err := json.Unmarshal([]byte(`{}`), &obj)
+		assert.NoError(t, err, "unmarshaling empty object should succeed")
+	})
+}
+
 func TestJSONMarshalingGraph(t *testing.T) {
 	t.Run("MarshalUnmarshal", func(t *testing.T) {
 		t.Parallel()
@@ -13709,6 +13760,39 @@ func TestJSONMarshalingSubgraphResponse(t *testing.T) {
 	})
 }
 
+func TestJSONMarshalingThreadSummarySearchFilters(t *testing.T) {
+	t.Run("MarshalUnmarshal", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ThreadSummarySearchFilters{}
+
+		// Act - Marshal to JSON
+		data, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed")
+		assert.NotNil(t, data, "marshaled data should not be nil")
+		assert.NotEmpty(t, data, "marshaled data should not be empty")
+
+		// Unmarshal back and verify round-trip
+		var unmarshaled ThreadSummarySearchFilters
+		err = json.Unmarshal(data, &unmarshaled)
+		assert.NoError(t, err, "round-trip unmarshal should succeed")
+	})
+
+	t.Run("UnmarshalInvalidJSON", func(t *testing.T) {
+		t.Parallel()
+		var obj ThreadSummarySearchFilters
+		err := json.Unmarshal([]byte(`{invalid json}`), &obj)
+		assert.Error(t, err, "unmarshaling invalid JSON should return an error")
+	})
+
+	t.Run("UnmarshalEmptyObject", func(t *testing.T) {
+		t.Parallel()
+		var obj ThreadSummarySearchFilters
+		err := json.Unmarshal([]byte(`{}`), &obj)
+		assert.NoError(t, err, "unmarshaling empty object should succeed")
+	})
+}
+
 func TestStringCloneGraphResult(t *testing.T) {
 	t.Run("StringMethod", func(t *testing.T) {
 		t.Parallel()
@@ -13885,6 +13969,22 @@ func TestStringEdgeSearchFilters(t *testing.T) {
 	})
 }
 
+func TestStringEpisodeSearchFilters(t *testing.T) {
+	t.Run("StringMethod", func(t *testing.T) {
+		t.Parallel()
+		obj := &EpisodeSearchFilters{}
+		result := obj.String()
+		assert.NotEmpty(t, result, "String() should return a non-empty representation")
+	})
+
+	t.Run("StringMethod_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *EpisodeSearchFilters
+		result := obj.String()
+		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
+	})
+}
+
 func TestStringGraph(t *testing.T) {
 	t.Run("StringMethod", func(t *testing.T) {
 		t.Parallel()
@@ -13992,6 +14092,22 @@ func TestStringSubgraphResponse(t *testing.T) {
 	t.Run("StringMethod_NilReceiver", func(t *testing.T) {
 		t.Parallel()
 		var obj *SubgraphResponse
+		result := obj.String()
+		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
+	})
+}
+
+func TestStringThreadSummarySearchFilters(t *testing.T) {
+	t.Run("StringMethod", func(t *testing.T) {
+		t.Parallel()
+		obj := &ThreadSummarySearchFilters{}
+		result := obj.String()
+		assert.NotEmpty(t, result, "String() should return a non-empty representation")
+	})
+
+	t.Run("StringMethod_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *ThreadSummarySearchFilters
 		result := obj.String()
 		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
 	})
@@ -14794,6 +14910,29 @@ func TestExtraPropertiesEdgeSearchFilters(t *testing.T) {
 	})
 }
 
+func TestExtraPropertiesEpisodeSearchFilters(t *testing.T) {
+	t.Run("GetExtraProperties", func(t *testing.T) {
+		t.Parallel()
+		obj := &EpisodeSearchFilters{}
+		// Should not panic when calling GetExtraProperties()
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("GetExtraProperties() panicked: %v", r)
+			}
+		}()
+		extraProps := obj.GetExtraProperties()
+		// Result can be nil or an empty/non-empty map
+		_ = extraProps
+	})
+
+	t.Run("GetExtraProperties_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *EpisodeSearchFilters
+		extraProps := obj.GetExtraProperties()
+		assert.Nil(t, extraProps, "nil receiver should return nil without panicking")
+	})
+}
+
 func TestExtraPropertiesGraph(t *testing.T) {
 	t.Run("GetExtraProperties", func(t *testing.T) {
 		t.Parallel()
@@ -14950,6 +15089,29 @@ func TestExtraPropertiesSubgraphResponse(t *testing.T) {
 	t.Run("GetExtraProperties_NilReceiver", func(t *testing.T) {
 		t.Parallel()
 		var obj *SubgraphResponse
+		extraProps := obj.GetExtraProperties()
+		assert.Nil(t, extraProps, "nil receiver should return nil without panicking")
+	})
+}
+
+func TestExtraPropertiesThreadSummarySearchFilters(t *testing.T) {
+	t.Run("GetExtraProperties", func(t *testing.T) {
+		t.Parallel()
+		obj := &ThreadSummarySearchFilters{}
+		// Should not panic when calling GetExtraProperties()
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("GetExtraProperties() panicked: %v", r)
+			}
+		}()
+		extraProps := obj.GetExtraProperties()
+		// Result can be nil or an empty/non-empty map
+		_ = extraProps
+	})
+
+	t.Run("GetExtraProperties_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *ThreadSummarySearchFilters
 		extraProps := obj.GetExtraProperties()
 		assert.Nil(t, extraProps, "nil receiver should return nil without panicking")
 	})
