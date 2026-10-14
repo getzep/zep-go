@@ -623,7 +623,7 @@ type SearchEpisodesRequest struct {
 	// timeout, Zep returns the results without the filter.
 	FilterLowQualityResults *bool `json:"filter_low_quality_results,omitempty" url:"-"`
 	// Filters constraining which items are returned.
-	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
+	Filters *EpisodeSearchFilters `json:"filters,omitempty" url:"-"`
 	// The diversity weighting used for maximal marginal relevance reranking.
 	// Required when reranker is mmr.
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
@@ -687,7 +687,7 @@ func (s *SearchEpisodesRequest) SetFilterLowQualityResults(filterLowQualityResul
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchEpisodesRequest) SetFilters(filters *SearchFilters) {
+func (s *SearchEpisodesRequest) SetFilters(filters *EpisodeSearchFilters) {
 	s.Filters = filters
 	s.require(searchEpisodesRequestFieldFilters)
 }
@@ -901,7 +901,7 @@ type SearchObservationsRequest struct {
 	// timeout, Zep returns the results without the filter.
 	FilterLowQualityResults *bool `json:"filter_low_quality_results,omitempty" url:"-"`
 	// Filters constraining which items are returned.
-	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
+	Filters *ObservationSearchFilters `json:"filters,omitempty" url:"-"`
 	// The diversity weighting used for maximal marginal relevance reranking.
 	// Required when reranker is mmr.
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
@@ -965,7 +965,7 @@ func (s *SearchObservationsRequest) SetFilterLowQualityResults(filterLowQualityR
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchObservationsRequest) SetFilters(filters *SearchFilters) {
+func (s *SearchObservationsRequest) SetFilters(filters *ObservationSearchFilters) {
 	s.Filters = filters
 	s.require(searchObservationsRequestFieldFilters)
 }
@@ -1040,7 +1040,7 @@ type SearchThreadSummariesRequest struct {
 	// timeout, Zep returns the results without the filter.
 	FilterLowQualityResults *bool `json:"filter_low_quality_results,omitempty" url:"-"`
 	// Filters constraining which items are returned.
-	Filters *SearchFilters `json:"filters,omitempty" url:"-"`
+	Filters *ThreadSummarySearchFilters `json:"filters,omitempty" url:"-"`
 	// The diversity weighting used for maximal marginal relevance reranking.
 	// Required when reranker is mmr.
 	MmrLambda *float64 `json:"mmr_lambda,omitempty" url:"-"`
@@ -1104,7 +1104,7 @@ func (s *SearchThreadSummariesRequest) SetFilterLowQualityResults(filterLowQuali
 
 // SetFilters sets the Filters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (s *SearchThreadSummariesRequest) SetFilters(filters *SearchFilters) {
+func (s *SearchThreadSummariesRequest) SetFilters(filters *ThreadSummarySearchFilters) {
 	s.Filters = filters
 	s.require(searchThreadSummariesRequestFieldFilters)
 }
@@ -3613,24 +3613,21 @@ func (c *ContextThreadSummary) String() string {
 }
 
 var (
-	edgeSearchFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
-	edgeSearchFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
-	edgeSearchFiltersFieldDateFilters           = big.NewInt(1 << 2)
-	edgeSearchFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
-	edgeSearchFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
-	edgeSearchFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
-	edgeSearchFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
-	edgeSearchFiltersFieldMetadataFilters       = big.NewInt(1 << 7)
-	edgeSearchFiltersFieldPropertyFilters       = big.NewInt(1 << 8)
-	edgeSearchFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 9)
-	edgeSearchFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 10)
+	edgeSearchFiltersFieldConnectedNodeUUIDs = big.NewInt(1 << 0)
+	edgeSearchFiltersFieldDateFilters        = big.NewInt(1 << 1)
+	edgeSearchFiltersFieldEdgeTypes          = big.NewInt(1 << 2)
+	edgeSearchFiltersFieldEdgeUUIDs          = big.NewInt(1 << 3)
+	edgeSearchFiltersFieldEpisodeUUIDs       = big.NewInt(1 << 4)
+	edgeSearchFiltersFieldExcludeEdgeTypes   = big.NewInt(1 << 5)
+	edgeSearchFiltersFieldMetadataFilters    = big.NewInt(1 << 6)
+	edgeSearchFiltersFieldPropertyFilters    = big.NewInt(1 << 7)
+	edgeSearchFiltersFieldSourceNodeUUIDs    = big.NewInt(1 << 8)
+	edgeSearchFiltersFieldTargetNodeUUIDs    = big.NewInt(1 << 9)
 )
 
 type EdgeSearchFilters struct {
 	// Include edges connected to any of these node UUIDs.
 	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
-	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
 	// Filter results by temporal values.
 	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
 	// Include results with any of these edge types.
@@ -3662,13 +3659,6 @@ func (e *EdgeSearchFilters) GetConnectedNodeUUIDs() []string {
 		return nil
 	}
 	return e.ConnectedNodeUUIDs
-}
-
-func (e *EdgeSearchFilters) GetContentPolicyViolated() *bool {
-	if e == nil {
-		return nil
-	}
-	return e.ContentPolicyViolated
 }
 
 func (e *EdgeSearchFilters) GetDateFilters() *DateFilters {
@@ -3755,13 +3745,6 @@ func (e *EdgeSearchFilters) require(field *big.Int) {
 func (e *EdgeSearchFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
 	e.ConnectedNodeUUIDs = connectedNodeUUIDs
 	e.require(edgeSearchFiltersFieldConnectedNodeUUIDs)
-}
-
-// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EdgeSearchFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
-	e.ContentPolicyViolated = contentPolicyViolated
-	e.require(edgeSearchFiltersFieldContentPolicyViolated)
 }
 
 // SetDateFilters sets the DateFilters field and marks it as non-optional;
@@ -3855,6 +3838,110 @@ func (e *EdgeSearchFilters) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EdgeSearchFilters) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+var (
+	episodeSearchFiltersFieldContentPolicyViolated = big.NewInt(1 << 0)
+	episodeSearchFiltersFieldMetadataFilters       = big.NewInt(1 << 1)
+)
+
+type EpisodeSearchFilters struct {
+	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Filter results by the episode's own stored metadata.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EpisodeSearchFilters) GetContentPolicyViolated() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.ContentPolicyViolated
+}
+
+func (e *EpisodeSearchFilters) GetMetadataFilters() *MetadataFilterGroup {
+	if e == nil {
+		return nil
+	}
+	return e.MetadataFilters
+}
+
+func (e *EpisodeSearchFilters) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EpisodeSearchFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if e.explicitFields != nil {
+		next.Set(e.explicitFields)
+	}
+	next.Or(next, field)
+	e.explicitFields = next
+}
+
+// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeSearchFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
+	e.ContentPolicyViolated = contentPolicyViolated
+	e.require(episodeSearchFiltersFieldContentPolicyViolated)
+}
+
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeSearchFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	e.MetadataFilters = metadataFilters
+	e.require(episodeSearchFiltersFieldMetadataFilters)
+}
+
+func (e *EpisodeSearchFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler EpisodeSearchFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EpisodeSearchFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EpisodeSearchFilters) MarshalJSON() ([]byte, error) {
+	type embed EpisodeSearchFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EpisodeSearchFilters) String() string {
 	if e == nil {
 		return "<nil>"
 	}
@@ -4620,20 +4707,14 @@ func (g *GraphPage) String() string {
 }
 
 var (
-	nodeSearchFiltersFieldContentPolicyViolated = big.NewInt(1 << 0)
-	nodeSearchFiltersFieldDateFilters           = big.NewInt(1 << 1)
-	nodeSearchFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 2)
-	nodeSearchFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 3)
-	nodeSearchFiltersFieldMetadataFilters       = big.NewInt(1 << 4)
-	nodeSearchFiltersFieldNodeLabels            = big.NewInt(1 << 5)
-	nodeSearchFiltersFieldPropertyFilters       = big.NewInt(1 << 6)
+	nodeSearchFiltersFieldEpisodeUUIDs      = big.NewInt(1 << 0)
+	nodeSearchFiltersFieldExcludeNodeLabels = big.NewInt(1 << 1)
+	nodeSearchFiltersFieldMetadataFilters   = big.NewInt(1 << 2)
+	nodeSearchFiltersFieldNodeLabels        = big.NewInt(1 << 3)
+	nodeSearchFiltersFieldPropertyFilters   = big.NewInt(1 << 4)
 )
 
 type NodeSearchFilters struct {
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
-	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
-	// Filter results by temporal values.
-	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
 	// Include results derived from any of these episode UUIDs.
 	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
 	// Exclude results with any of these node labels. Edge search does not support this filter.
@@ -4650,20 +4731,6 @@ type NodeSearchFilters struct {
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (n *NodeSearchFilters) GetContentPolicyViolated() *bool {
-	if n == nil {
-		return nil
-	}
-	return n.ContentPolicyViolated
-}
-
-func (n *NodeSearchFilters) GetDateFilters() *DateFilters {
-	if n == nil {
-		return nil
-	}
-	return n.DateFilters
 }
 
 func (n *NodeSearchFilters) GetEpisodeUUIDs() []string {
@@ -4715,20 +4782,6 @@ func (n *NodeSearchFilters) require(field *big.Int) {
 	}
 	next.Or(next, field)
 	n.explicitFields = next
-}
-
-// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (n *NodeSearchFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
-	n.ContentPolicyViolated = contentPolicyViolated
-	n.require(nodeSearchFiltersFieldContentPolicyViolated)
-}
-
-// SetDateFilters sets the DateFilters field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (n *NodeSearchFilters) SetDateFilters(dateFilters *DateFilters) {
-	n.DateFilters = dateFilters
-	n.require(nodeSearchFiltersFieldDateFilters)
 }
 
 // SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
@@ -4807,6 +4860,8 @@ func (n *NodeSearchFilters) String() string {
 	}
 	return fmt.Sprintf("%#v", n)
 }
+
+type ObservationSearchFilters = map[string]any
 
 var (
 	subgraphResponseFieldEdges            = big.NewInt(1 << 0)
@@ -4947,6 +5002,93 @@ func (s *SubgraphResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	threadSummarySearchFiltersFieldMetadataFilters = big.NewInt(1 << 0)
+)
+
+type ThreadSummarySearchFilters struct {
+	// Filter results by the metadata of the thread episodes.
+	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (t *ThreadSummarySearchFilters) GetMetadataFilters() *MetadataFilterGroup {
+	if t == nil {
+		return nil
+	}
+	return t.MetadataFilters
+}
+
+func (t *ThreadSummarySearchFilters) GetExtraProperties() map[string]interface{} {
+	if t == nil {
+		return nil
+	}
+	return t.extraProperties
+}
+
+func (t *ThreadSummarySearchFilters) require(field *big.Int) {
+	next := new(big.Int)
+	if t.explicitFields != nil {
+		next.Set(t.explicitFields)
+	}
+	next.Or(next, field)
+	t.explicitFields = next
+}
+
+// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummarySearchFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
+	t.MetadataFilters = metadataFilters
+	t.require(threadSummarySearchFiltersFieldMetadataFilters)
+}
+
+func (t *ThreadSummarySearchFilters) UnmarshalJSON(data []byte) error {
+	type unmarshaler ThreadSummarySearchFilters
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = ThreadSummarySearchFilters(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+	t.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *ThreadSummarySearchFilters) MarshalJSON() ([]byte, error) {
+	type embed ThreadSummarySearchFilters
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, t.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (t *ThreadSummarySearchFilters) String() string {
+	if t == nil {
+		return "<nil>"
+	}
+	if len(t.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(t.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
 }
 
 // Adjusts result selection to favor more recent graph data.

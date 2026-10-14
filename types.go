@@ -17565,72 +17565,24 @@ func (d *DocumentSummary) String() string {
 }
 
 var (
-	documentSummaryListFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
-	documentSummaryListFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
-	documentSummaryListFiltersFieldDateFilters           = big.NewInt(1 << 2)
-	documentSummaryListFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
-	documentSummaryListFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
-	documentSummaryListFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
-	documentSummaryListFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
-	documentSummaryListFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
-	documentSummaryListFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
-	documentSummaryListFiltersFieldNodeLabels            = big.NewInt(1 << 9)
-	documentSummaryListFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
-	documentSummaryListFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
-	documentSummaryListFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
+	documentSummaryListFiltersFieldDateFilters     = big.NewInt(1 << 0)
+	documentSummaryListFiltersFieldMetadataFilters = big.NewInt(1 << 1)
+	documentSummaryListFiltersFieldPropertyFilters = big.NewInt(1 << 2)
 )
 
 type DocumentSummaryListFilters struct {
-	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
-	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
-	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
-	// Filter results by temporal values.
+	// Filter results by created_at.
 	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
-	// Include results with any of these edge types. Node search does not support this filter.
-	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// Include results with any of these edge UUIDs. Node search does not support this filter.
-	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
-	// Include results derived from any of these episode UUIDs.
-	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	// Exclude results with any of these edge types. Node search does not support this filter.
-	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
-	// Exclude nodes that have any of these labels. On an edge list, the API
-	// excludes an edge when its source node or its target node has one of
-	// these labels. Edge search does not support this filter.
-	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
-	// Filter results by episode metadata.
+	// Filter results by the metadata of the document episodes.
 	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
-	// Include only nodes that have at least one of these labels. On an edge
-	// list, the source node and the target node of each edge must each have
-	// at least one of these labels. Edge search does not support this filter.
-	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 	// Filter results by node or edge properties.
 	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
-	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
-	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
-	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
-	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (d *DocumentSummaryListFilters) GetConnectedNodeUUIDs() []string {
-	if d == nil {
-		return nil
-	}
-	return d.ConnectedNodeUUIDs
-}
-
-func (d *DocumentSummaryListFilters) GetContentPolicyViolated() *bool {
-	if d == nil {
-		return nil
-	}
-	return d.ContentPolicyViolated
 }
 
 func (d *DocumentSummaryListFilters) GetDateFilters() *DateFilters {
@@ -17640,41 +17592,6 @@ func (d *DocumentSummaryListFilters) GetDateFilters() *DateFilters {
 	return d.DateFilters
 }
 
-func (d *DocumentSummaryListFilters) GetEdgeTypes() []string {
-	if d == nil {
-		return nil
-	}
-	return d.EdgeTypes
-}
-
-func (d *DocumentSummaryListFilters) GetEdgeUUIDs() []string {
-	if d == nil {
-		return nil
-	}
-	return d.EdgeUUIDs
-}
-
-func (d *DocumentSummaryListFilters) GetEpisodeUUIDs() []string {
-	if d == nil {
-		return nil
-	}
-	return d.EpisodeUUIDs
-}
-
-func (d *DocumentSummaryListFilters) GetExcludeEdgeTypes() []string {
-	if d == nil {
-		return nil
-	}
-	return d.ExcludeEdgeTypes
-}
-
-func (d *DocumentSummaryListFilters) GetExcludeNodeLabels() []string {
-	if d == nil {
-		return nil
-	}
-	return d.ExcludeNodeLabels
-}
-
 func (d *DocumentSummaryListFilters) GetMetadataFilters() *MetadataFilterGroup {
 	if d == nil {
 		return nil
@@ -17682,32 +17599,11 @@ func (d *DocumentSummaryListFilters) GetMetadataFilters() *MetadataFilterGroup {
 	return d.MetadataFilters
 }
 
-func (d *DocumentSummaryListFilters) GetNodeLabels() []string {
-	if d == nil {
-		return nil
-	}
-	return d.NodeLabels
-}
-
 func (d *DocumentSummaryListFilters) GetPropertyFilters() []*PropertyFilter {
 	if d == nil {
 		return nil
 	}
 	return d.PropertyFilters
-}
-
-func (d *DocumentSummaryListFilters) GetSourceNodeUUIDs() []string {
-	if d == nil {
-		return nil
-	}
-	return d.SourceNodeUUIDs
-}
-
-func (d *DocumentSummaryListFilters) GetTargetNodeUUIDs() []string {
-	if d == nil {
-		return nil
-	}
-	return d.TargetNodeUUIDs
 }
 
 func (d *DocumentSummaryListFilters) GetExtraProperties() map[string]interface{} {
@@ -17726,60 +17622,11 @@ func (d *DocumentSummaryListFilters) require(field *big.Int) {
 	d.explicitFields = next
 }
 
-// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
-	d.ConnectedNodeUUIDs = connectedNodeUUIDs
-	d.require(documentSummaryListFiltersFieldConnectedNodeUUIDs)
-}
-
-// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
-	d.ContentPolicyViolated = contentPolicyViolated
-	d.require(documentSummaryListFiltersFieldContentPolicyViolated)
-}
-
 // SetDateFilters sets the DateFilters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (d *DocumentSummaryListFilters) SetDateFilters(dateFilters *DateFilters) {
 	d.DateFilters = dateFilters
 	d.require(documentSummaryListFiltersFieldDateFilters)
-}
-
-// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetEdgeTypes(edgeTypes []string) {
-	d.EdgeTypes = edgeTypes
-	d.require(documentSummaryListFiltersFieldEdgeTypes)
-}
-
-// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
-	d.EdgeUUIDs = edgeUUIDs
-	d.require(documentSummaryListFiltersFieldEdgeUUIDs)
-}
-
-// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
-	d.EpisodeUUIDs = episodeUUIDs
-	d.require(documentSummaryListFiltersFieldEpisodeUUIDs)
-}
-
-// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
-	d.ExcludeEdgeTypes = excludeEdgeTypes
-	d.require(documentSummaryListFiltersFieldExcludeEdgeTypes)
-}
-
-// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
-	d.ExcludeNodeLabels = excludeNodeLabels
-	d.require(documentSummaryListFiltersFieldExcludeNodeLabels)
 }
 
 // SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
@@ -17789,32 +17636,11 @@ func (d *DocumentSummaryListFilters) SetMetadataFilters(metadataFilters *Metadat
 	d.require(documentSummaryListFiltersFieldMetadataFilters)
 }
 
-// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetNodeLabels(nodeLabels []string) {
-	d.NodeLabels = nodeLabels
-	d.require(documentSummaryListFiltersFieldNodeLabels)
-}
-
 // SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (d *DocumentSummaryListFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
 	d.PropertyFilters = propertyFilters
 	d.require(documentSummaryListFiltersFieldPropertyFilters)
-}
-
-// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
-	d.SourceNodeUUIDs = sourceNodeUUIDs
-	d.require(documentSummaryListFiltersFieldSourceNodeUUIDs)
-}
-
-// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (d *DocumentSummaryListFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
-	d.TargetNodeUUIDs = targetNodeUUIDs
-	d.require(documentSummaryListFiltersFieldTargetNodeUUIDs)
 }
 
 func (d *DocumentSummaryListFilters) UnmarshalJSON(data []byte) error {
@@ -26535,72 +26361,21 @@ func (o *Observation) String() string {
 }
 
 var (
-	observationListFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
-	observationListFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
-	observationListFiltersFieldDateFilters           = big.NewInt(1 << 2)
-	observationListFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
-	observationListFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
-	observationListFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
-	observationListFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
-	observationListFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
-	observationListFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
-	observationListFiltersFieldNodeLabels            = big.NewInt(1 << 9)
-	observationListFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
-	observationListFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
-	observationListFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
+	observationListFiltersFieldDateFilters     = big.NewInt(1 << 0)
+	observationListFiltersFieldPropertyFilters = big.NewInt(1 << 1)
 )
 
 type ObservationListFilters struct {
-	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
-	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
-	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
-	// Filter results by temporal values.
+	// Filter results by created_at.
 	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
-	// Include results with any of these edge types. Node search does not support this filter.
-	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// Include results with any of these edge UUIDs. Node search does not support this filter.
-	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
-	// Include results derived from any of these episode UUIDs.
-	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	// Exclude results with any of these edge types. Node search does not support this filter.
-	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
-	// Exclude nodes that have any of these labels. On an edge list, the API
-	// excludes an edge when its source node or its target node has one of
-	// these labels. Edge search does not support this filter.
-	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
-	// Filter results by episode metadata.
-	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
-	// Include only nodes that have at least one of these labels. On an edge
-	// list, the source node and the target node of each edge must each have
-	// at least one of these labels. Edge search does not support this filter.
-	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 	// Filter results by node or edge properties.
 	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
-	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
-	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
-	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
-	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (o *ObservationListFilters) GetConnectedNodeUUIDs() []string {
-	if o == nil {
-		return nil
-	}
-	return o.ConnectedNodeUUIDs
-}
-
-func (o *ObservationListFilters) GetContentPolicyViolated() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.ContentPolicyViolated
 }
 
 func (o *ObservationListFilters) GetDateFilters() *DateFilters {
@@ -26610,74 +26385,11 @@ func (o *ObservationListFilters) GetDateFilters() *DateFilters {
 	return o.DateFilters
 }
 
-func (o *ObservationListFilters) GetEdgeTypes() []string {
-	if o == nil {
-		return nil
-	}
-	return o.EdgeTypes
-}
-
-func (o *ObservationListFilters) GetEdgeUUIDs() []string {
-	if o == nil {
-		return nil
-	}
-	return o.EdgeUUIDs
-}
-
-func (o *ObservationListFilters) GetEpisodeUUIDs() []string {
-	if o == nil {
-		return nil
-	}
-	return o.EpisodeUUIDs
-}
-
-func (o *ObservationListFilters) GetExcludeEdgeTypes() []string {
-	if o == nil {
-		return nil
-	}
-	return o.ExcludeEdgeTypes
-}
-
-func (o *ObservationListFilters) GetExcludeNodeLabels() []string {
-	if o == nil {
-		return nil
-	}
-	return o.ExcludeNodeLabels
-}
-
-func (o *ObservationListFilters) GetMetadataFilters() *MetadataFilterGroup {
-	if o == nil {
-		return nil
-	}
-	return o.MetadataFilters
-}
-
-func (o *ObservationListFilters) GetNodeLabels() []string {
-	if o == nil {
-		return nil
-	}
-	return o.NodeLabels
-}
-
 func (o *ObservationListFilters) GetPropertyFilters() []*PropertyFilter {
 	if o == nil {
 		return nil
 	}
 	return o.PropertyFilters
-}
-
-func (o *ObservationListFilters) GetSourceNodeUUIDs() []string {
-	if o == nil {
-		return nil
-	}
-	return o.SourceNodeUUIDs
-}
-
-func (o *ObservationListFilters) GetTargetNodeUUIDs() []string {
-	if o == nil {
-		return nil
-	}
-	return o.TargetNodeUUIDs
 }
 
 func (o *ObservationListFilters) GetExtraProperties() map[string]interface{} {
@@ -26696,20 +26408,6 @@ func (o *ObservationListFilters) require(field *big.Int) {
 	o.explicitFields = next
 }
 
-// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
-	o.ConnectedNodeUUIDs = connectedNodeUUIDs
-	o.require(observationListFiltersFieldConnectedNodeUUIDs)
-}
-
-// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
-	o.ContentPolicyViolated = contentPolicyViolated
-	o.require(observationListFiltersFieldContentPolicyViolated)
-}
-
 // SetDateFilters sets the DateFilters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (o *ObservationListFilters) SetDateFilters(dateFilters *DateFilters) {
@@ -26717,74 +26415,11 @@ func (o *ObservationListFilters) SetDateFilters(dateFilters *DateFilters) {
 	o.require(observationListFiltersFieldDateFilters)
 }
 
-// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetEdgeTypes(edgeTypes []string) {
-	o.EdgeTypes = edgeTypes
-	o.require(observationListFiltersFieldEdgeTypes)
-}
-
-// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
-	o.EdgeUUIDs = edgeUUIDs
-	o.require(observationListFiltersFieldEdgeUUIDs)
-}
-
-// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
-	o.EpisodeUUIDs = episodeUUIDs
-	o.require(observationListFiltersFieldEpisodeUUIDs)
-}
-
-// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
-	o.ExcludeEdgeTypes = excludeEdgeTypes
-	o.require(observationListFiltersFieldExcludeEdgeTypes)
-}
-
-// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
-	o.ExcludeNodeLabels = excludeNodeLabels
-	o.require(observationListFiltersFieldExcludeNodeLabels)
-}
-
-// SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetMetadataFilters(metadataFilters *MetadataFilterGroup) {
-	o.MetadataFilters = metadataFilters
-	o.require(observationListFiltersFieldMetadataFilters)
-}
-
-// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetNodeLabels(nodeLabels []string) {
-	o.NodeLabels = nodeLabels
-	o.require(observationListFiltersFieldNodeLabels)
-}
-
 // SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (o *ObservationListFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
 	o.PropertyFilters = propertyFilters
 	o.require(observationListFiltersFieldPropertyFilters)
-}
-
-// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
-	o.SourceNodeUUIDs = sourceNodeUUIDs
-	o.require(observationListFiltersFieldSourceNodeUUIDs)
-}
-
-// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (o *ObservationListFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
-	o.TargetNodeUUIDs = targetNodeUUIDs
-	o.require(observationListFiltersFieldTargetNodeUUIDs)
 }
 
 func (o *ObservationListFilters) UnmarshalJSON(data []byte) error {
@@ -32685,72 +32320,24 @@ func (t *ThreadSummary) String() string {
 }
 
 var (
-	threadSummaryListFiltersFieldConnectedNodeUUIDs    = big.NewInt(1 << 0)
-	threadSummaryListFiltersFieldContentPolicyViolated = big.NewInt(1 << 1)
-	threadSummaryListFiltersFieldDateFilters           = big.NewInt(1 << 2)
-	threadSummaryListFiltersFieldEdgeTypes             = big.NewInt(1 << 3)
-	threadSummaryListFiltersFieldEdgeUUIDs             = big.NewInt(1 << 4)
-	threadSummaryListFiltersFieldEpisodeUUIDs          = big.NewInt(1 << 5)
-	threadSummaryListFiltersFieldExcludeEdgeTypes      = big.NewInt(1 << 6)
-	threadSummaryListFiltersFieldExcludeNodeLabels     = big.NewInt(1 << 7)
-	threadSummaryListFiltersFieldMetadataFilters       = big.NewInt(1 << 8)
-	threadSummaryListFiltersFieldNodeLabels            = big.NewInt(1 << 9)
-	threadSummaryListFiltersFieldPropertyFilters       = big.NewInt(1 << 10)
-	threadSummaryListFiltersFieldSourceNodeUUIDs       = big.NewInt(1 << 11)
-	threadSummaryListFiltersFieldTargetNodeUUIDs       = big.NewInt(1 << 12)
+	threadSummaryListFiltersFieldDateFilters     = big.NewInt(1 << 0)
+	threadSummaryListFiltersFieldMetadataFilters = big.NewInt(1 << 1)
+	threadSummaryListFiltersFieldPropertyFilters = big.NewInt(1 << 2)
 )
 
 type ThreadSummaryListFilters struct {
-	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
-	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
-	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
-	// Filter results by temporal values.
+	// Filter results by created_at.
 	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
-	// Include results with any of these edge types. Node search does not support this filter.
-	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// Include results with any of these edge UUIDs. Node search does not support this filter.
-	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
-	// Include results derived from any of these episode UUIDs.
-	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
-	// Exclude results with any of these edge types. Node search does not support this filter.
-	ExcludeEdgeTypes []string `json:"exclude_edge_types,omitempty" url:"exclude_edge_types,omitempty"`
-	// Exclude nodes that have any of these labels. On an edge list, the API
-	// excludes an edge when its source node or its target node has one of
-	// these labels. Edge search does not support this filter.
-	ExcludeNodeLabels []string `json:"exclude_node_labels,omitempty" url:"exclude_node_labels,omitempty"`
-	// Filter results by episode metadata.
+	// Filter results by the metadata of the thread episodes.
 	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
-	// Include only nodes that have at least one of these labels. On an edge
-	// list, the source node and the target node of each edge must each have
-	// at least one of these labels. Edge search does not support this filter.
-	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
 	// Filter results by node or edge properties.
 	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
-	// Include edges that start at any of these node UUIDs. Node search does not support this filter.
-	SourceNodeUUIDs []string `json:"source_node_uuids,omitempty" url:"source_node_uuids,omitempty"`
-	// Include edges that end at any of these node UUIDs. Node search does not support this filter.
-	TargetNodeUUIDs []string `json:"target_node_uuids,omitempty" url:"target_node_uuids,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
-}
-
-func (t *ThreadSummaryListFilters) GetConnectedNodeUUIDs() []string {
-	if t == nil {
-		return nil
-	}
-	return t.ConnectedNodeUUIDs
-}
-
-func (t *ThreadSummaryListFilters) GetContentPolicyViolated() *bool {
-	if t == nil {
-		return nil
-	}
-	return t.ContentPolicyViolated
 }
 
 func (t *ThreadSummaryListFilters) GetDateFilters() *DateFilters {
@@ -32760,41 +32347,6 @@ func (t *ThreadSummaryListFilters) GetDateFilters() *DateFilters {
 	return t.DateFilters
 }
 
-func (t *ThreadSummaryListFilters) GetEdgeTypes() []string {
-	if t == nil {
-		return nil
-	}
-	return t.EdgeTypes
-}
-
-func (t *ThreadSummaryListFilters) GetEdgeUUIDs() []string {
-	if t == nil {
-		return nil
-	}
-	return t.EdgeUUIDs
-}
-
-func (t *ThreadSummaryListFilters) GetEpisodeUUIDs() []string {
-	if t == nil {
-		return nil
-	}
-	return t.EpisodeUUIDs
-}
-
-func (t *ThreadSummaryListFilters) GetExcludeEdgeTypes() []string {
-	if t == nil {
-		return nil
-	}
-	return t.ExcludeEdgeTypes
-}
-
-func (t *ThreadSummaryListFilters) GetExcludeNodeLabels() []string {
-	if t == nil {
-		return nil
-	}
-	return t.ExcludeNodeLabels
-}
-
 func (t *ThreadSummaryListFilters) GetMetadataFilters() *MetadataFilterGroup {
 	if t == nil {
 		return nil
@@ -32802,32 +32354,11 @@ func (t *ThreadSummaryListFilters) GetMetadataFilters() *MetadataFilterGroup {
 	return t.MetadataFilters
 }
 
-func (t *ThreadSummaryListFilters) GetNodeLabels() []string {
-	if t == nil {
-		return nil
-	}
-	return t.NodeLabels
-}
-
 func (t *ThreadSummaryListFilters) GetPropertyFilters() []*PropertyFilter {
 	if t == nil {
 		return nil
 	}
 	return t.PropertyFilters
-}
-
-func (t *ThreadSummaryListFilters) GetSourceNodeUUIDs() []string {
-	if t == nil {
-		return nil
-	}
-	return t.SourceNodeUUIDs
-}
-
-func (t *ThreadSummaryListFilters) GetTargetNodeUUIDs() []string {
-	if t == nil {
-		return nil
-	}
-	return t.TargetNodeUUIDs
 }
 
 func (t *ThreadSummaryListFilters) GetExtraProperties() map[string]interface{} {
@@ -32846,60 +32377,11 @@ func (t *ThreadSummaryListFilters) require(field *big.Int) {
 	t.explicitFields = next
 }
 
-// SetConnectedNodeUUIDs sets the ConnectedNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetConnectedNodeUUIDs(connectedNodeUUIDs []string) {
-	t.ConnectedNodeUUIDs = connectedNodeUUIDs
-	t.require(threadSummaryListFiltersFieldConnectedNodeUUIDs)
-}
-
-// SetContentPolicyViolated sets the ContentPolicyViolated field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
-	t.ContentPolicyViolated = contentPolicyViolated
-	t.require(threadSummaryListFiltersFieldContentPolicyViolated)
-}
-
 // SetDateFilters sets the DateFilters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (t *ThreadSummaryListFilters) SetDateFilters(dateFilters *DateFilters) {
 	t.DateFilters = dateFilters
 	t.require(threadSummaryListFiltersFieldDateFilters)
-}
-
-// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetEdgeTypes(edgeTypes []string) {
-	t.EdgeTypes = edgeTypes
-	t.require(threadSummaryListFiltersFieldEdgeTypes)
-}
-
-// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetEdgeUUIDs(edgeUUIDs []string) {
-	t.EdgeUUIDs = edgeUUIDs
-	t.require(threadSummaryListFiltersFieldEdgeUUIDs)
-}
-
-// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetEpisodeUUIDs(episodeUUIDs []string) {
-	t.EpisodeUUIDs = episodeUUIDs
-	t.require(threadSummaryListFiltersFieldEpisodeUUIDs)
-}
-
-// SetExcludeEdgeTypes sets the ExcludeEdgeTypes field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetExcludeEdgeTypes(excludeEdgeTypes []string) {
-	t.ExcludeEdgeTypes = excludeEdgeTypes
-	t.require(threadSummaryListFiltersFieldExcludeEdgeTypes)
-}
-
-// SetExcludeNodeLabels sets the ExcludeNodeLabels field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetExcludeNodeLabels(excludeNodeLabels []string) {
-	t.ExcludeNodeLabels = excludeNodeLabels
-	t.require(threadSummaryListFiltersFieldExcludeNodeLabels)
 }
 
 // SetMetadataFilters sets the MetadataFilters field and marks it as non-optional;
@@ -32909,32 +32391,11 @@ func (t *ThreadSummaryListFilters) SetMetadataFilters(metadataFilters *MetadataF
 	t.require(threadSummaryListFiltersFieldMetadataFilters)
 }
 
-// SetNodeLabels sets the NodeLabels field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetNodeLabels(nodeLabels []string) {
-	t.NodeLabels = nodeLabels
-	t.require(threadSummaryListFiltersFieldNodeLabels)
-}
-
 // SetPropertyFilters sets the PropertyFilters field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (t *ThreadSummaryListFilters) SetPropertyFilters(propertyFilters []*PropertyFilter) {
 	t.PropertyFilters = propertyFilters
 	t.require(threadSummaryListFiltersFieldPropertyFilters)
-}
-
-// SetSourceNodeUUIDs sets the SourceNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetSourceNodeUUIDs(sourceNodeUUIDs []string) {
-	t.SourceNodeUUIDs = sourceNodeUUIDs
-	t.require(threadSummaryListFiltersFieldSourceNodeUUIDs)
-}
-
-// SetTargetNodeUUIDs sets the TargetNodeUUIDs field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (t *ThreadSummaryListFilters) SetTargetNodeUUIDs(targetNodeUUIDs []string) {
-	t.TargetNodeUUIDs = targetNodeUUIDs
-	t.require(threadSummaryListFiltersFieldTargetNodeUUIDs)
 }
 
 func (t *ThreadSummaryListFilters) UnmarshalJSON(data []byte) error {

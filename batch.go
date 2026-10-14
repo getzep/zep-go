@@ -1207,12 +1207,15 @@ func (b BatchItemStatus) Ptr() *BatchItemStatus {
 }
 
 var (
-	batchItemsResponseFieldItems = big.NewInt(1 << 0)
+	batchItemsResponseFieldItems         = big.NewInt(1 << 0)
+	batchItemsResponseFieldRejectedItems = big.NewInt(1 << 1)
 )
 
 type BatchItemsResponse struct {
 	// The batch items that were added, in the order they were appended.
 	Items []*BatchItem `json:"items,omitempty" url:"items,omitempty"`
+	// The request items that were rejected because their graph was not found.
+	RejectedItems []*RejectedBatchItem `json:"rejected_items,omitempty" url:"rejected_items,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1226,6 +1229,13 @@ func (b *BatchItemsResponse) GetItems() []*BatchItem {
 		return nil
 	}
 	return b.Items
+}
+
+func (b *BatchItemsResponse) GetRejectedItems() []*RejectedBatchItem {
+	if b == nil {
+		return nil
+	}
+	return b.RejectedItems
 }
 
 func (b *BatchItemsResponse) GetExtraProperties() map[string]interface{} {
@@ -1249,6 +1259,13 @@ func (b *BatchItemsResponse) require(field *big.Int) {
 func (b *BatchItemsResponse) SetItems(items []*BatchItem) {
 	b.Items = items
 	b.require(batchItemsResponseFieldItems)
+}
+
+// SetRejectedItems sets the RejectedItems field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemsResponse) SetRejectedItems(rejectedItems []*RejectedBatchItem) {
+	b.RejectedItems = rejectedItems
+	b.require(batchItemsResponseFieldRejectedItems)
 }
 
 func (b *BatchItemsResponse) UnmarshalJSON(data []byte) error {
@@ -1714,6 +1731,110 @@ func (p *ProcessBatchResult) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", p)
+}
+
+var (
+	rejectedBatchItemFieldIndex  = big.NewInt(1 << 0)
+	rejectedBatchItemFieldReason = big.NewInt(1 << 1)
+)
+
+type RejectedBatchItem struct {
+	// The zero-based position of the item in the request.
+	Index *int `json:"index,omitempty" url:"index,omitempty"`
+	// The reason that the item was rejected.
+	Reason *string `json:"reason,omitempty" url:"reason,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (r *RejectedBatchItem) GetIndex() *int {
+	if r == nil {
+		return nil
+	}
+	return r.Index
+}
+
+func (r *RejectedBatchItem) GetReason() *string {
+	if r == nil {
+		return nil
+	}
+	return r.Reason
+}
+
+func (r *RejectedBatchItem) GetExtraProperties() map[string]interface{} {
+	if r == nil {
+		return nil
+	}
+	return r.extraProperties
+}
+
+func (r *RejectedBatchItem) require(field *big.Int) {
+	next := new(big.Int)
+	if r.explicitFields != nil {
+		next.Set(r.explicitFields)
+	}
+	next.Or(next, field)
+	r.explicitFields = next
+}
+
+// SetIndex sets the Index field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RejectedBatchItem) SetIndex(index *int) {
+	r.Index = index
+	r.require(rejectedBatchItemFieldIndex)
+}
+
+// SetReason sets the Reason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RejectedBatchItem) SetReason(reason *string) {
+	r.Reason = reason
+	r.require(rejectedBatchItemFieldReason)
+}
+
+func (r *RejectedBatchItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler RejectedBatchItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RejectedBatchItem(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+	r.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RejectedBatchItem) MarshalJSON() ([]byte, error) {
+	type embed RejectedBatchItem
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*r),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, r.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (r *RejectedBatchItem) String() string {
+	if r == nil {
+		return "<nil>"
+	}
+	if len(r.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(r.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
 }
 
 type BatchListRequestStatus string
