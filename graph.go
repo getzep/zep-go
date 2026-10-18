@@ -157,7 +157,7 @@ type DetectPatternsRequest struct {
 	// Valid values: none, 7_days, 30_days, 90_days. Default: none
 	RecencyWeight *RecencyWeight `json:"recency_weight,omitempty" url:"-"`
 	// Filters which edges/nodes participate in pattern detection.
-	// Reuses the same filter format as /graph/search.
+	// Reuses the same filter format as the `graph.search` SDK method.
 	SearchFilters *SearchFilters `json:"search_filters,omitempty" url:"-"`
 	// Seed selection. If omitted, analyzes the entire graph. Mutually exclusive with query.
 	Seeds *PatternSeeds `json:"seeds,omitempty" url:"-"`

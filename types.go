@@ -67,6 +67,7 @@ const (
 	ComparisonOperatorIsNullAlias      ComparisonOperator = "is_null"
 	ComparisonOperatorIsNotNull        ComparisonOperator = "IS NOT NULL"
 	ComparisonOperatorContains         ComparisonOperator = "CONTAINS"
+	ComparisonOperatorIn               ComparisonOperator = "IN"
 )
 
 func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
@@ -91,6 +92,8 @@ func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
 		return ComparisonOperatorIsNotNull, nil
 	case "CONTAINS":
 		return ComparisonOperatorContains, nil
+	case "IN":
+		return ComparisonOperatorIn, nil
 	}
 	var t ComparisonOperator
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -648,13 +651,13 @@ type EntityNode struct {
 	// orders by degree.
 	Degree *int `json:"degree,omitempty" url:"degree,omitempty"`
 	// The UUIDs of the live episodes that mention this node, newest first. The
-	// list is complete when `episodes_truncated` is false. The list is empty
-	// when the node has more than 100 source episodes; list episodes with the
-	// `mentioned_node_uuids` filter to read them.
+	// list is complete when `episodes_truncated` is false. The list holds the
+	// newest 100 when the node has more than 100 source episodes; list
+	// episodes with the `mentioned_node_uuids` filter to read them all.
 	Episodes []string `json:"episodes,omitempty" url:"episodes,omitempty"`
-	// True when the node has more than 100 source episodes, so `episodes` is
-	// empty, or when provenance is unavailable. False means `episodes` is the
-	// complete set.
+	// True when the node has more than 100 source episodes, so `episodes` holds
+	// only the newest 100, or when provenance is unavailable. False means
+	// `episodes` is the complete set.
 	EpisodesTruncated *bool `json:"episodes_truncated,omitempty" url:"episodes_truncated,omitempty"`
 	// Labels associated with the node
 	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
@@ -1014,7 +1017,10 @@ func (e *EpisodeMentions) String() string {
 }
 
 type EpisodeMetadataFilter struct {
-	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, IN, CONTAINS
+	// Comparison operator: =, <>, >, <, >=, <=, IS NULL, IS NOT NULL, CONTAINS, IN.
+	// CONTAINS is a case-sensitive substring match on the stored value.
+	// IN takes an array of up to 100 values and matches when the stored value equals one of them exactly.
+	// v3 API: CONTAINS takes one comma-separated string and matches one of its items; IN is not accepted.
 	ComparisonOperator ComparisonOperator `json:"comparison_operator" url:"comparison_operator"`
 	// Metadata key to filter on
 	PropertyName string `json:"property_name" url:"property_name"`
@@ -1991,6 +1997,11 @@ type SearchFilters struct {
 	// target node UUID is in this list. Applies to edges only; rejected on
 	// requests whose result type contains no edges. Max 256 entries.
 	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
+	// Exact match on the complete content policy violation state of an
+	// episode. Supported on the episodes scope while the project includes
+	// flagged episodes. Zep applies it at hydration; it never reaches the
+	// graph service.
+	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
 	// 2D array of date filters for the created_at field.
 	// The outer array elements are combined with OR logic.
 	// The inner array elements are combined with AND logic.
@@ -2027,7 +2038,11 @@ type SearchFilters struct {
 	InvalidAt [][]*DateFilter `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
 	// List of node labels to filter on
 	NodeLabels []string `json:"node_labels,omitempty" url:"node_labels,omitempty"`
-	// List of property filters to apply to nodes and edges
+	// List of property filters. Each filter compares one attribute value.
+	// On a node search and on a node list, the filters match node attributes.
+	// On an edge search and on an edge list, the filters match edge attributes
+	// only. To get the edges of nodes that match a node attribute, first get
+	// the matching nodes, then send their UUIDs in connected_node_uuids.
 	PropertyFilters []*PropertyFilter `json:"property_filters,omitempty" url:"property_filters,omitempty"`
 	// List of node UUIDs to filter edges on: an edge matches if its source
 	// node UUID is in this list. Applies to edges only; rejected on requests
@@ -2053,6 +2068,13 @@ func (s *SearchFilters) GetConnectedNodeUUIDs() []string {
 		return nil
 	}
 	return s.ConnectedNodeUUIDs
+}
+
+func (s *SearchFilters) GetContentPolicyViolated() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.ContentPolicyViolated
 }
 
 func (s *SearchFilters) GetCreatedAt() [][]*DateFilter {

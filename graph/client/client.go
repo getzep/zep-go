@@ -255,7 +255,7 @@ func (c *Client) GetEpisodesForDocument(
 // Default `pageSize` is 50 (range 1–100). To list users, use
 // `user.list_ordered` instead. See the
 // [graph directory guide](/graph-directory) for pagination, relevance
-// ordering, and Memory MCP exposure.
+// ordering, and Context MCP exposure.
 func (c *Client) ListAll(
 	ctx context.Context,
 	request *v3.GraphListAllRequest,
