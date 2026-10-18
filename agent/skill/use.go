@@ -19,11 +19,18 @@ var (
 )
 
 type CreateAgentSkillUseRequest struct {
-	Outcome    *v4.AddAgentSkillUseOutcomeRequest `json:"outcome,omitempty" url:"-"`
-	ReasonCode *string                            `json:"reason_code,omitempty" url:"-"`
-	SearchID   string                             `json:"search_id" url:"-"`
-	TraceUUID  string                             `json:"trace_uuid" url:"-"`
-	Usage      CreateAgentSkillUseRequestUsage    `json:"usage" url:"-"`
+	// The developer records the outcome of the attempt. Valid values are
+	// succeeded, failed, partial, abandoned, and unknown.
+	Outcome *v4.AddAgentSkillUseOutcomeRequest `json:"outcome,omitempty" url:"-"`
+	// The developer supplies a reason code for this outcome. It can contain up to 255 characters.
+	ReasonCode *string `json:"reason_code,omitempty" url:"-"`
+	// The developer supplies the signed search token returned by Skill search.
+	SearchID string `json:"search_id" url:"-"`
+	// The developer supplies the UUID of the source Trace.
+	TraceUUID string `json:"trace_uuid" url:"-"`
+	// The developer supplies how the Skill was used. Valid values are selected, used,
+	// partially_used, ignored, inapplicable.
+	Usage CreateAgentSkillUseRequestUsage `json:"usage" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -94,6 +101,8 @@ func (c *CreateAgentSkillUseRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(explicitMarshaler)
 }
 
+// The developer supplies how the Skill was used. Valid values are selected, used,
+// partially_used, ignored, inapplicable.
 type CreateAgentSkillUseRequestUsage string
 
 const (

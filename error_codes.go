@@ -38,6 +38,21 @@ var ErrorCodes internal.ErrorCodes = internal.ErrorCodes{
 			APIError: apiError,
 		}
 	},
+	413: func(apiError *core.APIError) error {
+		return &ContentTooLargeError{
+			APIError: apiError,
+		}
+	},
+	429: func(apiError *core.APIError) error {
+		return &TooManyRequestsError{
+			APIError: apiError,
+		}
+	},
+	500: func(apiError *core.APIError) error {
+		return &InternalServerError{
+			APIError: apiError,
+		}
+	},
 	422: func(apiError *core.APIError) error {
 		return &UnprocessableEntityError{
 			APIError: apiError,

@@ -15030,11 +15030,11 @@ func TestSettersAgentSkillContractEvidence(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
-	t.Run("SetTrajectoryID", func(t *testing.T) {
+	t.Run("SetTraceID", func(t *testing.T) {
 		obj := &AgentSkillContractEvidence{}
-		var fernTestValueTrajectoryID *string
-		obj.SetTrajectoryID(fernTestValueTrajectoryID)
-		assert.Equal(t, fernTestValueTrajectoryID, obj.TrajectoryID)
+		var fernTestValueTraceID *string
+		obj.SetTraceID(fernTestValueTraceID)
+		assert.Equal(t, fernTestValueTraceID, obj.TraceID)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -15206,28 +15206,28 @@ func TestGettersAgentSkillContractEvidence(t *testing.T) {
 		_ = obj.GetSourceKind() // Should return zero value
 	})
 
-	t.Run("GetTrajectoryID", func(t *testing.T) {
+	t.Run("GetTraceID", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AgentSkillContractEvidence{}
 		var expected *string
-		obj.TrajectoryID = expected
+		obj.TraceID = expected
 
 		// Act & Assert
-		assert.Equal(t, expected, obj.GetTrajectoryID(), "getter should return the property value")
+		assert.Equal(t, expected, obj.GetTraceID(), "getter should return the property value")
 	})
 
-	t.Run("GetTrajectoryID_NilValue", func(t *testing.T) {
+	t.Run("GetTraceID_NilValue", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AgentSkillContractEvidence{}
-		obj.TrajectoryID = nil
+		obj.TraceID = nil
 
 		// Act & Assert
-		assert.Nil(t, obj.GetTrajectoryID(), "getter should return nil when property is nil")
+		assert.Nil(t, obj.GetTraceID(), "getter should return nil when property is nil")
 	})
 
-	t.Run("GetTrajectoryID_NilReceiver", func(t *testing.T) {
+	t.Run("GetTraceID_NilReceiver", func(t *testing.T) {
 		t.Parallel()
 		var obj *AgentSkillContractEvidence
 		// Should not panic - getters should handle nil receiver gracefully
@@ -15236,7 +15236,7 @@ func TestGettersAgentSkillContractEvidence(t *testing.T) {
 				t.Errorf("Getter panicked on nil receiver: %v", r)
 			}
 		}()
-		_ = obj.GetTrajectoryID() // Should return zero value
+		_ = obj.GetTraceID() // Should return zero value
 	})
 
 }
@@ -15397,14 +15397,14 @@ func TestSettersMarkExplicitAgentSkillContractEvidence(t *testing.T) {
 		// It verifies that setting a field via setter allows successful JSON round-trip
 	})
 
-	t.Run("SetTrajectoryID_MarksExplicit", func(t *testing.T) {
+	t.Run("SetTraceID_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
 		obj := &AgentSkillContractEvidence{}
-		var fernTestValueTrajectoryID *string
+		var fernTestValueTraceID *string
 
 		// Act
-		obj.SetTrajectoryID(fernTestValueTrajectoryID)
+		obj.SetTraceID(fernTestValueTraceID)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -28491,6 +28491,14 @@ func TestSettersAgentTraceEvent(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetToolCallID", func(t *testing.T) {
+		obj := &AgentTraceEvent{}
+		var fernTestValueToolCallID *string
+		obj.SetToolCallID(fernTestValueToolCallID)
+		assert.Equal(t, fernTestValueToolCallID, obj.ToolCallID)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetTraceUUID", func(t *testing.T) {
 		obj := &AgentTraceEvent{}
 		var fernTestValueTraceUUID *string
@@ -28945,6 +28953,39 @@ func TestGettersAgentTraceEvent(t *testing.T) {
 			}
 		}()
 		_ = obj.GetSources() // Should return zero value
+	})
+
+	t.Run("GetToolCallID", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &AgentTraceEvent{}
+		var expected *string
+		obj.ToolCallID = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetToolCallID(), "getter should return the property value")
+	})
+
+	t.Run("GetToolCallID_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &AgentTraceEvent{}
+		obj.ToolCallID = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetToolCallID(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetToolCallID_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *AgentTraceEvent
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetToolCallID() // Should return zero value
 	})
 
 	t.Run("GetTraceUUID", func(t *testing.T) {
@@ -29429,6 +29470,37 @@ func TestSettersMarkExplicitAgentTraceEvent(t *testing.T) {
 
 		// Act
 		obj.SetSources(fernTestValueSources)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetToolCallID_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &AgentTraceEvent{}
+		var fernTestValueToolCallID *string
+
+		// Act
+		obj.SetToolCallID(fernTestValueToolCallID)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -77164,6 +77236,14 @@ func TestSettersThreadSummary(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetGraphUUID", func(t *testing.T) {
+		obj := &ThreadSummary{}
+		var fernTestValueGraphUUID *string
+		obj.SetGraphUUID(fernTestValueGraphUUID)
+		assert.Equal(t, fernTestValueGraphUUID, obj.GraphUUID)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetLastSummarizedAt", func(t *testing.T) {
 		obj := &ThreadSummary{}
 		var fernTestValueLastSummarizedAt *string
@@ -77254,6 +77334,39 @@ func TestGettersThreadSummary(t *testing.T) {
 			}
 		}()
 		_ = obj.GetCreatedAt() // Should return zero value
+	})
+
+	t.Run("GetGraphUUID", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ThreadSummary{}
+		var expected *string
+		obj.GraphUUID = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetGraphUUID(), "getter should return the property value")
+	})
+
+	t.Run("GetGraphUUID_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ThreadSummary{}
+		obj.GraphUUID = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetGraphUUID(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetGraphUUID_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *ThreadSummary
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetGraphUUID() // Should return zero value
 	})
 
 	t.Run("GetLastSummarizedAt", func(t *testing.T) {
@@ -77498,6 +77611,37 @@ func TestSettersMarkExplicitThreadSummary(t *testing.T) {
 
 		// Act
 		obj.SetCreatedAt(fernTestValueCreatedAt)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetGraphUUID_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ThreadSummary{}
+		var fernTestValueGraphUUID *string
+
+		// Act
+		obj.SetGraphUUID(fernTestValueGraphUUID)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -97148,11 +97292,11 @@ func TestEnumAgentSkillContractEvidencePolarity(t *testing.T) {
 }
 
 func TestEnumAgentSkillContractEvidenceSourceKind(t *testing.T) {
-	t.Run("NewFromString_trajectory", func(t *testing.T) {
+	t.Run("NewFromString_trace", func(t *testing.T) {
 		t.Parallel()
-		val, err := NewAgentSkillContractEvidenceSourceKindFromString("trajectory")
+		val, err := NewAgentSkillContractEvidenceSourceKindFromString("trace")
 		assert.NoError(t, err, "valid enum value should not return error")
-		assert.Equal(t, AgentSkillContractEvidenceSourceKind("trajectory"), val, "enum value should match expected wire value")
+		assert.Equal(t, AgentSkillContractEvidenceSourceKind("trace"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_event", func(t *testing.T) {
@@ -97175,7 +97319,7 @@ func TestEnumAgentSkillContractEvidenceSourceKind(t *testing.T) {
 	})
 
 	t.Run("Ptr", func(t *testing.T) {
-		val, err := NewAgentSkillContractEvidenceSourceKindFromString("trajectory")
+		val, err := NewAgentSkillContractEvidenceSourceKindFromString("trace")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)
@@ -98741,6 +98885,13 @@ func TestEnumTaskFamilyMappingRuleSource(t *testing.T) {
 		val, err := NewTaskFamilyMappingRuleSourceFromString("name")
 		assert.NoError(t, err, "valid enum value should not return error")
 		assert.Equal(t, TaskFamilyMappingRuleSource("name"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_infer", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskFamilyMappingRuleSourceFromString("infer")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskFamilyMappingRuleSource("infer"), val, "enum value should match expected wire value")
 	})
 
 	t.Run("NewFromString_Invalid", func(t *testing.T) {

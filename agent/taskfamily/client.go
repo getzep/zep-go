@@ -118,8 +118,8 @@ func (c *Client) List(
 // Example:
 //
 //	request := &agent.RenameAgentTaskFamilyRequest{
-//	    FromSlug: "from_slug",
-//	    ToSlug: "to_slug",
+//	    FromSlug: "support/refund",
+//	    ToSlug: "support/refund",
 //	}
 //	client.Agent.TaskFamily.Rename(
 //	    context.TODO(),

@@ -65,6 +65,8 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// Create Agent Skill. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.CreateAgentSkillRequest{
@@ -94,7 +96,7 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Submit a portable Skill archive. The completed Task returns `{"result":{"skill_uuid":"<uuid>"}}`. Approve that Skill before retrieval.
+// Submit a portable Skill archive. The completed Task returns `{"result":{"skill_uuid":"<uuid>"}}`. Approve that Skill before retrieval. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
 func (c *Client) ImportPackage(
 	ctx context.Context,
 	// Agent UUID
@@ -114,6 +116,8 @@ func (c *Client) ImportPackage(
 	return response.Body, nil
 }
 
+// List Agent Skills. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.AgentSkillListRequest{}
@@ -191,10 +195,12 @@ func (c *Client) List(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// Search Agent Skills. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.AgentSkillSearchRequest{
-//	    Query: "query",
+//	    Query: "How do I refund a duplicate charge?",
 //	}
 //	client.Agent.Skill.Search(
 //	    context.TODO(),
@@ -270,6 +276,8 @@ func (c *Client) Search(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// Get Agent Skill. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	client.Agent.Skill.Get(
@@ -297,6 +305,8 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
+// Approve Agent Skill. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.ApproveAgentSkillRequest{
@@ -330,6 +340,8 @@ func (c *Client) Approve(
 	return response.Body, nil
 }
 
+// Retire Agent Skill. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.RetireAgentSkillRequest{
@@ -363,6 +375,8 @@ func (c *Client) Retire(
 	return response.Body, nil
 }
 
+// Create Agent Skill Version. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.CreateAgentSkillVersionRequest{

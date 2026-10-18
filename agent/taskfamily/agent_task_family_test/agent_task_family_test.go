@@ -114,8 +114,8 @@ func TestAgentTaskFamilyRenameWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &agent.RenameAgentTaskFamilyRequest{
-		FromSlug: "from_slug",
-		ToSlug:   "to_slug",
+		FromSlug: "support/refund",
+		ToSlug:   "support/refund",
 	}
 	_, invocationErr := client.Agent.TaskFamily.Rename(
 		context.TODO(),

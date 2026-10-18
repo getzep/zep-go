@@ -39,6 +39,8 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// Export an Agent Skill version. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	client.Agent.Skill.Export.Create(
@@ -70,6 +72,8 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
+// Download an Agent Skill export. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	client.Agent.Skill.Export.Get(

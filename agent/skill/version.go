@@ -15,8 +15,10 @@ var (
 )
 
 type CompareAgentSkillVersionsRequest struct {
+	// The developer supplies the source version to compare. It must be at least 1.
 	FromVersion int `json:"from_version" url:"-"`
-	ToVersion   int `json:"to_version" url:"-"`
+	// The developer supplies the destination version to compare. It must be at least 1.
+	ToVersion int `json:"to_version" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -148,8 +150,10 @@ var (
 )
 
 type RestoreAgentSkillVersionRequest struct {
+	// The developer supplies the current Skill version to protect against concurrent edits.
 	ExpectedVersion int `json:"expected_version" url:"-"`
-	Version         int `json:"version" url:"-"`
+	// The developer supplies the Skill version to restore.
+	Version int `json:"version" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`

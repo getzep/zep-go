@@ -43,7 +43,7 @@ func NewClient(options *core.RequestOptions) *Client {
 //
 //	request := &skill.CreateAgentSkillCandidateEvaluationRequest{
 //	    EvaluatedBy: skill.CreateAgentSkillCandidateEvaluationRequestEvaluatedByCustomer,
-//	    EvaluatorVersion: "evaluator_version",
+//	    EvaluatorVersion: "v1.0.0",
 //	    ExpectedRevision: 1,
 //	    Verdict: skill.CreateAgentSkillCandidateEvaluationRequestVerdictSucceeded,
 //	}
@@ -79,11 +79,13 @@ func (c *Client) CreateForCandidate(
 	return response.Body, nil
 }
 
+// Record Agent Skill Evaluation. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &skill.CreateAgentSkillEvaluationRequest{
 //	    EvaluatedBy: skill.CreateAgentSkillEvaluationRequestEvaluatedByCustomer,
-//	    EvaluatorVersion: "evaluator_version",
+//	    EvaluatorVersion: "v1.0.0",
 //	    SkillVersion: 1,
 //	    Verdict: skill.CreateAgentSkillEvaluationRequestVerdictSucceeded,
 //	}

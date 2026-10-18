@@ -15,6 +15,7 @@ var (
 )
 
 type ApproveAgentSkillRequest struct {
+	// The developer supplies the current Skill version to protect against concurrent edits.
 	ExpectedVersion int `json:"expected_version" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -64,8 +65,11 @@ var (
 )
 
 type CreateAgentSkillRequest struct {
+	// The developer supplies the structured content of the Skill.
 	Definition *v4.SkillDefinition `json:"definition" url:"-"`
-	SkillID    *string             `json:"skill_id,omitempty" url:"-"`
+	// The developer can set a stable ID for the Skill. If omitted, the service
+	// assigns one.
+	SkillID *string `json:"skill_id,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -121,8 +125,10 @@ var (
 )
 
 type CreateAgentSkillVersionRequest struct {
-	Definition      *v4.SkillDefinition `json:"definition" url:"-"`
-	ExpectedVersion int                 `json:"expected_version" url:"-"`
+	// The developer supplies the structured content for the new Skill version.
+	Definition *v4.SkillDefinition `json:"definition" url:"-"`
+	// The developer supplies the current Skill version to protect against concurrent edits.
+	ExpectedVersion int `json:"expected_version" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -185,11 +191,15 @@ type AgentSkillListRequest struct {
 	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
 	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
-	Cursor       *string  `json:"-" url:"cursor,omitempty"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// The developer filters results by environment names.
 	Environments []string `json:"environments,omitempty" url:"-"`
-	Kind         *string  `json:"kind,omitempty" url:"-"`
-	TaskFamily   *string  `json:"task_family,omitempty" url:"-"`
-	Tools        []string `json:"tools,omitempty" url:"-"`
+	// The developer supplies a Skill kind.
+	Kind *string `json:"kind,omitempty" url:"-"`
+	// The developer supplies the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"-"`
+	// The developer supplies tool names used by the Skill.
+	Tools []string `json:"tools,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -272,6 +282,7 @@ var (
 )
 
 type RetireAgentSkillRequest struct {
+	// The developer supplies the current Skill version to protect against concurrent edits.
 	ExpectedVersion int `json:"expected_version" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -331,18 +342,24 @@ type AgentSkillSearchRequest struct {
 	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
 	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
-	Cursor          *string  `json:"-" url:"cursor,omitempty"`
-	Environments    []string `json:"environments,omitempty" url:"-"`
-	IncludeMarkdown *bool    `json:"include_markdown,omitempty" url:"-"`
-	Kind            *string  `json:"kind,omitempty" url:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// The developer supplies environment names used by the Skill.
+	Environments []string `json:"environments,omitempty" url:"-"`
+	// The developer sets this to true to include the Skill instructions in Markdown.
+	IncludeMarkdown *bool `json:"include_markdown,omitempty" url:"-"`
+	// The developer supplies a Skill kind.
+	Kind *string `json:"kind,omitempty" url:"-"`
 	// MarkdownFormat selects the form of inline `markdown`. `agent` (the
 	// default) returns the Skill text that an Agent needs: no evidence
 	// markers, the description only in the frontmatter, and no empty
 	// sections. `full` returns the stored SKILL.md with its evidence markers.
 	MarkdownFormat *AgentSkillSearchRequestMarkdownFormat `json:"markdown_format,omitempty" url:"-"`
-	Query          string                                 `json:"query" url:"-"`
-	TaskFamily     *string                                `json:"task_family,omitempty" url:"-"`
-	Tools          []string                               `json:"tools,omitempty" url:"-"`
+	// The developer supplies a search query for Skills.
+	Query string `json:"query" url:"-"`
+	// The developer supplies the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"-"`
+	// The developer supplies tool names used by the Skill.
+	Tools []string `json:"tools,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`

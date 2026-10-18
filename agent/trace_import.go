@@ -23,7 +23,7 @@ var (
 )
 
 type CreateTraceImportRequest struct {
-	// ConnectionUUID identifies the project trace connection.
+	// The developer selects the configured provider connection.
 	ConnectionUUID *string `json:"connection_uuid,omitempty" url:"-"`
 	// LearnFrom controls whether imported evidence can support Skills.
 	LearnFrom *bool `json:"learn_from,omitempty" url:"-"`
@@ -33,7 +33,7 @@ type CreateTraceImportRequest struct {
 	Name *string `json:"name,omitempty" url:"-"`
 	// OnSourceChange defines how changed source traces are handled.
 	OnSourceChange *v4.TraceImportOnSourceChange `json:"on_source_change,omitempty" url:"-"`
-	// ProviderProjectID is the source provider project identifier.
+	// The developer selects the project to import from the provider.
 	ProviderProjectID *string `json:"provider_project_id,omitempty" url:"-"`
 	// RequireReview requires review for candidates backed by this import.
 	RequireReview *bool `json:"require_review,omitempty" url:"-"`

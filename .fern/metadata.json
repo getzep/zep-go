@@ -6,10 +6,10 @@
     "packageName": "zep",
     "union": "v1"
   },
-  "originGitCommit": "3bad6dc94b415e5291ffa6b5e67e06422c97660b",
+  "originGitCommit": "ee05bfd8ef5595c252169f3e0605ef888837982f",
   "originGitCommitIsDirty": true,
   "invokedBy": "ci",
-  "requestedVersion": "4.0.0",
+  "requestedVersion": "4.0.1",
   "ciProvider": "github",
-  "sdkVersion": "v4.0.0"
+  "sdkVersion": "v4.0.1"
 }

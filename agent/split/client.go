@@ -39,27 +39,29 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// Plan an Agent split. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.CreateAgentSplitPlanRequest{
 //	    Destinations: []*zep.AgentSplitPlanDestinationRequest{
 //	        &zep.AgentSplitPlanDestinationRequest{
 //	            Agent: &zep.CreateAgentRequest{
-//	                AgentID: "agent_id",
-//	                Name: "name",
-//	                SecurityDomain: "security_domain",
+//	                AgentID: "payments-agent",
+//	                Name: "Refund a duplicate charge",
+//	                SecurityDomain: "customer:support",
 //	            },
 //	            Skills: []*zep.AgentSplitPlanSkillSelectionRequest{
 //	                &zep.AgentSplitPlanSkillSelectionRequest{
-//	                    SkillUUID: "skill_uuid",
-//	                    SkillVersionUUID: "skill_version_uuid",
+//	                    SkillUUID: "6a906e70-50ca-4e43-a874-5fcae02a71fa",
+//	                    SkillVersionUUID: "6a906e70-50ca-4e43-a874-5fcae02a71fa",
 //	                    Version: 1,
 //	                },
 //	            },
 //	        },
 //	    },
 //	    ExpectedRevision: 1,
-//	    Rationale: "rationale",
+//	    Rationale: "Keep payment refunds separate from charge disputes.",
 //	    ReviewAcknowledged: true,
 //	}
 //	client.Agent.Split.Plan(
