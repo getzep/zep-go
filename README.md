@@ -8,7 +8,7 @@ The Zep Go library provides convenient access to the Zep APIs from Go.
 
 - [Requirements](#requirements)
 - [Initialize Client](#initialize-client)
-- [Add Messages to a Thread](#add-messages-to-a-thread)
+- [Add Messages to A Thread](#add-messages-to-a-thread)
 - [Get Thread Context](#get-thread-context)
 - [Optionals](#optionals)
 - [Request Options](#request-options)
@@ -173,9 +173,9 @@ func do() {
         ),
     )
     request := &zep.CreateAgentRequest{
-        AgentID: "agent_id",
-        Name: "name",
-        SecurityDomain: "security_domain",
+        AgentID: "payments-agent",
+        Name: "Refund a duplicate charge",
+        SecurityDomain: "customer:support",
     }
     client.Agent.Create(
         context.TODO(),

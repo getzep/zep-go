@@ -22,15 +22,26 @@ var (
 )
 
 type CreateAgentSkillEvaluationRequest struct {
-	ControlledTest    *bool                                        `json:"controlled_test,omitempty" url:"-"`
-	Environment       *string                                      `json:"environment,omitempty" url:"-"`
-	EvaluatedBy       CreateAgentSkillEvaluationRequestEvaluatedBy `json:"evaluated_by" url:"-"`
-	EvaluatorVersion  string                                       `json:"evaluator_version" url:"-"`
-	EvidenceReference *string                                      `json:"evidence_reference,omitempty" url:"-"`
-	Metrics           map[string]float64                           `json:"metrics,omitempty" url:"-"`
-	SkillVersion      int                                          `json:"skill_version" url:"-"`
-	UseUUID           *string                                      `json:"use_uuid,omitempty" url:"-"`
-	Verdict           CreateAgentSkillEvaluationRequestVerdict     `json:"verdict" url:"-"`
+	// The developer sets this to true when a controlled test produced the result.
+	ControlledTest *bool `json:"controlled_test,omitempty" url:"-"`
+	// The developer supplies the environment for this evaluation. At most 1024.
+	Environment *string `json:"environment,omitempty" url:"-"`
+	// The developer selects the evaluation source. Valid values are customer, tool,
+	// offline_corpus, policy.
+	EvaluatedBy CreateAgentSkillEvaluationRequestEvaluatedBy `json:"evaluated_by" url:"-"`
+	// The developer supplies the evaluation rule version. It can contain up to 255 characters.
+	EvaluatorVersion string `json:"evaluator_version" url:"-"`
+	// The developer links this evaluation to an evidence record.
+	EvidenceReference *string `json:"evidence_reference,omitempty" url:"-"`
+	// The developer supplies evaluation metrics.
+	Metrics map[string]float64 `json:"metrics,omitempty" url:"-"`
+	// The developer supplies the Skill version to evaluate. It must be at least 1.
+	SkillVersion int `json:"skill_version" url:"-"`
+	// The developer can link this evaluation to a recorded Skill use.
+	UseUUID *string `json:"use_uuid,omitempty" url:"-"`
+	// The developer supplies evaluation verdict. Valid values are succeeded, failed, partial,
+	// unknown.
+	Verdict CreateAgentSkillEvaluationRequestVerdict `json:"verdict" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -141,14 +152,24 @@ var (
 )
 
 type CreateAgentSkillCandidateEvaluationRequest struct {
-	ControlledTest    *bool                                                 `json:"controlled_test,omitempty" url:"-"`
-	Environment       *string                                               `json:"environment,omitempty" url:"-"`
-	EvaluatedBy       CreateAgentSkillCandidateEvaluationRequestEvaluatedBy `json:"evaluated_by" url:"-"`
-	EvaluatorVersion  string                                                `json:"evaluator_version" url:"-"`
-	EvidenceReference *string                                               `json:"evidence_reference,omitempty" url:"-"`
-	ExpectedRevision  int                                                   `json:"expected_revision" url:"-"`
-	Metrics           map[string]float64                                    `json:"metrics,omitempty" url:"-"`
-	Verdict           CreateAgentSkillCandidateEvaluationRequestVerdict     `json:"verdict" url:"-"`
+	// The developer sets this to true when a controlled test produced the result.
+	ControlledTest *bool `json:"controlled_test,omitempty" url:"-"`
+	// The developer supplies the environment for this evaluation.
+	Environment *string `json:"environment,omitempty" url:"-"`
+	// The developer selects the evaluation source. Valid values are customer, tool,
+	// offline_corpus, policy.
+	EvaluatedBy CreateAgentSkillCandidateEvaluationRequestEvaluatedBy `json:"evaluated_by" url:"-"`
+	// The developer supplies the version of the evaluation rule.
+	EvaluatorVersion string `json:"evaluator_version" url:"-"`
+	// The developer links this evaluation to an evidence record.
+	EvidenceReference *string `json:"evidence_reference,omitempty" url:"-"`
+	// The developer supplies the current revision used for optimistic concurrency. At least 1.
+	ExpectedRevision int `json:"expected_revision" url:"-"`
+	// The developer supplies evaluation metrics.
+	Metrics map[string]float64 `json:"metrics,omitempty" url:"-"`
+	// The developer supplies evaluation verdict. Valid values are succeeded, failed, partial,
+	// unknown.
+	Verdict CreateAgentSkillCandidateEvaluationRequestVerdict `json:"verdict" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -240,6 +261,8 @@ func (c *CreateAgentSkillCandidateEvaluationRequest) MarshalJSON() ([]byte, erro
 	return json.Marshal(explicitMarshaler)
 }
 
+// The developer selects the evaluation source. Valid values are customer, tool,
+// offline_corpus, policy.
 type CreateAgentSkillCandidateEvaluationRequestEvaluatedBy string
 
 const (
@@ -268,6 +291,8 @@ func (c CreateAgentSkillCandidateEvaluationRequestEvaluatedBy) Ptr() *CreateAgen
 	return &c
 }
 
+// The developer supplies evaluation verdict. Valid values are succeeded, failed, partial,
+// unknown.
 type CreateAgentSkillCandidateEvaluationRequestVerdict string
 
 const (
@@ -296,6 +321,8 @@ func (c CreateAgentSkillCandidateEvaluationRequestVerdict) Ptr() *CreateAgentSki
 	return &c
 }
 
+// The developer selects the evaluation source. Valid values are customer, tool,
+// offline_corpus, policy.
 type CreateAgentSkillEvaluationRequestEvaluatedBy string
 
 const (
@@ -324,6 +351,8 @@ func (c CreateAgentSkillEvaluationRequestEvaluatedBy) Ptr() *CreateAgentSkillEva
 	return &c
 }
 
+// The developer supplies evaluation verdict. Valid values are succeeded, failed, partial,
+// unknown.
 type CreateAgentSkillEvaluationRequestVerdict string
 
 const (

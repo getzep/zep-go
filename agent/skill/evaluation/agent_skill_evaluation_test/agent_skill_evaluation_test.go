@@ -90,7 +90,7 @@ func TestAgentSkillEvaluationCreateForCandidateWithWireMock(
 	)
 	request := &skill.CreateAgentSkillCandidateEvaluationRequest{
 		EvaluatedBy:      skill.CreateAgentSkillCandidateEvaluationRequestEvaluatedByCustomer,
-		EvaluatorVersion: "evaluator_version",
+		EvaluatorVersion: "v1.0.0",
 		ExpectedRevision: 1,
 		Verdict:          skill.CreateAgentSkillCandidateEvaluationRequestVerdictSucceeded,
 	}
@@ -122,7 +122,7 @@ func TestAgentSkillEvaluationCreateWithWireMock(
 	)
 	request := &skill.CreateAgentSkillEvaluationRequest{
 		EvaluatedBy:      skill.CreateAgentSkillEvaluationRequestEvaluatedByCustomer,
-		EvaluatorVersion: "evaluator_version",
+		EvaluatorVersion: "v1.0.0",
 		SkillVersion:     1,
 		Verdict:          skill.CreateAgentSkillEvaluationRequestVerdictSucceeded,
 	}

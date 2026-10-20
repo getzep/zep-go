@@ -90,7 +90,7 @@ func TestAgentTraceCreateWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &agent.CreateAgentTraceRequest{
-		Objective: "objective",
+		Objective: "Refund a duplicate charge.",
 	}
 	_, invocationErr := client.Agent.Trace.Create(
 		context.TODO(),
@@ -195,6 +195,9 @@ func TestAgentTraceUpdateWithWireMock(
 	)
 	request := &agent.PatchAgentTraceRequest{
 		ExpectedRevision: 1,
+		TaskFamily: zep.String(
+			"support/refund",
+		),
 	}
 	_, invocationErr := client.Agent.Trace.Update(
 		context.TODO(),
@@ -277,7 +280,10 @@ func TestAgentTraceCorrectTaskFamilyWithWireMock(
 	)
 	request := &agent.CorrectAgentTraceTaskFamilyRequest{
 		ExpectedRevision: 1,
-		Reason:           "reason",
+		Reason:           "acknowledged_gap",
+		TaskFamily: zep.String(
+			"support/refund",
+		),
 	}
 	_, invocationErr := client.Agent.Trace.CorrectTaskFamily(
 		context.TODO(),
