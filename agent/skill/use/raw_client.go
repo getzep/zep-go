@@ -37,7 +37,7 @@ func (r *RawClient) Create(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	request *skill.CreateAgentSkillUseRequest,
 	opts ...option.IdempotentRequestOption,
@@ -91,7 +91,7 @@ func (r *RawClient) AddOutcome(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	// Skill use UUID
 	useUUID string,

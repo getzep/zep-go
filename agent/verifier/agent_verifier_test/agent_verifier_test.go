@@ -166,7 +166,7 @@ func TestAgentVerifierInvalidateEvidenceWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &agent.InvalidateAgentVerifierEvidenceRequest{
-		Reason: "reason",
+		Reason: "acknowledged_gap",
 		VerifierRevisions: []int{
 			1,
 		},

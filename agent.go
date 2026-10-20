@@ -15,8 +15,11 @@ var (
 )
 
 type DeclareAgentBreakingChangeRequest struct {
-	ExpectedRevision int    `json:"expected_revision" url:"-"`
-	Version          string `json:"version" url:"-"`
+	// The developer supplies the current Agent revision for optimistic concurrency.
+	// It must be at least 1.
+	ExpectedRevision int `json:"expected_revision" url:"-"`
+	// The developer supplies the new deployment version. It must differ from the current version.
+	Version string `json:"version" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -127,14 +130,22 @@ var (
 )
 
 type GetAgentContextRequest struct {
-	Environments  []*AgentContextResource `json:"environments,omitempty" url:"-"`
-	Kind          *string                 `json:"kind,omitempty" url:"-"`
-	MaxCharacters *int                    `json:"max_characters,omitempty" url:"-"`
-	Models        []*AgentContextResource `json:"models,omitempty" url:"-"`
-	Objective     *string                 `json:"objective,omitempty" url:"-"`
-	TaskFamily    *string                 `json:"task_family,omitempty" url:"-"`
-	Tools         []*AgentContextResource `json:"tools,omitempty" url:"-"`
-	TraceUUID     *string                 `json:"trace_uuid,omitempty" url:"-"`
+	// The developer supplies environment names used by the Skill. At most 32.
+	Environments []*AgentContextResource `json:"environments,omitempty" url:"-"`
+	// The developer supplies a Skill kind. At most 64.
+	Kind *string `json:"kind,omitempty" url:"-"`
+	// The developer sets the maximum number of characters in the context response.
+	MaxCharacters *int `json:"max_characters,omitempty" url:"-"`
+	// The developer supplies models used for this evaluation. At most 32.
+	Models []*AgentContextResource `json:"models,omitempty" url:"-"`
+	// The developer supplies the task-instance objective. At most 512.
+	Objective *string `json:"objective,omitempty" url:"-"`
+	// The developer supplies the task-family slug. At most 128.
+	TaskFamily *string `json:"task_family,omitempty" url:"-"`
+	// The developer supplies tool names used by the Skill. At most 32.
+	Tools []*AgentContextResource `json:"tools,omitempty" url:"-"`
+	// The developer supplies the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -250,11 +261,11 @@ type AgentListRequest struct {
 	Order *AgentListRequestOrder `json:"-" url:"order,omitempty"`
 	// Filters to the exact developer-assigned Agent identifier.
 	AgentID *string `json:"agent_id,omitempty" url:"-"`
-	// Filters to the exact deployment identifier.
+	// The developer supplies filters to the exact deployment identifier.
 	DeploymentID *string `json:"deployment_id,omitempty" url:"-"`
 	// Filters to Agents whose metadata contains these key-value pairs.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
-	// Filters to Agents whose name, Agent identifier, deployment identifier,
+	// The developer supplies filters to Agents whose name, Agent identifier, deployment identifier,
 	// or deployment version contains this text. Matching is case-insensitive.
 	Search *string `json:"search,omitempty" url:"-"`
 	// Filters to lifecycle status. Omit to include every status.
@@ -666,12 +677,16 @@ var (
 )
 
 type AgentBreakingChange struct {
-	AffectedSkillCount *int    `json:"affected_skill_count,omitempty" url:"affected_skill_count,omitempty"`
-	AgentUUID          *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	// The Agent revision produced by this declaration, stable on replay.
-	Revision *int    `json:"revision,omitempty" url:"revision,omitempty"`
-	UUID     *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-	Version  *string `json:"version,omitempty" url:"version,omitempty"`
+	// The service returns the number of Skills affected by the declaration.
+	AffectedSkillCount *int `json:"affected_skill_count,omitempty" url:"affected_skill_count,omitempty"`
+	// The service returns the UUID of the Agent that received this declaration.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// The service returns the Agent revision produced by this declaration, stable on replay.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The service assigns the UUID that identifies this declaration.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns the deployment version recorded by this declaration.
+	Version *string `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -821,15 +836,24 @@ var (
 )
 
 type AgentContext struct {
-	Context        *string                      `json:"context,omitempty" url:"context,omitempty"`
-	Objective      *string                      `json:"objective,omitempty" url:"objective,omitempty"`
+	// The service returns context for this result.
+	Context *string `json:"context,omitempty" url:"context,omitempty"`
+	// The service returns the task-instance objective.
+	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
+	// The service returns sources that it could not include in full.
 	PartialSources []*AgentContextPartialSource `json:"partial_sources,omitempty" url:"partial_sources,omitempty"`
-	RequestID      *string                      `json:"request_id,omitempty" url:"request_id,omitempty"`
-	Skipped        []*AgentContextSkippedSkill  `json:"skipped,omitempty" url:"skipped,omitempty"`
-	Snapshot       []*AgentContextSkillSnapshot `json:"snapshot,omitempty" url:"snapshot,omitempty"`
-	TaskFamily     *string                      `json:"task_family,omitempty" url:"task_family,omitempty"`
-	TraceUUID      *string                      `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	Truncated      *bool                        `json:"truncated,omitempty" url:"truncated,omitempty"`
+	// The service returns the UUID that identifies this context request.
+	RequestID *string `json:"request_id,omitempty" url:"request_id,omitempty"`
+	// The service returns the Skills that it skipped.
+	Skipped []*AgentContextSkippedSkill `json:"skipped,omitempty" url:"skipped,omitempty"`
+	// The service returns a snapshot of the source data.
+	Snapshot []*AgentContextSkillSnapshot `json:"snapshot,omitempty" url:"snapshot,omitempty"`
+	// The service returns the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	// The service sets this to true when the context exceeds its output limit.
+	Truncated *bool `json:"truncated,omitempty" url:"truncated,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1029,9 +1053,12 @@ var (
 )
 
 type AgentContextEvidenceCounts struct {
+	// The service returns contradicting evidence count.
 	Contradicting *int `json:"contradicting,omitempty" url:"contradicting,omitempty"`
-	Neutral       *int `json:"neutral,omitempty" url:"neutral,omitempty"`
-	Supporting    *int `json:"supporting,omitempty" url:"supporting,omitempty"`
+	// The service returns the count of neutral evidence items.
+	Neutral *int `json:"neutral,omitempty" url:"neutral,omitempty"`
+	// The service returns supporting evidence count.
+	Supporting *int `json:"supporting,omitempty" url:"supporting,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1147,8 +1174,11 @@ var (
 )
 
 type AgentContextPartialSource struct {
-	Reason   *string `json:"reason,omitempty" url:"reason,omitempty"`
-	Source   *string `json:"source,omitempty" url:"source,omitempty"`
+	// The service explains why this source is partial.
+	Reason *string `json:"reason,omitempty" url:"reason,omitempty"`
+	// The service returns the source used to build this context.
+	Source *string `json:"source,omitempty" url:"source,omitempty"`
+	// The service returns the UUID of the Task linked to this partial source.
 	TaskUUID *string `json:"task_uuid,omitempty" url:"task_uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -1264,7 +1294,9 @@ var (
 )
 
 type AgentContextResource struct {
-	Name    string  `json:"name" url:"name"`
+	// The service returns the display name. At most 128.
+	Name string `json:"name" url:"name"`
+	// The service returns the version of this context resource.
 	Version *string `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -1370,12 +1402,18 @@ var (
 )
 
 type AgentContextSkillSnapshot struct {
-	ArtifactSha256    *string                     `json:"artifact_sha256,omitempty" url:"artifact_sha256,omitempty"`
-	EvidenceCitations []string                    `json:"evidence_citations,omitempty" url:"evidence_citations,omitempty"`
-	EvidenceCounts    *AgentContextEvidenceCounts `json:"evidence_counts,omitempty" url:"evidence_counts,omitempty"`
-	Rank              *int                        `json:"rank,omitempty" url:"rank,omitempty"`
-	SkillUUID         *string                     `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
-	Version           *int                        `json:"version,omitempty" url:"version,omitempty"`
+	// The service returns the SHA-256 digest of the Skill artifact.
+	ArtifactSha256 *string `json:"artifact_sha256,omitempty" url:"artifact_sha256,omitempty"`
+	// The service returns citations that support this Skill snapshot.
+	EvidenceCitations []string `json:"evidence_citations,omitempty" url:"evidence_citations,omitempty"`
+	// The service returns counts of evidence items by result.
+	EvidenceCounts *AgentContextEvidenceCounts `json:"evidence_counts,omitempty" url:"evidence_counts,omitempty"`
+	// The service returns result rank.
+	Rank *int `json:"rank,omitempty" url:"rank,omitempty"`
+	// The service returns the UUID of the Skill.
+	SkillUUID *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	// The service returns the Skill version number.
+	Version *int `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1533,9 +1571,12 @@ var (
 )
 
 type AgentContextSkippedSkill struct {
-	Reason    *string `json:"reason,omitempty" url:"reason,omitempty"`
+	// The service returns why the Skill was skipped from the context.
+	Reason *string `json:"reason,omitempty" url:"reason,omitempty"`
+	// The service returns the UUID of the Skill.
 	SkillUUID *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
-	Version   *int    `json:"version,omitempty" url:"version,omitempty"`
+	// The service returns the Skill version number.
+	Version *int `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1738,7 +1779,7 @@ var (
 )
 
 type AgentPage struct {
-	// The Agents on this page.
+	// The service returns the Agents on this page.
 	Items []*Agent `json:"items,omitempty" url:"items,omitempty"`
 	// Opaque cursor for retrieving the next page, present only when more results
 	// are available.

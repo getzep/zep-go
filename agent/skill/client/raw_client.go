@@ -139,7 +139,7 @@ func (r *RawClient) Get(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	opts ...option.RequestOption,
 ) (*core.Response[*zep.AgentSkill], error) {
@@ -188,7 +188,7 @@ func (r *RawClient) Approve(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	request *agent.ApproveAgentSkillRequest,
 	opts ...option.IdempotentRequestOption,
@@ -242,7 +242,7 @@ func (r *RawClient) Retire(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	request *agent.RetireAgentSkillRequest,
 	opts ...option.IdempotentRequestOption,
@@ -296,7 +296,7 @@ func (r *RawClient) CreateVersion(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	request *agent.CreateAgentSkillVersionRequest,
 	opts ...option.IdempotentRequestOption,

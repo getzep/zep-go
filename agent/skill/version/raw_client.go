@@ -37,7 +37,7 @@ func (r *RawClient) RestoreVersion(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	request *skill.RestoreAgentSkillVersionRequest,
 	opts ...option.IdempotentRequestOption,
@@ -91,7 +91,7 @@ func (r *RawClient) Compare(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	request *skill.CompareAgentSkillVersionsRequest,
 	opts ...option.RequestOption,
@@ -145,7 +145,7 @@ func (r *RawClient) Get(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	// Skill version
 	version int,

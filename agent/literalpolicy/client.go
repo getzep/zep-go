@@ -39,6 +39,8 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// Get Agent Literal Policy. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	client.Agent.LiteralPolicy.Get(
@@ -62,23 +64,25 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
+// Update Agent Literal Policy. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.UpdateAgentLiteralPolicyRequest{
 //	    AllowlistedClasses: &zep.AgentLiteralPolicyClasses{
 //	        Environments: []string{
-//	            "environments",
+//	            "environment_name",
 //	        },
 //	        Tools: []string{
-//	            "tools",
+//	            "command_name",
 //	        },
 //	    },
 //	    AllowlistedValues: &zep.AgentLiteralPolicyValues{
 //	        Environments: []string{
-//	            "environments",
+//	            "production",
 //	        },
 //	        Tools: []string{
-//	            "tools",
+//	            "refund_payment",
 //	        },
 //	    },
 //	    Default: agent.UpdateAgentLiteralPolicyRequestDefaultParameterize,

@@ -17,10 +17,15 @@ var (
 )
 
 type CreateAgentSplitPlanRequest struct {
-	Destinations       []*v4.AgentSplitPlanDestinationRequest `json:"destinations" url:"-"`
-	ExpectedRevision   int                                    `json:"expected_revision" url:"-"`
-	Rationale          string                                 `json:"rationale" url:"-"`
-	ReviewAcknowledged bool                                   `json:"review_acknowledged" url:"-"`
+	// The developer lists 1 to 100 destination Agents.
+	Destinations []*v4.AgentSplitPlanDestinationRequest `json:"destinations" url:"-"`
+	// The developer supplies the current revision used for optimistic concurrency. At least 1.
+	ExpectedRevision int `json:"expected_revision" url:"-"`
+	// The developer explains the requested change. The limit is 2,000
+	// characters.
+	Rationale string `json:"rationale" url:"-"`
+	// The developer sets this to true to confirm that the review is complete.
+	ReviewAcknowledged bool `json:"review_acknowledged" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`

@@ -1,6 +1,6 @@
 module github.com/getzep/zep-go/v4
 
-go 1.18
+go 1.21
 
 require (
 	github.com/google/uuid v1.4.0

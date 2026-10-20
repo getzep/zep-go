@@ -39,11 +39,13 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// Create Agent Skill Use. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &skill.CreateAgentSkillUseRequest{
-//	    SearchID: "search_id",
-//	    TraceUUID: "trace_uuid",
+//	    SearchID: "eyJ2IjoxLCJyZXF1ZXN0X2lkIjoiNmE5MDZlNzAtNTBjYS00ZTQzLWE4NzQtNWZjYWUwMmE3MWZhIn0.signature",
+//	    TraceUUID: "6a906e70-50ca-4e43-a874-5fcae02a71fa",
 //	    Usage: skill.CreateAgentSkillUseRequestUsageSelected,
 //	}
 //	client.Agent.Skill.Use.Create(
@@ -56,7 +58,7 @@ func (c *Client) Create(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	request *skill.CreateAgentSkillUseRequest,
 	opts ...option.IdempotentRequestOption,
@@ -74,6 +76,8 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
+// Record Agent Skill Feedback. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &zep.AddAgentSkillUseOutcomeRequest{
@@ -90,7 +94,7 @@ func (c *Client) AddOutcome(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	// Skill use UUID
 	useUUID string,
