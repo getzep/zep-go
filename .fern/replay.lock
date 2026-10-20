@@ -60,7 +60,13 @@ generations:
     cli_version: unknown
     generator_versions:
       fernapi/fern-go-sdk: 1.65.3
-current_generation: 41c7f000ea65bdecb8a2f11c8bcb7b9c815bca7a
+  - commit_sha: a2c5e842fbba84ba365ce0c0a5ad0005d0d38f2f
+    tree_hash: 2801069d25e075261f17bad1d9036381fefb9991
+    timestamp: 2026-10-20T18:16:08.721Z
+    cli_version: unknown
+    generator_versions:
+      fernapi/fern-go-sdk: 1.65.3
+current_generation: a2c5e842fbba84ba365ce0c0a5ad0005d0d38f2f
 patches:
   - id: patch-29d0e2e3
     content_hash: sha256:02d78af0c9f9ba6e859d38651b828338b20d1ff5e9acdeb3a97cc4f34355382c
@@ -545,3 +551,4 @@ patches:
 
         On the other hand, contributions to the README are always very welcome!
     user_owned: true
+    status: unresolved
