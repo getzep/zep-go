@@ -112,17 +112,26 @@ var (
 	appendAgentTraceEventRequestFieldOccurredAt = big.NewInt(1 << 5)
 	appendAgentTraceEventRequestFieldSequence   = big.NewInt(1 << 6)
 	appendAgentTraceEventRequestFieldSources    = big.NewInt(1 << 7)
+	appendAgentTraceEventRequestFieldToolCallID = big.NewInt(1 << 8)
 )
 
 type AppendAgentTraceEventRequest struct {
-	Content    *string                     `json:"content,omitempty" url:"-"`
-	Context    *v4.AgentTraceEventContext  `json:"context,omitempty" url:"-"`
-	EventID    *string                     `json:"event_id,omitempty" url:"-"`
-	EventType  v4.AgentTraceEventType      `json:"event_type" url:"-"`
+	Content *string `json:"content,omitempty" url:"-"`
+	// Context gives the model, the tools, and the environments of the event. context.tools is the tool
+	// that the event calls or returns, and Skills learning reads it. A tool event can omit the tool name.
+	Context   *v4.AgentTraceEventContext `json:"context,omitempty" url:"-"`
+	EventID   *string                    `json:"event_id,omitempty" url:"-"`
+	EventType v4.AgentTraceEventType     `json:"event_type" url:"-"`
+	// Metadata is developer data. Skills learning does not read it.
 	Metadata   map[string]any              `json:"metadata,omitempty" url:"-"`
 	OccurredAt *string                     `json:"occurred_at,omitempty" url:"-"`
 	Sequence   *int                        `json:"sequence,omitempty" url:"-"`
 	Sources    []*v4.AgentTraceEventSource `json:"sources,omitempty" url:"-"`
+	// ToolCallID is the ID that the agent framework gives a tool call. Use the same ID on
+	// the tool_call and tool_result events. It is valid only on these event types. A result
+	// without a matching call is valid. OpenAI uses tool_calls[].id, Anthropic uses the
+	// tool_use block id, and LangChain uses ToolMessage.tool_call_id.
+	ToolCallID *string `json:"tool_call_id,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -191,6 +200,13 @@ func (a *AppendAgentTraceEventRequest) SetSequence(sequence *int) {
 func (a *AppendAgentTraceEventRequest) SetSources(sources []*v4.AgentTraceEventSource) {
 	a.Sources = sources
 	a.require(appendAgentTraceEventRequestFieldSources)
+}
+
+// SetToolCallID sets the ToolCallID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AppendAgentTraceEventRequest) SetToolCallID(toolCallID *string) {
+	a.ToolCallID = toolCallID
+	a.require(appendAgentTraceEventRequestFieldToolCallID)
 }
 
 func (a *AppendAgentTraceEventRequest) UnmarshalJSON(data []byte) error {
@@ -404,18 +420,27 @@ var (
 )
 
 type CreateAgentTraceRequest struct {
-	// Whether eligible evidence may participate in learning. Defaults to true.
+	// The developer supplies whether eligible evidence may participate in learning. Defaults to
+	// true.
 	LearnFrom *bool `json:"learn_from,omitempty" url:"-"`
 	// Developer metadata used to organize and filter Traces.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
-	// The task-instance objective captured for this attempt.
+	// The developer describes the task instance. The create request requires a non-empty value but
+	// does not check its size. An AppendAgentTraceEventRequest returns 400 if the Trace objective
+	// exceeds 8 KiB (8,192 bytes).
 	Objective string `json:"objective" url:"-"`
-	// The parent Trace UUID when this attempt retries an earlier attempt.
+	// The developer supplies the parent Trace UUID when this attempt retries an earlier attempt.
 	ParentTraceUUID *string `json:"parent_trace_uuid,omitempty" url:"-"`
-	// The task-family slug. Optional when inferred task families are enabled
-	// for the account: the service assigns one after the Trace closes.
+	// The developer may set a task-family slug. If the developer omits it, Agent Skills assigns the
+	// Trace to a task family automatically. If Agent Skills cannot assign a task family, the
+	// `task_family_inference` field of the Trace is `unassigned`. A BYOM configuration requires `task_family`. A
+	// strict-residency deployment requires `task_family`. Without task_family in either case, the
+	// API returns 400 `invalid_request` with the message `task_family is required`. The slug must
+	// contain 1 to 128 lowercase letters, digits, `.`, `_`, `/`, or `-`. It must start with a
+	// lowercase letter or digit.
 	TaskFamily *string `json:"task_family,omitempty" url:"-"`
-	// The optional customer-assigned identifier, unique within the Agent.
+	// The developer may set an identifier that is unique within the Agent. A retry with the same
+	// create parameters returns 200 and the existing Trace. Different parameters return 409.
 	TraceID *string `json:"trace_id,omitempty" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -524,7 +549,8 @@ type AgentTraceListRequest struct {
 	SourceKind *TraceListRequestSourceKind `json:"-" url:"source_kind,omitempty"`
 	// Filters to Traces whose metadata contains these key-value pairs.
 	Metadata map[string]any `json:"metadata,omitempty" url:"-"`
-	// Filters to one reported outcome.
+	// The developer supplies filters to one reported outcome. Valid values are succeeded, failed,
+	// partial, abandoned, unknown.
 	Outcome *v4.AgentTraceOutcome `json:"outcome,omitempty" url:"-"`
 	// Filters to direct retries of this parent Trace.
 	ParentTraceUUID *string `json:"parent_trace_uuid,omitempty" url:"-"`

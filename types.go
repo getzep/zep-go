@@ -101,6 +101,8 @@ var (
 )
 
 type AddAgentSkillUseOutcomeRequest struct {
+	// The developer records the attempt outcome. Valid values are succeeded,
+	// failed, partial, abandoned, and unknown.
 	Outcome AddAgentSkillUseOutcomeRequestOutcome `json:"outcome" url:"outcome"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -182,6 +184,8 @@ func (a *AddAgentSkillUseOutcomeRequest) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+// The developer records the attempt outcome. Valid values are succeeded,
+// failed, partial, abandoned, and unknown.
 type AddAgentSkillUseOutcomeRequestOutcome string
 
 const (
@@ -1561,17 +1565,26 @@ var (
 )
 
 type AgentLearningState struct {
-	// Approval is the approval mode of the Agent: manual or auto. The default is auto.
-	Approval        *string `json:"approval,omitempty" url:"approval,omitempty"`
+	// The service returns the approval mode. Valid values are auto and manual. The default is auto.
+	Approval *string `json:"approval,omitempty" url:"approval,omitempty"`
+	// The service returns the Agent's learning mode. Valid values are scheduled, manual, and
+	// on_close. The default is scheduled.
 	CompilationMode *string `json:"compilation_mode,omitempty" url:"compilation_mode,omitempty"`
-	// CompilationPending is true while a learning run for the task family
-	// waits to start or runs. Skills from that run are not yet available.
-	CompilationPending     *bool    `json:"compilation_pending,omitempty" url:"compilation_pending,omitempty"`
-	EligibleTraceCount     *int     `json:"eligible_trace_count,omitempty" url:"eligible_trace_count,omitempty"`
-	MinimumAttemptFamilies *int     `json:"minimum_attempt_families,omitempty" url:"minimum_attempt_families,omitempty"`
-	NextStep               *string  `json:"next_step,omitempty" url:"next_step,omitempty"`
-	RequiredEvaluations    []string `json:"required_evaluations,omitempty" url:"required_evaluations,omitempty"`
-	TaskFamily             *string  `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service sets this to true while a learning run waits to start or runs.
+	// Skills from that run are not yet available.
+	CompilationPending *bool `json:"compilation_pending,omitempty" url:"compilation_pending,omitempty"`
+	// The service reports the number of Traces that can support learning.
+	EligibleTraceCount *int `json:"eligible_trace_count,omitempty" url:"eligible_trace_count,omitempty"`
+	// The service reports how many distinct attempt families a run needs. The default is 3 in
+	// scheduled mode and 1 in on_close mode.
+	MinimumAttemptFamilies *int `json:"minimum_attempt_families,omitempty" url:"minimum_attempt_families,omitempty"`
+	// The service returns text that tells a person what to do next. Code must
+	// not treat this text as a stable value.
+	NextStep *string `json:"next_step,omitempty" url:"next_step,omitempty"`
+	// The service returns the evaluations that each candidate must pass.
+	RequiredEvaluations []string `json:"required_evaluations,omitempty" url:"required_evaluations,omitempty"`
+	// The service returns the category whose learning progress this record describes.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2170,8 +2183,10 @@ var (
 )
 
 type AgentMemoryEvaluationPolicy struct {
+	// The developer lists one or more evaluation requirements for this policy.
 	Requirements []*AgentMemoryEvaluationRequirement `json:"requirements" url:"requirements"`
-	TaskFamily   string                              `json:"task_family" url:"task_family"`
+	// The developer selects the task family that uses this evaluation policy.
+	TaskFamily string `json:"task_family" url:"task_family"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2275,11 +2290,18 @@ var (
 )
 
 type AgentMemoryEvaluationRequirement struct {
-	Controlled       *bool   `json:"controlled,omitempty" url:"controlled,omitempty"`
-	Environment      *string `json:"environment,omitempty" url:"environment,omitempty"`
-	EvaluatedBy      string  `json:"evaluated_by" url:"evaluated_by"`
-	EvaluatorVersion string  `json:"evaluator_version" url:"evaluator_version"`
-	Result           string  `json:"result" url:"result"`
+	// The service sets this to true when it controls whether the requirement
+	// passes admission.
+	Controlled *bool `json:"controlled,omitempty" url:"controlled,omitempty"`
+	// The service returns the environment used for this evaluation.
+	Environment *string `json:"environment,omitempty" url:"environment,omitempty"`
+	// The developer selects the evaluation source.
+	EvaluatedBy string `json:"evaluated_by" url:"evaluated_by"`
+	// The service returns the version of the evaluation rule.
+	EvaluatorVersion string `json:"evaluator_version" url:"evaluator_version"`
+	// The developer supplies the required result for this evaluation. Valid
+	// values are defined by the evaluation named in the policy.
+	Result string `json:"result" url:"result"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2429,24 +2451,33 @@ var (
 )
 
 type AgentMemorySettings struct {
+	// The developer lists the evaluations that each candidate must pass for its category.
 	AdmissionEvaluationRequirements []*AgentMemoryEvaluationPolicy `json:"admission_evaluation_requirements,omitempty" url:"admission_evaluation_requirements,omitempty"`
-	Approval                        *AgentMemorySettingsApproval   `json:"approval,omitempty" url:"approval,omitempty"`
-	ApprovalMinimumAttemptFamilies  *int                           `json:"approval_minimum_attempt_families,omitempty" url:"approval_minimum_attempt_families,omitempty"`
-	// ApprovalRequiredTools lists the tool names that need a member approval in
-	// auto approval. A generated Skill that uses one of these tools waits for a
-	// member. The default is an empty list.
-	ApprovalRequiredTools    []string                            `json:"approval_required_tools,omitempty" url:"approval_required_tools,omitempty"`
-	AutoApprovalTaskFamilies []string                            `json:"auto_approval_task_families,omitempty" url:"auto_approval_task_families,omitempty"`
-	CompilationMode          *AgentMemorySettingsCompilationMode `json:"compilation_mode,omitempty" url:"compilation_mode,omitempty"`
-	// ProvisionalExpiryDays is the period after which Zep retires a provisional
-	// Skill that no application used. When it is not set, provisional Skills do
-	// not expire.
+	// The developer sets the approval mode. Valid values are auto and manual. The default is auto.
+	Approval *AgentMemorySettingsApproval `json:"approval,omitempty" url:"approval,omitempty"`
+	// The developer sets the minimum number of distinct attempt families for admission. The range is
+	// 1 to 16, and the default is 1.
+	ApprovalMinimumAttemptFamilies *int `json:"approval_minimum_attempt_families,omitempty" url:"approval_minimum_attempt_families,omitempty"`
+	// The developer lists tool names that need member approval in auto approval. A generated Skill
+	// that uses one of these tools waits for a member. The list can contain up to 256 unique names,
+	// each at most 255 characters. The default is an empty list.
+	ApprovalRequiredTools []string `json:"approval_required_tools,omitempty" url:"approval_required_tools,omitempty"`
+	// The developer lists task-family slugs that use auto approval. An empty list applies auto
+	// approval to all task families.
+	AutoApprovalTaskFamilies []string `json:"auto_approval_task_families,omitempty" url:"auto_approval_task_families,omitempty"`
+	// The developer selects the compilation mode. Valid values are scheduled, manual, and on_close.
+	// The default is scheduled.
+	CompilationMode *AgentMemorySettingsCompilationMode `json:"compilation_mode,omitempty" url:"compilation_mode,omitempty"`
+	// The developer sets how many days an unused provisional Skill can remain before the service
+	// retires it. The range is 1 to 3650 days. If omitted, provisional Skills do not expire.
 	ProvisionalExpiryDays *int `json:"provisional_expiry_days,omitempty" url:"provisional_expiry_days,omitempty"`
-	// ProvisionalSkillLimit is the maximum count of provisional Skills in one
-	// task family. Over the limit, a new provisional Skill waits for a member.
-	// When it is not set, no limit applies.
+	// The developer sets the maximum number of provisional Skills in one category. The range is 1 to
+	// 1000. A new Skill waits for a member when the count is over the limit. If omitted, no limit
+	// applies.
 	ProvisionalSkillLimit *int `json:"provisional_skill_limit,omitempty" url:"provisional_skill_limit,omitempty"`
-	RetentionDays         *int `json:"retention_days,omitempty" url:"retention_days,omitempty"`
+	// The developer sets the age-based cleanup period for eligible proposal sets. The range is 1 to
+	// 3650 days. If omitted, the setting does not enable age-based cleanup.
+	RetentionDays *int `json:"retention_days,omitempty" url:"retention_days,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2639,6 +2670,7 @@ func (a *AgentMemorySettings) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+// The developer sets the approval mode. Valid values are auto and manual. The default is auto.
 type AgentMemorySettingsApproval string
 
 const (
@@ -2661,6 +2693,8 @@ func (a AgentMemorySettingsApproval) Ptr() *AgentMemorySettingsApproval {
 	return &a
 }
 
+// The developer selects the compilation mode. Valid values are scheduled, manual, and on_close.
+// The default is scheduled.
 type AgentMemorySettingsCompilationMode string
 
 const (
@@ -2693,27 +2727,42 @@ var (
 	agentSkillFieldKind              = big.NewInt(1 << 3)
 	agentSkillFieldPackageName       = big.NewInt(1 << 4)
 	agentSkillFieldSearchable        = big.NewInt(1 << 5)
-	agentSkillFieldSkillID           = big.NewInt(1 << 6)
-	agentSkillFieldStatus            = big.NewInt(1 << 7)
-	agentSkillFieldTaskFamily        = big.NewInt(1 << 8)
-	agentSkillFieldUnavailableReason = big.NewInt(1 << 9)
-	agentSkillFieldUpdatedAt         = big.NewInt(1 << 10)
-	agentSkillFieldUUID              = big.NewInt(1 << 11)
+	agentSkillFieldShortID           = big.NewInt(1 << 6)
+	agentSkillFieldSkillID           = big.NewInt(1 << 7)
+	agentSkillFieldStatus            = big.NewInt(1 << 8)
+	agentSkillFieldTaskFamily        = big.NewInt(1 << 9)
+	agentSkillFieldUnavailableReason = big.NewInt(1 << 10)
+	agentSkillFieldUpdatedAt         = big.NewInt(1 << 11)
+	agentSkillFieldUUID              = big.NewInt(1 << 12)
 )
 
 type AgentSkill struct {
-	AgentVersions     []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
-	CreatedAt         *string  `json:"created_at,omitempty" url:"created_at,omitempty"`
-	CurrentVersion    *int     `json:"current_version,omitempty" url:"current_version,omitempty"`
-	Kind              *string  `json:"kind,omitempty" url:"kind,omitempty"`
-	PackageName       *string  `json:"package_name,omitempty" url:"package_name,omitempty"`
-	Searchable        *bool    `json:"searchable,omitempty" url:"searchable,omitempty"`
-	SkillID           *string  `json:"skill_id,omitempty" url:"skill_id,omitempty"`
-	Status            *string  `json:"status,omitempty" url:"status,omitempty"`
-	TaskFamily        *string  `json:"task_family,omitempty" url:"task_family,omitempty"`
-	UnavailableReason *string  `json:"unavailable_reason,omitempty" url:"unavailable_reason,omitempty"`
-	UpdatedAt         *string  `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID              *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns Agent versions that can use the Skill.
+	AgentVersions []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the current Skill version number.
+	CurrentVersion *int `json:"current_version,omitempty" url:"current_version,omitempty"`
+	// The service returns the Skill kind.
+	Kind *string `json:"kind,omitempty" url:"kind,omitempty"`
+	// The service returns the stable package name of the Skill.
+	PackageName *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	// The service returns whether search can return this Skill.
+	Searchable *bool `json:"searchable,omitempty" url:"searchable,omitempty"`
+	// The first 8 hex characters of uuid. Every route that takes skill_uuid also accepts this value in place of the full UUID.
+	ShortID *string `json:"short_id,omitempty" url:"short_id,omitempty"`
+	// The service returns the stable developer-facing ID of the Skill, when set.
+	SkillID *string `json:"skill_id,omitempty" url:"skill_id,omitempty"`
+	// The service returns the lifecycle status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// The service returns the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns why the Skill is unavailable to this Agent.
+	UnavailableReason *string `json:"unavailable_reason,omitempty" url:"unavailable_reason,omitempty"`
+	// the time that Zep last updated this resource.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2762,6 +2811,13 @@ func (a *AgentSkill) GetSearchable() *bool {
 		return nil
 	}
 	return a.Searchable
+}
+
+func (a *AgentSkill) GetShortID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ShortID
 }
 
 func (a *AgentSkill) GetSkillID() *string {
@@ -2864,6 +2920,13 @@ func (a *AgentSkill) SetSearchable(searchable *bool) {
 	a.require(agentSkillFieldSearchable)
 }
 
+// SetShortID sets the ShortID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkill) SetShortID(shortID *string) {
+	a.ShortID = shortID
+	a.require(agentSkillFieldShortID)
+}
+
 // SetSkillID sets the SkillID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (a *AgentSkill) SetSkillID(skillID *string) {
@@ -2958,12 +3021,18 @@ var (
 )
 
 type AgentSkillAdmissionDecision struct {
-	CreatedAt                 *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Decision                  *string `json:"decision,omitempty" url:"decision,omitempty"`
-	Mode                      *string `json:"mode,omitempty" url:"mode,omitempty"`
-	ReasonCode                *string `json:"reason_code,omitempty" url:"reason_code,omitempty"`
-	SkillVersion              *int    `json:"skill_version,omitempty" url:"skill_version,omitempty"`
-	SupportingAttemptFamilies *int    `json:"supporting_attempt_families,omitempty" url:"supporting_attempt_families,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the decision for this operation.
+	Decision *string `json:"decision,omitempty" url:"decision,omitempty"`
+	// The service returns publication policy mode.
+	Mode *string `json:"mode,omitempty" url:"mode,omitempty"`
+	// The service returns the code that explains this result.
+	ReasonCode *string `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	// The service returns the version number of the Skill.
+	SkillVersion *int `json:"skill_version,omitempty" url:"skill_version,omitempty"`
+	// The service returns the count of distinct attempt families that support admission.
+	SupportingAttemptFamilies *int `json:"supporting_attempt_families,omitempty" url:"supporting_attempt_families,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3131,19 +3200,33 @@ var (
 )
 
 type AgentSkillCandidate struct {
-	AgentVersions []string                          `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
-	BaseVersions  []*AgentSkillCandidateBaseVersion `json:"base_versions,omitempty" url:"base_versions,omitempty"`
-	Confidence    *float64                          `json:"confidence,omitempty" url:"confidence,omitempty"`
-	Decision      *string                           `json:"decision,omitempty" url:"decision,omitempty"`
-	Description   *string                           `json:"description,omitempty" url:"description,omitempty"`
-	DoNotUseWhen  []string                          `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
-	Evidence      []*AgentSkillCandidateEvidence    `json:"evidence,omitempty" url:"evidence,omitempty"`
-	Kind          *string                           `json:"kind,omitempty" url:"kind,omitempty"`
-	Markdown      *string                           `json:"markdown,omitempty" url:"markdown,omitempty"`
-	Name          *string                           `json:"name,omitempty" url:"name,omitempty"`
-	PackageName   *string                           `json:"package_name,omitempty" url:"package_name,omitempty"`
-	TaskFamily    *string                           `json:"task_family,omitempty" url:"task_family,omitempty"`
-	UUID          *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns Agent versions that can use the Skill.
+	AgentVersions []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	// The service returns Skill versions used as the split-plan base.
+	BaseVersions []*AgentSkillCandidateBaseVersion `json:"base_versions,omitempty" url:"base_versions,omitempty"`
+	// The service returns classifier confidence score.
+	Confidence *float64 `json:"confidence,omitempty" url:"confidence,omitempty"`
+	// The service returns the candidate operation. Valid values are add, patch,
+	// and retire.
+	Decision *string `json:"decision,omitempty" url:"decision,omitempty"`
+	// The service returns the resource description.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The service returns situations in which the Skill must not be used.
+	DoNotUseWhen []string `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
+	// The service returns evidence linked to this result.
+	Evidence []*AgentSkillCandidateEvidence `json:"evidence,omitempty" url:"evidence,omitempty"`
+	// The service returns the Skill kind.
+	Kind *string `json:"kind,omitempty" url:"kind,omitempty"`
+	// The service returns the Skill content in Markdown.
+	Markdown *string `json:"markdown,omitempty" url:"markdown,omitempty"`
+	// The service returns the display name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The service returns the stable package name of the Skill.
+	PackageName *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	// The service returns the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3403,13 +3486,20 @@ var (
 )
 
 type AgentSkillCandidateBaseVersion struct {
+	// The service returns Agent versions that can use the Skill.
 	AgentVersions []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
-	Description   *string  `json:"description,omitempty" url:"description,omitempty"`
-	DoNotUseWhen  []string `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
-	Markdown      *string  `json:"markdown,omitempty" url:"markdown,omitempty"`
-	Name          *string  `json:"name,omitempty" url:"name,omitempty"`
-	SkillUUID     *string  `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
-	Version       *int     `json:"version,omitempty" url:"version,omitempty"`
+	// The service returns the resource description.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The service returns situations in which the Skill must not be used.
+	DoNotUseWhen []string `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
+	// The service returns the Skill content in Markdown.
+	Markdown *string `json:"markdown,omitempty" url:"markdown,omitempty"`
+	// The service returns the display name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The service returns the UUID of the Skill.
+	SkillUUID *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	// The service returns the Skill version number.
+	Version *int `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3590,18 +3680,30 @@ var (
 )
 
 type AgentSkillCandidateEvaluation struct {
-	CandidateUUID     *string            `json:"candidate_uuid,omitempty" url:"candidate_uuid,omitempty"`
-	ControlledTest    *bool              `json:"controlled_test,omitempty" url:"controlled_test,omitempty"`
-	CreatedAt         *string            `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Environment       *string            `json:"environment,omitempty" url:"environment,omitempty"`
-	EvaluatedBy       *string            `json:"evaluated_by,omitempty" url:"evaluated_by,omitempty"`
-	EvaluatorVersion  *string            `json:"evaluator_version,omitempty" url:"evaluator_version,omitempty"`
-	EvidenceReference *string            `json:"evidence_reference,omitempty" url:"evidence_reference,omitempty"`
-	Metrics           map[string]float64 `json:"metrics,omitempty" url:"metrics,omitempty"`
-	ReviewUUID        *string            `json:"review_uuid,omitempty" url:"review_uuid,omitempty"`
-	Revision          *int               `json:"revision,omitempty" url:"revision,omitempty"`
-	UUID              *string            `json:"uuid,omitempty" url:"uuid,omitempty"`
-	Verdict           *string            `json:"verdict,omitempty" url:"verdict,omitempty"`
+	// The service returns the UUID of the candidate that this evaluation covers.
+	CandidateUUID *string `json:"candidate_uuid,omitempty" url:"candidate_uuid,omitempty"`
+	// The service reports whether a controlled test produced the result.
+	ControlledTest *bool `json:"controlled_test,omitempty" url:"controlled_test,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the environment used for this evaluation.
+	Environment *string `json:"environment,omitempty" url:"environment,omitempty"`
+	// The service returns the evaluation source. Valid values are customer, tool, offline_corpus, and policy.
+	EvaluatedBy *string `json:"evaluated_by,omitempty" url:"evaluated_by,omitempty"`
+	// The service returns the version of the evaluation rule.
+	EvaluatorVersion *string `json:"evaluator_version,omitempty" url:"evaluator_version,omitempty"`
+	// The service returns the link to supporting evidence, when one exists.
+	EvidenceReference *string `json:"evidence_reference,omitempty" url:"evidence_reference,omitempty"`
+	// The service returns evaluation metrics.
+	Metrics map[string]float64 `json:"metrics,omitempty" url:"metrics,omitempty"`
+	// The service returns the UUID of the review that produced this evaluation.
+	ReviewUUID *string `json:"review_uuid,omitempty" url:"review_uuid,omitempty"`
+	// The service returns the current revision number.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns the evaluation verdict.
+	Verdict *string `json:"verdict,omitempty" url:"verdict,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -3847,14 +3949,21 @@ var (
 )
 
 type AgentSkillCandidateEvidence struct {
-	// ImportedProvider is the provider of the source import, when this Trace was imported.
+	// The service returns the provider of the source import, when this Trace was imported.
 	ImportedProvider *string `json:"imported_provider,omitempty" url:"imported_provider,omitempty"`
-	OccurredAt       *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
-	Outcome          *string `json:"outcome,omitempty" url:"outcome,omitempty"`
-	Polarity         *string `json:"polarity,omitempty" url:"polarity,omitempty"`
-	SourceKind       *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
-	TraceUUID        *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	Verification     *string `json:"verification,omitempty" url:"verification,omitempty"`
+	// The service returns when the source event occurred.
+	OccurredAt *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
+	// The service returns the task outcome.
+	Outcome *string `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// The service returns the evidence stance.
+	Polarity *string `json:"polarity,omitempty" url:"polarity,omitempty"`
+	// The service returns the evidence source type. Valid values are trace,
+	// trace_event, trace_summary, and skill_version.
+	SourceKind *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
+	// The service returns the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	// The service returns how the outcome was verified.
+	Verification *string `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4034,18 +4143,28 @@ var (
 )
 
 type AgentSkillCandidateReview struct {
-	CandidateCount *int                   `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
-	Candidates     []*AgentSkillCandidate `json:"candidates,omitempty" url:"candidates,omitempty"`
-	CreatedAt      *string                `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the number of related resources.
+	CandidateCount *int `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
+	// The service returns candidate Skills.
+	Candidates []*AgentSkillCandidate `json:"candidates,omitempty" url:"candidates,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// ImportReviewRequired reports whether any evidence import requires approval.
-	ImportReviewRequired *bool                              `json:"import_review_required,omitempty" url:"import_review_required,omitempty"`
-	ReasonCode           *string                            `json:"reason_code,omitempty" url:"reason_code,omitempty"`
-	Results              []*AgentSkillCandidateReviewResult `json:"results,omitempty" url:"results,omitempty"`
-	ReviewedAt           *string                            `json:"reviewed_at,omitempty" url:"reviewed_at,omitempty"`
-	Revision             *int                               `json:"revision,omitempty" url:"revision,omitempty"`
-	Status               *string                            `json:"status,omitempty" url:"status,omitempty"`
-	TaskFamily           *string                            `json:"task_family,omitempty" url:"task_family,omitempty"`
-	UUID                 *string                            `json:"uuid,omitempty" url:"uuid,omitempty"`
+	ImportReviewRequired *bool `json:"import_review_required,omitempty" url:"import_review_required,omitempty"`
+	// The service returns the code that explains this result.
+	ReasonCode *string `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	// The service returns evaluation results.
+	Results []*AgentSkillCandidateReviewResult `json:"results,omitempty" url:"results,omitempty"`
+	// The service returns when the review occurred.
+	ReviewedAt *string `json:"reviewed_at,omitempty" url:"reviewed_at,omitempty"`
+	// The service returns the current revision number.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The service returns the lifecycle status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// The service returns the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4275,11 +4394,16 @@ var (
 )
 
 type AgentSkillCandidateReviewResult struct {
-	BaseVersions     []*AgentSkillCandidateBaseVersion `json:"base_versions,omitempty" url:"base_versions,omitempty"`
-	CandidateUUIDs   []string                          `json:"candidate_uuids,omitempty" url:"candidate_uuids,omitempty"`
-	Decision         *string                           `json:"decision,omitempty" url:"decision,omitempty"`
-	TargetSkillUUIDs []string                          `json:"target_skill_uuids,omitempty" url:"target_skill_uuids,omitempty"`
-	UUID             *string                           `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns Skill versions used as the split-plan base.
+	BaseVersions []*AgentSkillCandidateBaseVersion `json:"base_versions,omitempty" url:"base_versions,omitempty"`
+	// The service returns UUIDs of the candidate Skills in this plan.
+	CandidateUUIDs []string `json:"candidate_uuids,omitempty" url:"candidate_uuids,omitempty"`
+	// The service returns the Curator decision for this review result. Valid values are add, patch, merge, split, supersede, contradict, retire, reject, and no_change.
+	Decision *string `json:"decision,omitempty" url:"decision,omitempty"`
+	// The service returns UUIDs of the Skills that this plan can update.
+	TargetSkillUUIDs []string `json:"target_skill_uuids,omitempty" url:"target_skill_uuids,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4428,14 +4552,22 @@ var (
 )
 
 type AgentSkillCandidateReviewSummary struct {
-	CandidateCount *int    `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
-	CreatedAt      *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	ReasonCode     *string `json:"reason_code,omitempty" url:"reason_code,omitempty"`
-	ReviewedAt     *string `json:"reviewed_at,omitempty" url:"reviewed_at,omitempty"`
-	Revision       *int    `json:"revision,omitempty" url:"revision,omitempty"`
-	Status         *string `json:"status,omitempty" url:"status,omitempty"`
-	TaskFamily     *string `json:"task_family,omitempty" url:"task_family,omitempty"`
-	UUID           *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns the number of related resources.
+	CandidateCount *int `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the code that explains this result.
+	ReasonCode *string `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	// The service returns when the review occurred.
+	ReviewedAt *string `json:"reviewed_at,omitempty" url:"reviewed_at,omitempty"`
+	// The service returns the current revision number.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
+	// The service returns the lifecycle status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// The service returns the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4633,23 +4765,40 @@ var (
 )
 
 type AgentSkillCompilationOutcome struct {
-	AgentUUID             *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	Attempts              *int    `json:"attempts,omitempty" url:"attempts,omitempty"`
-	CandidateCount        *int    `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
-	CompilationIdentity   *string `json:"compilation_identity,omitempty" url:"compilation_identity,omitempty"`
+	// The service assigns the UUID of the Agent that owns this learning run.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// The service returns the number of attempts made in the last stage.
+	Attempts *int `json:"attempts,omitempty" url:"attempts,omitempty"`
+	// The service returns the number of candidate Skills that the run produced.
+	CandidateCount *int `json:"candidate_count,omitempty" url:"candidate_count,omitempty"`
+	// The service assigns the UUID that identifies this idempotent compilation
+	// attempt.
+	CompilationIdentity *string `json:"compilation_identity,omitempty" url:"compilation_identity,omitempty"`
+	// The service assigns the UUID of the scheduled window when one applies.
 	CompilationWindowUUID *string `json:"compilation_window_uuid,omitempty" url:"compilation_window_uuid,omitempty"`
-	CreatedAt             *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Decision              *string `json:"decision,omitempty" url:"decision,omitempty"`
-	ProposalCount         *int    `json:"proposal_count,omitempty" url:"proposal_count,omitempty"`
-	ReasonText            *string `json:"reason_text,omitempty" url:"reason_text,omitempty"`
-	// RejectedAddCount is the count of add proposals that the Reflector,
-	// the proposal scanner, or the Curator rejected in this compilation.
-	RejectedAddCount *int                                        `json:"rejected_add_count,omitempty" url:"rejected_add_count,omitempty"`
-	RejectionClass   *AgentSkillCompilationOutcomeRejectionClass `json:"rejection_class,omitempty" url:"rejection_class,omitempty"`
-	Stage            *string                                     `json:"stage,omitempty" url:"stage,omitempty"`
-	TaskFamily       *string                                     `json:"task_family,omitempty" url:"task_family,omitempty"`
-	TraceCount       *int                                        `json:"trace_count,omitempty" url:"trace_count,omitempty"`
-	UUID             *string                                     `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns when Zep recorded this learning-run outcome.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the final result of the learning run.
+	Decision *string `json:"decision,omitempty" url:"decision,omitempty"`
+	// The service returns the number of Skill proposals that the run produced.
+	ProposalCount *int `json:"proposal_count,omitempty" url:"proposal_count,omitempty"`
+	// The service explains why the learning run stopped or made no change.
+	ReasonText *string `json:"reason_text,omitempty" url:"reason_text,omitempty"`
+	// The service returns the count of add proposals that the Reflector, the proposal scanner, or
+	// the Curator rejected in this compilation.
+	RejectedAddCount *int `json:"rejected_add_count,omitempty" url:"rejected_add_count,omitempty"`
+	// The service returns why compilation rejected the candidate. Valid values are
+	// no_eligible_traces,reflector_invalid_output,applicability_ungrounded,corroboration_insufficient,scanner_rejected,curator_rejected,curator_attempts_exhausted,prompt_budget_exceeded,provider_error.
+	RejectionClass *AgentSkillCompilationOutcomeRejectionClass `json:"rejection_class,omitempty" url:"rejection_class,omitempty"`
+	// The service reports the last stage reached: selection, reflector, scanner, curator, or
+	// admission.
+	Stage *string `json:"stage,omitempty" url:"stage,omitempty"`
+	// The service returns the category that this learning run processed.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns the number of eligible Traces that the run processed.
+	TraceCount *int `json:"trace_count,omitempty" url:"trace_count,omitempty"`
+	// The service returns the stable identifier for this learning run.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4926,6 +5075,8 @@ func (a *AgentSkillCompilationOutcome) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+// The service returns why compilation rejected the candidate. Valid values are
+// no_eligible_traces,reflector_invalid_output,applicability_ungrounded,corroboration_insufficient,scanner_rejected,curator_rejected,curator_attempts_exhausted,prompt_budget_exceeded,provider_error.
 type AgentSkillCompilationOutcomeRejectionClass string
 
 const (
@@ -4998,31 +5149,58 @@ var (
 )
 
 type AgentSkillContract struct {
-	Aliases               []string                         `json:"aliases,omitempty" url:"aliases,omitempty"`
-	Applicability         *AgentSkillContractApplicability `json:"applicability,omitempty" url:"applicability,omitempty"`
-	Citations             []string                         `json:"citations,omitempty" url:"citations,omitempty"`
-	Confidence            *float64                         `json:"confidence,omitempty" url:"confidence,omitempty"`
-	Contraindications     []*AgentSkillContractText        `json:"contraindications,omitempty" url:"contraindications,omitempty"`
-	CustomerSections      []*AgentSkillContractSection     `json:"customer_sections,omitempty" url:"customer_sections,omitempty"`
-	Dependencies          []*AgentSkillContractDependency  `json:"dependencies,omitempty" url:"dependencies,omitempty"`
-	Description           *string                          `json:"description,omitempty" url:"description,omitempty"`
-	Environments          []*AgentSkillContractResource    `json:"environments,omitempty" url:"environments,omitempty"`
-	Evidence              []*AgentSkillContractEvidence    `json:"evidence,omitempty" url:"evidence,omitempty"`
-	Failures              []*AgentSkillContractFailure     `json:"failures,omitempty" url:"failures,omitempty"`
-	Invocation            *AgentSkillContractInvocation    `json:"invocation,omitempty" url:"invocation,omitempty"`
-	Kind                  *SkillKind                       `json:"kind,omitempty" url:"kind,omitempty"`
-	Name                  *string                          `json:"name,omitempty" url:"name,omitempty"`
-	Origin                *AgentSkillContractOrigin        `json:"origin,omitempty" url:"origin,omitempty"`
-	Outputs               []*AgentSkillContractText        `json:"outputs,omitempty" url:"outputs,omitempty"`
-	PackageName           *string                          `json:"package_name,omitempty" url:"package_name,omitempty"`
-	Preconditions         []*AgentSkillContractText        `json:"preconditions,omitempty" url:"preconditions,omitempty"`
-	Procedure             []*AgentSkillContractStep        `json:"procedure,omitempty" url:"procedure,omitempty"`
-	Relations             []*AgentSkillContractRelation    `json:"relations,omitempty" url:"relations,omitempty"`
-	SchemaVersion         *string                          `json:"schema_version,omitempty" url:"schema_version,omitempty"`
-	SuccessCriteria       []*AgentSkillContractText        `json:"success_criteria,omitempty" url:"success_criteria,omitempty"`
-	TaskFamily            *string                          `json:"task_family,omitempty" url:"task_family,omitempty"`
-	TerminationConditions []*AgentSkillContractText        `json:"termination_conditions,omitempty" url:"termination_conditions,omitempty"`
-	Tools                 []*AgentSkillContractResource    `json:"tools,omitempty" url:"tools,omitempty"`
+	// The service returns alternate names for the resource.
+	Aliases []string `json:"aliases,omitempty" url:"aliases,omitempty"`
+	// The service returns the Agent versions and models that can use the Skill.
+	Applicability *AgentSkillContractApplicability `json:"applicability,omitempty" url:"applicability,omitempty"`
+	// The service returns evidence identifiers that support the contract.
+	Citations []string `json:"citations,omitempty" url:"citations,omitempty"`
+	// The service returns the confidence score for the contract, from 0 to 1.
+	Confidence *float64 `json:"confidence,omitempty" url:"confidence,omitempty"`
+	// The service returns situations in which the Skill must not be used.
+	Contraindications []*AgentSkillContractText `json:"contraindications,omitempty" url:"contraindications,omitempty"`
+	// The service returns extra sections that a customer added to the Skill.
+	CustomerSections []*AgentSkillContractSection `json:"customer_sections,omitempty" url:"customer_sections,omitempty"`
+	// The service returns packages that the Skill requires.
+	Dependencies []*AgentSkillContractDependency `json:"dependencies,omitempty" url:"dependencies,omitempty"`
+	// The service returns the resource description.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The service returns environment names used by the Skill.
+	Environments []*AgentSkillContractResource `json:"environments,omitempty" url:"environments,omitempty"`
+	// The service returns the evidence records cited by the contract.
+	Evidence []*AgentSkillContractEvidence `json:"evidence,omitempty" url:"evidence,omitempty"`
+	// The service returns failure conditions and recovery steps.
+	Failures []*AgentSkillContractFailure `json:"failures,omitempty" url:"failures,omitempty"`
+	// The service returns when the Skill should be used.
+	Invocation *AgentSkillContractInvocation `json:"invocation,omitempty" url:"invocation,omitempty"`
+	// The service returns the Skill kind. Valid values are principle, procedure, workflow, failure_mode,
+	// recovery, constraint.
+	Kind *SkillKind `json:"kind,omitempty" url:"kind,omitempty"`
+	// The service returns the display name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The service returns how the Skill contract was created. Valid values are
+	// evidence_derived and customer_authored.
+	Origin *AgentSkillContractOrigin `json:"origin,omitempty" url:"origin,omitempty"`
+	// The service returns results that the Skill produces.
+	Outputs []*AgentSkillContractText `json:"outputs,omitempty" url:"outputs,omitempty"`
+	// The service returns the stable package name of the Skill.
+	PackageName *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	// The service returns conditions that must be true before use.
+	Preconditions []*AgentSkillContractText `json:"preconditions,omitempty" url:"preconditions,omitempty"`
+	// The service returns ordered procedure steps.
+	Procedure []*AgentSkillContractStep `json:"procedure,omitempty" url:"procedure,omitempty"`
+	// The service returns links from this Skill to other Skills.
+	Relations []*AgentSkillContractRelation `json:"relations,omitempty" url:"relations,omitempty"`
+	// The service returns the contract schema version. The current value is v1.
+	SchemaVersion *string `json:"schema_version,omitempty" url:"schema_version,omitempty"`
+	// The service returns conditions that show when the Skill task is complete.
+	SuccessCriteria []*AgentSkillContractText `json:"success_criteria,omitempty" url:"success_criteria,omitempty"`
+	// The service returns the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns conditions that show when the Skill's work is complete.
+	TerminationConditions []*AgentSkillContractText `json:"termination_conditions,omitempty" url:"termination_conditions,omitempty"`
+	// The service returns tool names used by the Skill.
+	Tools []*AgentSkillContractResource `json:"tools,omitempty" url:"tools,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5446,9 +5624,12 @@ var (
 )
 
 type AgentSkillContractApplicability struct {
-	AgentVersions []string                               `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
-	Citations     []string                               `json:"citations,omitempty" url:"citations,omitempty"`
-	Models        []*AgentSkillContractVersionConstraint `json:"models,omitempty" url:"models,omitempty"`
+	// The service returns Agent versions that can use the Skill.
+	AgentVersions []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	// The service returns evidence identifiers that support this applicability.
+	Citations []string `json:"citations,omitempty" url:"citations,omitempty"`
+	// The service returns model names and their allowed versions.
+	Models []*AgentSkillContractVersionConstraint `json:"models,omitempty" url:"models,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5563,7 +5744,9 @@ var (
 )
 
 type AgentSkillContractDependency struct {
-	PackageName       *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	// The service returns the stable package name of the Skill.
+	PackageName *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	// The service returns the allowed versions for this Skill.
 	VersionConstraint *string `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -5665,16 +5848,29 @@ var (
 	agentSkillContractEvidenceFieldPolarity        = big.NewInt(1 << 2)
 	agentSkillContractEvidenceFieldSourceID        = big.NewInt(1 << 3)
 	agentSkillContractEvidenceFieldSourceKind      = big.NewInt(1 << 4)
-	agentSkillContractEvidenceFieldTrajectoryID    = big.NewInt(1 << 5)
+	agentSkillContractEvidenceFieldTraceID         = big.NewInt(1 << 5)
 )
 
 type AgentSkillContractEvidence struct {
-	AttemptFamilyID *string                               `json:"attempt_family_id,omitempty" url:"attempt_family_id,omitempty"`
-	ID              *string                               `json:"id,omitempty" url:"id,omitempty"`
-	Polarity        *AgentSkillContractEvidencePolarity   `json:"polarity,omitempty" url:"polarity,omitempty"`
-	SourceID        *string                               `json:"source_id,omitempty" url:"source_id,omitempty"`
-	SourceKind      *AgentSkillContractEvidenceSourceKind `json:"source_kind,omitempty" url:"source_kind,omitempty"`
-	TrajectoryID    *string                               `json:"trajectory_id,omitempty" url:"trajectory_id,omitempty"`
+	// AttemptFamilyID is the ID of the attempt family that supplied this
+	// evidence. The service returns this value.
+	AttemptFamilyID *string `json:"attempt_family_id,omitempty" url:"attempt_family_id,omitempty"`
+	// ID is the citation identifier that the service returns. It is unique in
+	// the evidence list.
+	ID *string `json:"id,omitempty" url:"id,omitempty"`
+	// Polarity states whether the evidence supports, contradicts, or does not
+	// affect the contract claim. The service returns supporting, contradicting,
+	// or neutral.
+	Polarity *AgentSkillContractEvidencePolarity `json:"polarity,omitempty" url:"polarity,omitempty"`
+	// SourceID is the ID of the Trace, event, or summary version named by
+	// source_kind. The service returns this value.
+	SourceID *string `json:"source_id,omitempty" url:"source_id,omitempty"`
+	// SourceKind is the source type. The service returns trace, event, or
+	// summary.
+	SourceKind *AgentSkillContractEvidenceSourceKind `json:"source_kind,omitempty" url:"source_kind,omitempty"`
+	// TraceID is the ID of the Trace that supplied this evidence. The service
+	// returns this value.
+	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5718,11 +5914,11 @@ func (a *AgentSkillContractEvidence) GetSourceKind() *AgentSkillContractEvidence
 	return a.SourceKind
 }
 
-func (a *AgentSkillContractEvidence) GetTrajectoryID() *string {
+func (a *AgentSkillContractEvidence) GetTraceID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.TrajectoryID
+	return a.TraceID
 }
 
 func (a *AgentSkillContractEvidence) GetExtraProperties() map[string]interface{} {
@@ -5776,11 +5972,11 @@ func (a *AgentSkillContractEvidence) SetSourceKind(sourceKind *AgentSkillContrac
 	a.require(agentSkillContractEvidenceFieldSourceKind)
 }
 
-// SetTrajectoryID sets the TrajectoryID field and marks it as non-optional;
+// SetTraceID sets the TraceID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
-func (a *AgentSkillContractEvidence) SetTrajectoryID(trajectoryID *string) {
-	a.TrajectoryID = trajectoryID
-	a.require(agentSkillContractEvidenceFieldTrajectoryID)
+func (a *AgentSkillContractEvidence) SetTraceID(traceID *string) {
+	a.TraceID = traceID
+	a.require(agentSkillContractEvidenceFieldTraceID)
 }
 
 func (a *AgentSkillContractEvidence) UnmarshalJSON(data []byte) error {
@@ -5825,6 +6021,9 @@ func (a *AgentSkillContractEvidence) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+// Polarity states whether the evidence supports, contradicts, or does not
+// affect the contract claim. The service returns supporting, contradicting,
+// or neutral.
 type AgentSkillContractEvidencePolarity string
 
 const (
@@ -5850,18 +6049,20 @@ func (a AgentSkillContractEvidencePolarity) Ptr() *AgentSkillContractEvidencePol
 	return &a
 }
 
+// SourceKind is the source type. The service returns trace, event, or
+// summary.
 type AgentSkillContractEvidenceSourceKind string
 
 const (
-	AgentSkillContractEvidenceSourceKindTrajectory AgentSkillContractEvidenceSourceKind = "trajectory"
-	AgentSkillContractEvidenceSourceKindEvent      AgentSkillContractEvidenceSourceKind = "event"
-	AgentSkillContractEvidenceSourceKindSummary    AgentSkillContractEvidenceSourceKind = "summary"
+	AgentSkillContractEvidenceSourceKindTrace   AgentSkillContractEvidenceSourceKind = "trace"
+	AgentSkillContractEvidenceSourceKindEvent   AgentSkillContractEvidenceSourceKind = "event"
+	AgentSkillContractEvidenceSourceKindSummary AgentSkillContractEvidenceSourceKind = "summary"
 )
 
 func NewAgentSkillContractEvidenceSourceKindFromString(s string) (AgentSkillContractEvidenceSourceKind, error) {
 	switch s {
-	case "trajectory":
-		return AgentSkillContractEvidenceSourceKindTrajectory, nil
+	case "trace":
+		return AgentSkillContractEvidenceSourceKindTrace, nil
 	case "event":
 		return AgentSkillContractEvidenceSourceKindEvent, nil
 	case "summary":
@@ -5881,8 +6082,10 @@ var (
 )
 
 type AgentSkillContractFailure struct {
-	Condition *AgentSkillContractText   `json:"condition,omitempty" url:"condition,omitempty"`
-	Recovery  []*AgentSkillContractText `json:"recovery,omitempty" url:"recovery,omitempty"`
+	// The service returns the failure condition.
+	Condition *AgentSkillContractText `json:"condition,omitempty" url:"condition,omitempty"`
+	// The service returns actions that recover from this failure.
+	Recovery []*AgentSkillContractText `json:"recovery,omitempty" url:"recovery,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -5983,8 +6186,10 @@ var (
 )
 
 type AgentSkillContractInvocation struct {
+	// The service returns conditions that must hold before the Skill is used.
 	Conditions []*AgentSkillContractText `json:"conditions,omitempty" url:"conditions,omitempty"`
-	Summary    *AgentSkillContractText   `json:"summary,omitempty" url:"summary,omitempty"`
+	// The service returns a summary of when to use the Skill.
+	Summary *AgentSkillContractText `json:"summary,omitempty" url:"summary,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -6079,6 +6284,8 @@ func (a *AgentSkillContractInvocation) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+// The service returns how the Skill contract was created. Valid values are
+// evidence_derived and customer_authored.
 type AgentSkillContractOrigin string
 
 const (
@@ -6109,10 +6316,15 @@ var (
 )
 
 type AgentSkillContractRelation struct {
-	Citations         []string                        `json:"citations,omitempty" url:"citations,omitempty"`
-	Kind              *AgentSkillContractRelationKind `json:"kind,omitempty" url:"kind,omitempty"`
-	TargetPackageName *string                         `json:"target_package_name,omitempty" url:"target_package_name,omitempty"`
-	VersionConstraint *string                         `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
+	// The service returns evidence identifiers that support this relation.
+	Citations []string `json:"citations,omitempty" url:"citations,omitempty"`
+	// The service returns the relation type. Valid values are composes, requires,
+	// conflicts_with, supersedes, and related.
+	Kind *AgentSkillContractRelationKind `json:"kind,omitempty" url:"kind,omitempty"`
+	// The service returns the package name of the related Skill.
+	TargetPackageName *string `json:"target_package_name,omitempty" url:"target_package_name,omitempty"`
+	// The service returns the allowed versions for the related Skill.
+	VersionConstraint *string `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -6235,6 +6447,8 @@ func (a *AgentSkillContractRelation) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+// The service returns the relation type. Valid values are composes, requires,
+// conflicts_with, supersedes, and related.
 type AgentSkillContractRelationKind string
 
 const (
@@ -6274,10 +6488,14 @@ var (
 )
 
 type AgentSkillContractResource struct {
-	Aliases           []string `json:"aliases,omitempty" url:"aliases,omitempty"`
-	Citations         []string `json:"citations,omitempty" url:"citations,omitempty"`
-	Name              *string  `json:"name,omitempty" url:"name,omitempty"`
-	VersionConstraint *string  `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
+	// The service returns alternate names for this tool or environment.
+	Aliases []string `json:"aliases,omitempty" url:"aliases,omitempty"`
+	// The service returns evidence identifiers that support this resource.
+	Citations []string `json:"citations,omitempty" url:"citations,omitempty"`
+	// The service returns the resource name stored in the contract.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The service returns the allowed versions for this resource.
+	VersionConstraint *string `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -6408,10 +6626,14 @@ var (
 )
 
 type AgentSkillContractSection struct {
-	Heading       *string `json:"heading,omitempty" url:"heading,omitempty"`
-	Markdown      *string `json:"markdown,omitempty" url:"markdown,omitempty"`
+	// The service returns section heading.
+	Heading *string `json:"heading,omitempty" url:"heading,omitempty"`
+	// The service returns the Skill content in Markdown.
+	Markdown *string `json:"markdown,omitempty" url:"markdown,omitempty"`
+	// The service returns the section schema version. The current value is v1.
 	SchemaVersion *string `json:"schema_version,omitempty" url:"schema_version,omitempty"`
-	SectionID     *string `json:"section_id,omitempty" url:"section_id,omitempty"`
+	// The service returns the stable ID of this customer-authored section.
+	SectionID *string `json:"section_id,omitempty" url:"section_id,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -6541,9 +6763,12 @@ var (
 )
 
 type AgentSkillContractStep struct {
-	Decision             *AgentSkillContractText   `json:"decision,omitempty" url:"decision,omitempty"`
+	// The service returns the decision for this operation.
+	Decision *AgentSkillContractText `json:"decision,omitempty" url:"decision,omitempty"`
+	// The service returns results to look for after this procedure step.
 	ExpectedObservations []*AgentSkillContractText `json:"expected_observations,omitempty" url:"expected_observations,omitempty"`
-	Instruction          *AgentSkillContractText   `json:"instruction,omitempty" url:"instruction,omitempty"`
+	// The service returns the action for this procedure step.
+	Instruction *AgentSkillContractText `json:"instruction,omitempty" url:"instruction,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -6658,8 +6883,10 @@ var (
 )
 
 type AgentSkillContractText struct {
+	// The service returns evidence identifiers that support this text.
 	Citations []string `json:"citations,omitempty" url:"citations,omitempty"`
-	Text      *string  `json:"text,omitempty" url:"text,omitempty"`
+	// The service returns text that a person can read.
+	Text *string `json:"text,omitempty" url:"text,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -6760,7 +6987,9 @@ var (
 )
 
 type AgentSkillContractVersionConstraint struct {
-	Name              *string `json:"name,omitempty" url:"name,omitempty"`
+	// The service returns the Agent model or deployment name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The service returns the allowed versions for this model or deployment.
 	VersionConstraint *string `json:"version_constraint,omitempty" url:"version_constraint,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -6873,19 +7102,32 @@ var (
 )
 
 type AgentSkillEvaluation struct {
-	ControlledTest    *bool              `json:"controlled_test,omitempty" url:"controlled_test,omitempty"`
-	CreatedAt         *string            `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Environment       *string            `json:"environment,omitempty" url:"environment,omitempty"`
-	EvaluatedBy       *string            `json:"evaluated_by,omitempty" url:"evaluated_by,omitempty"`
-	EvaluatorVersion  *string            `json:"evaluator_version,omitempty" url:"evaluator_version,omitempty"`
-	EvidenceReference *string            `json:"evidence_reference,omitempty" url:"evidence_reference,omitempty"`
-	Metrics           map[string]float64 `json:"metrics,omitempty" url:"metrics,omitempty"`
-	SkillUUID         *string            `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
-	SkillVersion      *int               `json:"skill_version,omitempty" url:"skill_version,omitempty"`
-	TraceUUID         *string            `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	UseUUID           *string            `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
-	UUID              *string            `json:"uuid,omitempty" url:"uuid,omitempty"`
-	Verdict           *string            `json:"verdict,omitempty" url:"verdict,omitempty"`
+	// The developer sets this to true when a controlled test produced the result.
+	ControlledTest *bool `json:"controlled_test,omitempty" url:"controlled_test,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the environment used for this evaluation.
+	Environment *string `json:"environment,omitempty" url:"environment,omitempty"`
+	// The service returns the evaluation source. Valid values are customer, tool, offline_corpus, and policy.
+	EvaluatedBy *string `json:"evaluated_by,omitempty" url:"evaluated_by,omitempty"`
+	// The service returns the version of the evaluation rule.
+	EvaluatorVersion *string `json:"evaluator_version,omitempty" url:"evaluator_version,omitempty"`
+	// The service returns the link to supporting evidence, when one exists.
+	EvidenceReference *string `json:"evidence_reference,omitempty" url:"evidence_reference,omitempty"`
+	// The service returns evaluation metrics.
+	Metrics map[string]float64 `json:"metrics,omitempty" url:"metrics,omitempty"`
+	// The service returns the UUID of the Skill.
+	SkillUUID *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	// The service returns the version number of the Skill.
+	SkillVersion *int `json:"skill_version,omitempty" url:"skill_version,omitempty"`
+	// The service returns the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	// The service returns the UUID of the recorded Skill use, when linked.
+	UseUUID *string `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns the evaluation verdict.
+	Verdict *string `json:"verdict,omitempty" url:"verdict,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -7147,15 +7389,26 @@ var (
 )
 
 type AgentSkillEvidence struct {
-	AssertionUUID      *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
-	CreatedAt          *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	OccurredAt         *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
-	Polarity           *string `json:"polarity,omitempty" url:"polarity,omitempty"`
-	SourceKind         *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
+	// The service returns the verification assertion linked to this evidence.
+	AssertionUUID *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns when the source event occurred.
+	OccurredAt *string `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
+	// The service returns the evidence stance.
+	Polarity *string `json:"polarity,omitempty" url:"polarity,omitempty"`
+	// The service returns the evidence source type. Valid values are trace,
+	// trace_event, trace_summary, and skill_version.
+	SourceKind *string `json:"source_kind,omitempty" url:"source_kind,omitempty"`
+	// The service returns summary version linked to this evidence.
 	SummaryVersionUUID *string `json:"summary_version_uuid,omitempty" url:"summary_version_uuid,omitempty"`
-	TraceEventUUID     *string `json:"trace_event_uuid,omitempty" url:"trace_event_uuid,omitempty"`
-	TraceUUID          *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	Verification       *string `json:"verification,omitempty" url:"verification,omitempty"`
+	// The service returns trace event linked to this evidence.
+	TraceEventUUID *string `json:"trace_event_uuid,omitempty" url:"trace_event_uuid,omitempty"`
+	// The service returns the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	// The service returns the verification source. Valid values are none, agent,
+	// tool, customer, and external.
+	Verification *string `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -7607,21 +7860,36 @@ var (
 )
 
 type AgentSkillRelationship struct {
-	ApplicationState          *string `json:"application_state,omitempty" url:"application_state,omitempty"`
-	Kind                      *string `json:"kind,omitempty" url:"kind,omitempty"`
-	RelatedPackageName        *string `json:"related_package_name,omitempty" url:"related_package_name,omitempty"`
-	RelatedSkillKind          *string `json:"related_skill_kind,omitempty" url:"related_skill_kind,omitempty"`
-	RelatedSkillName          *string `json:"related_skill_name,omitempty" url:"related_skill_name,omitempty"`
-	RelatedSkillTaskFamily    *string `json:"related_skill_task_family,omitempty" url:"related_skill_task_family,omitempty"`
-	RelatedSkillUUID          *string `json:"related_skill_uuid,omitempty" url:"related_skill_uuid,omitempty"`
-	RelatedSkillVersion       *int    `json:"related_skill_version,omitempty" url:"related_skill_version,omitempty"`
-	RelatedVersionConstraint  *string `json:"related_version_constraint,omitempty" url:"related_version_constraint,omitempty"`
-	ResourceName              *string `json:"resource_name,omitempty" url:"resource_name,omitempty"`
+	// The service returns whether this Skill is applied to the Agent.
+	ApplicationState *string `json:"application_state,omitempty" url:"application_state,omitempty"`
+	// The service returns the Skill kind.
+	Kind *string `json:"kind,omitempty" url:"kind,omitempty"`
+	// The service returns the package name of the related Skill.
+	RelatedPackageName *string `json:"related_package_name,omitempty" url:"related_package_name,omitempty"`
+	// The service returns the kind of the related Skill.
+	RelatedSkillKind *string `json:"related_skill_kind,omitempty" url:"related_skill_kind,omitempty"`
+	// The service returns the display name of the related Skill.
+	RelatedSkillName *string `json:"related_skill_name,omitempty" url:"related_skill_name,omitempty"`
+	// The service returns the task-family slug of the related Skill.
+	RelatedSkillTaskFamily *string `json:"related_skill_task_family,omitempty" url:"related_skill_task_family,omitempty"`
+	// The service returns the UUID of the related Skill, when one is linked.
+	RelatedSkillUUID *string `json:"related_skill_uuid,omitempty" url:"related_skill_uuid,omitempty"`
+	// The service returns the version number of the related Skill.
+	RelatedSkillVersion *int `json:"related_skill_version,omitempty" url:"related_skill_version,omitempty"`
+	// The service returns the version constraint for the related Skill.
+	RelatedVersionConstraint *string `json:"related_version_constraint,omitempty" url:"related_version_constraint,omitempty"`
+	// The service returns the name of the related tool or environment.
+	ResourceName *string `json:"resource_name,omitempty" url:"resource_name,omitempty"`
+	// The service returns the allowed versions of the related resource.
 	ResourceVersionConstraint *string `json:"resource_version_constraint,omitempty" url:"resource_version_constraint,omitempty"`
-	TraceOutcome              *string `json:"trace_outcome,omitempty" url:"trace_outcome,omitempty"`
-	TraceTaskFamily           *string `json:"trace_task_family,omitempty" url:"trace_task_family,omitempty"`
-	TraceUUID                 *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	TraceVerification         *string `json:"trace_verification,omitempty" url:"trace_verification,omitempty"`
+	// The service returns the outcome of the source Trace.
+	TraceOutcome *string `json:"trace_outcome,omitempty" url:"trace_outcome,omitempty"`
+	// The service returns the task family of the source Trace.
+	TraceTaskFamily *string `json:"trace_task_family,omitempty" url:"trace_task_family,omitempty"`
+	// The service returns the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	// The service returns the verification state of the source Trace.
+	TraceVerification *string `json:"trace_verification,omitempty" url:"trace_verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -7908,44 +8176,60 @@ var (
 	agentSkillSearchHitFieldName                  = big.NewInt(1 << 6)
 	agentSkillSearchHitFieldPackageName           = big.NewInt(1 << 7)
 	agentSkillSearchHitFieldSelfContained         = big.NewInt(1 << 8)
-	agentSkillSearchHitFieldSkillID               = big.NewInt(1 << 9)
-	agentSkillSearchHitFieldSourceAttemptFamilies = big.NewInt(1 << 10)
-	agentSkillSearchHitFieldTaskFamily            = big.NewInt(1 << 11)
-	agentSkillSearchHitFieldTools                 = big.NewInt(1 << 12)
-	agentSkillSearchHitFieldTrust                 = big.NewInt(1 << 13)
-	agentSkillSearchHitFieldUUID                  = big.NewInt(1 << 14)
-	agentSkillSearchHitFieldVerifiedApplications  = big.NewInt(1 << 15)
-	agentSkillSearchHitFieldVersion               = big.NewInt(1 << 16)
+	agentSkillSearchHitFieldShortID               = big.NewInt(1 << 9)
+	agentSkillSearchHitFieldSkillID               = big.NewInt(1 << 10)
+	agentSkillSearchHitFieldSourceAttemptFamilies = big.NewInt(1 << 11)
+	agentSkillSearchHitFieldTaskFamily            = big.NewInt(1 << 12)
+	agentSkillSearchHitFieldTools                 = big.NewInt(1 << 13)
+	agentSkillSearchHitFieldTrust                 = big.NewInt(1 << 14)
+	agentSkillSearchHitFieldUUID                  = big.NewInt(1 << 15)
+	agentSkillSearchHitFieldVerifiedApplications  = big.NewInt(1 << 16)
+	agentSkillSearchHitFieldVersion               = big.NewInt(1 << 17)
 )
 
 type AgentSkillSearchHit struct {
+	// The service returns Agent versions that can use this Skill.
 	AgentVersions []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
-	Description   *string  `json:"description,omitempty" url:"description,omitempty"`
-	Environments  []string `json:"environments,omitempty" url:"environments,omitempty"`
-	Kind          *string  `json:"kind,omitempty" url:"kind,omitempty"`
-	Markdown      *string  `json:"markdown,omitempty" url:"markdown,omitempty"`
+	// The service returns the resource description.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The service returns environment names used by the Skill.
+	Environments []string `json:"environments,omitempty" url:"environments,omitempty"`
+	// The service returns the Skill kind.
+	Kind *string `json:"kind,omitempty" url:"kind,omitempty"`
+	// The service returns the rendered Skill instructions in Markdown.
+	Markdown *string `json:"markdown,omitempty" url:"markdown,omitempty"`
 	// Maturity is the trust tier of the Skill: provisional (one source attempt
 	// family), corroborated (two or more), established (a Trust of 0.6 or
 	// more from verified applications), or authored (no compiled source).
-	Maturity      *AgentSkillSearchHitMaturity `json:"maturity,omitempty" url:"maturity,omitempty"`
-	Name          *string                      `json:"name,omitempty" url:"name,omitempty"`
-	PackageName   *string                      `json:"package_name,omitempty" url:"package_name,omitempty"`
-	SelfContained *bool                        `json:"self_contained,omitempty" url:"self_contained,omitempty"`
-	SkillID       *string                      `json:"skill_id,omitempty" url:"skill_id,omitempty"`
+	Maturity *AgentSkillSearchHitMaturity `json:"maturity,omitempty" url:"maturity,omitempty"`
+	// The service returns the display name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The service returns the stable package name of the Skill.
+	PackageName *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	// The service reports whether this Skill can run without external context.
+	SelfContained *bool `json:"self_contained,omitempty" url:"self_contained,omitempty"`
+	// The first 8 hex characters of uuid. Every route that takes skill_uuid also accepts this value in place of the full UUID.
+	ShortID *string `json:"short_id,omitempty" url:"short_id,omitempty"`
+	// The service returns the stable developer-facing ID of the Skill, when set.
+	SkillID *string `json:"skill_id,omitempty" url:"skill_id,omitempty"`
 	// SourceAttemptFamilies is the count of distinct, successful, verified
 	// attempt families that support the current version.
-	SourceAttemptFamilies *int     `json:"source_attempt_families,omitempty" url:"source_attempt_families,omitempty"`
-	TaskFamily            *string  `json:"task_family,omitempty" url:"task_family,omitempty"`
-	Tools                 []string `json:"tools,omitempty" url:"tools,omitempty"`
+	SourceAttemptFamilies *int `json:"source_attempt_families,omitempty" url:"source_attempt_families,omitempty"`
+	// The service returns the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns tool names used by the Skill.
+	Tools []string `json:"tools,omitempty" url:"tools,omitempty"`
 	// Trust is the lower bound of the 95% Wilson score interval for the
 	// success rate of strongly verified applications of the Skill. It is 0
 	// when the Skill has no verified application.
 	Trust *float64 `json:"trust,omitempty" url:"trust,omitempty"`
-	UUID  *string  `json:"uuid,omitempty" url:"uuid,omitempty"`
-	// VerifiedApplications is the count of strongly verified applications
-	// that end in success or failure.
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns the count of strongly verified applications that end in success or
+	// failure.
 	VerifiedApplications *int `json:"verified_applications,omitempty" url:"verified_applications,omitempty"`
-	Version              *int `json:"version,omitempty" url:"version,omitempty"`
+	// The service returns the Skill version number.
+	Version *int `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8015,6 +8299,13 @@ func (a *AgentSkillSearchHit) GetSelfContained() *bool {
 		return nil
 	}
 	return a.SelfContained
+}
+
+func (a *AgentSkillSearchHit) GetShortID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ShortID
 }
 
 func (a *AgentSkillSearchHit) GetSkillID() *string {
@@ -8150,6 +8441,13 @@ func (a *AgentSkillSearchHit) SetPackageName(packageName *string) {
 func (a *AgentSkillSearchHit) SetSelfContained(selfContained *bool) {
 	a.SelfContained = selfContained
 	a.require(agentSkillSearchHitFieldSelfContained)
+}
+
+// SetShortID sets the ShortID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentSkillSearchHit) SetShortID(shortID *string) {
+	a.ShortID = shortID
+	a.require(agentSkillSearchHitFieldShortID)
 }
 
 // SetSkillID sets the SkillID field and marks it as non-optional;
@@ -8288,9 +8586,12 @@ var (
 )
 
 type AgentSkillSearchResponse struct {
-	Items      []*AgentSkillSearchHit `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string                `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	SearchID   *string                `json:"search_id,omitempty" url:"search_id,omitempty"`
+	// The service returns the items in this page.
+	Items []*AgentSkillSearchHit `json:"items,omitempty" url:"items,omitempty"`
+	// The service returns the cursor for the next page, when one exists.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The service returns the signed token for this result set.
+	SearchID *string `json:"search_id,omitempty" url:"search_id,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8412,15 +8713,24 @@ var (
 )
 
 type AgentSkillUse struct {
-	AgentVersion *string               `json:"agent_version,omitempty" url:"agent_version,omitempty"`
-	CreatedAt    *string               `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Outcome      *AgentSkillUseOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
-	ReasonCode   *string               `json:"reason_code,omitempty" url:"reason_code,omitempty"`
-	SkillUUID    *string               `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
-	SkillVersion *int                  `json:"skill_version,omitempty" url:"skill_version,omitempty"`
-	TraceUUID    *string               `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	Usage        *string               `json:"usage,omitempty" url:"usage,omitempty"`
-	UUID         *string               `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns the Agent version that used this Skill.
+	AgentVersion *string `json:"agent_version,omitempty" url:"agent_version,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the task outcome.
+	Outcome *AgentSkillUseOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// The service returns the code that explains this result.
+	ReasonCode *string `json:"reason_code,omitempty" url:"reason_code,omitempty"`
+	// The service returns the UUID of the Skill.
+	SkillUUID *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	// The service returns the version number of the Skill.
+	SkillVersion *int `json:"skill_version,omitempty" url:"skill_version,omitempty"`
+	// The service returns the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	// The service returns how the Skill was used.
+	Usage *string `json:"usage,omitempty" url:"usage,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8624,13 +8934,21 @@ var (
 )
 
 type AgentSkillUseOutcome struct {
+	// The service returns the verification assertion linked to this evidence.
 	AssertionUUID *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
-	CreatedAt     *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Outcome       *string `json:"outcome,omitempty" url:"outcome,omitempty"`
-	TraceUUID     *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	UseUUID       *string `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
-	UUID          *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-	Verification  *string `json:"verification,omitempty" url:"verification,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the task outcome.
+	Outcome *string `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// The service returns the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	// The service returns the UUID of the recorded Skill use.
+	UseUUID *string `json:"use_uuid,omitempty" url:"use_uuid,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns the verification source. Valid values are none, agent,
+	// tool, customer, and external.
+	Verification *string `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8805,14 +9123,19 @@ var (
 )
 
 type AgentSkillVersion struct {
-	Contract   *AgentSkillContract `json:"contract,omitempty" url:"contract,omitempty"`
-	CreatedAt  *string             `json:"created_at,omitempty" url:"created_at,omitempty"`
-	Definition *SkillDefinition    `json:"definition,omitempty" url:"definition,omitempty"`
+	// The service returns skill contract.
+	Contract *AgentSkillContract `json:"contract,omitempty" url:"contract,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the customer-authored Skill definition.
+	Definition *SkillDefinition `json:"definition,omitempty" url:"definition,omitempty"`
 	// Markdown is the agent view of the Skill unless the request selects
 	// `markdown_format=full`.
-	Markdown      *string `json:"markdown,omitempty" url:"markdown,omitempty"`
-	SelfContained *bool   `json:"self_contained,omitempty" url:"self_contained,omitempty"`
-	Version       *int    `json:"version,omitempty" url:"version,omitempty"`
+	Markdown *string `json:"markdown,omitempty" url:"markdown,omitempty"`
+	// The service reports whether the Skill can run without external context.
+	SelfContained *bool `json:"self_contained,omitempty" url:"self_contained,omitempty"`
+	// The service returns the Skill version number.
+	Version *int `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8970,9 +9293,12 @@ var (
 )
 
 type AgentSkillVersionComparison struct {
-	ChangedFields []string           `json:"changed_fields,omitempty" url:"changed_fields,omitempty"`
-	From          *AgentSkillVersion `json:"from,omitempty" url:"from,omitempty"`
-	To            *AgentSkillVersion `json:"to,omitempty" url:"to,omitempty"`
+	// The service lists fields that changed between these Skill versions.
+	ChangedFields []string `json:"changed_fields,omitempty" url:"changed_fields,omitempty"`
+	// The service returns the Skill version before the comparison.
+	From *AgentSkillVersion `json:"from,omitempty" url:"from,omitempty"`
+	// The service returns the Skill version after the comparison.
+	To *AgentSkillVersion `json:"to,omitempty" url:"to,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9092,14 +9418,20 @@ var (
 )
 
 type AgentSplitPlan struct {
+	// The service reports whether the plan authorizes Agent creation.
 	AuthorizesAgentCreation *bool `json:"authorizes_agent_creation,omitempty" url:"authorizes_agent_creation,omitempty"`
-	AuthorizesPublication   *bool `json:"authorizes_publication,omitempty" url:"authorizes_publication,omitempty"`
+	// The service reports whether the plan authorizes Skill publication.
+	AuthorizesPublication *bool `json:"authorizes_publication,omitempty" url:"authorizes_publication,omitempty"`
 	// A split plan is not human approval and grants no authority for later commands.
-	CreatesResources   *bool                        `json:"creates_resources,omitempty" url:"creates_resources,omitempty"`
-	Destinations       []*AgentSplitPlanDestination `json:"destinations,omitempty" url:"destinations,omitempty"`
-	Rationale          *string                      `json:"rationale,omitempty" url:"rationale,omitempty"`
-	ReviewAcknowledged *bool                        `json:"review_acknowledged,omitempty" url:"review_acknowledged,omitempty"`
-	Source             *AgentSplitPlanSource        `json:"source,omitempty" url:"source,omitempty"`
+	CreatesResources *bool `json:"creates_resources,omitempty" url:"creates_resources,omitempty"`
+	// The service returns UUIDs of the destination Agents.
+	Destinations []*AgentSplitPlanDestination `json:"destinations,omitempty" url:"destinations,omitempty"`
+	// The service returns the reason for the requested split.
+	Rationale *string `json:"rationale,omitempty" url:"rationale,omitempty"`
+	// The service reports whether the developer confirmed the review.
+	ReviewAcknowledged *bool `json:"review_acknowledged,omitempty" url:"review_acknowledged,omitempty"`
+	// The service returns the source Agent and the revision used for this plan.
+	Source *AgentSplitPlanSource `json:"source,omitempty" url:"source,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9270,7 +9602,9 @@ var (
 )
 
 type AgentSplitPlanDestination struct {
-	Agent  *CreateAgentRequest             `json:"agent,omitempty" url:"agent,omitempty"`
+	// The service returns the Agent settings for this destination.
+	Agent *CreateAgentRequest `json:"agent,omitempty" url:"agent,omitempty"`
+	// The service returns the Skills included in this plan.
 	Skills []*AgentSplitPlanSkillReference `json:"skills,omitempty" url:"skills,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -9372,7 +9706,9 @@ var (
 )
 
 type AgentSplitPlanDestinationRequest struct {
-	Agent  *CreateAgentRequest                    `json:"agent" url:"agent"`
+	// The developer supplies the Agent settings for this destination.
+	Agent *CreateAgentRequest `json:"agent" url:"agent"`
+	// The developer lists 1 to 100 Skills to include in this plan.
 	Skills []*AgentSplitPlanSkillSelectionRequest `json:"skills" url:"skills"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -9478,12 +9814,18 @@ var (
 )
 
 type AgentSplitPlanSkillReference struct {
-	PackageName      *string `json:"package_name,omitempty" url:"package_name,omitempty"`
-	SkillID          *string `json:"skill_id,omitempty" url:"skill_id,omitempty"`
-	SkillUUID        *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	// The service returns the stable package name of the Skill.
+	PackageName *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	// The service returns the stable developer-facing ID of the Skill, when set.
+	SkillID *string `json:"skill_id,omitempty" url:"skill_id,omitempty"`
+	// The service returns the UUID of the Skill.
+	SkillUUID *string `json:"skill_uuid,omitempty" url:"skill_uuid,omitempty"`
+	// The service returns the UUID of the selected immutable Skill version.
 	SkillVersionUUID *string `json:"skill_version_uuid,omitempty" url:"skill_version_uuid,omitempty"`
-	Status           *string `json:"status,omitempty" url:"status,omitempty"`
-	Version          *int    `json:"version,omitempty" url:"version,omitempty"`
+	// The service returns the Skill's lifecycle status.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// The service returns the selected Skill version number.
+	Version *int `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9641,9 +9983,12 @@ var (
 )
 
 type AgentSplitPlanSkillSelectionRequest struct {
-	SkillUUID        string `json:"skill_uuid" url:"skill_uuid"`
+	// The developer supplies the Skill identifier.
+	SkillUUID string `json:"skill_uuid" url:"skill_uuid"`
+	// The developer selects the immutable Skill version to include.
 	SkillVersionUUID string `json:"skill_version_uuid" url:"skill_version_uuid"`
-	Version          int    `json:"version" url:"version"`
+	// The developer supplies the Skill version number. It must be at least 1.
+	Version int `json:"version" url:"version"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9758,8 +10103,10 @@ var (
 )
 
 type AgentSplitPlanSource struct {
+	// The service returns the UUID of the owning Agent.
 	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	Revision  *int    `json:"revision,omitempty" url:"revision,omitempty"`
+	// The service returns the current revision number.
+	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9868,25 +10215,25 @@ var (
 )
 
 type AgentTaskFamilyDescriptor struct {
-	// The owning Agent UUID.
+	// The service returns the owning Agent UUID.
 	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	// The time the descriptor was created.
+	// The service returns the time the descriptor was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// What the family covers.
+	// The service returns what the family covers.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	// The descriptor version the classifier ran against.
+	// The service returns the descriptor version the classifier ran against.
 	DescriptorVersion *int `json:"descriptor_version,omitempty" url:"descriptor_version,omitempty"`
-	// The tools that distinguish this family from the others.
+	// The service returns the tools that distinguish this family from the others.
 	DistinguishingTools []string `json:"distinguishing_tools,omitempty" url:"distinguishing_tools,omitempty"`
-	// The most similar goal that does not belong to the family.
+	// The service returns the most similar goal that does not belong to the family.
 	NotFor *string `json:"not_for,omitempty" url:"not_for,omitempty"`
-	// The task-family slug members receive.
+	// The service returns the task-family slug members receive.
 	Slug *string `json:"slug,omitempty" url:"slug,omitempty"`
-	// The time the descriptor was last updated.
+	// The service returns the time the descriptor was last updated.
 	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	// When a Trace belongs to the family.
+	// The service returns when a Trace belongs to the family.
 	UseWhen *string `json:"use_when,omitempty" url:"use_when,omitempty"`
-	// The stable descriptor UUID.
+	// The service returns the stable descriptor UUID.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -10105,7 +10452,7 @@ type AgentTaskFamilyDescriptorPage struct {
 	Items []*AgentTaskFamilyDescriptor `json:"items,omitempty" url:"items,omitempty"`
 	// Opaque cursor for retrieving the next page, present only when more results are available.
 	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	// The total number of discovered task families within the owning Agent.
+	// The service returns the total number of discovered task families within the owning Agent.
 	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -10243,9 +10590,9 @@ var (
 type AgentTrace struct {
 	// The time the Trace was abandoned.
 	AbandonedAt *string `json:"abandoned_at,omitempty" url:"abandoned_at,omitempty"`
-	// The owning Agent UUID.
+	// The service returns the owning Agent UUID.
 	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	// The stable retry-family identity shared with declared child attempts.
+	// The service returns the stable retry-family identity shared by attempts.
 	AttemptFamilyUUID *string `json:"attempt_family_uuid,omitempty" url:"attempt_family_uuid,omitempty"`
 	// The time the Trace closed.
 	ClosedAt *string `json:"closed_at,omitempty" url:"closed_at,omitempty"`
@@ -10253,39 +10600,45 @@ type AgentTrace struct {
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// Server-owned fields that are not part of the top-level capture contract.
 	Internal *AgentTraceInternal `json:"internal,omitempty" url:"internal,omitempty"`
-	// Whether eligible evidence may participate in learning.
+	// The service returns whether eligible evidence may participate in learning.
 	LearnFrom *bool `json:"learn_from,omitempty" url:"learn_from,omitempty"`
-	// Why the Trace is not eligible for learning.
+	// The service returns why the Trace is not eligible for learning, when it
+	// is not eligible.
 	LearnFromReason *string `json:"learn_from_reason,omitempty" url:"learn_from_reason,omitempty"`
 	// Developer metadata used for exact containment filters.
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// The task-instance objective captured for this attempt.
+	// The service returns the task-instance objective captured for this attempt.
 	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
-	// The caller-owned task outcome.
+	// The service returns the task outcome that the developer recorded. Valid
+	// values are succeeded, failed, partial, abandoned, and unknown.
 	Outcome *AgentTraceOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
-	// The parent attempt when this Trace is a retry.
+	// The service returns the parent attempt when this Trace is a retry.
 	ParentTraceUUID *string `json:"parent_trace_uuid,omitempty" url:"parent_trace_uuid,omitempty"`
-	// The revision required by the next update or lifecycle command.
+	// The service returns the current revision for the next update or lifecycle
+	// command.
 	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
 	// The source record for an imported Trace.
 	Source *AgentTraceSource `json:"source,omitempty" url:"source,omitempty"`
-	// The current lifecycle state.
+	// The service returns the current lifecycle state. Valid values are open, closing, closed, abandoned, and deleted.
 	Status *AgentTraceLifecycle `json:"status,omitempty" url:"status,omitempty"`
-	// The optional opaque task-family classification slug.
+	// The service returns the declared or assigned task-family slug, when one
+	// is available.
 	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
-	// The latest task-family inference outcome. Absent when inference never
-	// ran for this Trace.
+	// The service returns the latest classification result. Its state is pending, assigned, or
+	// unassigned. It is absent if classification did not run for this Trace.
 	TaskFamilyInference *AgentTraceTaskFamilyInference `json:"task_family_inference,omitempty" url:"task_family_inference,omitempty"`
-	// Who supplied task_family: the caller (declared), an import rule
-	// (import_rule), or the service classifier (inferred).
+	// The service returns how it selected the task family. Valid values are
+	// declared, import_rule, and inferred.
 	TaskFamilySource *string `json:"task_family_source,omitempty" url:"task_family_source,omitempty"`
-	// The optional customer-assigned identifier, unique within the Agent.
+	// The developer may set an identifier that is unique within the Agent. A retry with the same
+	// create parameters returns 200 and the existing Trace. Different parameters return 409.
 	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
 	// The time the Trace was last updated.
 	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	// The stable Trace UUID.
+	// The service returns the stable Trace UUID.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
-	// The strength of the accepted outcome verification.
+	// The service returns how the outcome was verified. Valid values are none,
+	// agent, tool, customer, and external.
 	Verification *AgentTraceVerification `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -10825,28 +11178,37 @@ var (
 	agentTraceEventFieldProcessingState = big.NewInt(1 << 10)
 	agentTraceEventFieldSequence        = big.NewInt(1 << 11)
 	agentTraceEventFieldSources         = big.NewInt(1 << 12)
-	agentTraceEventFieldTraceUUID       = big.NewInt(1 << 13)
-	agentTraceEventFieldUpdatedAt       = big.NewInt(1 << 14)
-	agentTraceEventFieldUUID            = big.NewInt(1 << 15)
+	agentTraceEventFieldToolCallID      = big.NewInt(1 << 13)
+	agentTraceEventFieldTraceUUID       = big.NewInt(1 << 14)
+	agentTraceEventFieldUpdatedAt       = big.NewInt(1 << 15)
+	agentTraceEventFieldUUID            = big.NewInt(1 << 16)
 )
 
 type AgentTraceEvent struct {
-	AgentUUID       *string                         `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	Content         *string                         `json:"content,omitempty" url:"content,omitempty"`
-	Context         *AgentTraceEventContext         `json:"context,omitempty" url:"context,omitempty"`
-	CreatedAt       *string                         `json:"created_at,omitempty" url:"created_at,omitempty"`
-	EventID         *string                         `json:"event_id,omitempty" url:"event_id,omitempty"`
-	EventType       *AgentTraceEventType            `json:"event_type,omitempty" url:"event_type,omitempty"`
-	FailedAt        *string                         `json:"failed_at,omitempty" url:"failed_at,omitempty"`
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	Content   *string `json:"content,omitempty" url:"content,omitempty"`
+	// Context gives the model, the tools, and the environments of the event. context.tools is the tool
+	// that the event calls or returns, and Skills learning reads it. A tool event can omit the tool name.
+	Context   *AgentTraceEventContext `json:"context,omitempty" url:"context,omitempty"`
+	CreatedAt *string                 `json:"created_at,omitempty" url:"created_at,omitempty"`
+	EventID   *string                 `json:"event_id,omitempty" url:"event_id,omitempty"`
+	EventType *AgentTraceEventType    `json:"event_type,omitempty" url:"event_type,omitempty"`
+	FailedAt  *string                 `json:"failed_at,omitempty" url:"failed_at,omitempty"`
+	// Metadata is developer data. Skills learning does not read it.
 	Metadata        map[string]any                  `json:"metadata,omitempty" url:"metadata,omitempty"`
 	OccurredAt      *string                         `json:"occurred_at,omitempty" url:"occurred_at,omitempty"`
 	ProcessedAt     *string                         `json:"processed_at,omitempty" url:"processed_at,omitempty"`
 	ProcessingState *AgentTraceEventProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
 	Sequence        *int                            `json:"sequence,omitempty" url:"sequence,omitempty"`
 	Sources         []*AgentTraceEventSource        `json:"sources,omitempty" url:"sources,omitempty"`
-	TraceUUID       *string                         `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	UpdatedAt       *string                         `json:"updated_at,omitempty" url:"updated_at,omitempty"`
-	UUID            *string                         `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// ToolCallID is the ID that the agent framework gives a tool call. Use the same ID on
+	// the tool_call and tool_result events. It is valid only on these event types. A result
+	// without a matching call is valid. OpenAI uses tool_calls[].id, Anthropic uses the
+	// tool_use block id, and LangChain uses ToolMessage.tool_call_id.
+	ToolCallID *string `json:"tool_call_id,omitempty" url:"tool_call_id,omitempty"`
+	TraceUUID  *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	UpdatedAt  *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	UUID       *string `json:"uuid,omitempty" url:"uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -10944,6 +11306,13 @@ func (a *AgentTraceEvent) GetSources() []*AgentTraceEventSource {
 		return nil
 	}
 	return a.Sources
+}
+
+func (a *AgentTraceEvent) GetToolCallID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ToolCallID
 }
 
 func (a *AgentTraceEvent) GetTraceUUID() *string {
@@ -11074,6 +11443,13 @@ func (a *AgentTraceEvent) SetSources(sources []*AgentTraceEventSource) {
 	a.require(agentTraceEventFieldSources)
 }
 
+// SetToolCallID sets the ToolCallID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (a *AgentTraceEvent) SetToolCallID(toolCallID *string) {
+	a.ToolCallID = toolCallID
+	a.require(agentTraceEventFieldToolCallID)
+}
+
 // SetTraceUUID sets the TraceUUID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (a *AgentTraceEvent) SetTraceUUID(traceUUID *string) {
@@ -11149,6 +11525,8 @@ type AgentTraceEventContext struct {
 	Artifacts    []*AgentTraceResourceRef `json:"artifacts,omitempty" url:"artifacts,omitempty"`
 	Environments []*AgentTraceResourceRef `json:"environments,omitempty" url:"environments,omitempty"`
 	Model        *AgentTraceResourceRef   `json:"model,omitempty" url:"model,omitempty"`
+	// Tools identifies the tool that the event calls or returns. Skills learning reads this field.
+	// It is optional. A tool event can omit the tool name.
 	Tools        []*AgentTraceResourceRef `json:"tools,omitempty" url:"tools,omitempty"`
 	Verification *AgentTraceVerification  `json:"verification,omitempty" url:"verification,omitempty"`
 
@@ -11294,9 +11672,12 @@ var (
 )
 
 type AgentTraceEventPage struct {
-	Items      []*AgentTraceEvent `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string            `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int               `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The service returns the events in this page.
+	Items []*AgentTraceEvent `json:"items,omitempty" url:"items,omitempty"`
+	// The service returns the cursor for the next page, when one exists.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The service returns the total number of items.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -11666,7 +12047,9 @@ var (
 )
 
 type AgentTraceFinalizationResult struct {
-	Task  *Task       `json:"task,omitempty" url:"task,omitempty"`
+	// The service returns the asynchronous Task.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+	// The service returns the finalized Trace.
 	Trace *AgentTrace `json:"trace,omitempty" url:"trace,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -11772,12 +12155,19 @@ var (
 )
 
 type AgentTraceInternal struct {
-	AssertionUUID         *string                    `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
-	ClosingSequence       *int                       `json:"closing_sequence,omitempty" url:"closing_sequence,omitempty"`
-	CurrentSummaryVersion *int                       `json:"current_summary_version,omitempty" url:"current_summary_version,omitempty"`
-	LastTaskUUID          *string                    `json:"last_task_uuid,omitempty" url:"last_task_uuid,omitempty"`
-	NextSequence          *int                       `json:"next_sequence,omitempty" url:"next_sequence,omitempty"`
-	ProcessingState       *AgentTraceProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
+	// The service returns the UUID of the assertion linked to this Trace.
+	AssertionUUID *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	// The service returns the final sequence number expected when the Trace closes.
+	ClosingSequence *int `json:"closing_sequence,omitempty" url:"closing_sequence,omitempty"`
+	// The service returns the current summary version number.
+	CurrentSummaryVersion *int `json:"current_summary_version,omitempty" url:"current_summary_version,omitempty"`
+	// The service returns the UUID of the last Task linked to this Trace.
+	LastTaskUUID *string `json:"last_task_uuid,omitempty" url:"last_task_uuid,omitempty"`
+	// The service returns the next sequence number that the Trace can accept.
+	NextSequence *int `json:"next_sequence,omitempty" url:"next_sequence,omitempty"`
+	// The service returns the current processing state. Valid values are idle, pending, processing,
+	// failed.
+	ProcessingState *AgentTraceProcessingState `json:"processing_state,omitempty" url:"processing_state,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -12361,20 +12751,36 @@ var (
 )
 
 type AgentTraceSource struct {
-	ConnectionUUID    *string            `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
-	ImportUUID        *string            `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
-	ImportedAt        *string            `json:"imported_at,omitempty" url:"imported_at,omitempty"`
-	Kind              *string            `json:"kind,omitempty" url:"kind,omitempty"`
-	Provider          *string            `json:"provider,omitempty" url:"provider,omitempty"`
-	ProviderProjectID *string            `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
-	RunUUID           *string            `json:"run_uuid,omitempty" url:"run_uuid,omitempty"`
-	Scores            map[string]float64 `json:"scores,omitempty" url:"scores,omitempty"`
-	// SourceChanged reports whether the provider trace changed after import.
-	SourceChanged  *bool   `json:"source_changed,omitempty" url:"source_changed,omitempty"`
+	// The service returns the UUID of the provider connection, when the Trace
+	// came from an import.
+	ConnectionUUID *string `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
+	// The service returns the UUID of the import, when the Trace came from an
+	// import.
+	ImportUUID *string `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
+	// The service returns when Zep imported the Trace.
+	ImportedAt *string `json:"imported_at,omitempty" url:"imported_at,omitempty"`
+	// The service returns the source type. The valid value is trace_import.
+	Kind *string `json:"kind,omitempty" url:"kind,omitempty"`
+	// The service returns the provider that supplied this Trace.
+	Provider *string `json:"provider,omitempty" url:"provider,omitempty"`
+	// The service returns the provider's project ID when the Trace came from an
+	// import.
+	ProviderProjectID *string `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
+	// The service returns the UUID of the import run, when one applies.
+	RunUUID *string `json:"run_uuid,omitempty" url:"run_uuid,omitempty"`
+	// The service returns provider-specific scores for the imported Trace.
+	Scores map[string]float64 `json:"scores,omitempty" url:"scores,omitempty"`
+	// The service returns whether the provider Trace changed after import.
+	SourceChanged *bool `json:"source_changed,omitempty" url:"source_changed,omitempty"`
+	// The service returns the provider revision processed by this import.
 	SourceRevision *string `json:"source_revision,omitempty" url:"source_revision,omitempty"`
-	SourceURL      *string `json:"source_url,omitempty" url:"source_url,omitempty"`
-	TraceEndedAt   *string `json:"trace_ended_at,omitempty" url:"trace_ended_at,omitempty"`
-	TraceID        *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
+	// The service returns a link to the source Trace, when available.
+	SourceURL *string `json:"source_url,omitempty" url:"source_url,omitempty"`
+	// The service returns when the source Trace ended.
+	TraceEndedAt *string `json:"trace_ended_at,omitempty" url:"trace_ended_at,omitempty"`
+	// The service returns the provider ID of the source Trace.
+	TraceID *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
+	// The service returns the start time of the source Trace, when available.
 	TraceStartedAt *string `json:"trace_started_at,omitempty" url:"trace_started_at,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -12640,11 +13046,16 @@ var (
 )
 
 type AgentTraceSourceDeletionResult struct {
-	AffectedSkills    *int        `json:"affected_skills,omitempty" url:"affected_skills,omitempty"`
-	DeletionUUID      *string     `json:"deletion_uuid,omitempty" url:"deletion_uuid,omitempty"`
-	SkillRepairTask   *Task       `json:"skill_repair_task,omitempty" url:"skill_repair_task,omitempty"`
-	SummaryRepairTask *Task       `json:"summary_repair_task,omitempty" url:"summary_repair_task,omitempty"`
-	Trace             *AgentTrace `json:"trace,omitempty" url:"trace,omitempty"`
+	// The service returns the number of Skills affected by this deletion.
+	AffectedSkills *int `json:"affected_skills,omitempty" url:"affected_skills,omitempty"`
+	// The service returns the UUID of the deletion operation.
+	DeletionUUID *string `json:"deletion_uuid,omitempty" url:"deletion_uuid,omitempty"`
+	// The service returns the Task that repairs Skills affected by this deletion.
+	SkillRepairTask *Task `json:"skill_repair_task,omitempty" url:"skill_repair_task,omitempty"`
+	// The service returns the Task that repairs summaries affected by this deletion.
+	SummaryRepairTask *Task `json:"summary_repair_task,omitempty" url:"summary_repair_task,omitempty"`
+	// The service returns the Trace.
+	Trace *AgentTrace `json:"trace,omitempty" url:"trace,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -12805,26 +13216,47 @@ var (
 )
 
 type AgentTraceStructuredSummary struct {
-	Ambiguities      []*AgentTraceSummaryStatement  `json:"ambiguities,omitempty" url:"ambiguities,omitempty"`
-	Approach         []*AgentTraceSummaryStatement  `json:"approach,omitempty" url:"approach,omitempty"`
-	Artifacts        []*AgentTraceSummaryResource   `json:"artifacts,omitempty" url:"artifacts,omitempty"`
-	CandidateLessons []*AgentTraceSummaryStatement  `json:"candidate_lessons,omitempty" url:"candidate_lessons,omitempty"`
-	Corrections      []*AgentTraceSummaryStatement  `json:"corrections,omitempty" url:"corrections,omitempty"`
-	Coverage         *AgentTraceSummaryCoverage     `json:"coverage,omitempty" url:"coverage,omitempty"`
-	EffectiveSteps   []*AgentTraceSummaryStatement  `json:"effective_steps,omitempty" url:"effective_steps,omitempty"`
-	Environments     []*AgentTraceSummaryResource   `json:"environments,omitempty" url:"environments,omitempty"`
-	Errors           []*AgentTraceSummaryStatement  `json:"errors,omitempty" url:"errors,omitempty"`
-	EventTimeBasis   *string                        `json:"event_time_basis,omitempty" url:"event_time_basis,omitempty"`
-	FirstEventTime   *string                        `json:"first_event_time,omitempty" url:"first_event_time,omitempty"`
-	IneffectiveSteps []*AgentTraceSummaryStatement  `json:"ineffective_steps,omitempty" url:"ineffective_steps,omitempty"`
-	LastEventTime    *string                        `json:"last_event_time,omitempty" url:"last_event_time,omitempty"`
-	Objective        *string                        `json:"objective,omitempty" url:"objective,omitempty"`
-	Recoveries       []*AgentTraceSummaryStatement  `json:"recoveries,omitempty" url:"recoveries,omitempty"`
-	ReportedOutcome  *AgentTraceOutcome             `json:"reported_outcome,omitempty" url:"reported_outcome,omitempty"`
-	Result           *AgentTraceSummaryStatement    `json:"result,omitempty" url:"result,omitempty"`
-	TaskFamily       *string                        `json:"task_family,omitempty" url:"task_family,omitempty"`
-	Tools            []*AgentTraceSummaryResource   `json:"tools,omitempty" url:"tools,omitempty"`
-	Verification     *AgentTraceSummaryVerification `json:"verification,omitempty" url:"verification,omitempty"`
+	// The service returns unresolved ambiguities.
+	Ambiguities []*AgentTraceSummaryStatement `json:"ambiguities,omitempty" url:"ambiguities,omitempty"`
+	// The service returns verification method.
+	Approach []*AgentTraceSummaryStatement `json:"approach,omitempty" url:"approach,omitempty"`
+	// The service returns linked artifacts.
+	Artifacts []*AgentTraceSummaryResource `json:"artifacts,omitempty" url:"artifacts,omitempty"`
+	// The service returns lessons that the learning process may use.
+	CandidateLessons []*AgentTraceSummaryStatement `json:"candidate_lessons,omitempty" url:"candidate_lessons,omitempty"`
+	// The service returns corrective actions.
+	Corrections []*AgentTraceSummaryStatement `json:"corrections,omitempty" url:"corrections,omitempty"`
+	// The service returns the event coverage of the summary.
+	Coverage *AgentTraceSummaryCoverage `json:"coverage,omitempty" url:"coverage,omitempty"`
+	// The service returns actions that helped complete the task.
+	EffectiveSteps []*AgentTraceSummaryStatement `json:"effective_steps,omitempty" url:"effective_steps,omitempty"`
+	// The service returns environment names used by the Skill.
+	Environments []*AgentTraceSummaryResource `json:"environments,omitempty" url:"environments,omitempty"`
+	// The service returns verification errors.
+	Errors []*AgentTraceSummaryStatement `json:"errors,omitempty" url:"errors,omitempty"`
+	// The service returns how event times were selected for the summary.
+	EventTimeBasis *string `json:"event_time_basis,omitempty" url:"event_time_basis,omitempty"`
+	// The service returns the time of the first event in the summary.
+	FirstEventTime *string `json:"first_event_time,omitempty" url:"first_event_time,omitempty"`
+	// The service returns actions that did not help complete the task.
+	IneffectiveSteps []*AgentTraceSummaryStatement `json:"ineffective_steps,omitempty" url:"ineffective_steps,omitempty"`
+	// The service returns the time of the last event in the summary.
+	LastEventTime *string `json:"last_event_time,omitempty" url:"last_event_time,omitempty"`
+	// The service returns the task-instance objective.
+	Objective *string `json:"objective,omitempty" url:"objective,omitempty"`
+	// The service returns recovery actions.
+	Recoveries []*AgentTraceSummaryStatement `json:"recoveries,omitempty" url:"recoveries,omitempty"`
+	// The service returns the outcome reported for the Trace. Valid values are succeeded, failed, partial,
+	// abandoned, unknown.
+	ReportedOutcome *AgentTraceOutcome `json:"reported_outcome,omitempty" url:"reported_outcome,omitempty"`
+	// The service returns verification result.
+	Result *AgentTraceSummaryStatement `json:"result,omitempty" url:"result,omitempty"`
+	// The service returns the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The service returns tool names used by the Skill.
+	Tools []*AgentTraceSummaryResource `json:"tools,omitempty" url:"tools,omitempty"`
+	// The service returns the verification status and its evidence.
+	Verification *AgentTraceSummaryVerification `json:"verification,omitempty" url:"verification,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -13177,7 +13609,9 @@ var (
 )
 
 type AgentTraceSummaryByteRange struct {
-	End   *int `json:"end,omitempty" url:"end,omitempty"`
+	// The service returns the byte offset after the half-open omitted range.
+	End *int `json:"end,omitempty" url:"end,omitempty"`
+	// The service returns the first byte offset in the half-open omitted range.
 	Start *int `json:"start,omitempty" url:"start,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -13279,8 +13713,10 @@ var (
 )
 
 type AgentTraceSummaryCitation struct {
-	EventID  *string `json:"event_id,omitempty" url:"event_id,omitempty"`
-	Sequence *int    `json:"sequence,omitempty" url:"sequence,omitempty"`
+	// The service returns the ID of the source event.
+	EventID *string `json:"event_id,omitempty" url:"event_id,omitempty"`
+	// The service returns the event sequence cited by this summary.
+	Sequence *int `json:"sequence,omitempty" url:"sequence,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -13383,10 +13819,14 @@ var (
 )
 
 type AgentTraceSummaryCoverage struct {
-	ExcerptedEvents       []*AgentTraceSummaryExcerptedEvent `json:"excerpted_events,omitempty" url:"excerpted_events,omitempty"`
-	FirstSequence         *int                               `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
-	LastSequence          *int                               `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
-	OmittedSequenceRanges []*AgentTraceSummaryOmittedRange   `json:"omitted_sequence_ranges,omitempty" url:"omitted_sequence_ranges,omitempty"`
+	// The service returns events that the summary includes as excerpts.
+	ExcerptedEvents []*AgentTraceSummaryExcerptedEvent `json:"excerpted_events,omitempty" url:"excerpted_events,omitempty"`
+	// The service returns the first sequence number covered by this summary.
+	FirstSequence *int `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
+	// The service returns the last sequence number covered by this summary.
+	LastSequence *int `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	// The service returns sequence ranges that the summary omits.
+	OmittedSequenceRanges []*AgentTraceSummaryOmittedRange `json:"omitted_sequence_ranges,omitempty" url:"omitted_sequence_ranges,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -13551,10 +13991,14 @@ var (
 )
 
 type AgentTraceSummaryExcerptedEvent struct {
-	ContentBytes      *int                          `json:"content_bytes,omitempty" url:"content_bytes,omitempty"`
-	EventID           *string                       `json:"event_id,omitempty" url:"event_id,omitempty"`
+	// The service returns the excerpted event content in bytes.
+	ContentBytes *int `json:"content_bytes,omitempty" url:"content_bytes,omitempty"`
+	// The service returns the ID of the source event.
+	EventID *string `json:"event_id,omitempty" url:"event_id,omitempty"`
+	// The service returns byte ranges removed from the excerpted event content.
 	OmittedByteRanges []*AgentTraceSummaryByteRange `json:"omitted_byte_ranges,omitempty" url:"omitted_byte_ranges,omitempty"`
-	Sequence          *int                          `json:"sequence,omitempty" url:"sequence,omitempty"`
+	// The service returns the sequence number of the excerpted event.
+	Sequence *int `json:"sequence,omitempty" url:"sequence,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -13715,9 +14159,13 @@ var (
 )
 
 type AgentTraceSummaryOmittedRange struct {
-	FirstSequence *int                             `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
-	LastSequence  *int                             `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
-	Reason        *AgentTraceSummaryOmissionReason `json:"reason,omitempty" url:"reason,omitempty"`
+	// The service returns the first sequence number in the omitted range.
+	FirstSequence *int `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
+	// The service returns the last sequence number in the omitted range.
+	LastSequence *int `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	// The service returns the reason for this result. Valid values are narrower_authorization_boundary,
+	// acknowledged_gap, abandoned_gap, processing_failed, source_deleted.
+	Reason *AgentTraceSummaryOmissionReason `json:"reason,omitempty" url:"reason,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -13833,9 +14281,12 @@ var (
 )
 
 type AgentTraceSummaryPage struct {
-	Items      []*AgentTraceSummaryVersion `json:"items,omitempty" url:"items,omitempty"`
-	NextCursor *string                     `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
-	TotalSize  *int                        `json:"total_size,omitempty" url:"total_size,omitempty"`
+	// The service returns the summary versions in this page.
+	Items []*AgentTraceSummaryVersion `json:"items,omitempty" url:"items,omitempty"`
+	// The service returns the cursor for the next page, when one exists.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+	// The service returns the total number of matching items.
+	TotalSize *int `json:"total_size,omitempty" url:"total_size,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -13951,9 +14402,12 @@ var (
 )
 
 type AgentTraceSummaryResource struct {
+	// The service returns the events that support this resource summary.
 	Citations []*AgentTraceSummaryCitation `json:"citations,omitempty" url:"citations,omitempty"`
-	Name      *string                      `json:"name,omitempty" url:"name,omitempty"`
-	Version   *string                      `json:"version,omitempty" url:"version,omitempty"`
+	// The service returns the resource name recorded in the source event.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The service returns the resource version recorded in the source event.
+	Version *string `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -14068,8 +14522,10 @@ var (
 )
 
 type AgentTraceSummaryStatement struct {
+	// The service returns the events that support this statement.
 	Citations []*AgentTraceSummaryCitation `json:"citations,omitempty" url:"citations,omitempty"`
-	Text      *string                      `json:"text,omitempty" url:"text,omitempty"`
+	// The service returns one statement from the summary.
+	Text *string `json:"text,omitempty" url:"text,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -14172,10 +14628,15 @@ var (
 )
 
 type AgentTraceSummaryVerification struct {
-	Citations   []*AgentTraceSummaryCitation         `json:"citations,omitempty" url:"citations,omitempty"`
-	Details     []*AgentTraceSummaryStatement        `json:"details,omitempty" url:"details,omitempty"`
-	Status      *AgentTraceSummaryVerificationStatus `json:"status,omitempty" url:"status,omitempty"`
-	VerifierIDs []string                             `json:"verifier_ids,omitempty" url:"verifier_ids,omitempty"`
+	// The service returns the events that support this verification result.
+	Citations []*AgentTraceSummaryCitation `json:"citations,omitempty" url:"citations,omitempty"`
+	// The service returns the detailed verification statements.
+	Details []*AgentTraceSummaryStatement `json:"details,omitempty" url:"details,omitempty"`
+	// The service returns the lifecycle status. Valid values are
+	// unverified,agent_verified,tool_verified,customer_verified,externally_verified.
+	Status *AgentTraceSummaryVerificationStatus `json:"status,omitempty" url:"status,omitempty"`
+	// The service returns IDs of Verifiers that checked this summary.
+	VerifierIDs []string `json:"verifier_ids,omitempty" url:"verifier_ids,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -14298,6 +14759,8 @@ func (a *AgentTraceSummaryVerification) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+// The service returns the lifecycle status. Valid values are
+// unverified,agent_verified,tool_verified,customer_verified,externally_verified.
 type AgentTraceSummaryVerificationStatus string
 
 const (
@@ -14350,23 +14813,44 @@ var (
 )
 
 type AgentTraceSummaryVersion struct {
-	AgentUUID             *string                          `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	AssertionUUID         *string                          `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
-	CreatedAt             *string                          `json:"created_at,omitempty" url:"created_at,omitempty"`
-	CreationReason        *AgentTraceSummaryCreationReason `json:"creation_reason,omitempty" url:"creation_reason,omitempty"`
-	FirstOccurredAt       *string                          `json:"first_occurred_at,omitempty" url:"first_occurred_at,omitempty"`
-	FirstSequence         *int                             `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
-	LastOccurredAt        *string                          `json:"last_occurred_at,omitempty" url:"last_occurred_at,omitempty"`
-	LastSequence          *int                             `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	// The service returns the UUID of the owning Agent.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// The service returns the verification assertion linked to this evidence.
+	AssertionUUID *string `json:"assertion_uuid,omitempty" url:"assertion_uuid,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns what caused this summary version. Valid values are close, abandon, revision,
+	// task_family_correction, evidence_deletion, policy_change.
+	CreationReason *AgentTraceSummaryCreationReason `json:"creation_reason,omitempty" url:"creation_reason,omitempty"`
+	// The service returns when the first event occurred.
+	FirstOccurredAt *string `json:"first_occurred_at,omitempty" url:"first_occurred_at,omitempty"`
+	// The service returns the first event sequence included in this summary.
+	FirstSequence *int `json:"first_sequence,omitempty" url:"first_sequence,omitempty"`
+	// The service returns when the last event occurred.
+	LastOccurredAt *string `json:"last_occurred_at,omitempty" url:"last_occurred_at,omitempty"`
+	// The service returns the last event sequence included in this summary.
+	LastSequence *int `json:"last_sequence,omitempty" url:"last_sequence,omitempty"`
+	// The service returns event sequence ranges that this summary omits.
 	OmittedSequenceRanges []*AgentTraceSummaryOmittedRange `json:"omitted_sequence_ranges,omitempty" url:"omitted_sequence_ranges,omitempty"`
-	Outcome               *AgentTraceOutcome               `json:"outcome,omitempty" url:"outcome,omitempty"`
-	ParentVersionUUID     *string                          `json:"parent_version_uuid,omitempty" url:"parent_version_uuid,omitempty"`
-	StructuredSummary     *AgentTraceStructuredSummary     `json:"structured_summary,omitempty" url:"structured_summary,omitempty"`
-	Text                  *string                          `json:"text,omitempty" url:"text,omitempty"`
-	TraceUUID             *string                          `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
-	UUID                  *string                          `json:"uuid,omitempty" url:"uuid,omitempty"`
-	Verification          *AgentTraceVerification          `json:"verification,omitempty" url:"verification,omitempty"`
-	Version               *int                             `json:"version,omitempty" url:"version,omitempty"`
+	// The service returns the task outcome. Valid values are succeeded, failed, partial, abandoned,
+	// unknown.
+	Outcome *AgentTraceOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+	// The service returns the UUID of the parent summary version, when one exists.
+	ParentVersionUUID *string `json:"parent_version_uuid,omitempty" url:"parent_version_uuid,omitempty"`
+	// The service returns the structured summary generated for this Trace.
+	StructuredSummary *AgentTraceStructuredSummary `json:"structured_summary,omitempty" url:"structured_summary,omitempty"`
+	// The service returns text that a person can read.
+	Text *string `json:"text,omitempty" url:"text,omitempty"`
+	// The service returns the UUID of the source Trace.
+	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
+	// The service returns the UUID that identifies this summary version.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns how the outcome was verified. Valid values are none, agent, tool,
+	// customer, external, unverified, agent_verified, tool_verified, customer_verified,
+	// externally_verified.
+	Verification *AgentTraceVerification `json:"verification,omitempty" url:"verification,omitempty"`
+	// The service returns this summary version number.
+	Version *int `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -14681,17 +15165,18 @@ var (
 )
 
 type AgentTraceTaskFamilyInference struct {
-	// The time the outcome was recorded.
+	// The service returns the time the outcome was recorded.
 	AssignedAt *string `json:"assigned_at,omitempty" url:"assigned_at,omitempty"`
-	// The classifier version that produced the outcome.
+	// The service records the classifier version that produced the outcome.
 	ClassifierVersion *string `json:"classifier_version,omitempty" url:"classifier_version,omitempty"`
-	// The classifier confidence of the accepted or top candidate.
+	// The service records the classifier confidence for the accepted or top candidate, from 0 to 1.
 	Confidence *float64 `json:"confidence,omitempty" url:"confidence,omitempty"`
-	// The descriptor set version the classifier ran against.
+	// The service returns the descriptor set version the classifier ran against.
 	DescriptorVersion *int `json:"descriptor_version,omitempty" url:"descriptor_version,omitempty"`
-	// Whether the classifier marked the Trace reusable for learning.
+	// The service returns whether the classifier marked the Trace reusable for learning.
 	LearningReusable *bool `json:"learning_reusable,omitempty" url:"learning_reusable,omitempty"`
-	// The inference state: pending, assigned, or unassigned.
+	// The service returns pending while classification is in progress, assigned when a task family
+	// is selected, or unassigned when no family is selected.
 	State *string `json:"state,omitempty" url:"state,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -15251,15 +15736,24 @@ var (
 )
 
 type AgentVerifierEvidenceInvalidationResult struct {
-	AffectedSkillUUIDs []string                `json:"affected_skill_uuids,omitempty" url:"affected_skill_uuids,omitempty"`
-	AgentUUID          *string                 `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	CreatedAt          *string                 `json:"created_at,omitempty" url:"created_at,omitempty"`
-	CreatedBy          *AgentVerifierPrincipal `json:"created_by,omitempty" url:"created_by,omitempty"`
-	Reason             *string                 `json:"reason,omitempty" url:"reason,omitempty"`
-	Task               *Task                   `json:"task,omitempty" url:"task,omitempty"`
-	UUID               *string                 `json:"uuid,omitempty" url:"uuid,omitempty"`
-	VerifierRevisions  []int                   `json:"verifier_revisions,omitempty" url:"verifier_revisions,omitempty"`
-	VerifierUUID       *string                 `json:"verifier_uuid,omitempty" url:"verifier_uuid,omitempty"`
+	// The service returns UUIDs of Skills affected by this invalidation.
+	AffectedSkillUUIDs []string `json:"affected_skill_uuids,omitempty" url:"affected_skill_uuids,omitempty"`
+	// The service returns the UUID of the owning Agent.
+	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
+	// The service returns when Zep created this resource.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The service returns the principal that created this assertion.
+	CreatedBy *AgentVerifierPrincipal `json:"created_by,omitempty" url:"created_by,omitempty"`
+	// The service returns why the Verifier revisions were invalidated.
+	Reason *string `json:"reason,omitempty" url:"reason,omitempty"`
+	// The service returns the Task that tracks this asynchronous operation.
+	Task *Task `json:"task,omitempty" url:"task,omitempty"`
+	// The service returns the UUID that identifies this resource.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The service returns revisions of the Verifiers affected by this invalidation.
+	VerifierRevisions []int `json:"verifier_revisions,omitempty" url:"verifier_revisions,omitempty"`
+	// The service returns the UUID of the Verifier linked to this invalidation.
+	VerifierUUID *string `json:"verifier_uuid,omitempty" url:"verifier_uuid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -15566,11 +16060,12 @@ var (
 type AgentVerifierPrincipalBinding struct {
 	// The time the binding was created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
-	// The verification strength assigned to this principal binding.
+	// The service returns the verification strength assigned to this principal binding. Valid values
+	// are tool_verified, customer_verified, externally_verified.
 	EffectiveStrength *AgentVerificationStrength `json:"effective_strength,omitempty" url:"effective_strength,omitempty"`
-	// The exact principal identifier bound to this verifier.
+	// The service returns the exact principal identifier bound to this verifier.
 	PrincipalID *string `json:"principal_id,omitempty" url:"principal_id,omitempty"`
-	// The authenticated principal type bound to this verifier.
+	// The service returns the authenticated principal type bound to this verifier.
 	PrincipalType *string `json:"principal_type,omitempty" url:"principal_type,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -17311,6 +17806,7 @@ var (
 )
 
 type DeleteAgentTraceRequest struct {
+	// The developer supplies the current revision for optimistic concurrency.
 	ExpectedRevision int `json:"expected_revision" url:"expected_revision"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -21596,7 +22092,7 @@ var (
 type ImportedTraceReference struct {
 	// AgentUUID is the visible Agent identifier.
 	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	// ImportUUID is the active import owner identifier.
+	// The service returns the UUID of the active import.
 	ImportUUID *string `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
 	// TraceUUID is the imported Trace identifier.
 	TraceUUID *string `json:"trace_uuid,omitempty" url:"trace_uuid,omitempty"`
@@ -28783,25 +29279,45 @@ var (
 )
 
 type SkillDefinition struct {
-	AgentVersions []string                  `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
-	Aliases       []string                  `json:"aliases,omitempty" url:"aliases,omitempty"`
-	Description   *string                   `json:"description,omitempty" url:"description,omitempty"`
-	DoNotUseWhen  []string                  `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
-	DoneWhen      []string                  `json:"done_when,omitempty" url:"done_when,omitempty"`
-	Environments  []*SkillResource          `json:"environments,omitempty" url:"environments,omitempty"`
-	Failures      []*SkillFailure           `json:"failures,omitempty" url:"failures,omitempty"`
-	Kind          *SkillKind                `json:"kind,omitempty" url:"kind,omitempty"`
-	Name          *string                   `json:"name,omitempty" url:"name,omitempty"`
-	Outputs       []string                  `json:"outputs,omitempty" url:"outputs,omitempty"`
-	PackageName   *string                   `json:"package_name,omitempty" url:"package_name,omitempty"`
-	Preconditions []string                  `json:"preconditions,omitempty" url:"preconditions,omitempty"`
-	Procedure     []*SkillProcedureStep     `json:"procedure,omitempty" url:"procedure,omitempty"`
-	RelatedSkills []*SkillRelation          `json:"related_skills,omitempty" url:"related_skills,omitempty"`
-	Sections      []*SkillDefinitionSection `json:"sections,omitempty" url:"sections,omitempty"`
-	StopWhen      []string                  `json:"stop_when,omitempty" url:"stop_when,omitempty"`
-	TaskFamily    *string                   `json:"task_family,omitempty" url:"task_family,omitempty"`
-	Tools         []*SkillResource          `json:"tools,omitempty" url:"tools,omitempty"`
-	UseWhen       []string                  `json:"use_when,omitempty" url:"use_when,omitempty"`
+	// The developer lists Agent versions that can use the Skill.
+	AgentVersions []string `json:"agent_versions,omitempty" url:"agent_versions,omitempty"`
+	// The developer supplies alternate names for the resource.
+	Aliases []string `json:"aliases,omitempty" url:"aliases,omitempty"`
+	// The developer supplies the resource description.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The developer supplies situations in which the Skill must not be used.
+	DoNotUseWhen []string `json:"do_not_use_when,omitempty" url:"do_not_use_when,omitempty"`
+	// The developer supplies conditions that show when the Skill work is complete.
+	DoneWhen []string `json:"done_when,omitempty" url:"done_when,omitempty"`
+	// The developer supplies environment names used by the Skill.
+	Environments []*SkillResource `json:"environments,omitempty" url:"environments,omitempty"`
+	// The developer supplies failure conditions and recovery steps.
+	Failures []*SkillFailure `json:"failures,omitempty" url:"failures,omitempty"`
+	// The developer supplies a Skill kind. Valid values are principle, procedure, workflow,
+	// failure_mode, recovery, constraint.
+	Kind *SkillKind `json:"kind,omitempty" url:"kind,omitempty"`
+	// The developer supplies a display name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The developer supplies results that the Skill produces.
+	Outputs []string `json:"outputs,omitempty" url:"outputs,omitempty"`
+	// The developer supplies the stable package name for the Skill.
+	PackageName *string `json:"package_name,omitempty" url:"package_name,omitempty"`
+	// The developer supplies conditions that must be true before use.
+	Preconditions []string `json:"preconditions,omitempty" url:"preconditions,omitempty"`
+	// The developer supplies ordered procedure steps.
+	Procedure []*SkillProcedureStep `json:"procedure,omitempty" url:"procedure,omitempty"`
+	// The developer lists Skills that relate to this Skill.
+	RelatedSkills []*SkillRelation `json:"related_skills,omitempty" url:"related_skills,omitempty"`
+	// The developer supplies structured sections of the Skill.
+	Sections []*SkillDefinitionSection `json:"sections,omitempty" url:"sections,omitempty"`
+	// The developer supplies conditions that require the workflow to stop.
+	StopWhen []string `json:"stop_when,omitempty" url:"stop_when,omitempty"`
+	// The developer supplies the task-family slug.
+	TaskFamily *string `json:"task_family,omitempty" url:"task_family,omitempty"`
+	// The developer supplies tool names used by the Skill.
+	Tools []*SkillResource `json:"tools,omitempty" url:"tools,omitempty"`
+	// The developer supplies conditions that must hold before the Skill is used.
+	UseWhen []string `json:"use_when,omitempty" url:"use_when,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -29141,8 +29657,11 @@ var (
 )
 
 type SkillDefinitionSection struct {
-	Heading  *string `json:"heading,omitempty" url:"heading,omitempty"`
-	ID       *string `json:"id,omitempty" url:"id,omitempty"`
+	// The developer supplies section heading.
+	Heading *string `json:"heading,omitempty" url:"heading,omitempty"`
+	// The developer assigns a stable ID to this section.
+	ID *string `json:"id,omitempty" url:"id,omitempty"`
+	// The developer supplies skill content in Markdown.
 	Markdown *string `json:"markdown,omitempty" url:"markdown,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -29258,8 +29777,10 @@ var (
 )
 
 type SkillFailure struct {
+	// The developer supplies steps to recover from this failure.
 	Recover []string `json:"recover,omitempty" url:"recover,omitempty"`
-	When    *string  `json:"when,omitempty" url:"when,omitempty"`
+	// The developer supplies a condition that causes this failure.
+	When *string `json:"when,omitempty" url:"when,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -29395,9 +29916,12 @@ var (
 )
 
 type SkillProcedureStep struct {
-	Decision    *string  `json:"decision,omitempty" url:"decision,omitempty"`
-	Expect      []string `json:"expect,omitempty" url:"expect,omitempty"`
-	Instruction *string  `json:"instruction,omitempty" url:"instruction,omitempty"`
+	// The developer describes the decision point for this procedure step.
+	Decision *string `json:"decision,omitempty" url:"decision,omitempty"`
+	// The developer supplies expected results.
+	Expect []string `json:"expect,omitempty" url:"expect,omitempty"`
+	// The developer supplies action for this procedure step.
+	Instruction *string `json:"instruction,omitempty" url:"instruction,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -29513,9 +30037,12 @@ var (
 )
 
 type SkillRelation struct {
+	// The developer supplies a relationship to the related Skill.
 	Relation *string `json:"relation,omitempty" url:"relation,omitempty"`
-	Skill    *string `json:"skill,omitempty" url:"skill,omitempty"`
-	Version  *string `json:"version,omitempty" url:"version,omitempty"`
+	// The developer identifies a related Skill by its stable package name.
+	Skill *string `json:"skill,omitempty" url:"skill,omitempty"`
+	// The developer supplies the Agent deployment version.
+	Version *string `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -29631,9 +30158,12 @@ var (
 )
 
 type SkillResource struct {
+	// The developer supplies alternate names for the resource.
 	Aliases []string `json:"aliases,omitempty" url:"aliases,omitempty"`
-	Name    *string  `json:"name,omitempty" url:"name,omitempty"`
-	Version *string  `json:"version,omitempty" url:"version,omitempty"`
+	// The developer supplies a display name.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The developer supplies the Agent deployment version.
+	Version *string `json:"version,omitempty" url:"version,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -29771,7 +30301,7 @@ type SourceSpan struct {
 	Kind *string `json:"kind,omitempty" url:"kind,omitempty"`
 	// Metadata contains provider span metadata. Example: {"team":"support"}.
 	Metadata map[string]any `json:"metadata,omitempty" url:"metadata,omitempty"`
-	// Model is the model identifier, when present.
+	// The provider supplies the model name when it is available.
 	Model *string `json:"model,omitempty" url:"model,omitempty"`
 	// Name is the provider span name.
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
@@ -30905,8 +31435,8 @@ type Task struct {
 	Result *TaskResult `json:"result,omitempty" url:"result,omitempty"`
 	// The time a worker began processing the task; absent until then.
 	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
-	// The task's current state: pending, processing, succeeded, partial, or
-	// failed.
+	// The service returns the task state. Valid values are pending, processing,
+	// succeeded, partial, and failed.
 	Status *TaskStatus `json:"status,omitempty" url:"status,omitempty"`
 	// The kind of asynchronous operation the task represents.
 	Type *string `json:"type,omitempty" url:"type,omitempty"`
@@ -31129,15 +31659,15 @@ var (
 )
 
 type TaskFamilyMappingRule struct {
-	// Fallback is used when the selected source has no value.
+	// The service uses this task family when the source gives no value. The value infer asks Agent Skills to assign the task family automatically.
 	Fallback *string `json:"fallback,omitempty" url:"fallback,omitempty"`
 	// Key is the metadata key for metadata mapping.
 	Key *string `json:"key,omitempty" url:"key,omitempty"`
 	// Prefix is the tag prefix for tag mapping.
 	Prefix *string `json:"prefix,omitempty" url:"prefix,omitempty"`
-	// Source selects the task family source.
+	// The service reads the task family from this source. The value infer asks Agent Skills to assign the task family automatically.
 	Source *TaskFamilyMappingRuleSource `json:"source,omitempty" url:"source,omitempty"`
-	// Value is the fixed task family value.
+	// The developer supplies the task-family slug when the source is fixed.
 	Value *string `json:"value,omitempty" url:"value,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -31275,7 +31805,7 @@ func (t *TaskFamilyMappingRule) String() string {
 	return fmt.Sprintf("%#v", t)
 }
 
-// Source selects the task family source.
+// The service reads the task family from this source. The value infer asks Agent Skills to assign the task family automatically.
 type TaskFamilyMappingRuleSource string
 
 const (
@@ -31283,6 +31813,7 @@ const (
 	TaskFamilyMappingRuleSourceMetadata  TaskFamilyMappingRuleSource = "metadata"
 	TaskFamilyMappingRuleSourceTagPrefix TaskFamilyMappingRuleSource = "tag_prefix"
 	TaskFamilyMappingRuleSourceName      TaskFamilyMappingRuleSource = "name"
+	TaskFamilyMappingRuleSourceInfer     TaskFamilyMappingRuleSource = "infer"
 )
 
 func NewTaskFamilyMappingRuleSourceFromString(s string) (TaskFamilyMappingRuleSource, error) {
@@ -31295,6 +31826,8 @@ func NewTaskFamilyMappingRuleSourceFromString(s string) (TaskFamilyMappingRuleSo
 		return TaskFamilyMappingRuleSourceTagPrefix, nil
 	case "name":
 		return TaskFamilyMappingRuleSourceName, nil
+	case "infer":
+		return TaskFamilyMappingRuleSourceInfer, nil
 	}
 	var t TaskFamilyMappingRuleSource
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -32076,8 +32609,8 @@ func (t *TaskResultEpisode) String() string {
 	return fmt.Sprintf("%#v", t)
 }
 
-// The task's current state: pending, processing, succeeded, partial, or
-// failed.
+// The service returns the task state. Valid values are pending, processing,
+// succeeded, partial, and failed.
 type TaskStatus string
 
 const (
@@ -32111,18 +32644,21 @@ func (t TaskStatus) Ptr() *TaskStatus {
 
 var (
 	threadSummaryFieldCreatedAt                    = big.NewInt(1 << 0)
-	threadSummaryFieldLastSummarizedAt             = big.NewInt(1 << 1)
-	threadSummaryFieldLastSummarizedEpisodeValidAt = big.NewInt(1 << 2)
-	threadSummaryFieldRelevance                    = big.NewInt(1 << 3)
-	threadSummaryFieldScore                        = big.NewInt(1 << 4)
-	threadSummaryFieldSummary                      = big.NewInt(1 << 5)
-	threadSummaryFieldThreadUUID                   = big.NewInt(1 << 6)
-	threadSummaryFieldUUID                         = big.NewInt(1 << 7)
+	threadSummaryFieldGraphUUID                    = big.NewInt(1 << 1)
+	threadSummaryFieldLastSummarizedAt             = big.NewInt(1 << 2)
+	threadSummaryFieldLastSummarizedEpisodeValidAt = big.NewInt(1 << 3)
+	threadSummaryFieldRelevance                    = big.NewInt(1 << 4)
+	threadSummaryFieldScore                        = big.NewInt(1 << 5)
+	threadSummaryFieldSummary                      = big.NewInt(1 << 6)
+	threadSummaryFieldThreadUUID                   = big.NewInt(1 << 7)
+	threadSummaryFieldUUID                         = big.NewInt(1 << 8)
 )
 
 type ThreadSummary struct {
 	// The time the summary was first created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The unique identifier of the graph this thread summary belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	// The wall-clock time of the most recent summary update.
 	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
 	// The latest episode reference time covered by the most recent summary
@@ -32154,6 +32690,13 @@ func (t *ThreadSummary) GetCreatedAt() *string {
 		return nil
 	}
 	return t.CreatedAt
+}
+
+func (t *ThreadSummary) GetGraphUUID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.GraphUUID
 }
 
 func (t *ThreadSummary) GetLastSummarizedAt() *string {
@@ -32226,6 +32769,13 @@ func (t *ThreadSummary) require(field *big.Int) {
 func (t *ThreadSummary) SetCreatedAt(createdAt *string) {
 	t.CreatedAt = createdAt
 	t.require(threadSummaryFieldCreatedAt)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *ThreadSummary) SetGraphUUID(graphUUID *string) {
+	t.GraphUUID = graphUUID
+	t.require(threadSummaryFieldGraphUUID)
 }
 
 // SetLastSummarizedAt sets the LastSummarizedAt field and marks it as non-optional;
@@ -32901,7 +33451,7 @@ var (
 type TraceImport struct {
 	// AgentUUID is the owning Agent identifier.
 	AgentUUID *string `json:"agent_uuid,omitempty" url:"agent_uuid,omitempty"`
-	// ConnectionUUID is the trace connection identifier.
+	// The service returns the configured provider connection used by this import.
 	ConnectionUUID *string `json:"connection_uuid,omitempty" url:"connection_uuid,omitempty"`
 	// CreatedAt is the resource creation time.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
@@ -32925,7 +33475,7 @@ type TraceImport struct {
 	Provider *TraceImportProvider `json:"provider,omitempty" url:"provider,omitempty"`
 	// ProviderOrganizationID is the provider organization identifier.
 	ProviderOrganizationID *string `json:"provider_organization_id,omitempty" url:"provider_organization_id,omitempty"`
-	// ProviderProjectID is the source project identifier.
+	// The service returns the provider project selected for this import.
 	ProviderProjectID *string `json:"provider_project_id,omitempty" url:"provider_project_id,omitempty"`
 	// RequireReview reports whether candidate review is required.
 	RequireReview *bool `json:"require_review,omitempty" url:"require_review,omitempty"`
@@ -33656,7 +34206,7 @@ type TraceImportRun struct {
 	DueAt *string `json:"due_at,omitempty" url:"due_at,omitempty"`
 	// ErrorCode is the safe run error code, when present.
 	ErrorCode *string `json:"error_code,omitempty" url:"error_code,omitempty"`
-	// ImportUUID is the owning import identifier.
+	// The service returns the UUID of the import that owns this run.
 	ImportUUID *string `json:"import_uuid,omitempty" url:"import_uuid,omitempty"`
 	// MoreAvailable reports whether more matching traces remain.
 	MoreAvailable *bool `json:"more_available,omitempty" url:"more_available,omitempty"`
@@ -33666,7 +34216,7 @@ type TraceImportRun struct {
 	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
 	// Status is the run status.
 	Status *string `json:"status,omitempty" url:"status,omitempty"`
-	// TaskUUID is the Task identifier.
+	// The service returns the Task UUID for this import run.
 	TaskUUID *string `json:"task_uuid,omitempty" url:"task_uuid,omitempty"`
 	// Trigger is the event that created the run.
 	Trigger *string `json:"trigger,omitempty" url:"trigger,omitempty"`
@@ -35372,7 +35922,8 @@ var (
 )
 
 type TraceProviderProject struct {
-	// CreatedAt is the project creation time, when the provider returns it.
+	// The provider supplies this creation time when it has one. The service
+	// returns it when it is available.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// ID is the provider project identifier.
 	ID *string `json:"id,omitempty" url:"id,omitempty"`

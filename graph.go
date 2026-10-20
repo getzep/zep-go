@@ -450,6 +450,202 @@ func (c *ContentPolicyEventListRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
+	graphQueryRequestFieldGenerateAnswer = big.NewInt(1 << 0)
+	graphQueryRequestFieldGraphUUIDs     = big.NewInt(1 << 1)
+	graphQueryRequestFieldGuidance       = big.NewInt(1 << 2)
+	graphQueryRequestFieldMode           = big.NewInt(1 << 3)
+	graphQueryRequestFieldQuery          = big.NewInt(1 << 4)
+)
+
+type GraphQueryRequest struct {
+	// When true, a model also writes an answer from the retrieved records.
+	// The default is false: the response has the records and no answer.
+	GenerateAnswer *bool `json:"generate_answer,omitempty" url:"-"`
+	// The graph UUIDs to query. The current release accepts one UUID.
+	GraphUUIDs []string `json:"graph_uuids" url:"-"`
+	// Optional caller guidance for the answer. The agent treats it as untrusted text.
+	Guidance *string `json:"guidance,omitempty" url:"-"`
+	// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep.
+	Mode *GraphQueryRequestMode `json:"mode,omitempty" url:"-"`
+	// The natural-language question about the graph.
+	Query  string `json:"query" url:"-"`
+	stream bool
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (g *GraphQueryRequest) Stream() bool {
+	return g.stream
+}
+
+func (g *GraphQueryRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetGenerateAnswer sets the GenerateAnswer field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryRequest) SetGenerateAnswer(generateAnswer *bool) {
+	g.GenerateAnswer = generateAnswer
+	g.require(graphQueryRequestFieldGenerateAnswer)
+}
+
+// SetGraphUUIDs sets the GraphUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryRequest) SetGraphUUIDs(graphUUIDs []string) {
+	g.GraphUUIDs = graphUUIDs
+	g.require(graphQueryRequestFieldGraphUUIDs)
+}
+
+// SetGuidance sets the Guidance field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryRequest) SetGuidance(guidance *string) {
+	g.Guidance = guidance
+	g.require(graphQueryRequestFieldGuidance)
+}
+
+// SetMode sets the Mode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryRequest) SetMode(mode *GraphQueryRequestMode) {
+	g.Mode = mode
+	g.require(graphQueryRequestFieldMode)
+}
+
+// SetQuery sets the Query field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryRequest) SetQuery(query string) {
+	g.Query = query
+	g.require(graphQueryRequestFieldQuery)
+}
+
+func (g *GraphQueryRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*g = GraphQueryRequest(body)
+	g.stream = false
+	return nil
+}
+
+func (g *GraphQueryRequest) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryRequest
+	var marshaler = struct {
+		embed
+		Stream bool `json:"stream"`
+	}{
+		embed:  embed(*g),
+		Stream: false,
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
+	graphQueryStreamRequestFieldGenerateAnswer = big.NewInt(1 << 0)
+	graphQueryStreamRequestFieldGraphUUIDs     = big.NewInt(1 << 1)
+	graphQueryStreamRequestFieldGuidance       = big.NewInt(1 << 2)
+	graphQueryStreamRequestFieldMode           = big.NewInt(1 << 3)
+	graphQueryStreamRequestFieldQuery          = big.NewInt(1 << 4)
+)
+
+type GraphQueryStreamRequest struct {
+	// When true, a model also writes an answer from the retrieved records.
+	// The default is false: the response has the records and no answer.
+	GenerateAnswer *bool `json:"generate_answer,omitempty" url:"-"`
+	// The graph UUIDs to query. The current release accepts one UUID.
+	GraphUUIDs []string `json:"graph_uuids" url:"-"`
+	// Optional caller guidance for the answer. The agent treats it as untrusted text.
+	Guidance *string `json:"guidance,omitempty" url:"-"`
+	// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep.
+	Mode *GraphQueryRequestMode `json:"mode,omitempty" url:"-"`
+	// The natural-language question about the graph.
+	Query  string `json:"query" url:"-"`
+	stream bool
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (g *GraphQueryStreamRequest) Stream() bool {
+	return g.stream
+}
+
+func (g *GraphQueryStreamRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetGenerateAnswer sets the GenerateAnswer field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryStreamRequest) SetGenerateAnswer(generateAnswer *bool) {
+	g.GenerateAnswer = generateAnswer
+	g.require(graphQueryStreamRequestFieldGenerateAnswer)
+}
+
+// SetGraphUUIDs sets the GraphUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryStreamRequest) SetGraphUUIDs(graphUUIDs []string) {
+	g.GraphUUIDs = graphUUIDs
+	g.require(graphQueryStreamRequestFieldGraphUUIDs)
+}
+
+// SetGuidance sets the Guidance field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryStreamRequest) SetGuidance(guidance *string) {
+	g.Guidance = guidance
+	g.require(graphQueryStreamRequestFieldGuidance)
+}
+
+// SetMode sets the Mode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryStreamRequest) SetMode(mode *GraphQueryRequestMode) {
+	g.Mode = mode
+	g.require(graphQueryStreamRequestFieldMode)
+}
+
+// SetQuery sets the Query field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryStreamRequest) SetQuery(query string) {
+	g.Query = query
+	g.require(graphQueryStreamRequestFieldQuery)
+}
+
+func (g *GraphQueryStreamRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryStreamRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*g = GraphQueryStreamRequest(body)
+	g.stream = true
+	return nil
+}
+
+func (g *GraphQueryStreamRequest) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryStreamRequest
+	var marshaler = struct {
+		embed
+		Stream bool `json:"stream"`
+	}{
+		embed:  embed(*g),
+		Stream: true,
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
 	searchEdgesRequestFieldPageSize                = big.NewInt(1 << 0)
 	searchEdgesRequestFieldCursor                  = big.NewInt(1 << 1)
 	searchEdgesRequestFieldQuery                   = big.NewInt(1 << 2)
@@ -3386,19 +3582,22 @@ func (c *ContextResults) String() string {
 
 var (
 	contextThreadSummaryFieldCreatedAt                    = big.NewInt(1 << 0)
-	contextThreadSummaryFieldLastSummarizedAt             = big.NewInt(1 << 1)
-	contextThreadSummaryFieldLastSummarizedEpisodeValidAt = big.NewInt(1 << 2)
-	contextThreadSummaryFieldRelevance                    = big.NewInt(1 << 3)
-	contextThreadSummaryFieldScore                        = big.NewInt(1 << 4)
-	contextThreadSummaryFieldSelectionRank                = big.NewInt(1 << 5)
-	contextThreadSummaryFieldSummary                      = big.NewInt(1 << 6)
-	contextThreadSummaryFieldThreadUUID                   = big.NewInt(1 << 7)
-	contextThreadSummaryFieldUUID                         = big.NewInt(1 << 8)
+	contextThreadSummaryFieldGraphUUID                    = big.NewInt(1 << 1)
+	contextThreadSummaryFieldLastSummarizedAt             = big.NewInt(1 << 2)
+	contextThreadSummaryFieldLastSummarizedEpisodeValidAt = big.NewInt(1 << 3)
+	contextThreadSummaryFieldRelevance                    = big.NewInt(1 << 4)
+	contextThreadSummaryFieldScore                        = big.NewInt(1 << 5)
+	contextThreadSummaryFieldSelectionRank                = big.NewInt(1 << 6)
+	contextThreadSummaryFieldSummary                      = big.NewInt(1 << 7)
+	contextThreadSummaryFieldThreadUUID                   = big.NewInt(1 << 8)
+	contextThreadSummaryFieldUUID                         = big.NewInt(1 << 9)
 )
 
 type ContextThreadSummary struct {
 	// The time the summary was first created.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The unique identifier of the graph this thread summary belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	// The wall-clock time of the most recent summary update.
 	LastSummarizedAt *string `json:"last_summarized_at,omitempty" url:"last_summarized_at,omitempty"`
 	// The latest episode reference time covered by the most recent summary
@@ -3433,6 +3632,13 @@ func (c *ContextThreadSummary) GetCreatedAt() *string {
 		return nil
 	}
 	return c.CreatedAt
+}
+
+func (c *ContextThreadSummary) GetGraphUUID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.GraphUUID
 }
 
 func (c *ContextThreadSummary) GetLastSummarizedAt() *string {
@@ -3512,6 +3718,13 @@ func (c *ContextThreadSummary) require(field *big.Int) {
 func (c *ContextThreadSummary) SetCreatedAt(createdAt *string) {
 	c.CreatedAt = createdAt
 	c.require(contextThreadSummaryFieldCreatedAt)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextThreadSummary) SetGraphUUID(graphUUID *string) {
+	c.GraphUUID = graphUUID
+	c.require(contextThreadSummaryFieldGraphUUID)
 }
 
 // SetLastSummarizedAt sets the LastSummarizedAt field and marks it as non-optional;
@@ -4707,6 +4920,2981 @@ func (g *GraphPage) String() string {
 }
 
 var (
+	graphQueryCitationsFieldEdgeUUIDs    = big.NewInt(1 << 0)
+	graphQueryCitationsFieldEpisodeUUIDs = big.NewInt(1 << 1)
+	graphQueryCitationsFieldNodeUUIDs    = big.NewInt(1 << 2)
+)
+
+type GraphQueryCitations struct {
+	// The edge UUIDs cited by the answer.
+	EdgeUUIDs []string `json:"edge_uuids,omitempty" url:"edge_uuids,omitempty"`
+	// The episode UUIDs cited by the answer.
+	EpisodeUUIDs []string `json:"episode_uuids,omitempty" url:"episode_uuids,omitempty"`
+	// The node UUIDs cited by the answer.
+	NodeUUIDs []string `json:"node_uuids,omitempty" url:"node_uuids,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryCitations) GetEdgeUUIDs() []string {
+	if g == nil {
+		return nil
+	}
+	return g.EdgeUUIDs
+}
+
+func (g *GraphQueryCitations) GetEpisodeUUIDs() []string {
+	if g == nil {
+		return nil
+	}
+	return g.EpisodeUUIDs
+}
+
+func (g *GraphQueryCitations) GetNodeUUIDs() []string {
+	if g == nil {
+		return nil
+	}
+	return g.NodeUUIDs
+}
+
+func (g *GraphQueryCitations) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryCitations) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetEdgeUUIDs sets the EdgeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryCitations) SetEdgeUUIDs(edgeUUIDs []string) {
+	g.EdgeUUIDs = edgeUUIDs
+	g.require(graphQueryCitationsFieldEdgeUUIDs)
+}
+
+// SetEpisodeUUIDs sets the EpisodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryCitations) SetEpisodeUUIDs(episodeUUIDs []string) {
+	g.EpisodeUUIDs = episodeUUIDs
+	g.require(graphQueryCitationsFieldEpisodeUUIDs)
+}
+
+// SetNodeUUIDs sets the NodeUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryCitations) SetNodeUUIDs(nodeUUIDs []string) {
+	g.NodeUUIDs = nodeUUIDs
+	g.require(graphQueryCitationsFieldNodeUUIDs)
+}
+
+func (g *GraphQueryCitations) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryCitations
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryCitations(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryCitations) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryCitations
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryCitations) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryEdgeFieldAttributes       = big.NewInt(1 << 0)
+	graphQueryEdgeFieldCreatedAt        = big.NewInt(1 << 1)
+	graphQueryEdgeFieldExpiredAt        = big.NewInt(1 << 2)
+	graphQueryEdgeFieldFact             = big.NewInt(1 << 3)
+	graphQueryEdgeFieldGraphUUID        = big.NewInt(1 << 4)
+	graphQueryEdgeFieldHyperedgeUUID    = big.NewInt(1 << 5)
+	graphQueryEdgeFieldInvalidAt        = big.NewInt(1 << 6)
+	graphQueryEdgeFieldName             = big.NewInt(1 << 7)
+	graphQueryEdgeFieldScope            = big.NewInt(1 << 8)
+	graphQueryEdgeFieldSourceNodeLabels = big.NewInt(1 << 9)
+	graphQueryEdgeFieldSourceNodeName   = big.NewInt(1 << 10)
+	graphQueryEdgeFieldSourceNodeUUID   = big.NewInt(1 << 11)
+	graphQueryEdgeFieldTargetNodeLabels = big.NewInt(1 << 12)
+	graphQueryEdgeFieldTargetNodeName   = big.NewInt(1 << 13)
+	graphQueryEdgeFieldTargetNodeUUID   = big.NewInt(1 << 14)
+	graphQueryEdgeFieldUserUUID         = big.NewInt(1 << 15)
+	graphQueryEdgeFieldUUID             = big.NewInt(1 << 16)
+	graphQueryEdgeFieldValidAt          = big.NewInt(1 << 17)
+)
+
+type GraphQueryEdge struct {
+	// Additional attributes of the edge.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the edge was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The time the fact was superseded or removed.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
+	// The natural-language fact this edge represents.
+	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
+	// The unique identifier of the graph this edge belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The unique identifier of the hyperedge this edge is a member of. Omitted
+	// when the edge is not part of a hyperedge.
+	HyperedgeUUID *string `json:"hyperedge_uuid,omitempty" url:"hyperedge_uuid,omitempty"`
+	// The time at which the fact stopped being true.
+	InvalidAt *string `json:"invalid_at,omitempty" url:"invalid_at,omitempty"`
+	// The name of the edge, in upper snake case, for example RELATES_TO.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The kind of edge this is, for example entity or episodic.
+	Scope *string `json:"scope,omitempty" url:"scope,omitempty"`
+	// The current labels of the source node. This is read at request time rather
+	// than stored on the edge, and is omitted when the source node cannot be
+	// resolved.
+	SourceNodeLabels []string `json:"source_node_labels,omitempty" url:"source_node_labels,omitempty"`
+	// The current name of the source node. This is read at request time rather
+	// than stored on the edge, and is omitted when the source node cannot be
+	// resolved.
+	SourceNodeName *string `json:"source_node_name,omitempty" url:"source_node_name,omitempty"`
+	// The unique identifier of the edge's source node.
+	SourceNodeUUID *string `json:"source_node_uuid,omitempty" url:"source_node_uuid,omitempty"`
+	// The current labels of the target node. This is read at request time rather
+	// than stored on the edge, and is omitted when the target node cannot be
+	// resolved.
+	TargetNodeLabels []string `json:"target_node_labels,omitempty" url:"target_node_labels,omitempty"`
+	// The current name of the target node. This is read at request time rather
+	// than stored on the edge, and is omitted when the target node cannot be
+	// resolved.
+	TargetNodeName *string `json:"target_node_name,omitempty" url:"target_node_name,omitempty"`
+	// The unique identifier of the edge's target node.
+	TargetNodeUUID *string `json:"target_node_uuid,omitempty" url:"target_node_uuid,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
+	// The unique identifier of the edge.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// The time from which the fact is considered true.
+	ValidAt *string `json:"valid_at,omitempty" url:"valid_at,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryEdge) GetAttributes() map[string]any {
+	if g == nil {
+		return nil
+	}
+	return g.Attributes
+}
+
+func (g *GraphQueryEdge) GetCreatedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedAt
+}
+
+func (g *GraphQueryEdge) GetExpiredAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ExpiredAt
+}
+
+func (g *GraphQueryEdge) GetFact() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Fact
+}
+
+func (g *GraphQueryEdge) GetGraphUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.GraphUUID
+}
+
+func (g *GraphQueryEdge) GetHyperedgeUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.HyperedgeUUID
+}
+
+func (g *GraphQueryEdge) GetInvalidAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.InvalidAt
+}
+
+func (g *GraphQueryEdge) GetName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Name
+}
+
+func (g *GraphQueryEdge) GetScope() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Scope
+}
+
+func (g *GraphQueryEdge) GetSourceNodeLabels() []string {
+	if g == nil {
+		return nil
+	}
+	return g.SourceNodeLabels
+}
+
+func (g *GraphQueryEdge) GetSourceNodeName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.SourceNodeName
+}
+
+func (g *GraphQueryEdge) GetSourceNodeUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.SourceNodeUUID
+}
+
+func (g *GraphQueryEdge) GetTargetNodeLabels() []string {
+	if g == nil {
+		return nil
+	}
+	return g.TargetNodeLabels
+}
+
+func (g *GraphQueryEdge) GetTargetNodeName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.TargetNodeName
+}
+
+func (g *GraphQueryEdge) GetTargetNodeUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.TargetNodeUUID
+}
+
+func (g *GraphQueryEdge) GetUserUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UserUUID
+}
+
+func (g *GraphQueryEdge) GetUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUID
+}
+
+func (g *GraphQueryEdge) GetValidAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ValidAt
+}
+
+func (g *GraphQueryEdge) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryEdge) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetAttributes(attributes map[string]any) {
+	g.Attributes = attributes
+	g.require(graphQueryEdgeFieldAttributes)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetCreatedAt(createdAt *string) {
+	g.CreatedAt = createdAt
+	g.require(graphQueryEdgeFieldCreatedAt)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetExpiredAt(expiredAt *string) {
+	g.ExpiredAt = expiredAt
+	g.require(graphQueryEdgeFieldExpiredAt)
+}
+
+// SetFact sets the Fact field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetFact(fact *string) {
+	g.Fact = fact
+	g.require(graphQueryEdgeFieldFact)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetGraphUUID(graphUUID *string) {
+	g.GraphUUID = graphUUID
+	g.require(graphQueryEdgeFieldGraphUUID)
+}
+
+// SetHyperedgeUUID sets the HyperedgeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetHyperedgeUUID(hyperedgeUUID *string) {
+	g.HyperedgeUUID = hyperedgeUUID
+	g.require(graphQueryEdgeFieldHyperedgeUUID)
+}
+
+// SetInvalidAt sets the InvalidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetInvalidAt(invalidAt *string) {
+	g.InvalidAt = invalidAt
+	g.require(graphQueryEdgeFieldInvalidAt)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetName(name *string) {
+	g.Name = name
+	g.require(graphQueryEdgeFieldName)
+}
+
+// SetScope sets the Scope field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetScope(scope *string) {
+	g.Scope = scope
+	g.require(graphQueryEdgeFieldScope)
+}
+
+// SetSourceNodeLabels sets the SourceNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetSourceNodeLabels(sourceNodeLabels []string) {
+	g.SourceNodeLabels = sourceNodeLabels
+	g.require(graphQueryEdgeFieldSourceNodeLabels)
+}
+
+// SetSourceNodeName sets the SourceNodeName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetSourceNodeName(sourceNodeName *string) {
+	g.SourceNodeName = sourceNodeName
+	g.require(graphQueryEdgeFieldSourceNodeName)
+}
+
+// SetSourceNodeUUID sets the SourceNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetSourceNodeUUID(sourceNodeUUID *string) {
+	g.SourceNodeUUID = sourceNodeUUID
+	g.require(graphQueryEdgeFieldSourceNodeUUID)
+}
+
+// SetTargetNodeLabels sets the TargetNodeLabels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetTargetNodeLabels(targetNodeLabels []string) {
+	g.TargetNodeLabels = targetNodeLabels
+	g.require(graphQueryEdgeFieldTargetNodeLabels)
+}
+
+// SetTargetNodeName sets the TargetNodeName field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetTargetNodeName(targetNodeName *string) {
+	g.TargetNodeName = targetNodeName
+	g.require(graphQueryEdgeFieldTargetNodeName)
+}
+
+// SetTargetNodeUUID sets the TargetNodeUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetTargetNodeUUID(targetNodeUUID *string) {
+	g.TargetNodeUUID = targetNodeUUID
+	g.require(graphQueryEdgeFieldTargetNodeUUID)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetUserUUID(userUUID *string) {
+	g.UserUUID = userUUID
+	g.require(graphQueryEdgeFieldUserUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetUUID(uuid *string) {
+	g.UUID = uuid
+	g.require(graphQueryEdgeFieldUUID)
+}
+
+// SetValidAt sets the ValidAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryEdge) SetValidAt(validAt *string) {
+	g.ValidAt = validAt
+	g.require(graphQueryEdgeFieldValidAt)
+}
+
+func (g *GraphQueryEdge) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryEdge
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryEdge(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryEdge) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryEdge
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryEdge) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryErrorEventFieldSequence = big.NewInt(1 << 0)
+	graphQueryErrorEventFieldStatus   = big.NewInt(1 << 1)
+	graphQueryErrorEventFieldError    = big.NewInt(1 << 2)
+)
+
+type GraphQueryErrorEvent struct {
+	Sequence int        `json:"sequence" url:"sequence"`
+	Status   int        `json:"status" url:"status"`
+	Error    *ErrorBody `json:"error" url:"error"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryErrorEvent) GetSequence() int {
+	if g == nil {
+		return 0
+	}
+	return g.Sequence
+}
+
+func (g *GraphQueryErrorEvent) GetStatus() int {
+	if g == nil {
+		return 0
+	}
+	return g.Status
+}
+
+func (g *GraphQueryErrorEvent) GetError() *ErrorBody {
+	if g == nil {
+		return nil
+	}
+	return g.Error
+}
+
+func (g *GraphQueryErrorEvent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryErrorEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryErrorEvent) SetSequence(sequence int) {
+	g.Sequence = sequence
+	g.require(graphQueryErrorEventFieldSequence)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryErrorEvent) SetStatus(status int) {
+	g.Status = status
+	g.require(graphQueryErrorEventFieldStatus)
+}
+
+// SetError sets the Error field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryErrorEvent) SetError(error_ *ErrorBody) {
+	g.Error = error_
+	g.require(graphQueryErrorEventFieldError)
+}
+
+func (g *GraphQueryErrorEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryErrorEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryErrorEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryErrorEvent) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryErrorEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryErrorEvent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryHandleFieldHandle    = big.NewInt(1 << 0)
+	graphQueryHandleFieldItemType  = big.NewInt(1 << 1)
+	graphQueryHandleFieldUUID      = big.NewInt(1 << 2)
+	graphQueryHandleFieldGraphUUID = big.NewInt(1 << 3)
+)
+
+type GraphQueryHandle struct {
+	Handle    string                   `json:"handle" url:"handle"`
+	ItemType  GraphQueryHandleItemType `json:"item_type" url:"item_type"`
+	UUID      string                   `json:"uuid" url:"uuid"`
+	GraphUUID string                   `json:"graph_uuid" url:"graph_uuid"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryHandle) GetHandle() string {
+	if g == nil {
+		return ""
+	}
+	return g.Handle
+}
+
+func (g *GraphQueryHandle) GetItemType() GraphQueryHandleItemType {
+	if g == nil {
+		return ""
+	}
+	return g.ItemType
+}
+
+func (g *GraphQueryHandle) GetUUID() string {
+	if g == nil {
+		return ""
+	}
+	return g.UUID
+}
+
+func (g *GraphQueryHandle) GetGraphUUID() string {
+	if g == nil {
+		return ""
+	}
+	return g.GraphUUID
+}
+
+func (g *GraphQueryHandle) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryHandle) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetHandle sets the Handle field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryHandle) SetHandle(handle string) {
+	g.Handle = handle
+	g.require(graphQueryHandleFieldHandle)
+}
+
+// SetItemType sets the ItemType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryHandle) SetItemType(itemType GraphQueryHandleItemType) {
+	g.ItemType = itemType
+	g.require(graphQueryHandleFieldItemType)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryHandle) SetUUID(uuid string) {
+	g.UUID = uuid
+	g.require(graphQueryHandleFieldUUID)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryHandle) SetGraphUUID(graphUUID string) {
+	g.GraphUUID = graphUUID
+	g.require(graphQueryHandleFieldGraphUUID)
+}
+
+func (g *GraphQueryHandle) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryHandle
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryHandle(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryHandle) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryHandle
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryHandle) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphQueryHandleItemType string
+
+const (
+	GraphQueryHandleItemTypeNode    GraphQueryHandleItemType = "node"
+	GraphQueryHandleItemTypeEdge    GraphQueryHandleItemType = "edge"
+	GraphQueryHandleItemTypeEpisode GraphQueryHandleItemType = "episode"
+)
+
+func NewGraphQueryHandleItemTypeFromString(s string) (GraphQueryHandleItemType, error) {
+	switch s {
+	case "node":
+		return GraphQueryHandleItemTypeNode, nil
+	case "edge":
+		return GraphQueryHandleItemTypeEdge, nil
+	case "episode":
+		return GraphQueryHandleItemTypeEpisode, nil
+	}
+	var t GraphQueryHandleItemType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphQueryHandleItemType) Ptr() *GraphQueryHandleItemType {
+	return &g
+}
+
+var (
+	graphQueryListingFieldFirstItem = big.NewInt(1 << 0)
+	graphQueryListingFieldLastItem  = big.NewInt(1 << 1)
+	graphQueryListingFieldComplete  = big.NewInt(1 << 2)
+)
+
+type GraphQueryListing struct {
+	FirstItem int  `json:"first_item" url:"first_item"`
+	LastItem  int  `json:"last_item" url:"last_item"`
+	Complete  bool `json:"complete" url:"complete"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryListing) GetFirstItem() int {
+	if g == nil {
+		return 0
+	}
+	return g.FirstItem
+}
+
+func (g *GraphQueryListing) GetLastItem() int {
+	if g == nil {
+		return 0
+	}
+	return g.LastItem
+}
+
+func (g *GraphQueryListing) GetComplete() bool {
+	if g == nil {
+		return false
+	}
+	return g.Complete
+}
+
+func (g *GraphQueryListing) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryListing) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetFirstItem sets the FirstItem field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryListing) SetFirstItem(firstItem int) {
+	g.FirstItem = firstItem
+	g.require(graphQueryListingFieldFirstItem)
+}
+
+// SetLastItem sets the LastItem field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryListing) SetLastItem(lastItem int) {
+	g.LastItem = lastItem
+	g.require(graphQueryListingFieldLastItem)
+}
+
+// SetComplete sets the Complete field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryListing) SetComplete(complete bool) {
+	g.Complete = complete
+	g.require(graphQueryListingFieldComplete)
+}
+
+func (g *GraphQueryListing) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryListing
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryListing(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryListing) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryListing
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryListing) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryNodeFieldAttributes = big.NewInt(1 << 0)
+	graphQueryNodeFieldCreatedAt  = big.NewInt(1 << 1)
+	graphQueryNodeFieldGraphUUID  = big.NewInt(1 << 2)
+	graphQueryNodeFieldLabels     = big.NewInt(1 << 3)
+	graphQueryNodeFieldName       = big.NewInt(1 << 4)
+	graphQueryNodeFieldSummary    = big.NewInt(1 << 5)
+	graphQueryNodeFieldUserUUID   = big.NewInt(1 << 6)
+	graphQueryNodeFieldUUID       = big.NewInt(1 << 7)
+)
+
+type GraphQueryNode struct {
+	// Additional attributes of the node, as defined by its entity type.
+	Attributes map[string]any `json:"attributes,omitempty" url:"attributes,omitempty"`
+	// The time the node was created.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The unique identifier of the graph this node belongs to.
+	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
+	// The entity type labels assigned to the node.
+	Labels []string `json:"labels,omitempty" url:"labels,omitempty"`
+	// The name of the entity that the node represents.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A generated summary of the entity that the node represents.
+	Summary *string `json:"summary,omitempty" url:"summary,omitempty"`
+	// The unique identifier of the user that owns the graph. Present only when
+	// the graph is a user graph.
+	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
+	// The node UUID, assigned by Zep.
+	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryNode) GetAttributes() map[string]any {
+	if g == nil {
+		return nil
+	}
+	return g.Attributes
+}
+
+func (g *GraphQueryNode) GetCreatedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedAt
+}
+
+func (g *GraphQueryNode) GetGraphUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.GraphUUID
+}
+
+func (g *GraphQueryNode) GetLabels() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Labels
+}
+
+func (g *GraphQueryNode) GetName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Name
+}
+
+func (g *GraphQueryNode) GetSummary() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Summary
+}
+
+func (g *GraphQueryNode) GetUserUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UserUUID
+}
+
+func (g *GraphQueryNode) GetUUID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.UUID
+}
+
+func (g *GraphQueryNode) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryNode) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetAttributes sets the Attributes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryNode) SetAttributes(attributes map[string]any) {
+	g.Attributes = attributes
+	g.require(graphQueryNodeFieldAttributes)
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryNode) SetCreatedAt(createdAt *string) {
+	g.CreatedAt = createdAt
+	g.require(graphQueryNodeFieldCreatedAt)
+}
+
+// SetGraphUUID sets the GraphUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryNode) SetGraphUUID(graphUUID *string) {
+	g.GraphUUID = graphUUID
+	g.require(graphQueryNodeFieldGraphUUID)
+}
+
+// SetLabels sets the Labels field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryNode) SetLabels(labels []string) {
+	g.Labels = labels
+	g.require(graphQueryNodeFieldLabels)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryNode) SetName(name *string) {
+	g.Name = name
+	g.require(graphQueryNodeFieldName)
+}
+
+// SetSummary sets the Summary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryNode) SetSummary(summary *string) {
+	g.Summary = summary
+	g.require(graphQueryNodeFieldSummary)
+}
+
+// SetUserUUID sets the UserUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryNode) SetUserUUID(userUUID *string) {
+	g.UserUUID = userUUID
+	g.require(graphQueryNodeFieldUserUUID)
+}
+
+// SetUUID sets the UUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryNode) SetUUID(uuid *string) {
+	g.UUID = uuid
+	g.require(graphQueryNodeFieldUUID)
+}
+
+func (g *GraphQueryNode) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryNode
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryNode(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryNode) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryNode
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryNode) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryPlanFieldSubjects       = big.NewInt(1 << 0)
+	graphQueryPlanFieldSteps          = big.NewInt(1 << 1)
+	graphQueryPlanFieldEvidenceNeeded = big.NewInt(1 << 2)
+	graphQueryPlanFieldStopWhen       = big.NewInt(1 << 3)
+	graphQueryPlanFieldAnswerLanguage = big.NewInt(1 << 4)
+)
+
+type GraphQueryPlan struct {
+	Subjects       []string              `json:"subjects" url:"subjects"`
+	Steps          []*GraphQueryPlanStep `json:"steps" url:"steps"`
+	EvidenceNeeded []string              `json:"evidence_needed" url:"evidence_needed"`
+	StopWhen       string                `json:"stop_when" url:"stop_when"`
+	AnswerLanguage string                `json:"answer_language" url:"answer_language"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryPlan) GetSubjects() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Subjects
+}
+
+func (g *GraphQueryPlan) GetSteps() []*GraphQueryPlanStep {
+	if g == nil {
+		return nil
+	}
+	return g.Steps
+}
+
+func (g *GraphQueryPlan) GetEvidenceNeeded() []string {
+	if g == nil {
+		return nil
+	}
+	return g.EvidenceNeeded
+}
+
+func (g *GraphQueryPlan) GetStopWhen() string {
+	if g == nil {
+		return ""
+	}
+	return g.StopWhen
+}
+
+func (g *GraphQueryPlan) GetAnswerLanguage() string {
+	if g == nil {
+		return ""
+	}
+	return g.AnswerLanguage
+}
+
+func (g *GraphQueryPlan) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryPlan) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSubjects sets the Subjects field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlan) SetSubjects(subjects []string) {
+	g.Subjects = subjects
+	g.require(graphQueryPlanFieldSubjects)
+}
+
+// SetSteps sets the Steps field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlan) SetSteps(steps []*GraphQueryPlanStep) {
+	g.Steps = steps
+	g.require(graphQueryPlanFieldSteps)
+}
+
+// SetEvidenceNeeded sets the EvidenceNeeded field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlan) SetEvidenceNeeded(evidenceNeeded []string) {
+	g.EvidenceNeeded = evidenceNeeded
+	g.require(graphQueryPlanFieldEvidenceNeeded)
+}
+
+// SetStopWhen sets the StopWhen field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlan) SetStopWhen(stopWhen string) {
+	g.StopWhen = stopWhen
+	g.require(graphQueryPlanFieldStopWhen)
+}
+
+// SetAnswerLanguage sets the AnswerLanguage field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlan) SetAnswerLanguage(answerLanguage string) {
+	g.AnswerLanguage = answerLanguage
+	g.require(graphQueryPlanFieldAnswerLanguage)
+}
+
+func (g *GraphQueryPlan) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryPlan
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryPlan(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryPlan) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryPlan
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryPlan) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryPlanEventFieldSequence = big.NewInt(1 << 0)
+	graphQueryPlanEventFieldStep     = big.NewInt(1 << 1)
+	graphQueryPlanEventFieldRevision = big.NewInt(1 << 2)
+	graphQueryPlanEventFieldPlan     = big.NewInt(1 << 3)
+)
+
+type GraphQueryPlanEvent struct {
+	Sequence int             `json:"sequence" url:"sequence"`
+	Step     int             `json:"step" url:"step"`
+	Revision int             `json:"revision" url:"revision"`
+	Plan     *GraphQueryPlan `json:"plan" url:"plan"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryPlanEvent) GetSequence() int {
+	if g == nil {
+		return 0
+	}
+	return g.Sequence
+}
+
+func (g *GraphQueryPlanEvent) GetStep() int {
+	if g == nil {
+		return 0
+	}
+	return g.Step
+}
+
+func (g *GraphQueryPlanEvent) GetRevision() int {
+	if g == nil {
+		return 0
+	}
+	return g.Revision
+}
+
+func (g *GraphQueryPlanEvent) GetPlan() *GraphQueryPlan {
+	if g == nil {
+		return nil
+	}
+	return g.Plan
+}
+
+func (g *GraphQueryPlanEvent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryPlanEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlanEvent) SetSequence(sequence int) {
+	g.Sequence = sequence
+	g.require(graphQueryPlanEventFieldSequence)
+}
+
+// SetStep sets the Step field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlanEvent) SetStep(step int) {
+	g.Step = step
+	g.require(graphQueryPlanEventFieldStep)
+}
+
+// SetRevision sets the Revision field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlanEvent) SetRevision(revision int) {
+	g.Revision = revision
+	g.require(graphQueryPlanEventFieldRevision)
+}
+
+// SetPlan sets the Plan field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlanEvent) SetPlan(plan *GraphQueryPlan) {
+	g.Plan = plan
+	g.require(graphQueryPlanEventFieldPlan)
+}
+
+func (g *GraphQueryPlanEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryPlanEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryPlanEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryPlanEvent) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryPlanEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryPlanEvent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryPlanStepFieldTool          = big.NewInt(1 << 0)
+	graphQueryPlanStepFieldPurpose       = big.NewInt(1 << 1)
+	graphQueryPlanStepFieldArgumentsHint = big.NewInt(1 << 2)
+)
+
+type GraphQueryPlanStep struct {
+	Tool          string `json:"tool" url:"tool"`
+	Purpose       string `json:"purpose" url:"purpose"`
+	ArgumentsHint string `json:"arguments_hint" url:"arguments_hint"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryPlanStep) GetTool() string {
+	if g == nil {
+		return ""
+	}
+	return g.Tool
+}
+
+func (g *GraphQueryPlanStep) GetPurpose() string {
+	if g == nil {
+		return ""
+	}
+	return g.Purpose
+}
+
+func (g *GraphQueryPlanStep) GetArgumentsHint() string {
+	if g == nil {
+		return ""
+	}
+	return g.ArgumentsHint
+}
+
+func (g *GraphQueryPlanStep) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryPlanStep) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetTool sets the Tool field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlanStep) SetTool(tool string) {
+	g.Tool = tool
+	g.require(graphQueryPlanStepFieldTool)
+}
+
+// SetPurpose sets the Purpose field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlanStep) SetPurpose(purpose string) {
+	g.Purpose = purpose
+	g.require(graphQueryPlanStepFieldPurpose)
+}
+
+// SetArgumentsHint sets the ArgumentsHint field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryPlanStep) SetArgumentsHint(argumentsHint string) {
+	g.ArgumentsHint = argumentsHint
+	g.require(graphQueryPlanStepFieldArgumentsHint)
+}
+
+func (g *GraphQueryPlanStep) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryPlanStep
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryPlanStep(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryPlanStep) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryPlanStep
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryPlanStep) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryReasoningEventFieldSequence = big.NewInt(1 << 0)
+	graphQueryReasoningEventFieldStep     = big.NewInt(1 << 1)
+	graphQueryReasoningEventFieldText     = big.NewInt(1 << 2)
+)
+
+type GraphQueryReasoningEvent struct {
+	Sequence int    `json:"sequence" url:"sequence"`
+	Step     int    `json:"step" url:"step"`
+	Text     string `json:"text" url:"text"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryReasoningEvent) GetSequence() int {
+	if g == nil {
+		return 0
+	}
+	return g.Sequence
+}
+
+func (g *GraphQueryReasoningEvent) GetStep() int {
+	if g == nil {
+		return 0
+	}
+	return g.Step
+}
+
+func (g *GraphQueryReasoningEvent) GetText() string {
+	if g == nil {
+		return ""
+	}
+	return g.Text
+}
+
+func (g *GraphQueryReasoningEvent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryReasoningEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryReasoningEvent) SetSequence(sequence int) {
+	g.Sequence = sequence
+	g.require(graphQueryReasoningEventFieldSequence)
+}
+
+// SetStep sets the Step field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryReasoningEvent) SetStep(step int) {
+	g.Step = step
+	g.require(graphQueryReasoningEventFieldStep)
+}
+
+// SetText sets the Text field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryReasoningEvent) SetText(text string) {
+	g.Text = text
+	g.require(graphQueryReasoningEventFieldText)
+}
+
+func (g *GraphQueryReasoningEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryReasoningEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryReasoningEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryReasoningEvent) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryReasoningEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryReasoningEvent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryResponseFieldAnswer    = big.NewInt(1 << 0)
+	graphQueryResponseFieldCitations = big.NewInt(1 << 1)
+	graphQueryResponseFieldResults   = big.NewInt(1 << 2)
+	graphQueryResponseFieldTruncated = big.NewInt(1 << 3)
+)
+
+type GraphQueryResponse struct {
+	// The answer with citation handles removed. Present only when the
+	// request sets generate_answer to true.
+	Answer *string `json:"answer,omitempty" url:"answer,omitempty"`
+	// The UUIDs of the graph items cited by the answer. The lists are empty
+	// when the response has no answer.
+	Citations *GraphQueryCitations `json:"citations,omitempty" url:"citations,omitempty"`
+	// The distinct graph records retrieved during the query.
+	Results *GraphQueryResults `json:"results,omitempty" url:"results,omitempty"`
+	// Whether the record limit omitted any results.
+	Truncated *bool `json:"truncated,omitempty" url:"truncated,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryResponse) GetAnswer() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Answer
+}
+
+func (g *GraphQueryResponse) GetCitations() *GraphQueryCitations {
+	if g == nil {
+		return nil
+	}
+	return g.Citations
+}
+
+func (g *GraphQueryResponse) GetResults() *GraphQueryResults {
+	if g == nil {
+		return nil
+	}
+	return g.Results
+}
+
+func (g *GraphQueryResponse) GetTruncated() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.Truncated
+}
+
+func (g *GraphQueryResponse) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryResponse) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetAnswer sets the Answer field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResponse) SetAnswer(answer *string) {
+	g.Answer = answer
+	g.require(graphQueryResponseFieldAnswer)
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResponse) SetCitations(citations *GraphQueryCitations) {
+	g.Citations = citations
+	g.require(graphQueryResponseFieldCitations)
+}
+
+// SetResults sets the Results field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResponse) SetResults(results *GraphQueryResults) {
+	g.Results = results
+	g.require(graphQueryResponseFieldResults)
+}
+
+// SetTruncated sets the Truncated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResponse) SetTruncated(truncated *bool) {
+	g.Truncated = truncated
+	g.require(graphQueryResponseFieldTruncated)
+}
+
+func (g *GraphQueryResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryResponse) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryResponse
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryResponse) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryResultEventFieldSequence  = big.NewInt(1 << 0)
+	graphQueryResultEventFieldAnswer    = big.NewInt(1 << 1)
+	graphQueryResultEventFieldCitations = big.NewInt(1 << 2)
+	graphQueryResultEventFieldResults   = big.NewInt(1 << 3)
+	graphQueryResultEventFieldTruncated = big.NewInt(1 << 4)
+)
+
+type GraphQueryResultEvent struct {
+	Sequence  int                  `json:"sequence" url:"sequence"`
+	Answer    *string              `json:"answer,omitempty" url:"answer,omitempty"`
+	Citations *GraphQueryCitations `json:"citations" url:"citations"`
+	Results   *GraphQueryResults   `json:"results" url:"results"`
+	Truncated bool                 `json:"truncated" url:"truncated"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryResultEvent) GetSequence() int {
+	if g == nil {
+		return 0
+	}
+	return g.Sequence
+}
+
+func (g *GraphQueryResultEvent) GetAnswer() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Answer
+}
+
+func (g *GraphQueryResultEvent) GetCitations() *GraphQueryCitations {
+	if g == nil {
+		return nil
+	}
+	return g.Citations
+}
+
+func (g *GraphQueryResultEvent) GetResults() *GraphQueryResults {
+	if g == nil {
+		return nil
+	}
+	return g.Results
+}
+
+func (g *GraphQueryResultEvent) GetTruncated() bool {
+	if g == nil {
+		return false
+	}
+	return g.Truncated
+}
+
+func (g *GraphQueryResultEvent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryResultEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResultEvent) SetSequence(sequence int) {
+	g.Sequence = sequence
+	g.require(graphQueryResultEventFieldSequence)
+}
+
+// SetAnswer sets the Answer field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResultEvent) SetAnswer(answer *string) {
+	g.Answer = answer
+	g.require(graphQueryResultEventFieldAnswer)
+}
+
+// SetCitations sets the Citations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResultEvent) SetCitations(citations *GraphQueryCitations) {
+	g.Citations = citations
+	g.require(graphQueryResultEventFieldCitations)
+}
+
+// SetResults sets the Results field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResultEvent) SetResults(results *GraphQueryResults) {
+	g.Results = results
+	g.require(graphQueryResultEventFieldResults)
+}
+
+// SetTruncated sets the Truncated field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResultEvent) SetTruncated(truncated bool) {
+	g.Truncated = truncated
+	g.require(graphQueryResultEventFieldTruncated)
+}
+
+func (g *GraphQueryResultEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryResultEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryResultEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryResultEvent) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryResultEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryResultEvent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryResultsFieldEdges           = big.NewInt(1 << 0)
+	graphQueryResultsFieldEpisodes        = big.NewInt(1 << 1)
+	graphQueryResultsFieldNodes           = big.NewInt(1 << 2)
+	graphQueryResultsFieldObservations    = big.NewInt(1 << 3)
+	graphQueryResultsFieldThreadSummaries = big.NewInt(1 << 4)
+)
+
+type GraphQueryResults struct {
+	// The retrieved edges.
+	Edges []*GraphQueryEdge `json:"edges,omitempty" url:"edges,omitempty"`
+	// The retrieved episodes.
+	Episodes []*Episode `json:"episodes,omitempty" url:"episodes,omitempty"`
+	// The retrieved nodes.
+	Nodes []*GraphQueryNode `json:"nodes,omitempty" url:"nodes,omitempty"`
+	// The retrieved observations.
+	Observations []*Observation `json:"observations,omitempty" url:"observations,omitempty"`
+	// The retrieved thread summaries.
+	ThreadSummaries []*ThreadSummary `json:"thread_summaries,omitempty" url:"thread_summaries,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryResults) GetEdges() []*GraphQueryEdge {
+	if g == nil {
+		return nil
+	}
+	return g.Edges
+}
+
+func (g *GraphQueryResults) GetEpisodes() []*Episode {
+	if g == nil {
+		return nil
+	}
+	return g.Episodes
+}
+
+func (g *GraphQueryResults) GetNodes() []*GraphQueryNode {
+	if g == nil {
+		return nil
+	}
+	return g.Nodes
+}
+
+func (g *GraphQueryResults) GetObservations() []*Observation {
+	if g == nil {
+		return nil
+	}
+	return g.Observations
+}
+
+func (g *GraphQueryResults) GetThreadSummaries() []*ThreadSummary {
+	if g == nil {
+		return nil
+	}
+	return g.ThreadSummaries
+}
+
+func (g *GraphQueryResults) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryResults) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetEdges sets the Edges field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResults) SetEdges(edges []*GraphQueryEdge) {
+	g.Edges = edges
+	g.require(graphQueryResultsFieldEdges)
+}
+
+// SetEpisodes sets the Episodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResults) SetEpisodes(episodes []*Episode) {
+	g.Episodes = episodes
+	g.require(graphQueryResultsFieldEpisodes)
+}
+
+// SetNodes sets the Nodes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResults) SetNodes(nodes []*GraphQueryNode) {
+	g.Nodes = nodes
+	g.require(graphQueryResultsFieldNodes)
+}
+
+// SetObservations sets the Observations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResults) SetObservations(observations []*Observation) {
+	g.Observations = observations
+	g.require(graphQueryResultsFieldObservations)
+}
+
+// SetThreadSummaries sets the ThreadSummaries field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResults) SetThreadSummaries(threadSummaries []*ThreadSummary) {
+	g.ThreadSummaries = threadSummaries
+	g.require(graphQueryResultsFieldThreadSummaries)
+}
+
+func (g *GraphQueryResults) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryResults
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryResults(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryResults) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryResults
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryResults) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryStartedEventFieldSequence   = big.NewInt(1 << 0)
+	graphQueryStartedEventFieldGraphUUIDs = big.NewInt(1 << 1)
+	graphQueryStartedEventFieldHandles    = big.NewInt(1 << 2)
+)
+
+type GraphQueryStartedEvent struct {
+	Sequence   int                 `json:"sequence" url:"sequence"`
+	GraphUUIDs []string            `json:"graph_uuids" url:"graph_uuids"`
+	Handles    []*GraphQueryHandle `json:"handles" url:"handles"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryStartedEvent) GetSequence() int {
+	if g == nil {
+		return 0
+	}
+	return g.Sequence
+}
+
+func (g *GraphQueryStartedEvent) GetGraphUUIDs() []string {
+	if g == nil {
+		return nil
+	}
+	return g.GraphUUIDs
+}
+
+func (g *GraphQueryStartedEvent) GetHandles() []*GraphQueryHandle {
+	if g == nil {
+		return nil
+	}
+	return g.Handles
+}
+
+func (g *GraphQueryStartedEvent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryStartedEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryStartedEvent) SetSequence(sequence int) {
+	g.Sequence = sequence
+	g.require(graphQueryStartedEventFieldSequence)
+}
+
+// SetGraphUUIDs sets the GraphUUIDs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryStartedEvent) SetGraphUUIDs(graphUUIDs []string) {
+	g.GraphUUIDs = graphUUIDs
+	g.require(graphQueryStartedEventFieldGraphUUIDs)
+}
+
+// SetHandles sets the Handles field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryStartedEvent) SetHandles(handles []*GraphQueryHandle) {
+	g.Handles = handles
+	g.require(graphQueryStartedEventFieldHandles)
+}
+
+func (g *GraphQueryStartedEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryStartedEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryStartedEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryStartedEvent) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryStartedEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryStartedEvent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphQueryStreamEvent struct {
+	Type       string
+	Started    *GraphQueryStartedEvent
+	Reasoning  *GraphQueryReasoningEvent
+	Plan       *GraphQueryPlanEvent
+	ToolCall   *GraphQueryToolCallEvent
+	ToolResult *GraphQueryToolResultEvent
+	ToolError  *GraphQueryToolErrorEvent
+	Result     *GraphQueryResultEvent
+	Error      *GraphQueryErrorEvent
+
+	rawJSON json.RawMessage
+}
+
+func (g *GraphQueryStreamEvent) GetType() string {
+	if g == nil {
+		return ""
+	}
+	return g.Type
+}
+
+func (g *GraphQueryStreamEvent) GetStarted() *GraphQueryStartedEvent {
+	if g == nil {
+		return nil
+	}
+	return g.Started
+}
+
+func (g *GraphQueryStreamEvent) GetReasoning() *GraphQueryReasoningEvent {
+	if g == nil {
+		return nil
+	}
+	return g.Reasoning
+}
+
+func (g *GraphQueryStreamEvent) GetPlan() *GraphQueryPlanEvent {
+	if g == nil {
+		return nil
+	}
+	return g.Plan
+}
+
+func (g *GraphQueryStreamEvent) GetToolCall() *GraphQueryToolCallEvent {
+	if g == nil {
+		return nil
+	}
+	return g.ToolCall
+}
+
+func (g *GraphQueryStreamEvent) GetToolResult() *GraphQueryToolResultEvent {
+	if g == nil {
+		return nil
+	}
+	return g.ToolResult
+}
+
+func (g *GraphQueryStreamEvent) GetToolError() *GraphQueryToolErrorEvent {
+	if g == nil {
+		return nil
+	}
+	return g.ToolError
+}
+
+func (g *GraphQueryStreamEvent) GetResult() *GraphQueryResultEvent {
+	if g == nil {
+		return nil
+	}
+	return g.Result
+}
+
+func (g *GraphQueryStreamEvent) GetError() *GraphQueryErrorEvent {
+	if g == nil {
+		return nil
+	}
+	return g.Error
+}
+
+func (g *GraphQueryStreamEvent) UnmarshalJSON(data []byte) error {
+	var unmarshaler struct {
+		Type string `json:"type"`
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	g.Type = unmarshaler.Type
+	if unmarshaler.Type == "" {
+		return fmt.Errorf("%T did not include discriminant type", g)
+	}
+	switch unmarshaler.Type {
+	case "started":
+		value := new(GraphQueryStartedEvent)
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		g.Started = value
+	case "reasoning":
+		value := new(GraphQueryReasoningEvent)
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		g.Reasoning = value
+	case "plan":
+		value := new(GraphQueryPlanEvent)
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		g.Plan = value
+	case "tool_call":
+		value := new(GraphQueryToolCallEvent)
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		g.ToolCall = value
+	case "tool_result":
+		value := new(GraphQueryToolResultEvent)
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		g.ToolResult = value
+	case "tool_error":
+		value := new(GraphQueryToolErrorEvent)
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		g.ToolError = value
+	case "result":
+		value := new(GraphQueryResultEvent)
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		g.Result = value
+	case "error":
+		value := new(GraphQueryErrorEvent)
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		g.Error = value
+	}
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g GraphQueryStreamEvent) MarshalJSON() ([]byte, error) {
+	if err := g.validate(); err != nil {
+		return nil, err
+	}
+	if g.Started != nil {
+		return internal.MarshalJSONWithExtraProperty(g.Started, "type", "started")
+	}
+	if g.Reasoning != nil {
+		return internal.MarshalJSONWithExtraProperty(g.Reasoning, "type", "reasoning")
+	}
+	if g.Plan != nil {
+		return internal.MarshalJSONWithExtraProperty(g.Plan, "type", "plan")
+	}
+	if g.ToolCall != nil {
+		return internal.MarshalJSONWithExtraProperty(g.ToolCall, "type", "tool_call")
+	}
+	if g.ToolResult != nil {
+		return internal.MarshalJSONWithExtraProperty(g.ToolResult, "type", "tool_result")
+	}
+	if g.ToolError != nil {
+		return internal.MarshalJSONWithExtraProperty(g.ToolError, "type", "tool_error")
+	}
+	if g.Result != nil {
+		return internal.MarshalJSONWithExtraProperty(g.Result, "type", "result")
+	}
+	if g.Error != nil {
+		return internal.MarshalJSONWithExtraProperty(g.Error, "type", "error")
+	}
+	if len(g.rawJSON) > 0 {
+		return g.rawJSON, nil
+	}
+	return nil, fmt.Errorf("type %T does not define a non-empty union type", g)
+}
+
+type GraphQueryStreamEventVisitor interface {
+	VisitStarted(*GraphQueryStartedEvent) error
+	VisitReasoning(*GraphQueryReasoningEvent) error
+	VisitPlan(*GraphQueryPlanEvent) error
+	VisitToolCall(*GraphQueryToolCallEvent) error
+	VisitToolResult(*GraphQueryToolResultEvent) error
+	VisitToolError(*GraphQueryToolErrorEvent) error
+	VisitResult(*GraphQueryResultEvent) error
+	VisitError(*GraphQueryErrorEvent) error
+}
+
+func (g *GraphQueryStreamEvent) Accept(visitor GraphQueryStreamEventVisitor) error {
+	if g.Started != nil {
+		return visitor.VisitStarted(g.Started)
+	}
+	if g.Reasoning != nil {
+		return visitor.VisitReasoning(g.Reasoning)
+	}
+	if g.Plan != nil {
+		return visitor.VisitPlan(g.Plan)
+	}
+	if g.ToolCall != nil {
+		return visitor.VisitToolCall(g.ToolCall)
+	}
+	if g.ToolResult != nil {
+		return visitor.VisitToolResult(g.ToolResult)
+	}
+	if g.ToolError != nil {
+		return visitor.VisitToolError(g.ToolError)
+	}
+	if g.Result != nil {
+		return visitor.VisitResult(g.Result)
+	}
+	if g.Error != nil {
+		return visitor.VisitError(g.Error)
+	}
+	return fmt.Errorf("type %T does not define a non-empty union type", g)
+}
+
+func (g *GraphQueryStreamEvent) validate() error {
+	if g == nil {
+		return fmt.Errorf("type %T is nil", g)
+	}
+	var fields []string
+	if g.Started != nil {
+		fields = append(fields, "started")
+	}
+	if g.Reasoning != nil {
+		fields = append(fields, "reasoning")
+	}
+	if g.Plan != nil {
+		fields = append(fields, "plan")
+	}
+	if g.ToolCall != nil {
+		fields = append(fields, "tool_call")
+	}
+	if g.ToolResult != nil {
+		fields = append(fields, "tool_result")
+	}
+	if g.ToolError != nil {
+		fields = append(fields, "tool_error")
+	}
+	if g.Result != nil {
+		fields = append(fields, "result")
+	}
+	if g.Error != nil {
+		fields = append(fields, "error")
+	}
+	if len(fields) == 0 {
+		if g.Type != "" {
+			if len(g.rawJSON) > 0 {
+				return nil
+			}
+			return fmt.Errorf("type %T defines a discriminant set to %q but the field is not set", g, g.Type)
+		}
+		return fmt.Errorf("type %T is empty", g)
+	}
+	if len(fields) > 1 {
+		return fmt.Errorf("type %T defines values for %s, but only one value is allowed", g, fields)
+	}
+	if g.Type != "" {
+		field := fields[0]
+		if g.Type != field {
+			return fmt.Errorf(
+				"type %T defines a discriminant set to %q, but it does not match the %T field; either remove or update the discriminant to match",
+				g,
+				g.Type,
+				g,
+			)
+		}
+	}
+	return nil
+}
+
+var (
+	graphQueryToolCallEventFieldSequence   = big.NewInt(1 << 0)
+	graphQueryToolCallEventFieldStep       = big.NewInt(1 << 1)
+	graphQueryToolCallEventFieldCallNumber = big.NewInt(1 << 2)
+	graphQueryToolCallEventFieldTool       = big.NewInt(1 << 3)
+	graphQueryToolCallEventFieldArguments  = big.NewInt(1 << 4)
+)
+
+type GraphQueryToolCallEvent struct {
+	Sequence   int    `json:"sequence" url:"sequence"`
+	Step       int    `json:"step" url:"step"`
+	CallNumber int    `json:"call_number" url:"call_number"`
+	Tool       string `json:"tool" url:"tool"`
+	Arguments  string `json:"arguments" url:"arguments"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryToolCallEvent) GetSequence() int {
+	if g == nil {
+		return 0
+	}
+	return g.Sequence
+}
+
+func (g *GraphQueryToolCallEvent) GetStep() int {
+	if g == nil {
+		return 0
+	}
+	return g.Step
+}
+
+func (g *GraphQueryToolCallEvent) GetCallNumber() int {
+	if g == nil {
+		return 0
+	}
+	return g.CallNumber
+}
+
+func (g *GraphQueryToolCallEvent) GetTool() string {
+	if g == nil {
+		return ""
+	}
+	return g.Tool
+}
+
+func (g *GraphQueryToolCallEvent) GetArguments() string {
+	if g == nil {
+		return ""
+	}
+	return g.Arguments
+}
+
+func (g *GraphQueryToolCallEvent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryToolCallEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolCallEvent) SetSequence(sequence int) {
+	g.Sequence = sequence
+	g.require(graphQueryToolCallEventFieldSequence)
+}
+
+// SetStep sets the Step field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolCallEvent) SetStep(step int) {
+	g.Step = step
+	g.require(graphQueryToolCallEventFieldStep)
+}
+
+// SetCallNumber sets the CallNumber field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolCallEvent) SetCallNumber(callNumber int) {
+	g.CallNumber = callNumber
+	g.require(graphQueryToolCallEventFieldCallNumber)
+}
+
+// SetTool sets the Tool field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolCallEvent) SetTool(tool string) {
+	g.Tool = tool
+	g.require(graphQueryToolCallEventFieldTool)
+}
+
+// SetArguments sets the Arguments field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolCallEvent) SetArguments(arguments string) {
+	g.Arguments = arguments
+	g.require(graphQueryToolCallEventFieldArguments)
+}
+
+func (g *GraphQueryToolCallEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryToolCallEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryToolCallEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryToolCallEvent) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryToolCallEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryToolCallEvent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphQueryToolErrorEventFieldSequence   = big.NewInt(1 << 0)
+	graphQueryToolErrorEventFieldCallNumber = big.NewInt(1 << 1)
+	graphQueryToolErrorEventFieldTool       = big.NewInt(1 << 2)
+	graphQueryToolErrorEventFieldReason     = big.NewInt(1 << 3)
+	graphQueryToolErrorEventFieldDurationMs = big.NewInt(1 << 4)
+)
+
+type GraphQueryToolErrorEvent struct {
+	Sequence   int                            `json:"sequence" url:"sequence"`
+	CallNumber int                            `json:"call_number" url:"call_number"`
+	Tool       string                         `json:"tool" url:"tool"`
+	Reason     GraphQueryToolErrorEventReason `json:"reason" url:"reason"`
+	DurationMs int64                          `json:"duration_ms" url:"duration_ms"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryToolErrorEvent) GetSequence() int {
+	if g == nil {
+		return 0
+	}
+	return g.Sequence
+}
+
+func (g *GraphQueryToolErrorEvent) GetCallNumber() int {
+	if g == nil {
+		return 0
+	}
+	return g.CallNumber
+}
+
+func (g *GraphQueryToolErrorEvent) GetTool() string {
+	if g == nil {
+		return ""
+	}
+	return g.Tool
+}
+
+func (g *GraphQueryToolErrorEvent) GetReason() GraphQueryToolErrorEventReason {
+	if g == nil {
+		return ""
+	}
+	return g.Reason
+}
+
+func (g *GraphQueryToolErrorEvent) GetDurationMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.DurationMs
+}
+
+func (g *GraphQueryToolErrorEvent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryToolErrorEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolErrorEvent) SetSequence(sequence int) {
+	g.Sequence = sequence
+	g.require(graphQueryToolErrorEventFieldSequence)
+}
+
+// SetCallNumber sets the CallNumber field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolErrorEvent) SetCallNumber(callNumber int) {
+	g.CallNumber = callNumber
+	g.require(graphQueryToolErrorEventFieldCallNumber)
+}
+
+// SetTool sets the Tool field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolErrorEvent) SetTool(tool string) {
+	g.Tool = tool
+	g.require(graphQueryToolErrorEventFieldTool)
+}
+
+// SetReason sets the Reason field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolErrorEvent) SetReason(reason GraphQueryToolErrorEventReason) {
+	g.Reason = reason
+	g.require(graphQueryToolErrorEventFieldReason)
+}
+
+// SetDurationMs sets the DurationMs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolErrorEvent) SetDurationMs(durationMs int64) {
+	g.DurationMs = durationMs
+	g.require(graphQueryToolErrorEventFieldDurationMs)
+}
+
+func (g *GraphQueryToolErrorEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryToolErrorEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryToolErrorEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryToolErrorEvent) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryToolErrorEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryToolErrorEvent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type GraphQueryToolErrorEventReason string
+
+const (
+	GraphQueryToolErrorEventReasonInvalidArguments GraphQueryToolErrorEventReason = "invalid_arguments"
+	GraphQueryToolErrorEventReasonDuplicateCall    GraphQueryToolErrorEventReason = "duplicate_call"
+	GraphQueryToolErrorEventReasonUnknownTool      GraphQueryToolErrorEventReason = "unknown_tool"
+	GraphQueryToolErrorEventReasonPlanLimit        GraphQueryToolErrorEventReason = "plan_limit"
+	GraphQueryToolErrorEventReasonRetrievalFailed  GraphQueryToolErrorEventReason = "retrieval_failed"
+)
+
+func NewGraphQueryToolErrorEventReasonFromString(s string) (GraphQueryToolErrorEventReason, error) {
+	switch s {
+	case "invalid_arguments":
+		return GraphQueryToolErrorEventReasonInvalidArguments, nil
+	case "duplicate_call":
+		return GraphQueryToolErrorEventReasonDuplicateCall, nil
+	case "unknown_tool":
+		return GraphQueryToolErrorEventReasonUnknownTool, nil
+	case "plan_limit":
+		return GraphQueryToolErrorEventReasonPlanLimit, nil
+	case "retrieval_failed":
+		return GraphQueryToolErrorEventReasonRetrievalFailed, nil
+	}
+	var t GraphQueryToolErrorEventReason
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphQueryToolErrorEventReason) Ptr() *GraphQueryToolErrorEventReason {
+	return &g
+}
+
+var (
+	graphQueryToolResultEventFieldSequence   = big.NewInt(1 << 0)
+	graphQueryToolResultEventFieldCallNumber = big.NewInt(1 << 1)
+	graphQueryToolResultEventFieldTool       = big.NewInt(1 << 2)
+	graphQueryToolResultEventFieldDurationMs = big.NewInt(1 << 3)
+	graphQueryToolResultEventFieldListing    = big.NewInt(1 << 4)
+	graphQueryToolResultEventFieldHandles    = big.NewInt(1 << 5)
+	graphQueryToolResultEventFieldResults    = big.NewInt(1 << 6)
+)
+
+type GraphQueryToolResultEvent struct {
+	Sequence   int                 `json:"sequence" url:"sequence"`
+	CallNumber int                 `json:"call_number" url:"call_number"`
+	Tool       string              `json:"tool" url:"tool"`
+	DurationMs int64               `json:"duration_ms" url:"duration_ms"`
+	Listing    *GraphQueryListing  `json:"listing,omitempty" url:"listing,omitempty"`
+	Handles    []*GraphQueryHandle `json:"handles" url:"handles"`
+	Results    *GraphQueryResults  `json:"results" url:"results"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphQueryToolResultEvent) GetSequence() int {
+	if g == nil {
+		return 0
+	}
+	return g.Sequence
+}
+
+func (g *GraphQueryToolResultEvent) GetCallNumber() int {
+	if g == nil {
+		return 0
+	}
+	return g.CallNumber
+}
+
+func (g *GraphQueryToolResultEvent) GetTool() string {
+	if g == nil {
+		return ""
+	}
+	return g.Tool
+}
+
+func (g *GraphQueryToolResultEvent) GetDurationMs() int64 {
+	if g == nil {
+		return 0
+	}
+	return g.DurationMs
+}
+
+func (g *GraphQueryToolResultEvent) GetListing() *GraphQueryListing {
+	if g == nil {
+		return nil
+	}
+	return g.Listing
+}
+
+func (g *GraphQueryToolResultEvent) GetHandles() []*GraphQueryHandle {
+	if g == nil {
+		return nil
+	}
+	return g.Handles
+}
+
+func (g *GraphQueryToolResultEvent) GetResults() *GraphQueryResults {
+	if g == nil {
+		return nil
+	}
+	return g.Results
+}
+
+func (g *GraphQueryToolResultEvent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphQueryToolResultEvent) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetSequence sets the Sequence field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolResultEvent) SetSequence(sequence int) {
+	g.Sequence = sequence
+	g.require(graphQueryToolResultEventFieldSequence)
+}
+
+// SetCallNumber sets the CallNumber field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolResultEvent) SetCallNumber(callNumber int) {
+	g.CallNumber = callNumber
+	g.require(graphQueryToolResultEventFieldCallNumber)
+}
+
+// SetTool sets the Tool field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolResultEvent) SetTool(tool string) {
+	g.Tool = tool
+	g.require(graphQueryToolResultEventFieldTool)
+}
+
+// SetDurationMs sets the DurationMs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolResultEvent) SetDurationMs(durationMs int64) {
+	g.DurationMs = durationMs
+	g.require(graphQueryToolResultEventFieldDurationMs)
+}
+
+// SetListing sets the Listing field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolResultEvent) SetListing(listing *GraphQueryListing) {
+	g.Listing = listing
+	g.require(graphQueryToolResultEventFieldListing)
+}
+
+// SetHandles sets the Handles field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolResultEvent) SetHandles(handles []*GraphQueryHandle) {
+	g.Handles = handles
+	g.require(graphQueryToolResultEventFieldHandles)
+}
+
+// SetResults sets the Results field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryToolResultEvent) SetResults(results *GraphQueryResults) {
+	g.Results = results
+	g.require(graphQueryToolResultEventFieldResults)
+}
+
+func (g *GraphQueryToolResultEvent) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphQueryToolResultEvent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphQueryToolResultEvent(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphQueryToolResultEvent) MarshalJSON() ([]byte, error) {
+	type embed GraphQueryToolResultEvent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphQueryToolResultEvent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
 	nodeSearchFiltersFieldEpisodeUUIDs      = big.NewInt(1 << 0)
 	nodeSearchFiltersFieldExcludeNodeLabels = big.NewInt(1 << 1)
 	nodeSearchFiltersFieldMetadataFilters   = big.NewInt(1 << 2)
@@ -5161,6 +8349,29 @@ func NewGraphListRequestOrderByFromString(s string) (GraphListRequestOrderBy, er
 }
 
 func (g GraphListRequestOrderBy) Ptr() *GraphListRequestOrderBy {
+	return &g
+}
+
+// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep.
+type GraphQueryRequestMode string
+
+const (
+	GraphQueryRequestModeFast GraphQueryRequestMode = "fast"
+	GraphQueryRequestModeDeep GraphQueryRequestMode = "deep"
+)
+
+func NewGraphQueryRequestModeFromString(s string) (GraphQueryRequestMode, error) {
+	switch s {
+	case "fast":
+		return GraphQueryRequestModeFast, nil
+	case "deep":
+		return GraphQueryRequestModeDeep, nil
+	}
+	var t GraphQueryRequestMode
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphQueryRequestMode) Ptr() *GraphQueryRequestMode {
 	return &g
 }
 

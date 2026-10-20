@@ -149,6 +149,64 @@ func TestGraphLookupWithWireMock(
 	VerifyRequestCount(t, "TestGraphLookupWithWireMock", "POST", "/graphs/lookup", nil, 1)
 }
 
+func TestGraphQueryStreamWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.GraphQueryStreamRequest{
+		GraphUUIDs: []string{
+			"graph_uuids",
+		},
+		Query: "query",
+	}
+	_, invocationErr := client.Graph.QueryStream(
+		context.TODO(),
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphQueryStreamWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphQueryStreamWithWireMock", "POST", "/graphs/query", nil, 1)
+}
+
+func TestGraphQueryStreamWithWireMock2(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.GraphQueryStreamRequest{
+		GraphUUIDs: []string{
+			"graph_uuids",
+		},
+		Query: "query",
+	}
+	_, invocationErr := client.Graph.QueryStream(
+		context.TODO(),
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphQueryStreamWithWireMock2"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphQueryStreamWithWireMock2", "POST", "/graphs/query", nil, 1)
+}
+
 func TestGraphGetWithWireMock(
 	t *testing.T,
 ) {

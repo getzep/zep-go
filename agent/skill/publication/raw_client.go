@@ -91,7 +91,7 @@ func (r *RawClient) Get(
 	ctx context.Context,
 	// Destination Agent UUID
 	agentUUID string,
-	// Destination Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	opts ...option.RequestOption,
 ) (*core.Response[*zep.AgentSkillPublicationLineage], error) {

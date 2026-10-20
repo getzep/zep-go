@@ -12,6 +12,8 @@ import (
 var (
 	taskListRequestFieldPageSize = big.NewInt(1 << 0)
 	taskListRequestFieldCursor   = big.NewInt(1 << 1)
+	taskListRequestFieldStatus   = big.NewInt(1 << 2)
+	taskListRequestFieldType     = big.NewInt(1 << 3)
 )
 
 type TaskListRequest struct {
@@ -19,6 +21,10 @@ type TaskListRequest struct {
 	PageSize *int `json:"-" url:"page_size,omitempty"`
 	// Opaque page cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Return only the tasks with this status
+	Status *TaskListRequestStatus `json:"-" url:"status,omitempty"`
+	// Return only the tasks of this type
+	Type *TaskListRequestType `json:"-" url:"type,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -45,6 +51,20 @@ func (t *TaskListRequest) SetPageSize(pageSize *int) {
 func (t *TaskListRequest) SetCursor(cursor *string) {
 	t.Cursor = cursor
 	t.require(taskListRequestFieldCursor)
+}
+
+// SetStatus sets the Status field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskListRequest) SetStatus(status *TaskListRequestStatus) {
+	t.Status = status
+	t.require(taskListRequestFieldStatus)
+}
+
+// SetType sets the Type field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (t *TaskListRequest) SetType(type_ *TaskListRequestType) {
+	t.Type = type_
+	t.require(taskListRequestFieldType)
 }
 
 var (
@@ -168,4 +188,141 @@ func (t *TaskPage) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+type TaskListRequestStatus string
+
+const (
+	TaskListRequestStatusPending    TaskListRequestStatus = "pending"
+	TaskListRequestStatusProcessing TaskListRequestStatus = "processing"
+	TaskListRequestStatusSucceeded  TaskListRequestStatus = "succeeded"
+	TaskListRequestStatusPartial    TaskListRequestStatus = "partial"
+	TaskListRequestStatusFailed     TaskListRequestStatus = "failed"
+)
+
+func NewTaskListRequestStatusFromString(s string) (TaskListRequestStatus, error) {
+	switch s {
+	case "pending":
+		return TaskListRequestStatusPending, nil
+	case "processing":
+		return TaskListRequestStatusProcessing, nil
+	case "succeeded":
+		return TaskListRequestStatusSucceeded, nil
+	case "partial":
+		return TaskListRequestStatusPartial, nil
+	case "failed":
+		return TaskListRequestStatusFailed, nil
+	}
+	var t TaskListRequestStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TaskListRequestStatus) Ptr() *TaskListRequestStatus {
+	return &t
+}
+
+type TaskListRequestType string
+
+const (
+	TaskListRequestTypeUserDelete                              TaskListRequestType = "user.delete"
+	TaskListRequestTypeAgentDelete                             TaskListRequestType = "agent.delete"
+	TaskListRequestTypeThreadDelete                            TaskListRequestType = "thread.delete"
+	TaskListRequestTypeGraphDelete                             TaskListRequestType = "graph.delete"
+	TaskListRequestTypeGraphAdd                                TaskListRequestType = "graph.add"
+	TaskListRequestTypeGraphAddNodes                           TaskListRequestType = "graph.add_nodes"
+	TaskListRequestTypeGraphAddEdges                           TaskListRequestType = "graph.add_edges"
+	TaskListRequestTypeGraphAddFactTriple                      TaskListRequestType = "graph.add_fact_triple"
+	TaskListRequestTypeGraphAddTriple                          TaskListRequestType = "graph.add_triple"
+	TaskListRequestTypeGraphEdgeAdd                            TaskListRequestType = "graph.edge.add"
+	TaskListRequestTypeGraphClone                              TaskListRequestType = "graph.clone"
+	TaskListRequestTypeGraphWarm                               TaskListRequestType = "graph.warm"
+	TaskListRequestTypeGraphEpisodeDelete                      TaskListRequestType = "graph.episode.delete"
+	TaskListRequestTypeGraphNodeDelete                         TaskListRequestType = "graph.node.delete"
+	TaskListRequestTypeGraphEdgeDelete                         TaskListRequestType = "graph.edge.delete"
+	TaskListRequestTypeGraphHyperedgeAdd                       TaskListRequestType = "graph.hyperedge.add"
+	TaskListRequestTypeGraphHyperedgeCreateEdge                TaskListRequestType = "graph.hyperedge.create_edge"
+	TaskListRequestTypeGraphHyperedgeDelete                    TaskListRequestType = "graph.hyperedge.delete"
+	TaskListRequestTypeGraphHyperedgeDeleteEdge                TaskListRequestType = "graph.hyperedge.delete_edge"
+	TaskListRequestTypeThreadAddMessages                       TaskListRequestType = "thread.add_messages"
+	TaskListRequestTypeBatchProcess                            TaskListRequestType = "batch.process"
+	TaskListRequestTypeAgentTrajectoryFinalize                 TaskListRequestType = "agent.trajectory.finalize"
+	TaskListRequestTypeAgentTrajectoryRepairTaskFamily         TaskListRequestType = "agent.trajectory.repair.task_family"
+	TaskListRequestTypeAgentTrajectoryRepairEvidenceDeletion   TaskListRequestType = "agent.trajectory.repair.evidence_deletion"
+	TaskListRequestTypeAgentTrajectoryImportRun                TaskListRequestType = "agent.trajectory_import.run"
+	TaskListRequestTypeAgentTrajectoryImportDelete             TaskListRequestType = "agent.trajectory_import.delete"
+	TaskListRequestTypeAgentVerifierRepairEvidenceInvalidation TaskListRequestType = "agent.verifier.repair.evidence_invalidation"
+	TaskListRequestTypeAgentSkillRepairSourceDeletion          TaskListRequestType = "agent.skill.repair.source_deletion"
+	TaskListRequestTypeAgentSkillExport                        TaskListRequestType = "agent.skill.export"
+	TaskListRequestTypeAgentSkillImport                        TaskListRequestType = "agent.skill.import"
+)
+
+func NewTaskListRequestTypeFromString(s string) (TaskListRequestType, error) {
+	switch s {
+	case "user.delete":
+		return TaskListRequestTypeUserDelete, nil
+	case "agent.delete":
+		return TaskListRequestTypeAgentDelete, nil
+	case "thread.delete":
+		return TaskListRequestTypeThreadDelete, nil
+	case "graph.delete":
+		return TaskListRequestTypeGraphDelete, nil
+	case "graph.add":
+		return TaskListRequestTypeGraphAdd, nil
+	case "graph.add_nodes":
+		return TaskListRequestTypeGraphAddNodes, nil
+	case "graph.add_edges":
+		return TaskListRequestTypeGraphAddEdges, nil
+	case "graph.add_fact_triple":
+		return TaskListRequestTypeGraphAddFactTriple, nil
+	case "graph.add_triple":
+		return TaskListRequestTypeGraphAddTriple, nil
+	case "graph.edge.add":
+		return TaskListRequestTypeGraphEdgeAdd, nil
+	case "graph.clone":
+		return TaskListRequestTypeGraphClone, nil
+	case "graph.warm":
+		return TaskListRequestTypeGraphWarm, nil
+	case "graph.episode.delete":
+		return TaskListRequestTypeGraphEpisodeDelete, nil
+	case "graph.node.delete":
+		return TaskListRequestTypeGraphNodeDelete, nil
+	case "graph.edge.delete":
+		return TaskListRequestTypeGraphEdgeDelete, nil
+	case "graph.hyperedge.add":
+		return TaskListRequestTypeGraphHyperedgeAdd, nil
+	case "graph.hyperedge.create_edge":
+		return TaskListRequestTypeGraphHyperedgeCreateEdge, nil
+	case "graph.hyperedge.delete":
+		return TaskListRequestTypeGraphHyperedgeDelete, nil
+	case "graph.hyperedge.delete_edge":
+		return TaskListRequestTypeGraphHyperedgeDeleteEdge, nil
+	case "thread.add_messages":
+		return TaskListRequestTypeThreadAddMessages, nil
+	case "batch.process":
+		return TaskListRequestTypeBatchProcess, nil
+	case "agent.trajectory.finalize":
+		return TaskListRequestTypeAgentTrajectoryFinalize, nil
+	case "agent.trajectory.repair.task_family":
+		return TaskListRequestTypeAgentTrajectoryRepairTaskFamily, nil
+	case "agent.trajectory.repair.evidence_deletion":
+		return TaskListRequestTypeAgentTrajectoryRepairEvidenceDeletion, nil
+	case "agent.trajectory_import.run":
+		return TaskListRequestTypeAgentTrajectoryImportRun, nil
+	case "agent.trajectory_import.delete":
+		return TaskListRequestTypeAgentTrajectoryImportDelete, nil
+	case "agent.verifier.repair.evidence_invalidation":
+		return TaskListRequestTypeAgentVerifierRepairEvidenceInvalidation, nil
+	case "agent.skill.repair.source_deletion":
+		return TaskListRequestTypeAgentSkillRepairSourceDeletion, nil
+	case "agent.skill.export":
+		return TaskListRequestTypeAgentSkillExport, nil
+	case "agent.skill.import":
+		return TaskListRequestTypeAgentSkillImport, nil
+	}
+	var t TaskListRequestType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TaskListRequestType) Ptr() *TaskListRequestType {
+	return &t
 }

@@ -18,7 +18,7 @@ var (
 type SourceTraceGetRequest struct {
 	// Mapping is an optional mapping preview configuration. Example: {"task_family":{"source":"fixed","value":"support"}}.
 	Mapping *v4.TraceMapping `json:"mapping,omitempty" url:"-"`
-	// ProviderProjectID is the provider project identifier.
+	// The developer supplies the project ID from the selected provider.
 	ProviderProjectID string `json:"provider_project_id" url:"-"`
 	// TraceID is the provider trace identifier.
 	TraceID string `json:"trace_id" url:"-"`
@@ -92,7 +92,7 @@ type SourceTraceListRequest struct {
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// Filter contains provider trace filters. Example: {"started_after":"2026-01-01T00:00:00Z"}.
 	Filter *v4.TraceFilter `json:"filter,omitempty" url:"-"`
-	// ProviderProjectID is the provider project identifier.
+	// The developer supplies the project ID from the selected provider.
 	ProviderProjectID string `json:"provider_project_id" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted

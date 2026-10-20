@@ -66,9 +66,9 @@ func NewClient(options *core.RequestOptions) *Client {
 // Example:
 //
 //	request := &zep.CreateAgentRequest{
-//	    AgentID: "agent_id",
-//	    Name: "name",
-//	    SecurityDomain: "security_domain",
+//	    AgentID: "payments-agent",
+//	    Name: "Refund a duplicate charge",
+//	    SecurityDomain: "customer:support",
 //	}
 //	client.Agent.Create(
 //	    context.TODO(),
@@ -242,11 +242,13 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
+// Declare a breaking Agent deployment change. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &zep.DeclareAgentBreakingChangeRequest{
 //	    ExpectedRevision: 1,
-//	    Version: "version",
+//	    Version: "2026.09.01",
 //	}
 //	client.Agent.DeclareBreakingChange(
 //	    context.TODO(),
@@ -272,6 +274,8 @@ func (c *Client) DeclareBreakingChange(
 	return response.Body, nil
 }
 
+// Get Agent context. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &zep.GetAgentContextRequest{}

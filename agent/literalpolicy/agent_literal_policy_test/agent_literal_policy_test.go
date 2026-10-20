@@ -115,18 +115,18 @@ func TestAgentLiteralPolicyUpdateWithWireMock(
 	request := &agent.UpdateAgentLiteralPolicyRequest{
 		AllowlistedClasses: &zep.AgentLiteralPolicyClasses{
 			Environments: []string{
-				"environments",
+				"environment_name",
 			},
 			Tools: []string{
-				"tools",
+				"command_name",
 			},
 		},
 		AllowlistedValues: &zep.AgentLiteralPolicyValues{
 			Environments: []string{
-				"environments",
+				"production",
 			},
 			Tools: []string{
-				"tools",
+				"refund_payment",
 			},
 		},
 		Default: agent.UpdateAgentLiteralPolicyRequestDefaultParameterize,

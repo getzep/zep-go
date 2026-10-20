@@ -43,7 +43,7 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
-// List runs that belong to this trace import.
+// List runs that belong to this trace import. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
 //
 // Example:
 //
@@ -122,7 +122,7 @@ func (c *Client) List(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
-// Create a pending run and its Task. This operation does not start the run.
+// Create a pending run and its Task. This operation does not start the run. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
 //
 // Example:
 //
@@ -151,7 +151,7 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
-// Read one run that belongs to this trace import.
+// Read one run that belongs to this trace import. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
 //
 // Example:
 //

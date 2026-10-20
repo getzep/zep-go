@@ -26,6 +26,22 @@ func TestSettersTaskListRequest(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetStatus", func(t *testing.T) {
+		obj := &TaskListRequest{}
+		var fernTestValueStatus *TaskListRequestStatus
+		obj.SetStatus(fernTestValueStatus)
+		assert.Equal(t, fernTestValueStatus, obj.Status)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+	t.Run("SetType", func(t *testing.T) {
+		obj := &TaskListRequest{}
+		var fernTestValueType *TaskListRequestType
+		obj.SetType(fernTestValueType)
+		assert.Equal(t, fernTestValueType, obj.Type)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 }
 
 func TestSettersMarkExplicitTaskListRequest(t *testing.T) {
@@ -68,6 +84,68 @@ func TestSettersMarkExplicitTaskListRequest(t *testing.T) {
 
 		// Act
 		obj.SetCursor(fernTestValueCursor)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetStatus_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &TaskListRequest{}
+		var fernTestValueStatus *TaskListRequestStatus
+
+		// Act
+		obj.SetStatus(fernTestValueStatus)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetType_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &TaskListRequest{}
+		var fernTestValueType *TaskListRequestType
+
+		// Act
+		obj.SetType(fernTestValueType)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -364,6 +442,281 @@ func TestStringTaskPage(t *testing.T) {
 		var obj *TaskPage
 		result := obj.String()
 		assert.Equal(t, "<nil>", result, "String() should return <nil> for nil receiver")
+	})
+}
+
+func TestEnumTaskListRequestStatus(t *testing.T) {
+	t.Run("NewFromString_pending", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestStatusFromString("pending")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestStatus("pending"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_processing", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestStatusFromString("processing")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestStatus("processing"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_succeeded", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestStatusFromString("succeeded")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestStatus("succeeded"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_partial", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestStatusFromString("partial")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestStatus("partial"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_failed", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestStatusFromString("failed")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestStatus("failed"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewTaskListRequestStatusFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewTaskListRequestStatusFromString("pending")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumTaskListRequestType(t *testing.T) {
+	t.Run("NewFromString_user_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("user.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("user.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_thread_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("thread.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("thread.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_add", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.add")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.add"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_add_nodes", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.add_nodes")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.add_nodes"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_add_edges", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.add_edges")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.add_edges"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_add_fact_triple", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.add_fact_triple")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.add_fact_triple"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_add_triple", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.add_triple")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.add_triple"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_edge_add", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.edge.add")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.edge.add"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_clone", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.clone")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.clone"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_warm", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.warm")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.warm"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_episode_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.episode.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.episode.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_node_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.node.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.node.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_edge_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.edge.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.edge.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_hyperedge_add", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.hyperedge.add")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.hyperedge.add"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_hyperedge_create_edge", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.hyperedge.create_edge")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.hyperedge.create_edge"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_hyperedge_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.hyperedge.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.hyperedge.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_graph_hyperedge_delete_edge", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("graph.hyperedge.delete_edge")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("graph.hyperedge.delete_edge"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_thread_add_messages", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("thread.add_messages")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("thread.add_messages"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_batch_process", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("batch.process")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("batch.process"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_trajectory_finalize", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.trajectory.finalize")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.trajectory.finalize"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_trajectory_repair_task_family", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.trajectory.repair.task_family")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.trajectory.repair.task_family"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_trajectory_repair_evidence_deletion", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.trajectory.repair.evidence_deletion")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.trajectory.repair.evidence_deletion"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_trajectory_import_run", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.trajectory_import.run")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.trajectory_import.run"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_trajectory_import_delete", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.trajectory_import.delete")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.trajectory_import.delete"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_verifier_repair_evidence_invalidation", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.verifier.repair.evidence_invalidation")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.verifier.repair.evidence_invalidation"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_skill_repair_source_deletion", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.skill.repair.source_deletion")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.skill.repair.source_deletion"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_skill_export", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.skill.export")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.skill.export"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_agent_skill_import", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewTaskListRequestTypeFromString("agent.skill.import")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, TaskListRequestType("agent.skill.import"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewTaskListRequestTypeFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewTaskListRequestTypeFromString("user.delete")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
 	})
 }
 
