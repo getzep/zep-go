@@ -89,9 +89,9 @@ func TestAgentCreateWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &zep.CreateAgentRequest{
-		AgentID:        "agent_id",
-		Name:           "name",
-		SecurityDomain: "security_domain",
+		AgentID:        "payments-agent",
+		Name:           "Refund a duplicate charge",
+		SecurityDomain: "customer:support",
 	}
 	_, invocationErr := client.Agent.Create(
 		context.TODO(),
@@ -219,7 +219,7 @@ func TestAgentDeclareBreakingChangeWithWireMock(
 	)
 	request := &zep.DeclareAgentBreakingChangeRequest{
 		ExpectedRevision: 1,
-		Version:          "version",
+		Version:          "2026.09.01",
 	}
 	_, invocationErr := client.Agent.DeclareBreakingChange(
 		context.TODO(),

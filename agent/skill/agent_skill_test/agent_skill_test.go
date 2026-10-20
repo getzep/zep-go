@@ -142,7 +142,7 @@ func TestAgentSkillSearchWithWireMock(
 		option.WithAPIKey("test-value"),
 	)
 	request := &agent.AgentSkillSearchRequest{
-		Query: "query",
+		Query: "How do I refund a duplicate charge?",
 	}
 	_, invocationErr := client.Agent.Skill.Search(
 		context.TODO(),

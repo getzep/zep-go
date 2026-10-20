@@ -40,6 +40,8 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// Get Agent Learning State. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.LearningGetRequest{
@@ -69,6 +71,8 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
+// List durable learning-run outcomes for an Agent. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.LearningListRunsRequest{}

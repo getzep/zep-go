@@ -39,7 +39,7 @@ func (r *RawClient) Create(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	// Skill version
 	version int,
@@ -93,7 +93,7 @@ func (r *RawClient) Get(
 	ctx context.Context,
 	// Agent UUID
 	agentUUID string,
-	// Skill UUID
+	// Skill UUID, or the 8-character short_id
 	skillUUID string,
 	// Skill version
 	version int,

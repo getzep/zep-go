@@ -40,6 +40,8 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
+// List Agent Verifiers. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.AgentVerifierListRequest{}
@@ -117,6 +119,8 @@ func (c *Client) List(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// Get Agent Verifier. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	client.Agent.Verifier.Get(
@@ -144,6 +148,8 @@ func (c *Client) Get(
 	return response.Body, nil
 }
 
+// Update Agent Verifier. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.PatchAgentVerifierRequest{
@@ -177,10 +183,12 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
+// Invalidate Agent Verifier Evidence. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.InvalidateAgentVerifierEvidenceRequest{
-//	    Reason: "reason",
+//	    Reason: "acknowledged_gap",
 //	    VerifierRevisions: []int{
 //	        1,
 //	    },
@@ -213,6 +221,8 @@ func (c *Client) InvalidateEvidence(
 	return response.Body, nil
 }
 
+// Revoke Agent Verifier. Agent Skills is in closed release. Zep enables Agent Skills only for select accounts. A request from an account without access returns `403 permission_denied`. To get access, contact support@getzep.com.
+//
 // Example:
 //
 //	request := &agent.RevokeAgentVerifierRequest{

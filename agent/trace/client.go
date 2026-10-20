@@ -43,7 +43,7 @@ func NewClient(options *core.RequestOptions) *Client {
 // Example:
 //
 //	request := &agent.CreateAgentTraceRequest{
-//	    Objective: "objective",
+//	    Objective: "Refund a duplicate charge.",
 //	}
 //	client.Agent.Trace.Create(
 //	    context.TODO(),
@@ -210,6 +210,9 @@ func (c *Client) Delete(
 //
 //	request := &agent.PatchAgentTraceRequest{
 //	    ExpectedRevision: 1,
+//	    TaskFamily: zep.String(
+//	        "support/refund",
+//	    ),
 //	}
 //	client.Agent.Trace.Update(
 //	    context.TODO(),
@@ -307,7 +310,10 @@ func (c *Client) Close(
 //
 //	request := &agent.CorrectAgentTraceTaskFamilyRequest{
 //	    ExpectedRevision: 1,
-//	    Reason: "reason",
+//	    Reason: "acknowledged_gap",
+//	    TaskFamily: zep.String(
+//	        "support/refund",
+//	    ),
 //	}
 //	client.Agent.Trace.CorrectTaskFamily(
 //	    context.TODO(),
@@ -414,6 +420,8 @@ func (c *Client) ListEvents(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// A tool call and its result can share a tool_call_id. For example, append {"event_type":"tool_call","tool_call_id":"call_8f2b","content":"Search orders","context":{"tools":[{"name":"search_orders"}]}} and {"event_type":"tool_result","tool_call_id":"call_8f2b","content":"Order results","context":{"tools":[{"name":"search_orders"}]}}.
+//
 // Example:
 //
 //	request := &agent.AppendAgentTraceEventRequest{

@@ -15,8 +15,10 @@ var (
 )
 
 type CompareAgentSkillVersionsRequest struct {
+	// The developer supplies the source version to compare. It must be at least 1.
 	FromVersion int `json:"from_version" url:"-"`
-	ToVersion   int `json:"to_version" url:"-"`
+	// The developer supplies the destination version to compare. It must be at least 1.
+	ToVersion int `json:"to_version" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -68,11 +70,14 @@ func (c *CompareAgentSkillVersionsRequest) MarshalJSON() ([]byte, error) {
 
 var (
 	versionGetRequestFieldMarkdownFormat = big.NewInt(1 << 0)
+	versionGetRequestFieldInclude        = big.NewInt(1 << 1)
 )
 
 type VersionGetRequest struct {
 	// Markdown form: agent (default) or full
 	MarkdownFormat *VersionGetRequestMarkdownFormat `json:"-" url:"markdown_format,omitempty"`
+	// Optional field to add to the response: contract
+	Include *string `json:"-" url:"include,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -92,6 +97,13 @@ func (v *VersionGetRequest) require(field *big.Int) {
 func (v *VersionGetRequest) SetMarkdownFormat(markdownFormat *VersionGetRequestMarkdownFormat) {
 	v.MarkdownFormat = markdownFormat
 	v.require(versionGetRequestFieldMarkdownFormat)
+}
+
+// SetInclude sets the Include field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (v *VersionGetRequest) SetInclude(include *string) {
+	v.Include = include
+	v.require(versionGetRequestFieldInclude)
 }
 
 var (
@@ -148,8 +160,10 @@ var (
 )
 
 type RestoreAgentSkillVersionRequest struct {
+	// The developer supplies the current Skill version to protect against concurrent edits.
 	ExpectedVersion int `json:"expected_version" url:"-"`
-	Version         int `json:"version" url:"-"`
+	// The developer supplies the Skill version to restore.
+	Version int `json:"version" url:"-"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`

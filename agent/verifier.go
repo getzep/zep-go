@@ -15,7 +15,7 @@ var (
 )
 
 type InvalidateAgentVerifierEvidenceRequest struct {
-	// Why evidence from these verifier revisions is invalid.
+	// The developer supplies why evidence from these verifier revisions is invalid.
 	Reason string `json:"reason" url:"-"`
 	// Verifier revisions whose accepted evidence is no longer valid.
 	VerifierRevisions []int `json:"verifier_revisions" url:"-"`

@@ -162,6 +162,37 @@ func (f *ForbiddenError) GetBody() *APIError {
 	return f.Body
 }
 
+// Internal Server Error
+type InternalServerError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (i *InternalServerError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	i.StatusCode = 500
+	i.Body = body
+	return nil
+}
+
+func (i *InternalServerError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(i.Body)
+}
+
+func (i *InternalServerError) Unwrap() error {
+	return i.APIError
+}
+
+func (i *InternalServerError) GetBody() *APIError {
+	if i == nil {
+		return nil
+	}
+	return i.Body
+}
+
 // Not Found
 type NotFoundError struct {
 	*core.APIError
@@ -222,6 +253,37 @@ func (s *ServiceUnavailableError) GetBody() *APIError {
 		return nil
 	}
 	return s.Body
+}
+
+// Too Many Requests
+type TooManyRequestsError struct {
+	*core.APIError
+	Body *APIError
+}
+
+func (t *TooManyRequestsError) UnmarshalJSON(data []byte) error {
+	var body *APIError
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	t.StatusCode = 429
+	t.Body = body
+	return nil
+}
+
+func (t *TooManyRequestsError) MarshalJSON() ([]byte, error) {
+	return json.Marshal(t.Body)
+}
+
+func (t *TooManyRequestsError) Unwrap() error {
+	return t.APIError
+}
+
+func (t *TooManyRequestsError) GetBody() *APIError {
+	if t == nil {
+		return nil
+	}
+	return t.Body
 }
 
 // Unauthorized
