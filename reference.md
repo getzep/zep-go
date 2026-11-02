@@ -1442,7 +1442,7 @@ client.Graph.Lookup(
 <dl>
 <dd>
 
-Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
+Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
 </dd>
 </dl>
 </dd>
@@ -1508,7 +1508,7 @@ The default is false: the response has the records and no answer.
 <dl>
 <dd>
 
-**mode:** `*zep.GraphQueryRequestMode` — The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep.
+**mode:** `*zep.GraphQueryRequestMode` — The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
     
 </dd>
 </dl>
@@ -1548,7 +1548,7 @@ The default is false: the response has the records and no answer.
 <dl>
 <dd>
 
-Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
+Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
 </dd>
 </dl>
 </dd>
@@ -1614,7 +1614,7 @@ The default is false: the response has the records and no answer.
 <dl>
 <dd>
 
-**mode:** `*zep.GraphQueryRequestMode` — The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep.
+**mode:** `*zep.GraphQueryRequestMode` — The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
     
 </dd>
 </dl>
@@ -2175,6 +2175,81 @@ client.Graph.SetInstructions(
 <dd>
 
 **request:** `*zep.Instructions` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Graph.ListMetadataKeys(GraphUUID) -> *zep.GraphMetadataKeyList</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the append-only metadata keys recorded for a graph. A key can remain in the list after no episode or message uses it.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.GraphListMetadataKeysRequest{}
+client.Graph.ListMetadataKeys(
+    context.TODO(),
+    "graph_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**pageSize:** `*int` — The maximum number of keys per page.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `*string` — Opaque page cursor
     
 </dd>
 </dl>
@@ -5985,6 +6060,72 @@ cannot be changed after creation.
 </dl>
 </details>
 
+<details><summary><code>client.User.GetByEmail(request) -> *zep.User</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Send `{"email": "jane@example.com"}` to get the user with this email.
+An email matches only when the stored and requested values are equal after normalization.
+Normalization lowercases both values and trims leading and trailing whitespace.
+The operation returns `404 not_found` when no active user matches.
+The operation returns `400 invalid_request` with `param: "email"` when multiple active users match.
+The operation returns `400 invalid_request` with `param: "email"` when BYOK is active for the account.
+An email that was stored encrypted with BYOK does not match.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.GetUserByEmailRequest{
+    Email: "jane@example.com",
+}
+client.User.GetByEmail(
+    context.TODO(),
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**email:** `string` — The user's email address. Matching ignores case and leading and trailing whitespace.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.User.List(request) -> *zep.UserPage</code></summary>
 <dl>
 <dd>
@@ -7041,7 +7182,7 @@ sections. `full` returns the stored SKILL.md with its evidence markers.
 <dl>
 <dd>
 
-**query:** `string` — The developer supplies a search query for Skills.
+**query:** `string` — The developer supplies a search query for Skills. A term is a sequence of characters between whitespace. When the query has more than 64 terms, Zep searches with the first 64 terms and ignores the other terms. The query must not be longer than 512 bytes.
     
 </dd>
 </dl>
@@ -11842,10 +11983,25 @@ names the filter fields that the operation does not support.
 </dl>
 </details>
 
-## Graph Episode
-<details><summary><code>client.Graph.Episode.ListForDocument(GraphUUID, DocumentID) -> *zep.EpisodePage</code></summary>
+## Graph Edge
+<details><summary><code>client.Graph.Edge.Add(GraphUUID, request) -> *zep.AddEdgesResult</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Adds 1 to 100 edges. A name creates a node when deduplicate is false. When deduplicate is true, Zep matches a node by name first.
+Example: {"edges":[{"fact":"Ada works at Acme Corp","fact_name":"WORKS_AT","source_node":{"uuid":"f47ac10b-58cc-4372-a567-0e02b2c3d479"},"target_node":{"uuid":"f47ac10b-58cc-4372-a567-0e02b2c3d480"}},{"fact":"Ada leads a team","fact_name":"LEADS","source_node":{"name":"Ada Lovelace","labels":["Person"]},"target_node":{"name":"Engineering","labels":["Department"]}}],"deduplicate":false}
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -11856,11 +12012,19 @@ names the filter fields that the operation does not support.
 <dd>
 
 ```go
-request := &graph.EpisodeListForDocumentRequest{}
-client.Graph.Episode.ListForDocument(
+request := &graph.AddEdgesRequest{
+    Edges: []*zep.EdgeInput{
+        &zep.EdgeInput{
+            Fact: "Ada works at Acme Corp",
+            FactName: "WORKS_AT",
+            SourceNode: &zep.EdgeNodeRef{},
+            TargetNode: &zep.EdgeNodeRef{},
+        },
+    },
+}
+client.Graph.Edge.Add(
     context.TODO(),
     "graph_uuid",
-    "document_id",
     request,
 )
 ```
@@ -11885,7 +12049,81 @@ client.Graph.Episode.ListForDocument(
 <dl>
 <dd>
 
-**documentID:** `string` — Document ID
+**deduplicate:** `*bool` 
+
+When true, Zep compares each edge with graph edges and can merge a
+duplicate or invalidate a contradicted edge. This adds an LLM call per
+edge. The default is false.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**edges:** `[]*zep.EdgeInput` — The edges to add to the graph. The request accepts 1 to 100 edges.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Graph.Edge.List(GraphUUID, request) -> *zep.EdgePage</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists the edges of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
+You can sort by `uuid`, `created_at`, or `valid_at`. The default sort is `uuid` in descending order. An edge with no `valid_at` sorts as if its `valid_at` is 1970-01-01T00:00:00Z. Thus it comes before an edge with a later `valid_at` in ascending order, and after an edge with an earlier `valid_at`.
+You can use all `filters` fields except `content_policy_violated`.
+If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &graph.EdgeListRequest{}
+client.Graph.Edge.List(
+    context.TODO(),
+    "graph_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
     
 </dd>
 </dl>
@@ -11905,6 +12143,33 @@ client.Graph.Episode.ListForDocument(
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**orderBy:** `*graph.EdgeListRequestOrderBy` — Sort key: uuid (default), created_at, or valid_at
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**order:** `*graph.EdgeListRequestOrder` — Sort direction: asc or desc (default desc)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filters:** `*zep.EdgeListFilters` 
+
+Filters that limit the items in the list. The operation description
+names the filter fields that the operation does not support.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -11913,6 +12178,204 @@ client.Graph.Episode.ListForDocument(
 </dl>
 </details>
 
+<details><summary><code>client.Graph.Edge.Get(GraphUUID, EdgeUUID) -> *zep.Edge</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Graph.Edge.Get(
+    context.TODO(),
+    "graph_uuid",
+    "edge_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**edgeUUID:** `string` — Edge UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Graph.Edge.Delete(GraphUUID, EdgeUUID) -> *zep.AsyncResult</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Graph.Edge.Delete(
+    context.TODO(),
+    "graph_uuid",
+    "edge_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**edgeUUID:** `string` — Edge UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Graph.Edge.Update(GraphUUID, EdgeUUID, request) -> *zep.Edge</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates one edge. When the edge belongs to a hyperedge, changing fact
+rewrites it on every member of that hyperedge in one all-or-nothing
+write, because the members share it. Attribute-only edits touch this
+edge alone.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &graph.PatchEdgeRequest{}
+client.Graph.Edge.Update(
+    context.TODO(),
+    "graph_uuid",
+    "edge_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**edgeUUID:** `string` — Edge UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**attributes:** `map[string]any` 
+
+Additional attributes to merge onto the edge; a key set to null is
+removed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fact:** `*string` 
+
+The fact text describing the relationship between the source and target
+nodes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Graph Episode
 <details><summary><code>client.Graph.Episode.Add(GraphUUID, request) -> *zep.AddEpisodeResult</code></summary>
 <dl>
 <dd>
@@ -12039,7 +12502,10 @@ the results to episodes that mention any of the listed node UUIDs. The
 list can also contain episode UUIDs: an episode UUID matches that episode,
 so one request can return a known set of episodes. At most 256 entries.
 `filters.metadata_filters` restricts the results to episodes whose stored
-metadata matches the predicate.
+metadata matches the predicate. `filters.document_id` restricts the results
+to the episodes of one document.
+
+Example body: `{"filters": {"document_id": "gdrive.test-folder.weird-document"}}`
 </dd>
 </dl>
 </dd>
@@ -12431,398 +12897,6 @@ client.Graph.Episode.ListIngestionTraces(
 <dd>
 
 **cursor:** `*string` — Opaque page cursor
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Graph Edge
-<details><summary><code>client.Graph.Edge.Add(GraphUUID, request) -> *zep.AddEdgesResult</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Adds 1 to 100 edges. A name creates a node when deduplicate is false. When deduplicate is true, Zep matches a node by name first.
-Example: {"edges":[{"fact":"Ada works at Acme Corp","fact_name":"WORKS_AT","source_node":{"uuid":"f47ac10b-58cc-4372-a567-0e02b2c3d479"},"target_node":{"uuid":"f47ac10b-58cc-4372-a567-0e02b2c3d480"}},{"fact":"Ada leads a team","fact_name":"LEADS","source_node":{"name":"Ada Lovelace","labels":["Person"]},"target_node":{"name":"Engineering","labels":["Department"]}}],"deduplicate":false}
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &graph.AddEdgesRequest{
-    Edges: []*zep.EdgeInput{
-        &zep.EdgeInput{
-            Fact: "Ada works at Acme Corp",
-            FactName: "WORKS_AT",
-            SourceNode: &zep.EdgeNodeRef{},
-            TargetNode: &zep.EdgeNodeRef{},
-        },
-    },
-}
-client.Graph.Edge.Add(
-    context.TODO(),
-    "graph_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**deduplicate:** `*bool` 
-
-When true, Zep compares each edge with graph edges and can merge a
-duplicate or invalidate a contradicted edge. This adds an LLM call per
-edge. The default is false.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**edges:** `[]*zep.EdgeInput` — The edges to add to the graph. The request accepts 1 to 100 edges.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Graph.Edge.List(GraphUUID, request) -> *zep.EdgePage</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Lists the edges of a graph and returns one page of results. The default `page_size` is 50, and the maximum `page_size` is 100.
-You can sort by `uuid`, `created_at`, or `valid_at`. The default sort is `uuid` in descending order. An edge with no `valid_at` sorts as if its `valid_at` is 1970-01-01T00:00:00Z. Thus it comes before an edge with a later `valid_at` in ascending order, and after an edge with an earlier `valid_at`.
-You can use all `filters` fields except `content_policy_violated`.
-If the request has an unsupported or unknown filter field, the API returns an `unsupported_filter` error.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &graph.EdgeListRequest{}
-client.Graph.Edge.List(
-    context.TODO(),
-    "graph_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**pageSize:** `*int` — The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cursor:** `*string` — Opaque page cursor
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**orderBy:** `*graph.EdgeListRequestOrderBy` — Sort key: uuid (default), created_at, or valid_at
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**order:** `*graph.EdgeListRequestOrder` — Sort direction: asc or desc (default desc)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**filters:** `*zep.EdgeListFilters` 
-
-Filters that limit the items in the list. The operation description
-names the filter fields that the operation does not support.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Graph.Edge.Get(GraphUUID, EdgeUUID) -> *zep.Edge</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-client.Graph.Edge.Get(
-    context.TODO(),
-    "graph_uuid",
-    "edge_uuid",
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**edgeUUID:** `string` — Edge UUID
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Graph.Edge.Delete(GraphUUID, EdgeUUID) -> *zep.AsyncResult</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-client.Graph.Edge.Delete(
-    context.TODO(),
-    "graph_uuid",
-    "edge_uuid",
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**edgeUUID:** `string` — Edge UUID
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Graph.Edge.Update(GraphUUID, EdgeUUID, request) -> *zep.Edge</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Updates one edge. When the edge belongs to a hyperedge, changing fact
-rewrites it on every member of that hyperedge in one all-or-nothing
-write, because the members share it. Attribute-only edits touch this
-edge alone.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &graph.PatchEdgeRequest{}
-client.Graph.Edge.Update(
-    context.TODO(),
-    "graph_uuid",
-    "edge_uuid",
-    request,
-)
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**graphUUID:** `string` — The UUID of the graph. For a user graph, you can also use the UUID of the user.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**edgeUUID:** `string` — Edge UUID
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**attributes:** `map[string]any` 
-
-Additional attributes to merge onto the edge; a key set to null is
-removed.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**fact:** `*string` 
-
-The fact text describing the relationship between the source and target
-nodes.
     
 </dd>
 </dl>

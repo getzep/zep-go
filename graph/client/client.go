@@ -23,8 +23,8 @@ import (
 type Client struct {
 	WithRawResponse *RawClient
 	DocumentSummary *documentsummary.Client
-	Episode         *episode.Client
 	Edge            *edge.Client
+	Episode         *episode.Client
 	Hyperedge       *hyperedge.Client
 	Node            *node.Client
 	Observation     *observation.Client
@@ -41,8 +41,8 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 	return &Client{
 		DocumentSummary: documentsummary.NewClient(options),
-		Episode:         episode.NewClient(options),
 		Edge:            edge.NewClient(options),
+		Episode:         episode.NewClient(options),
 		Hyperedge:       hyperedge.NewClient(options),
 		Node:            node.NewClient(options),
 		Observation:     observation.NewClient(options),
@@ -177,7 +177,7 @@ func (c *Client) Lookup(
 	return response.Body, nil
 }
 
-// Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
+// Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
 //
 // Example:
 //
@@ -233,7 +233,7 @@ func (c *Client) QueryStream(
 	)
 }
 
-// Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
+// Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
 //
 // Example:
 //
@@ -546,6 +546,81 @@ func (c *Client) SetInstructions(
 		return nil, err
 	}
 	return response.Body, nil
+}
+
+// Returns the append-only metadata keys recorded for a graph. A key can remain in the list after no episode or message uses it.
+//
+// Example:
+//
+//	request := &zep.GraphListMetadataKeysRequest{}
+//	client.Graph.ListMetadataKeys(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) ListMetadataKeys(
+	ctx context.Context,
+	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
+	graphUUID string,
+	request *zep.GraphListMetadataKeysRequest,
+	opts ...option.RequestOption,
+) (*core.Page[*string, *zep.GraphMetadataKey, *zep.GraphMetadataKeyList], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		c.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := internal.EncodeURL(
+		baseURL+"/graphs/%v/metadata-keys",
+		graphUUID,
+	)
+	queryParams, err := internal.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	headers := internal.MergeHeaders(
+		c.options.ToHeader(),
+		options.ToHeader(),
+	)
+	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
+		if pageRequest.Cursor != nil {
+			queryParams.Set("cursor", *pageRequest.Cursor)
+		}
+		nextURL := endpointURL
+		if len(queryParams) > 0 {
+			nextURL += "?" + queryParams.Encode()
+		}
+		return &internal.CallParams{
+			URL:             nextURL,
+			Method:          http.MethodGet,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        pageRequest.Response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		}
+	}
+	readPageResponse := func(response *zep.GraphMetadataKeyList) *core.PageResponse[*string, *zep.GraphMetadataKey, *zep.GraphMetadataKeyList] {
+		var zeroValue *string
+		next := response.GetNextCursor()
+		results := response.GetItems()
+		return &core.PageResponse[*string, *zep.GraphMetadataKey, *zep.GraphMetadataKeyList]{
+			Results:  results,
+			Response: response,
+			Next:     next,
+			Done:     next == zeroValue || *next == "",
+		}
+	}
+	pager := internal.NewCursorPager(
+		c.caller,
+		prepareCall,
+		readPageResponse,
+	)
+	return pager.GetPage(ctx, request.Cursor)
 }
 
 // Example:

@@ -77,32 +77,6 @@ func VerifyRequestCount(
 	require.Equal(t, expected, len(result.Requests))
 }
 
-func TestGraphEpisodeListForDocumentWithWireMock(
-	t *testing.T,
-) {
-	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
-	if WireMockBaseURL == "" {
-		WireMockBaseURL = "http://localhost:8080"
-	}
-	client := client.NewClient(
-		option.WithBaseURL(WireMockBaseURL),
-		option.WithAPIKey("test-value"),
-	)
-	request := &graph.EpisodeListForDocumentRequest{}
-	_, invocationErr := client.Graph.Episode.ListForDocument(
-		context.TODO(),
-		"graph_uuid",
-		"document_id",
-		request,
-		option.WithHTTPHeader(
-			http.Header{"X-Test-Id": []string{"TestGraphEpisodeListForDocumentWithWireMock"}},
-		),
-	)
-
-	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestGraphEpisodeListForDocumentWithWireMock", "GET", "/graphs/graph_uuid/documents/document_id/episodes", nil, 1)
-}
-
 func TestGraphEpisodeAddWithWireMock(
 	t *testing.T,
 ) {

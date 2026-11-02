@@ -428,6 +428,31 @@ func TestGraphSetInstructionsWithWireMock(
 	VerifyRequestCount(t, "TestGraphSetInstructionsWithWireMock", "PUT", "/graphs/graph_uuid/instructions", nil, 1)
 }
 
+func TestGraphListMetadataKeysWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.GraphListMetadataKeysRequest{}
+	_, invocationErr := client.Graph.ListMetadataKeys(
+		context.TODO(),
+		"graph_uuid",
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphListMetadataKeysWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphListMetadataKeysWithWireMock", "GET", "/graphs/graph_uuid/metadata-keys", nil, 1)
+}
+
 func TestGraphGetObservationSteeringWithWireMock(
 	t *testing.T,
 ) {

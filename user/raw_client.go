@@ -78,6 +78,52 @@ func (r *RawClient) Create(
 	}, nil
 }
 
+func (r *RawClient) GetByEmail(
+	ctx context.Context,
+	request *zep.GetUserByEmailRequest,
+	opts ...option.RequestOption,
+) (*core.Response[*zep.User], error) {
+	options := core.NewRequestOptions(opts...)
+	baseURL := internal.ResolveBaseURL(
+		options.BaseURL,
+		r.baseURL,
+		"https://api.getzep.com/api/v4",
+	)
+	endpointURL := baseURL + "/users/get-by-email"
+	headers := internal.MergeHeaders(
+		r.options.ToHeader(),
+		options.ToHeader(),
+	)
+	headers.Add("Content-Type", "application/json")
+	core.SetIdempotencyKeyHeader(headers)
+
+	var response *zep.User
+	raw, err := r.caller.Call(
+		ctx,
+		&internal.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPost,
+			Headers:         headers,
+			MaxAttempts:     options.MaxAttempts,
+			DisableRetries:  options.DisableRetries,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &core.Response[*zep.User]{
+		StatusCode: raw.StatusCode,
+		Header:     raw.Header,
+		Body:       response,
+	}, nil
+}
+
 func (r *RawClient) Lookup(
 	ctx context.Context,
 	request *zep.LookupRequest,

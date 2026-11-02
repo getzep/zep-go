@@ -50670,6 +50670,14 @@ func TestSettersEpisodeListFilters(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetDocumentID", func(t *testing.T) {
+		obj := &EpisodeListFilters{}
+		var fernTestValueDocumentID *string
+		obj.SetDocumentID(fernTestValueDocumentID)
+		assert.Equal(t, fernTestValueDocumentID, obj.DocumentID)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetMentionedNodeUUIDs", func(t *testing.T) {
 		obj := &EpisodeListFilters{}
 		var fernTestValueMentionedNodeUUIDs []string
@@ -50720,6 +50728,39 @@ func TestGettersEpisodeListFilters(t *testing.T) {
 			}
 		}()
 		_ = obj.GetContentPolicyViolated() // Should return zero value
+	})
+
+	t.Run("GetDocumentID", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeListFilters{}
+		var expected *string
+		obj.DocumentID = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetDocumentID(), "getter should return the property value")
+	})
+
+	t.Run("GetDocumentID_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeListFilters{}
+		obj.DocumentID = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetDocumentID(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetDocumentID_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *EpisodeListFilters
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetDocumentID() // Should return zero value
 	})
 
 	t.Run("GetMentionedNodeUUIDs", func(t *testing.T) {
@@ -50799,6 +50840,37 @@ func TestSettersMarkExplicitEpisodeListFilters(t *testing.T) {
 
 		// Act
 		obj.SetContentPolicyViolated(fernTestValueContentPolicyViolated)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetDocumentID_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &EpisodeListFilters{}
+		var fernTestValueDocumentID *string
+
+		// Act
+		obj.SetDocumentID(fernTestValueDocumentID)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -64973,6 +65045,14 @@ func TestSettersMarkExplicitObservationType(t *testing.T) {
 }
 
 func TestSettersOntology(t *testing.T) {
+	t.Run("SetEdgeTypeHierarchy", func(t *testing.T) {
+		obj := &Ontology{}
+		var fernTestValueEdgeTypeHierarchy map[string]any
+		obj.SetEdgeTypeHierarchy(fernTestValueEdgeTypeHierarchy)
+		assert.Equal(t, fernTestValueEdgeTypeHierarchy, obj.EdgeTypeHierarchy)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetEdgeTypes", func(t *testing.T) {
 		obj := &Ontology{}
 		var fernTestValueEdgeTypes []*EdgeType
@@ -65008,6 +65088,39 @@ func TestSettersOntology(t *testing.T) {
 }
 
 func TestGettersOntology(t *testing.T) {
+	t.Run("GetEdgeTypeHierarchy", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &Ontology{}
+		var expected map[string]any
+		obj.EdgeTypeHierarchy = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetEdgeTypeHierarchy(), "getter should return the property value")
+	})
+
+	t.Run("GetEdgeTypeHierarchy_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &Ontology{}
+		obj.EdgeTypeHierarchy = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetEdgeTypeHierarchy(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetEdgeTypeHierarchy_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *Ontology
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetEdgeTypeHierarchy() // Should return zero value
+	})
+
 	t.Run("GetEdgeTypes", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
@@ -65143,6 +65256,37 @@ func TestGettersOntology(t *testing.T) {
 }
 
 func TestSettersMarkExplicitOntology(t *testing.T) {
+	t.Run("SetEdgeTypeHierarchy_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &Ontology{}
+		var fernTestValueEdgeTypeHierarchy map[string]any
+
+		// Act
+		obj.SetEdgeTypeHierarchy(fernTestValueEdgeTypeHierarchy)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
 	t.Run("SetEdgeTypes_MarksExplicit", func(t *testing.T) {
 		t.Parallel()
 		// Arrange
