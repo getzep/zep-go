@@ -354,7 +354,7 @@ type AgentSkillSearchRequest struct {
 	// markers, the description only in the frontmatter, and no empty
 	// sections. `full` returns the stored SKILL.md with its evidence markers.
 	MarkdownFormat *AgentSkillSearchRequestMarkdownFormat `json:"markdown_format,omitempty" url:"-"`
-	// The developer supplies a search query for Skills.
+	// The developer supplies a search query for Skills. A term is a sequence of characters between whitespace. When the query has more than 64 terms, Zep searches with the first 64 terms and ignores the other terms. The query must not be longer than 512 bytes.
 	Query string `json:"query" url:"-"`
 	// The developer supplies the task-family slug.
 	TaskFamily *string `json:"task_family,omitempty" url:"-"`

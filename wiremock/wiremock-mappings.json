@@ -1171,6 +1171,42 @@
       }
     },
     {
+      "id": "d4c4ffd7-353b-4c22-9356-b417300af247",
+      "name": "List graph metadata keys - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/metadata-keys",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"2026-10-13T12:00:00Z\",\n      \"key\": \"customer_tier\"\n    }\n  ],\n  \"next_cursor\": \"eyJrIjoiY3VzdG9tZXJfdGllciJ9\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d4c4ffd7-353b-4c22-9356-b417300af247",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
       "id": "437555a0-fd7a-4b75-bcb6-cd020b4e93fd",
       "name": "Get graph observation steering - default",
       "request": {
@@ -1261,7 +1297,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1297,7 +1333,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1931,7 +1967,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1963,7 +1999,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
+        "body": "{\n  \"edge_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"edge_types\": [\n    {\n      \"description\": \"description\",\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ],\n      \"source_targets\": [\n        {}\n      ]\n    }\n  ],\n  \"entity_type_hierarchy\": {\n    \"key\": \"value\"\n  },\n  \"entity_types\": [\n    {\n      \"description\": \"description\",\n      \"identity_properties\": [\n        \"identity_properties\"\n      ],\n      \"name\": \"name\",\n      \"properties\": [\n        {\n          \"protected\": true\n        }\n      ]\n    }\n  ],\n  \"inherited\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -3073,6 +3109,37 @@
         }
       },
       "uuid": "5da22e46-2b55-4fe7-bf67-930ea5d8eeb8",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d44e5208-0df7-43de-bab0-626ea06ea473",
+      "name": "Get user by email - default",
+      "request": {
+        "urlPathTemplate": "/users/get-by-email",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"created_at\": \"created_at\",\n  \"disable_default_ontology\": true,\n  \"email\": \"email\",\n  \"first_name\": \"first_name\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"last_name\": \"last_name\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"time_zone\": \"time_zone\",\n  \"user_id\": \"user_id\",\n  \"uuid\": \"uuid\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d44e5208-0df7-43de-bab0-626ea06ea473",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -5731,10 +5798,82 @@
       }
     },
     {
-      "id": "e7e1086f-8991-4be2-b3a7-b2717689948c",
-      "name": "List document episodes - default",
+      "id": "44b3756e-98e2-466e-8d96-6b22a830d7d0",
+      "name": "Add edges - default",
       "request": {
-        "urlPathTemplate": "/graphs/{graph_uuid}/documents/{document_id}/episodes",
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"edges\": [\n    {\n      \"attributes\": {\n        \"key\": \"value\"\n      },\n      \"expired_at\": \"2024-02-15T10:30:00Z\",\n      \"fact\": \"Ada works at Acme Corp\",\n      \"fact_name\": \"WORKS_AT\",\n      \"invalid_at\": \"2024-02-15T10:30:00Z\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"source_node\": {\n        \"labels\": [\n          \"Organization\"\n        ],\n        \"name\": \"Acme Corp\",\n        \"summary\": \"A software company\",\n        \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n      },\n      \"source_node_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n      \"target_node\": {\n        \"labels\": [\n          \"Organization\"\n        ],\n        \"name\": \"Acme Corp\",\n        \"summary\": \"A software company\",\n        \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n      },\n      \"target_node_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d480\",\n      \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n      \"valid_at\": \"2024-01-15T10:30:00Z\"\n    }\n  ],\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"failed_count\": 1,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false,\n        \"violated_count\": 2\n      },\n      \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n      \"edges\": [\n        {\n          \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n          \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n          \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n        }\n      ],\n      \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\",\n      \"episodes\": [\n        {\n          \"content_policy\": {\n            \"category_keys\": [\n              \"health\"\n            ],\n            \"dropped_count\": 0,\n            \"failed_count\": 1,\n            \"retained_count\": 7,\n            \"revision\": 3,\n            \"violated\": false,\n            \"violated_count\": 2\n          },\n          \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\"\n        }\n      ],\n      \"hyperedge_uuid\": \"d4e5f6a7-b8c9-4d0e-9f2a-3b4c5d6e7f80\",\n      \"skill_uuid\": \"e5f6a7b8-c9d0-4e1f-8a3b-4c5d6e7f8091\",\n      \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n      \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"pending\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "44b3756e-98e2-466e-8d96-6b22a830d7d0",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0ee6cd27-0f03-470b-98ab-57d9d6c64cdd",
+      "name": "List edges - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges/list",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"items\": [\n    {\n      \"attributes\": {\n        \"key\": \"value\"\n      },\n      \"created_at\": \"created_at\",\n      \"episode_uuids\": [\n        \"episode_uuids\"\n      ],\n      \"expired_at\": \"expired_at\",\n      \"fact\": \"fact\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"hyperedge_uuid\": \"hyperedge_uuid\",\n      \"invalid_at\": \"invalid_at\",\n      \"name\": \"name\",\n      \"relevance\": 1.1,\n      \"scope\": \"scope\",\n      \"score\": 1.1,\n      \"source_node_labels\": [\n        \"source_node_labels\"\n      ],\n      \"source_node_name\": \"source_node_name\",\n      \"source_node_uuid\": \"source_node_uuid\",\n      \"target_node_labels\": [\n        \"target_node_labels\"\n      ],\n      \"target_node_name\": \"target_node_name\",\n      \"target_node_uuid\": \"target_node_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0ee6cd27-0f03-470b-98ab-57d9d6c64cdd",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "21363119-41cd-4859-9113-4b687dc351f6",
+      "name": "Get edge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
         "method": "GET",
         "headers": {
           "Authorization": {
@@ -5745,19 +5884,97 @@
           "graph_uuid": {
             "equalTo": "graph_uuid"
           },
-          "document_id": {
-            "equalTo": "document_id"
+          "edge_uuid": {
+            "equalTo": "edge_uuid"
           }
         }
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"attributes\": {\n    \"key\": \"value\"\n  },\n  \"created_at\": \"created_at\",\n  \"episode_uuids\": [\n    \"episode_uuids\"\n  ],\n  \"expired_at\": \"expired_at\",\n  \"fact\": \"fact\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"hyperedge_uuid\": \"hyperedge_uuid\",\n  \"invalid_at\": \"invalid_at\",\n  \"name\": \"name\",\n  \"relevance\": 1.1,\n  \"scope\": \"scope\",\n  \"score\": 1.1,\n  \"source_node_labels\": [\n    \"source_node_labels\"\n  ],\n  \"source_node_name\": \"source_node_name\",\n  \"source_node_uuid\": \"source_node_uuid\",\n  \"target_node_labels\": [\n    \"target_node_labels\"\n  ],\n  \"target_node_name\": \"target_node_name\",\n  \"target_node_uuid\": \"target_node_uuid\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "e7e1086f-8991-4be2-b3a7-b2717689948c",
+      "uuid": "21363119-41cd-4859-9113-4b687dc351f6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "51f8436e-e328-4009-b662-d253352129ac",
+      "name": "Delete edge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "edge_uuid": {
+            "equalTo": "edge_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 202,
+        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"failed_count\": 1,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false,\n        \"violated_count\": 2\n      },\n      \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n      \"edges\": [\n        {\n          \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n          \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n          \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n        }\n      ],\n      \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\",\n      \"episodes\": [\n        {\n          \"content_policy\": {\n            \"category_keys\": [\n              \"health\"\n            ],\n            \"dropped_count\": 0,\n            \"failed_count\": 1,\n            \"retained_count\": 7,\n            \"revision\": 3,\n            \"violated\": false,\n            \"violated_count\": 2\n          },\n          \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\"\n        }\n      ],\n      \"hyperedge_uuid\": \"d4e5f6a7-b8c9-4d0e-9f2a-3b4c5d6e7f80\",\n      \"skill_uuid\": \"e5f6a7b8-c9d0-4e1f-8a3b-4c5d6e7f8091\",\n      \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n      \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"pending\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "51f8436e-e328-4009-b662-d253352129ac",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "1450b220-8447-4b6b-ac26-1e3e93900069",
+      "name": "Update edge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          },
+          "edge_uuid": {
+            "equalTo": "edge_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"attributes\": {\n    \"key\": \"value\"\n  },\n  \"created_at\": \"created_at\",\n  \"episode_uuids\": [\n    \"episode_uuids\"\n  ],\n  \"expired_at\": \"expired_at\",\n  \"fact\": \"fact\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"hyperedge_uuid\": \"hyperedge_uuid\",\n  \"invalid_at\": \"invalid_at\",\n  \"name\": \"name\",\n  \"relevance\": 1.1,\n  \"scope\": \"scope\",\n  \"score\": 1.1,\n  \"source_node_labels\": [\n    \"source_node_labels\"\n  ],\n  \"source_node_name\": \"source_node_name\",\n  \"source_node_uuid\": \"source_node_uuid\",\n  \"target_node_labels\": [\n    \"target_node_labels\"\n  ],\n  \"target_node_name\": \"target_node_name\",\n  \"target_node_uuid\": \"target_node_uuid\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "1450b220-8447-4b6b-ac26-1e3e93900069",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -6025,195 +6242,6 @@
         }
       },
       "uuid": "64d87e91-f329-42e5-a5b0-410c321b4e06",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "44b3756e-98e2-466e-8d96-6b22a830d7d0",
-      "name": "Add edges - default",
-      "request": {
-        "urlPathTemplate": "/graphs/{graph_uuid}/edges",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "graph_uuid": {
-            "equalTo": "graph_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 202,
-        "body": "{\n  \"edges\": [\n    {\n      \"attributes\": {\n        \"key\": \"value\"\n      },\n      \"expired_at\": \"2024-02-15T10:30:00Z\",\n      \"fact\": \"Ada works at Acme Corp\",\n      \"fact_name\": \"WORKS_AT\",\n      \"invalid_at\": \"2024-02-15T10:30:00Z\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"source_node\": {\n        \"labels\": [\n          \"Organization\"\n        ],\n        \"name\": \"Acme Corp\",\n        \"summary\": \"A software company\",\n        \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n      },\n      \"source_node_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n      \"target_node\": {\n        \"labels\": [\n          \"Organization\"\n        ],\n        \"name\": \"Acme Corp\",\n        \"summary\": \"A software company\",\n        \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n      },\n      \"target_node_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d480\",\n      \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n      \"valid_at\": \"2024-01-15T10:30:00Z\"\n    }\n  ],\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"failed_count\": 1,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false,\n        \"violated_count\": 2\n      },\n      \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n      \"edges\": [\n        {\n          \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n          \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n          \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n        }\n      ],\n      \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\",\n      \"episodes\": [\n        {\n          \"content_policy\": {\n            \"category_keys\": [\n              \"health\"\n            ],\n            \"dropped_count\": 0,\n            \"failed_count\": 1,\n            \"retained_count\": 7,\n            \"revision\": 3,\n            \"violated\": false,\n            \"violated_count\": 2\n          },\n          \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\"\n        }\n      ],\n      \"hyperedge_uuid\": \"d4e5f6a7-b8c9-4d0e-9f2a-3b4c5d6e7f80\",\n      \"skill_uuid\": \"e5f6a7b8-c9d0-4e1f-8a3b-4c5d6e7f8091\",\n      \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n      \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"pending\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "44b3756e-98e2-466e-8d96-6b22a830d7d0",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "0ee6cd27-0f03-470b-98ab-57d9d6c64cdd",
-      "name": "List edges - default",
-      "request": {
-        "urlPathTemplate": "/graphs/{graph_uuid}/edges/list",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "graph_uuid": {
-            "equalTo": "graph_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"attributes\": {\n        \"key\": \"value\"\n      },\n      \"created_at\": \"created_at\",\n      \"episode_uuids\": [\n        \"episode_uuids\"\n      ],\n      \"expired_at\": \"expired_at\",\n      \"fact\": \"fact\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"hyperedge_uuid\": \"hyperedge_uuid\",\n      \"invalid_at\": \"invalid_at\",\n      \"name\": \"name\",\n      \"relevance\": 1.1,\n      \"scope\": \"scope\",\n      \"score\": 1.1,\n      \"source_node_labels\": [\n        \"source_node_labels\"\n      ],\n      \"source_node_name\": \"source_node_name\",\n      \"source_node_uuid\": \"source_node_uuid\",\n      \"target_node_labels\": [\n        \"target_node_labels\"\n      ],\n      \"target_node_name\": \"target_node_name\",\n      \"target_node_uuid\": \"target_node_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\",\n      \"valid_at\": \"valid_at\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "0ee6cd27-0f03-470b-98ab-57d9d6c64cdd",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "21363119-41cd-4859-9113-4b687dc351f6",
-      "name": "Get edge - default",
-      "request": {
-        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "graph_uuid": {
-            "equalTo": "graph_uuid"
-          },
-          "edge_uuid": {
-            "equalTo": "edge_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"attributes\": {\n    \"key\": \"value\"\n  },\n  \"created_at\": \"created_at\",\n  \"episode_uuids\": [\n    \"episode_uuids\"\n  ],\n  \"expired_at\": \"expired_at\",\n  \"fact\": \"fact\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"hyperedge_uuid\": \"hyperedge_uuid\",\n  \"invalid_at\": \"invalid_at\",\n  \"name\": \"name\",\n  \"relevance\": 1.1,\n  \"scope\": \"scope\",\n  \"score\": 1.1,\n  \"source_node_labels\": [\n    \"source_node_labels\"\n  ],\n  \"source_node_name\": \"source_node_name\",\n  \"source_node_uuid\": \"source_node_uuid\",\n  \"target_node_labels\": [\n    \"target_node_labels\"\n  ],\n  \"target_node_name\": \"target_node_name\",\n  \"target_node_uuid\": \"target_node_uuid\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "21363119-41cd-4859-9113-4b687dc351f6",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "51f8436e-e328-4009-b662-d253352129ac",
-      "name": "Delete edge - default",
-      "request": {
-        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
-        "method": "DELETE",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "graph_uuid": {
-            "equalTo": "graph_uuid"
-          },
-          "edge_uuid": {
-            "equalTo": "edge_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 202,
-        "body": "{\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"failed_count\": 1,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false,\n        \"violated_count\": 2\n      },\n      \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n      \"edges\": [\n        {\n          \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n          \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n          \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n        }\n      ],\n      \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\",\n      \"episodes\": [\n        {\n          \"content_policy\": {\n            \"category_keys\": [\n              \"health\"\n            ],\n            \"dropped_count\": 0,\n            \"failed_count\": 1,\n            \"retained_count\": 7,\n            \"revision\": 3,\n            \"violated\": false,\n            \"violated_count\": 2\n          },\n          \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\"\n        }\n      ],\n      \"hyperedge_uuid\": \"d4e5f6a7-b8c9-4d0e-9f2a-3b4c5d6e7f80\",\n      \"skill_uuid\": \"e5f6a7b8-c9d0-4e1f-8a3b-4c5d6e7f8091\",\n      \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n      \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"pending\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "51f8436e-e328-4009-b662-d253352129ac",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "1450b220-8447-4b6b-ac26-1e3e93900069",
-      "name": "Update edge - default",
-      "request": {
-        "urlPathTemplate": "/graphs/{graph_uuid}/edges/{edge_uuid}",
-        "method": "PATCH",
-        "headers": {
-          "Authorization": {
-            "matches": ".+"
-          }
-        },
-        "pathParameters": {
-          "graph_uuid": {
-            "equalTo": "graph_uuid"
-          },
-          "edge_uuid": {
-            "equalTo": "edge_uuid"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"attributes\": {\n    \"key\": \"value\"\n  },\n  \"created_at\": \"created_at\",\n  \"episode_uuids\": [\n    \"episode_uuids\"\n  ],\n  \"expired_at\": \"expired_at\",\n  \"fact\": \"fact\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"hyperedge_uuid\": \"hyperedge_uuid\",\n  \"invalid_at\": \"invalid_at\",\n  \"name\": \"name\",\n  \"relevance\": 1.1,\n  \"scope\": \"scope\",\n  \"score\": 1.1,\n  \"source_node_labels\": [\n    \"source_node_labels\"\n  ],\n  \"source_node_name\": \"source_node_name\",\n  \"source_node_uuid\": \"source_node_uuid\",\n  \"target_node_labels\": [\n    \"target_node_labels\"\n  ],\n  \"target_node_name\": \"target_node_name\",\n  \"target_node_uuid\": \"target_node_uuid\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\",\n  \"valid_at\": \"valid_at\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "1450b220-8447-4b6b-ac26-1e3e93900069",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -7022,6 +7050,6 @@
     }
   ],
   "meta": {
-    "total": 193
+    "total": 194
   }
 }

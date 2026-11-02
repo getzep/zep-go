@@ -42,83 +42,6 @@ func NewClient(options *core.RequestOptions) *Client {
 
 // Example:
 //
-//	request := &graph.EpisodeListForDocumentRequest{}
-//	client.Graph.Episode.ListForDocument(
-//	    context.TODO(),
-//	    "graph_uuid",
-//	    "document_id",
-//	    request,
-//	)
-func (c *Client) ListForDocument(
-	ctx context.Context,
-	// The UUID of the graph. For a user graph, you can also use the UUID of the user.
-	graphUUID string,
-	// Document ID
-	documentID string,
-	request *graph.EpisodeListForDocumentRequest,
-	opts ...option.RequestOption,
-) (*core.Page[*string, *zep.Episode, *zep.EpisodePage], error) {
-	options := core.NewRequestOptions(opts...)
-	baseURL := internal.ResolveBaseURL(
-		options.BaseURL,
-		c.baseURL,
-		"https://api.getzep.com/api/v4",
-	)
-	endpointURL := internal.EncodeURL(
-		baseURL+"/graphs/%v/documents/%v/episodes",
-		graphUUID,
-		documentID,
-	)
-	queryParams, err := internal.QueryValues(request)
-	if err != nil {
-		return nil, err
-	}
-	headers := internal.MergeHeaders(
-		c.options.ToHeader(),
-		options.ToHeader(),
-	)
-	prepareCall := func(pageRequest *core.PageRequest[*string]) *internal.CallParams {
-		if pageRequest.Cursor != nil {
-			queryParams.Set("cursor", *pageRequest.Cursor)
-		}
-		nextURL := endpointURL
-		if len(queryParams) > 0 {
-			nextURL += "?" + queryParams.Encode()
-		}
-		return &internal.CallParams{
-			URL:             nextURL,
-			Method:          http.MethodGet,
-			Headers:         headers,
-			MaxAttempts:     options.MaxAttempts,
-			DisableRetries:  options.DisableRetries,
-			BodyProperties:  options.BodyProperties,
-			QueryParameters: options.QueryParameters,
-			Client:          options.HTTPClient,
-			Response:        pageRequest.Response,
-			ErrorDecoder:    internal.NewErrorDecoder(zep.ErrorCodes),
-		}
-	}
-	readPageResponse := func(response *zep.EpisodePage) *core.PageResponse[*string, *zep.Episode, *zep.EpisodePage] {
-		var zeroValue *string
-		next := response.GetNextCursor()
-		results := response.GetItems()
-		return &core.PageResponse[*string, *zep.Episode, *zep.EpisodePage]{
-			Results:  results,
-			Response: response,
-			Next:     next,
-			Done:     next == zeroValue || *next == "",
-		}
-	}
-	pager := internal.NewCursorPager(
-		c.caller,
-		prepareCall,
-		readPageResponse,
-	)
-	return pager.GetPage(ctx, request.Cursor)
-}
-
-// Example:
-//
 //	request := &graph.AddEpisodeRequest{
 //	    Data: "data",
 //	}
@@ -151,7 +74,10 @@ func (c *Client) Add(
 // list can also contain episode UUIDs: an episode UUID matches that episode,
 // so one request can return a known set of episodes. At most 256 entries.
 // `filters.metadata_filters` restricts the results to episodes whose stored
-// metadata matches the predicate.
+// metadata matches the predicate. `filters.document_id` restricts the results
+// to the episodes of one document.
+//
+// Example body: `{"filters": {"document_id": "gdrive.test-folder.weird-document"}}`
 //
 // Example:
 //

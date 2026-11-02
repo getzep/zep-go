@@ -135,6 +135,55 @@ func (c *CreateUserRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
+	getUserByEmailRequestFieldEmail = big.NewInt(1 << 0)
+)
+
+type GetUserByEmailRequest struct {
+	// The user's email address. Matching ignores case and leading and trailing whitespace.
+	Email string `json:"email" url:"-"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (g *GetUserByEmailRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetEmail sets the Email field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GetUserByEmailRequest) SetEmail(email string) {
+	g.Email = email
+	g.require(getUserByEmailRequestFieldEmail)
+}
+
+func (g *GetUserByEmailRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler GetUserByEmailRequest
+	var body unmarshaler
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	*g = GetUserByEmailRequest(body)
+	return nil
+}
+
+func (g *GetUserByEmailRequest) MarshalJSON() ([]byte, error) {
+	type embed GetUserByEmailRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+var (
 	userListRequestFieldPageSize = big.NewInt(1 << 0)
 	userListRequestFieldCursor   = big.NewInt(1 << 1)
 	userListRequestFieldOrderBy  = big.NewInt(1 << 2)

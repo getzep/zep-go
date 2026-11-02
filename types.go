@@ -20823,8 +20823,9 @@ func (e *EpisodeDebugLog) String() string {
 
 var (
 	episodeListFiltersFieldContentPolicyViolated = big.NewInt(1 << 0)
-	episodeListFiltersFieldMentionedNodeUUIDs    = big.NewInt(1 << 1)
-	episodeListFiltersFieldMetadataFilters       = big.NewInt(1 << 2)
+	episodeListFiltersFieldDocumentID            = big.NewInt(1 << 1)
+	episodeListFiltersFieldMentionedNodeUUIDs    = big.NewInt(1 << 2)
+	episodeListFiltersFieldMetadataFilters       = big.NewInt(1 << 3)
 )
 
 type EpisodeListFilters struct {
@@ -20832,6 +20833,9 @@ type EpisodeListFilters struct {
 	// false, include only episodes that no content policy flagged. The
 	// project setting include_policy_violating_episodes must be on.
 	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
+	// Include only the episodes of this document. The value is the
+	// document_id of the episodes. At most 100 characters.
+	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
 	// Include only episodes that mention at least one of these nodes. At
 	// most 256 node UUIDs.
 	MentionedNodeUUIDs []string `json:"mentioned_node_uuids,omitempty" url:"mentioned_node_uuids,omitempty"`
@@ -20850,6 +20854,13 @@ func (e *EpisodeListFilters) GetContentPolicyViolated() *bool {
 		return nil
 	}
 	return e.ContentPolicyViolated
+}
+
+func (e *EpisodeListFilters) GetDocumentID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.DocumentID
 }
 
 func (e *EpisodeListFilters) GetMentionedNodeUUIDs() []string {
@@ -20887,6 +20898,13 @@ func (e *EpisodeListFilters) require(field *big.Int) {
 func (e *EpisodeListFilters) SetContentPolicyViolated(contentPolicyViolated *bool) {
 	e.ContentPolicyViolated = contentPolicyViolated
 	e.require(episodeListFiltersFieldContentPolicyViolated)
+}
+
+// SetDocumentID sets the DocumentID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EpisodeListFilters) SetDocumentID(documentID *string) {
+	e.DocumentID = documentID
+	e.require(episodeListFiltersFieldDocumentID)
 }
 
 // SetMentionedNodeUUIDs sets the MentionedNodeUUIDs field and marks it as non-optional;
@@ -27310,16 +27328,19 @@ func (o *ObservationType) String() string {
 }
 
 var (
-	ontologyFieldEdgeTypes           = big.NewInt(1 << 0)
-	ontologyFieldEntityTypeHierarchy = big.NewInt(1 << 1)
-	ontologyFieldEntityTypes         = big.NewInt(1 << 2)
-	ontologyFieldInherited           = big.NewInt(1 << 3)
+	ontologyFieldEdgeTypeHierarchy   = big.NewInt(1 << 0)
+	ontologyFieldEdgeTypes           = big.NewInt(1 << 1)
+	ontologyFieldEntityTypeHierarchy = big.NewInt(1 << 2)
+	ontologyFieldEntityTypes         = big.NewInt(1 << 3)
+	ontologyFieldInherited           = big.NewInt(1 << 4)
 )
 
 type Ontology struct {
+	// The edge type hierarchy. Omitted when the ontology has no edge subtypes.
+	EdgeTypeHierarchy map[string]any `json:"edge_type_hierarchy,omitempty" url:"edge_type_hierarchy,omitempty"`
 	// The edge types defined in the ontology in effect at this scope.
 	EdgeTypes []*EdgeType `json:"edge_types,omitempty" url:"edge_types,omitempty"`
-	// The entity type hierarchy (spec ontology-1). Omitted when the ontology is flat.
+	// The entity type hierarchy. Omitted when the ontology has no entity subtypes.
 	EntityTypeHierarchy map[string]any `json:"entity_type_hierarchy,omitempty" url:"entity_type_hierarchy,omitempty"`
 	// The entity types defined in the ontology in effect at this scope.
 	EntityTypes []*EntityType `json:"entity_types,omitempty" url:"entity_types,omitempty"`
@@ -27332,6 +27353,13 @@ type Ontology struct {
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (o *Ontology) GetEdgeTypeHierarchy() map[string]any {
+	if o == nil {
+		return nil
+	}
+	return o.EdgeTypeHierarchy
 }
 
 func (o *Ontology) GetEdgeTypes() []*EdgeType {
@@ -27376,6 +27404,13 @@ func (o *Ontology) require(field *big.Int) {
 	}
 	next.Or(next, field)
 	o.explicitFields = next
+}
+
+// SetEdgeTypeHierarchy sets the EdgeTypeHierarchy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (o *Ontology) SetEdgeTypeHierarchy(edgeTypeHierarchy map[string]any) {
+	o.EdgeTypeHierarchy = edgeTypeHierarchy
+	o.require(ontologyFieldEdgeTypeHierarchy)
 }
 
 // SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
@@ -31436,7 +31471,9 @@ type Task struct {
 	// The time a worker began processing the task; absent until then.
 	StartedAt *string `json:"started_at,omitempty" url:"started_at,omitempty"`
 	// The service returns the task state. Valid values are pending, processing,
-	// succeeded, partial, and failed.
+	// succeeded, partial, and failed. A task has no canceled state. When a batch
+	// becomes canceled, its batch.process task becomes failed, and the task error
+	// code is batch_canceled.
 	Status *TaskStatus `json:"status,omitempty" url:"status,omitempty"`
 	// The kind of asynchronous operation the task represents.
 	Type *string `json:"type,omitempty" url:"type,omitempty"`
@@ -32610,7 +32647,9 @@ func (t *TaskResultEpisode) String() string {
 }
 
 // The service returns the task state. Valid values are pending, processing,
-// succeeded, partial, and failed.
+// succeeded, partial, and failed. A task has no canceled state. When a batch
+// becomes canceled, its batch.process task becomes failed, and the task error
+// code is batch_canceled.
 type TaskStatus string
 
 const (

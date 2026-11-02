@@ -62,6 +62,39 @@ func (c *Client) Create(
 	return response.Body, nil
 }
 
+// Send `{"email": "jane@example.com"}` to get the user with this email.
+// An email matches only when the stored and requested values are equal after normalization.
+// Normalization lowercases both values and trims leading and trailing whitespace.
+// The operation returns `404 not_found` when no active user matches.
+// The operation returns `400 invalid_request` with `param: "email"` when multiple active users match.
+// The operation returns `400 invalid_request` with `param: "email"` when BYOK is active for the account.
+// An email that was stored encrypted with BYOK does not match.
+//
+// Example:
+//
+//	request := &zep.GetUserByEmailRequest{
+//	    Email: "jane@example.com",
+//	}
+//	client.User.GetByEmail(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) GetByEmail(
+	ctx context.Context,
+	request *zep.GetUserByEmailRequest,
+	opts ...option.RequestOption,
+) (*zep.User, error) {
+	response, err := c.WithRawResponse.GetByEmail(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Example:
 //
 //	request := &zep.UserListRequest{}

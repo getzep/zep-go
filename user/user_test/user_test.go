@@ -101,6 +101,32 @@ func TestUserCreateWithWireMock(
 	VerifyRequestCount(t, "TestUserCreateWithWireMock", "POST", "/users", nil, 1)
 }
 
+func TestUserGetByEmailWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.GetUserByEmailRequest{
+		Email: "jane@example.com",
+	}
+	_, invocationErr := client.User.GetByEmail(
+		context.TODO(),
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestUserGetByEmailWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestUserGetByEmailWithWireMock", "POST", "/users/get-by-email", nil, 1)
+}
+
 func TestUserListWithWireMock(
 	t *testing.T,
 ) {
