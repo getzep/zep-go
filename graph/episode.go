@@ -211,44 +211,6 @@ func (e *EpisodeListRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
-	episodeListForDocumentRequestFieldPageSize = big.NewInt(1 << 0)
-	episodeListForDocumentRequestFieldCursor   = big.NewInt(1 << 1)
-)
-
-type EpisodeListForDocumentRequest struct {
-	// The maximum number of items in one page. The SDK method returns a pager. In Python, `.items` holds only the first page. In TypeScript, `.data` holds only the first page. To read every page, iterate the pager: use `for` or `list(...)` in Python, or `for await` in TypeScript. In Go, the method returns one page, and `Iterator()` reads all pages.
-	PageSize *int `json:"-" url:"page_size,omitempty"`
-	// Opaque page cursor
-	Cursor *string `json:"-" url:"cursor,omitempty"`
-
-	// Private bitmask of fields set to an explicit value and therefore not to be omitted
-	explicitFields *big.Int `json:"-" url:"-"`
-}
-
-func (e *EpisodeListForDocumentRequest) require(field *big.Int) {
-	next := new(big.Int)
-	if e.explicitFields != nil {
-		next.Set(e.explicitFields)
-	}
-	next.Or(next, field)
-	e.explicitFields = next
-}
-
-// SetPageSize sets the PageSize field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EpisodeListForDocumentRequest) SetPageSize(pageSize *int) {
-	e.PageSize = pageSize
-	e.require(episodeListForDocumentRequestFieldPageSize)
-}
-
-// SetCursor sets the Cursor field and marks it as non-optional;
-// this prevents an empty or null value for this field from being omitted during serialization.
-func (e *EpisodeListForDocumentRequest) SetCursor(cursor *string) {
-	e.Cursor = cursor
-	e.require(episodeListForDocumentRequestFieldCursor)
-}
-
-var (
 	episodeListIngestionTracesRequestFieldPageSize = big.NewInt(1 << 0)
 	episodeListIngestionTracesRequestFieldCursor   = big.NewInt(1 << 1)
 )

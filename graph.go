@@ -450,6 +450,44 @@ func (c *ContentPolicyEventListRequest) MarshalJSON() ([]byte, error) {
 }
 
 var (
+	graphListMetadataKeysRequestFieldPageSize = big.NewInt(1 << 0)
+	graphListMetadataKeysRequestFieldCursor   = big.NewInt(1 << 1)
+)
+
+type GraphListMetadataKeysRequest struct {
+	// The maximum number of keys per page.
+	PageSize *int `json:"-" url:"page_size,omitempty"`
+	// Opaque page cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+}
+
+func (g *GraphListMetadataKeysRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetPageSize sets the PageSize field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphListMetadataKeysRequest) SetPageSize(pageSize *int) {
+	g.PageSize = pageSize
+	g.require(graphListMetadataKeysRequestFieldPageSize)
+}
+
+// SetCursor sets the Cursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphListMetadataKeysRequest) SetCursor(cursor *string) {
+	g.Cursor = cursor
+	g.require(graphListMetadataKeysRequestFieldCursor)
+}
+
+var (
 	graphQueryRequestFieldGenerateAnswer = big.NewInt(1 << 0)
 	graphQueryRequestFieldGraphUUIDs     = big.NewInt(1 << 1)
 	graphQueryRequestFieldGuidance       = big.NewInt(1 << 2)
@@ -465,7 +503,7 @@ type GraphQueryRequest struct {
 	GraphUUIDs []string `json:"graph_uuids" url:"-"`
 	// Optional caller guidance for the answer. The agent treats it as untrusted text.
 	Guidance *string `json:"guidance,omitempty" url:"-"`
-	// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep.
+	// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
 	Mode *GraphQueryRequestMode `json:"mode,omitempty" url:"-"`
 	// The natural-language question about the graph.
 	Query  string `json:"query" url:"-"`
@@ -563,7 +601,7 @@ type GraphQueryStreamRequest struct {
 	GraphUUIDs []string `json:"graph_uuids" url:"-"`
 	// Optional caller guidance for the answer. The agent treats it as untrusted text.
 	Guidance *string `json:"guidance,omitempty" url:"-"`
-	// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep.
+	// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
 	Mode *GraphQueryRequestMode `json:"mode,omitempty" url:"-"`
 	// The natural-language question about the graph.
 	Query  string `json:"query" url:"-"`
@@ -4798,6 +4836,214 @@ func (g *GraphDeleteResult) String() string {
 }
 
 var (
+	graphMetadataKeyFieldCreatedAt = big.NewInt(1 << 0)
+	graphMetadataKeyFieldKey       = big.NewInt(1 << 1)
+)
+
+type GraphMetadataKey struct {
+	// The time when the key was first recorded.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The metadata key name.
+	Key *string `json:"key,omitempty" url:"key,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphMetadataKey) GetCreatedAt() *string {
+	if g == nil {
+		return nil
+	}
+	return g.CreatedAt
+}
+
+func (g *GraphMetadataKey) GetKey() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Key
+}
+
+func (g *GraphMetadataKey) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphMetadataKey) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetCreatedAt sets the CreatedAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphMetadataKey) SetCreatedAt(createdAt *string) {
+	g.CreatedAt = createdAt
+	g.require(graphMetadataKeyFieldCreatedAt)
+}
+
+// SetKey sets the Key field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphMetadataKey) SetKey(key *string) {
+	g.Key = key
+	g.require(graphMetadataKeyFieldKey)
+}
+
+func (g *GraphMetadataKey) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphMetadataKey
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphMetadataKey(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphMetadataKey) MarshalJSON() ([]byte, error) {
+	type embed GraphMetadataKey
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphMetadataKey) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
+	graphMetadataKeyListFieldItems      = big.NewInt(1 << 0)
+	graphMetadataKeyListFieldNextCursor = big.NewInt(1 << 1)
+)
+
+type GraphMetadataKeyList struct {
+	// The append-only keys recorded for the graph. A key can remain after no episode or message uses it.
+	Items []*GraphMetadataKey `json:"items,omitempty" url:"items,omitempty"`
+	// The cursor for the next page, when more keys exist.
+	NextCursor *string `json:"next_cursor,omitempty" url:"next_cursor,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (g *GraphMetadataKeyList) GetItems() []*GraphMetadataKey {
+	if g == nil {
+		return nil
+	}
+	return g.Items
+}
+
+func (g *GraphMetadataKeyList) GetNextCursor() *string {
+	if g == nil {
+		return nil
+	}
+	return g.NextCursor
+}
+
+func (g *GraphMetadataKeyList) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
+	return g.extraProperties
+}
+
+func (g *GraphMetadataKeyList) require(field *big.Int) {
+	next := new(big.Int)
+	if g.explicitFields != nil {
+		next.Set(g.explicitFields)
+	}
+	next.Or(next, field)
+	g.explicitFields = next
+}
+
+// SetItems sets the Items field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphMetadataKeyList) SetItems(items []*GraphMetadataKey) {
+	g.Items = items
+	g.require(graphMetadataKeyListFieldItems)
+}
+
+// SetNextCursor sets the NextCursor field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphMetadataKeyList) SetNextCursor(nextCursor *string) {
+	g.NextCursor = nextCursor
+	g.require(graphMetadataKeyListFieldNextCursor)
+}
+
+func (g *GraphMetadataKeyList) UnmarshalJSON(data []byte) error {
+	type unmarshaler GraphMetadataKeyList
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GraphMetadataKeyList(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+	g.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GraphMetadataKeyList) MarshalJSON() ([]byte, error) {
+	type embed GraphMetadataKeyList
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*g),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, g.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (g *GraphMetadataKeyList) String() string {
+	if g == nil {
+		return "<nil>"
+	}
+	if len(g.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+var (
 	graphPageFieldItems      = big.NewInt(1 << 0)
 	graphPageFieldNextCursor = big.NewInt(1 << 1)
 	graphPageFieldTotalSize  = big.NewInt(1 << 2)
@@ -8352,7 +8598,7 @@ func (g GraphListRequestOrderBy) Ptr() *GraphListRequestOrderBy {
 	return &g
 }
 
-// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. A project with a BYOM configuration supports only deep. A BYOC deployment supports only deep.
+// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
 type GraphQueryRequestMode string
 
 const (
