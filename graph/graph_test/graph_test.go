@@ -380,6 +380,54 @@ func TestGraphGetContextWithWireMock(
 	VerifyRequestCount(t, "TestGraphGetContextWithWireMock", "POST", "/graphs/graph_uuid/context", nil, 1)
 }
 
+func TestGraphGetInclusionRulesWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	_, invocationErr := client.Graph.GetInclusionRules(
+		context.TODO(),
+		"graph_uuid",
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphGetInclusionRulesWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphGetInclusionRulesWithWireMock", "GET", "/graphs/graph_uuid/inclusion-rules", nil, 1)
+}
+
+func TestGraphSetInclusionRulesWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.InclusionRules{}
+	_, invocationErr := client.Graph.SetInclusionRules(
+		context.TODO(),
+		"graph_uuid",
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphSetInclusionRulesWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphSetInclusionRulesWithWireMock", "PUT", "/graphs/graph_uuid/inclusion-rules", nil, 1)
+}
+
 func TestGraphGetInstructionsWithWireMock(
 	t *testing.T,
 ) {
@@ -426,6 +474,54 @@ func TestGraphSetInstructionsWithWireMock(
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
 	VerifyRequestCount(t, "TestGraphSetInstructionsWithWireMock", "PUT", "/graphs/graph_uuid/instructions", nil, 1)
+}
+
+func TestGraphGetKnowledgeWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	_, invocationErr := client.Graph.GetKnowledge(
+		context.TODO(),
+		"graph_uuid",
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphGetKnowledgeWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphGetKnowledgeWithWireMock", "GET", "/graphs/graph_uuid/knowledge", nil, 1)
+}
+
+func TestGraphSetKnowledgeWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.SetKnowledgeRequest{}
+	_, invocationErr := client.Graph.SetKnowledge(
+		context.TODO(),
+		"graph_uuid",
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGraphSetKnowledgeWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestGraphSetKnowledgeWithWireMock", "PUT", "/graphs/graph_uuid/knowledge", nil, 1)
 }
 
 func TestGraphListMetadataKeysWithWireMock(

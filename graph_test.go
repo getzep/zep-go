@@ -3448,6 +3448,14 @@ func TestSettersContentPolicyEvent(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetMatchedBy", func(t *testing.T) {
+		obj := &ContentPolicyEvent{}
+		var fernTestValueMatchedBy []ContentPolicyMatchedBy
+		obj.SetMatchedBy(fernTestValueMatchedBy)
+		assert.Equal(t, fernTestValueMatchedBy, obj.MatchedBy)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetRevision", func(t *testing.T) {
 		obj := &ContentPolicyEvent{}
 		var fernTestValueRevision *int
@@ -3663,6 +3671,39 @@ func TestGettersContentPolicyEvent(t *testing.T) {
 			}
 		}()
 		_ = obj.GetID() // Should return zero value
+	})
+
+	t.Run("GetMatchedBy", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContentPolicyEvent{}
+		var expected []ContentPolicyMatchedBy
+		obj.MatchedBy = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetMatchedBy(), "getter should return the property value")
+	})
+
+	t.Run("GetMatchedBy_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContentPolicyEvent{}
+		obj.MatchedBy = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetMatchedBy(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetMatchedBy_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *ContentPolicyEvent
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetMatchedBy() // Should return zero value
 	})
 
 	t.Run("GetRevision", func(t *testing.T) {
@@ -3897,6 +3938,37 @@ func TestSettersMarkExplicitContentPolicyEvent(t *testing.T) {
 
 		// Act
 		obj.SetID(fernTestValueID)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetMatchedBy_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContentPolicyEvent{}
+		var fernTestValueMatchedBy []ContentPolicyMatchedBy
+
+		// Act
+		obj.SetMatchedBy(fernTestValueMatchedBy)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -5988,6 +6060,14 @@ func TestSettersContextEpisode(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetExpiredAt", func(t *testing.T) {
+		obj := &ContextEpisode{}
+		var fernTestValueExpiredAt *string
+		obj.SetExpiredAt(fernTestValueExpiredAt)
+		assert.Equal(t, fernTestValueExpiredAt, obj.ExpiredAt)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetGraphUUID", func(t *testing.T) {
 		obj := &ContextEpisode{}
 		var fernTestValueGraphUUID *string
@@ -6097,6 +6177,14 @@ func TestSettersContextEpisode(t *testing.T) {
 		var fernTestValueUUID *string
 		obj.SetUUID(fernTestValueUUID)
 		assert.Equal(t, fernTestValueUUID, obj.UUID)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
+	t.Run("SetWaitStatus", func(t *testing.T) {
+		obj := &ContextEpisode{}
+		var fernTestValueWaitStatus *EpisodeWaitStatus
+		obj.SetWaitStatus(fernTestValueWaitStatus)
+		assert.Equal(t, fernTestValueWaitStatus, obj.WaitStatus)
 		assert.NotNil(t, obj.explicitFields)
 	})
 
@@ -6233,6 +6321,39 @@ func TestGettersContextEpisode(t *testing.T) {
 			}
 		}()
 		_ = obj.GetDocumentID() // Should return zero value
+	})
+
+	t.Run("GetExpiredAt", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContextEpisode{}
+		var expected *string
+		obj.ExpiredAt = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetExpiredAt(), "getter should return the property value")
+	})
+
+	t.Run("GetExpiredAt_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContextEpisode{}
+		obj.ExpiredAt = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetExpiredAt(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetExpiredAt_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *ContextEpisode
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetExpiredAt() // Should return zero value
 	})
 
 	t.Run("GetGraphUUID", func(t *testing.T) {
@@ -6697,6 +6818,39 @@ func TestGettersContextEpisode(t *testing.T) {
 		_ = obj.GetUUID() // Should return zero value
 	})
 
+	t.Run("GetWaitStatus", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContextEpisode{}
+		var expected *EpisodeWaitStatus
+		obj.WaitStatus = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetWaitStatus(), "getter should return the property value")
+	})
+
+	t.Run("GetWaitStatus_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContextEpisode{}
+		obj.WaitStatus = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetWaitStatus(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetWaitStatus_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *ContextEpisode
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetWaitStatus() // Should return zero value
+	})
+
 }
 
 func TestSettersMarkExplicitContextEpisode(t *testing.T) {
@@ -6801,6 +6955,37 @@ func TestSettersMarkExplicitContextEpisode(t *testing.T) {
 
 		// Act
 		obj.SetDocumentID(fernTestValueDocumentID)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetExpiredAt_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContextEpisode{}
+		var fernTestValueExpiredAt *string
+
+		// Act
+		obj.SetExpiredAt(fernTestValueExpiredAt)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -7235,6 +7420,37 @@ func TestSettersMarkExplicitContextEpisode(t *testing.T) {
 
 		// Act
 		obj.SetUUID(fernTestValueUUID)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetWaitStatus_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &ContextEpisode{}
+		var fernTestValueWaitStatus *EpisodeWaitStatus
+
+		// Act
+		obj.SetWaitStatus(fernTestValueWaitStatus)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -16914,6 +17130,14 @@ func TestSettersGraphQueryResponse(t *testing.T) {
 		assert.NotNil(t, obj.explicitFields)
 	})
 
+	t.Run("SetAnswerStatus", func(t *testing.T) {
+		obj := &GraphQueryResponse{}
+		var fernTestValueAnswerStatus *GraphQueryResponseAnswerStatus
+		obj.SetAnswerStatus(fernTestValueAnswerStatus)
+		assert.Equal(t, fernTestValueAnswerStatus, obj.AnswerStatus)
+		assert.NotNil(t, obj.explicitFields)
+	})
+
 	t.Run("SetCitations", func(t *testing.T) {
 		obj := &GraphQueryResponse{}
 		var fernTestValueCitations *GraphQueryCitations
@@ -16972,6 +17196,39 @@ func TestGettersGraphQueryResponse(t *testing.T) {
 			}
 		}()
 		_ = obj.GetAnswer() // Should return zero value
+	})
+
+	t.Run("GetAnswerStatus", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &GraphQueryResponse{}
+		var expected *GraphQueryResponseAnswerStatus
+		obj.AnswerStatus = expected
+
+		// Act & Assert
+		assert.Equal(t, expected, obj.GetAnswerStatus(), "getter should return the property value")
+	})
+
+	t.Run("GetAnswerStatus_NilValue", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &GraphQueryResponse{}
+		obj.AnswerStatus = nil
+
+		// Act & Assert
+		assert.Nil(t, obj.GetAnswerStatus(), "getter should return nil when property is nil")
+	})
+
+	t.Run("GetAnswerStatus_NilReceiver", func(t *testing.T) {
+		t.Parallel()
+		var obj *GraphQueryResponse
+		// Should not panic - getters should handle nil receiver gracefully
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Getter panicked on nil receiver: %v", r)
+			}
+		}()
+		_ = obj.GetAnswerStatus() // Should return zero value
 	})
 
 	t.Run("GetCitations", func(t *testing.T) {
@@ -17084,6 +17341,37 @@ func TestSettersMarkExplicitGraphQueryResponse(t *testing.T) {
 
 		// Act
 		obj.SetAnswer(fernTestValueAnswer)
+
+		// Assert - object with explicitly set field can be marshaled/unmarshaled
+		bytes, err := json.Marshal(obj)
+		require.NoError(t, err, "marshaling should succeed for test setup")
+
+		// This test ensures JSON marshaling and unmarshaling succeed when the field has a zero/nil value
+		// Detect if marshaled JSON is an object or primitive to use correct unmarshal target
+		if len(bytes) > 0 && bytes[0] == '{' {
+			// JSON object - unmarshal into map
+			var unmarshaled map[string]interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		} else {
+			// JSON primitive (string, number, boolean, null) - unmarshal into interface{}
+			var unmarshaled interface{}
+			err = json.Unmarshal(bytes, &unmarshaled)
+			require.NoError(t, err, "unmarshaling should succeed for test verification")
+		}
+
+		// Note: This does not explicitly assert the presence of a specific JSON field
+		// It verifies that setting a field via setter allows successful JSON round-trip
+	})
+
+	t.Run("SetAnswerStatus_MarksExplicit", func(t *testing.T) {
+		t.Parallel()
+		// Arrange
+		obj := &GraphQueryResponse{}
+		var fernTestValueAnswerStatus *GraphQueryResponseAnswerStatus
+
+		// Act
+		obj.SetAnswerStatus(fernTestValueAnswerStatus)
 
 		// Assert - object with explicitly set field can be marshaled/unmarshaled
 		bytes, err := json.Marshal(obj)
@@ -22417,6 +22705,13 @@ func TestEnumContentPolicyEventDropReason(t *testing.T) {
 		assert.Equal(t, ContentPolicyEventDropReason("dependent"), val, "enum value should match expected wire value")
 	})
 
+	t.Run("NewFromString_not_included", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewContentPolicyEventDropReasonFromString("not_included")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, ContentPolicyEventDropReason("not_included"), val, "enum value should match expected wire value")
+	})
+
 	t.Run("NewFromString_Invalid", func(t *testing.T) {
 		_, err := NewContentPolicyEventDropReasonFromString("invalid_value_that_does_not_exist")
 		assert.Error(t, err)
@@ -22467,6 +22762,42 @@ func TestEnumContentPolicyEventListFiltersDropReason(t *testing.T) {
 
 	t.Run("Ptr", func(t *testing.T) {
 		val, err := NewContentPolicyEventListFiltersDropReasonFromString("match")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumContentPolicyMatchedBy(t *testing.T) {
+	t.Run("NewFromString_type", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewContentPolicyMatchedByFromString("type")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, ContentPolicyMatchedBy("type"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_pattern", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewContentPolicyMatchedByFromString("pattern")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, ContentPolicyMatchedBy("pattern"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_condition", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewContentPolicyMatchedByFromString("condition")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, ContentPolicyMatchedBy("condition"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewContentPolicyMatchedByFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewContentPolicyMatchedByFromString("type")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)
@@ -22633,6 +22964,42 @@ func TestEnumGraphQueryRequestMode(t *testing.T) {
 
 	t.Run("Ptr", func(t *testing.T) {
 		val, err := NewGraphQueryRequestModeFromString("fast")
+		assert.NoError(t, err)
+		ptr := val.Ptr()
+		assert.NotNil(t, ptr)
+		assert.Equal(t, val, *ptr)
+	})
+}
+
+func TestEnumGraphQueryResponseAnswerStatus(t *testing.T) {
+	t.Run("NewFromString_answered", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewGraphQueryResponseAnswerStatusFromString("answered")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, GraphQueryResponseAnswerStatus("answered"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_partial", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewGraphQueryResponseAnswerStatusFromString("partial")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, GraphQueryResponseAnswerStatus("partial"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_refused", func(t *testing.T) {
+		t.Parallel()
+		val, err := NewGraphQueryResponseAnswerStatusFromString("refused")
+		assert.NoError(t, err, "valid enum value should not return error")
+		assert.Equal(t, GraphQueryResponseAnswerStatus("refused"), val, "enum value should match expected wire value")
+	})
+
+	t.Run("NewFromString_Invalid", func(t *testing.T) {
+		_, err := NewGraphQueryResponseAnswerStatusFromString("invalid_value_that_does_not_exist")
+		assert.Error(t, err)
+	})
+
+	t.Run("Ptr", func(t *testing.T) {
+		val, err := NewGraphQueryResponseAnswerStatusFromString("answered")
 		assert.NoError(t, err)
 		ptr := val.Ptr()
 		assert.NotNil(t, ptr)

@@ -177,7 +177,7 @@ func (c *Client) Lookup(
 	return response.Body, nil
 }
 
-// Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
+// Experimental. Smart Query retrieves multi-hop context from a graph in one call. Some agent tasks need multi-hop retrieval: the agent does not know in advance what to search for, so it must retrieve a record, learn from it, and then plan the next retrieval. Zep explores the graph with searches and graph traversals, and it uses the records from each retrieval round to plan the next round. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items and an `answer_status` of `answered`, `partial`, or `refused`. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: Optimized for latency. Retrieves the context for multi-hop queries. The query runs at most 3 search rounds. deep: Runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and available to every Zep account. The request, the response, the events, and the modes of the operation can change.
 //
 // Example:
 //
@@ -233,7 +233,7 @@ func (c *Client) QueryStream(
 	)
 }
 
-// Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
+// Experimental. Smart Query retrieves multi-hop context from a graph in one call. Some agent tasks need multi-hop retrieval: the agent does not know in advance what to search for, so it must retrieve a record, learn from it, and then plan the next retrieval. Zep explores the graph with searches and graph traversals, and it uses the records from each retrieval round to plan the next round. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items and an `answer_status` of `answered`, `partial`, or `refused`. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: Optimized for latency. Retrieves the context for multi-hop queries. The query runs at most 3 search rounds. deep: Runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and available to every Zep account. The request, the response, the events, and the modes of the operation can change.
 //
 // Example:
 //
@@ -365,7 +365,7 @@ func (c *Client) Clone(
 	return response.Body, nil
 }
 
-// Returns the content policy the graph bound at creation. The policy of a graph does not change after creation. A graph without a content policy returns revision 0 with no categories and no rules.
+// Experimental: the request, the response, and the behavior of this operation can change. Returns the content policy the graph bound at creation. The policy of a graph does not change after creation. A graph without a content policy returns revision 0 with no categories and no rules.
 //
 // Example:
 //
@@ -390,7 +390,7 @@ func (c *Client) GetContentPolicy(
 	return response.Body, nil
 }
 
-// Lists the content policy decisions recorded for a graph, newest first. Each event carries identifiers only. A graph without a content policy returns an empty list.
+// Experimental: the request, the response, and the behavior of this operation can change. Lists the content policy decisions recorded for a graph, newest first. Each event carries identifiers only. A graph without a content policy returns an empty list.
 //
 // Example:
 //
@@ -498,6 +498,60 @@ func (c *Client) GetContext(
 	return response.Body, nil
 }
 
+// Returns the graph rules, for example {"inclusion_rules":[],"inherited":true}.
+//
+// Example:
+//
+//	client.Graph.GetInclusionRules(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
+func (c *Client) GetInclusionRules(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	opts ...option.RequestOption,
+) (*zep.InclusionRules, error) {
+	response, err := c.WithRawResponse.GetInclusionRules(
+		ctx,
+		graphUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Replaces the graph rules. Request: {"inclusion_rules":[]}. Response: {"inclusion_rules":[],"inherited":true}.
+//
+// Example:
+//
+//	request := &zep.InclusionRules{}
+//	client.Graph.SetInclusionRules(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SetInclusionRules(
+	ctx context.Context,
+	// Graph UUID
+	graphUUID string,
+	request *zep.InclusionRules,
+	opts ...option.IdempotentRequestOption,
+) (*zep.InclusionRules, error) {
+	response, err := c.WithRawResponse.SetInclusionRules(
+		ctx,
+		graphUUID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
 // Example:
 //
 //	client.Graph.GetInstructions(
@@ -537,6 +591,63 @@ func (c *Client) SetInstructions(
 	opts ...option.IdempotentRequestOption,
 ) (*zep.Instructions, error) {
 	response, err := c.WithRawResponse.SetInstructions(
+		ctx,
+		graphUUID,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Returns the domain knowledge in effect at this scope. The knowledge_api account flag must be enabled.
+// Response example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}],"inherited":false}
+//
+// Example:
+//
+//	client.Graph.GetKnowledge(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	)
+func (c *Client) GetKnowledge(
+	ctx context.Context,
+	// The UUID of the graph or its user.
+	graphUUID string,
+	opts ...option.RequestOption,
+) (*zep.KnowledgeResponse, error) {
+	response, err := c.WithRawResponse.GetKnowledge(
+		ctx,
+		graphUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Replaces the complete set of domain knowledge entries at this scope. The knowledge_api account flag must be enabled.
+// Response example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}],"inherited":false}
+// Request example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}]}
+//
+// Example:
+//
+//	request := &zep.SetKnowledgeRequest{}
+//	client.Graph.SetKnowledge(
+//	    context.TODO(),
+//	    "graph_uuid",
+//	    request,
+//	)
+func (c *Client) SetKnowledge(
+	ctx context.Context,
+	// The UUID of the graph or its user.
+	graphUUID string,
+	request *zep.SetKnowledgeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.KnowledgeResponse, error) {
+	response, err := c.WithRawResponse.SetKnowledge(
 		ctx,
 		graphUUID,
 		request,

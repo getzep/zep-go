@@ -433,8 +433,9 @@ var (
 )
 
 type AddHyperedgeEdgeResult struct {
-	// An accept-time acknowledgement of the member edge, carrying the
-	// identifier Zep assigned and the hyperedge's shared fields.
+	// An accept-time acknowledgement of the member edge. It contains the
+	// identifier that Zep assigned and the name and nodes that you supplied.
+	// It does not contain the shared fact or timestamps of the hyperedge.
 	Edge *AddedEdge `json:"edge,omitempty" url:"edge,omitempty"`
 	// The asynchronous task that tracks writing the member edge.
 	Task *Task `json:"task,omitempty" url:"task,omitempty"`
@@ -763,6 +764,7 @@ type AddedEdge struct {
 	// The time the fact was superseded or removed.
 	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
 	// The natural-language fact you submitted for this edge.
+	// graph.hyperedge.create_edge does not return this field.
 	Fact *string `json:"fact,omitempty" url:"fact,omitempty"`
 	// The name of the edge, in upper snake case, for example RELATES_TO.
 	FactName *string `json:"fact_name,omitempty" url:"fact_name,omitempty"`
@@ -16647,21 +16649,36 @@ func (c *ContentPolicyCategoryRequest) String() string {
 }
 
 var (
-	contentPolicyRuleFieldCategoryKey        = big.NewInt(1 << 0)
-	contentPolicyRuleFieldDescription        = big.NewInt(1 << 1)
-	contentPolicyRuleFieldID                 = big.NewInt(1 << 2)
-	contentPolicyRuleFieldPermittedExamples  = big.NewInt(1 << 3)
-	contentPolicyRuleFieldProhibitedExamples = big.NewInt(1 << 4)
+	contentPolicyRuleFieldAction             = big.NewInt(1 << 0)
+	contentPolicyRuleFieldCategoryKey        = big.NewInt(1 << 1)
+	contentPolicyRuleFieldCondition          = big.NewInt(1 << 2)
+	contentPolicyRuleFieldDescription        = big.NewInt(1 << 3)
+	contentPolicyRuleFieldEdgeTypes          = big.NewInt(1 << 4)
+	contentPolicyRuleFieldEntityTypes        = big.NewInt(1 << 5)
+	contentPolicyRuleFieldID                 = big.NewInt(1 << 6)
+	contentPolicyRuleFieldPatterns           = big.NewInt(1 << 7)
+	contentPolicyRuleFieldPermittedExamples  = big.NewInt(1 << 8)
+	contentPolicyRuleFieldProhibitedExamples = big.NewInt(1 << 9)
 )
 
 type ContentPolicyRule struct {
+	// The rule action. The supported values are exclude and include.
+	Action *ContentPolicyRuleAction `json:"action,omitempty" url:"action,omitempty"`
 	// The key of the category this rule belongs to.
 	CategoryKey *string `json:"category_key,omitempty" url:"category_key,omitempty"`
-	// The content this rule prohibits.
+	// The condition that this rule evaluates.
+	Condition *string `json:"condition,omitempty" url:"condition,omitempty"`
+	// Deprecated: use condition. This alias remains available for one release.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// Edge types that this rule covers.
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// Entity types that this rule covers.
+	EntityTypes []string `json:"entity_types,omitempty" url:"entity_types,omitempty"`
 	// The server-assigned identifier of the rule. Stable across revisions while
-	// the category key and description are unchanged.
+	// the effective rule definition is unchanged.
 	ID *string `json:"id,omitempty" url:"id,omitempty"`
+	// Regular expression patterns that this rule matches.
+	Patterns []string `json:"patterns,omitempty" url:"patterns,omitempty"`
 	// Examples of similar content the rule permits.
 	PermittedExamples []string `json:"permitted_examples,omitempty" url:"permitted_examples,omitempty"`
 	// Examples of content the rule prohibits.
@@ -16674,11 +16691,25 @@ type ContentPolicyRule struct {
 	rawJSON         json.RawMessage
 }
 
+func (c *ContentPolicyRule) GetAction() *ContentPolicyRuleAction {
+	if c == nil {
+		return nil
+	}
+	return c.Action
+}
+
 func (c *ContentPolicyRule) GetCategoryKey() *string {
 	if c == nil {
 		return nil
 	}
 	return c.CategoryKey
+}
+
+func (c *ContentPolicyRule) GetCondition() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Condition
 }
 
 func (c *ContentPolicyRule) GetDescription() *string {
@@ -16688,11 +16719,32 @@ func (c *ContentPolicyRule) GetDescription() *string {
 	return c.Description
 }
 
+func (c *ContentPolicyRule) GetEdgeTypes() []string {
+	if c == nil {
+		return nil
+	}
+	return c.EdgeTypes
+}
+
+func (c *ContentPolicyRule) GetEntityTypes() []string {
+	if c == nil {
+		return nil
+	}
+	return c.EntityTypes
+}
+
 func (c *ContentPolicyRule) GetID() *string {
 	if c == nil {
 		return nil
 	}
 	return c.ID
+}
+
+func (c *ContentPolicyRule) GetPatterns() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Patterns
 }
 
 func (c *ContentPolicyRule) GetPermittedExamples() []string {
@@ -16725,11 +16777,25 @@ func (c *ContentPolicyRule) require(field *big.Int) {
 	c.explicitFields = next
 }
 
+// SetAction sets the Action field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetAction(action *ContentPolicyRuleAction) {
+	c.Action = action
+	c.require(contentPolicyRuleFieldAction)
+}
+
 // SetCategoryKey sets the CategoryKey field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *ContentPolicyRule) SetCategoryKey(categoryKey *string) {
 	c.CategoryKey = categoryKey
 	c.require(contentPolicyRuleFieldCategoryKey)
+}
+
+// SetCondition sets the Condition field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetCondition(condition *string) {
+	c.Condition = condition
+	c.require(contentPolicyRuleFieldCondition)
 }
 
 // SetDescription sets the Description field and marks it as non-optional;
@@ -16739,11 +16805,32 @@ func (c *ContentPolicyRule) SetDescription(description *string) {
 	c.require(contentPolicyRuleFieldDescription)
 }
 
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetEdgeTypes(edgeTypes []string) {
+	c.EdgeTypes = edgeTypes
+	c.require(contentPolicyRuleFieldEdgeTypes)
+}
+
+// SetEntityTypes sets the EntityTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetEntityTypes(entityTypes []string) {
+	c.EntityTypes = entityTypes
+	c.require(contentPolicyRuleFieldEntityTypes)
+}
+
 // SetID sets the ID field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *ContentPolicyRule) SetID(id *string) {
 	c.ID = id
 	c.require(contentPolicyRuleFieldID)
+}
+
+// SetPatterns sets the Patterns field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRule) SetPatterns(patterns []string) {
+	c.Patterns = patterns
+	c.require(contentPolicyRuleFieldPatterns)
 }
 
 // SetPermittedExamples sets the PermittedExamples field and marks it as non-optional;
@@ -16802,20 +16889,60 @@ func (c *ContentPolicyRule) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
+// The rule action. The supported values are exclude and include.
+type ContentPolicyRuleAction string
+
+const (
+	ContentPolicyRuleActionExclude ContentPolicyRuleAction = "exclude"
+	ContentPolicyRuleActionInclude ContentPolicyRuleAction = "include"
+)
+
+func NewContentPolicyRuleActionFromString(s string) (ContentPolicyRuleAction, error) {
+	switch s {
+	case "exclude":
+		return ContentPolicyRuleActionExclude, nil
+	case "include":
+		return ContentPolicyRuleActionInclude, nil
+	}
+	var t ContentPolicyRuleAction
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ContentPolicyRuleAction) Ptr() *ContentPolicyRuleAction {
+	return &c
+}
+
 var (
-	contentPolicyRuleRequestFieldCategoryKey        = big.NewInt(1 << 0)
-	contentPolicyRuleRequestFieldDescription        = big.NewInt(1 << 1)
-	contentPolicyRuleRequestFieldPermittedExamples  = big.NewInt(1 << 2)
-	contentPolicyRuleRequestFieldProhibitedExamples = big.NewInt(1 << 3)
+	contentPolicyRuleRequestFieldAction             = big.NewInt(1 << 0)
+	contentPolicyRuleRequestFieldCategoryKey        = big.NewInt(1 << 1)
+	contentPolicyRuleRequestFieldCondition          = big.NewInt(1 << 2)
+	contentPolicyRuleRequestFieldDescription        = big.NewInt(1 << 3)
+	contentPolicyRuleRequestFieldEdgeTypes          = big.NewInt(1 << 4)
+	contentPolicyRuleRequestFieldEntityTypes        = big.NewInt(1 << 5)
+	contentPolicyRuleRequestFieldPatterns           = big.NewInt(1 << 6)
+	contentPolicyRuleRequestFieldPermittedExamples  = big.NewInt(1 << 7)
+	contentPolicyRuleRequestFieldProhibitedExamples = big.NewInt(1 << 8)
 )
 
 type ContentPolicyRuleRequest struct {
+	// The rule action. The supported values are exclude and include.
+	// The include action is experimental and gated.
+	Action *ContentPolicyRuleRequestAction `json:"action,omitempty" url:"action,omitempty"`
 	// The key of the category this rule belongs to. The category must be in
 	// the same policy.
 	CategoryKey *string `json:"category_key,omitempty" url:"category_key,omitempty"`
-	// The content this rule prohibits, in plain language. Maximum 1000
-	// characters.
+	// The experimental condition that this rule evaluates. This field is available
+	// to all accounts. Maximum 1000 characters.
+	Condition *string `json:"condition,omitempty" url:"condition,omitempty"`
+	// Deprecated: use condition. This alias remains available for one release.
+	// When both fields are set, they must have the same value.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// Edge types that this rule covers. The field is experimental and gated.
+	EdgeTypes []string `json:"edge_types,omitempty" url:"edge_types,omitempty"`
+	// Entity types that this rule covers. The field is experimental and gated.
+	EntityTypes []string `json:"entity_types,omitempty" url:"entity_types,omitempty"`
+	// Regular expression patterns that this rule matches. The field is experimental and gated.
+	Patterns []string `json:"patterns,omitempty" url:"patterns,omitempty"`
 	// Examples of similar content the rule permits. 0 to 8 items, each at most
 	// 500 characters.
 	PermittedExamples []string `json:"permitted_examples,omitempty" url:"permitted_examples,omitempty"`
@@ -16830,6 +16957,13 @@ type ContentPolicyRuleRequest struct {
 	rawJSON         json.RawMessage
 }
 
+func (c *ContentPolicyRuleRequest) GetAction() *ContentPolicyRuleRequestAction {
+	if c == nil {
+		return nil
+	}
+	return c.Action
+}
+
 func (c *ContentPolicyRuleRequest) GetCategoryKey() *string {
 	if c == nil {
 		return nil
@@ -16837,11 +16971,39 @@ func (c *ContentPolicyRuleRequest) GetCategoryKey() *string {
 	return c.CategoryKey
 }
 
+func (c *ContentPolicyRuleRequest) GetCondition() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Condition
+}
+
 func (c *ContentPolicyRuleRequest) GetDescription() *string {
 	if c == nil {
 		return nil
 	}
 	return c.Description
+}
+
+func (c *ContentPolicyRuleRequest) GetEdgeTypes() []string {
+	if c == nil {
+		return nil
+	}
+	return c.EdgeTypes
+}
+
+func (c *ContentPolicyRuleRequest) GetEntityTypes() []string {
+	if c == nil {
+		return nil
+	}
+	return c.EntityTypes
+}
+
+func (c *ContentPolicyRuleRequest) GetPatterns() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Patterns
 }
 
 func (c *ContentPolicyRuleRequest) GetPermittedExamples() []string {
@@ -16874,6 +17036,13 @@ func (c *ContentPolicyRuleRequest) require(field *big.Int) {
 	c.explicitFields = next
 }
 
+// SetAction sets the Action field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetAction(action *ContentPolicyRuleRequestAction) {
+	c.Action = action
+	c.require(contentPolicyRuleRequestFieldAction)
+}
+
 // SetCategoryKey sets the CategoryKey field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *ContentPolicyRuleRequest) SetCategoryKey(categoryKey *string) {
@@ -16881,11 +17050,39 @@ func (c *ContentPolicyRuleRequest) SetCategoryKey(categoryKey *string) {
 	c.require(contentPolicyRuleRequestFieldCategoryKey)
 }
 
+// SetCondition sets the Condition field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetCondition(condition *string) {
+	c.Condition = condition
+	c.require(contentPolicyRuleRequestFieldCondition)
+}
+
 // SetDescription sets the Description field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *ContentPolicyRuleRequest) SetDescription(description *string) {
 	c.Description = description
 	c.require(contentPolicyRuleRequestFieldDescription)
+}
+
+// SetEdgeTypes sets the EdgeTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetEdgeTypes(edgeTypes []string) {
+	c.EdgeTypes = edgeTypes
+	c.require(contentPolicyRuleRequestFieldEdgeTypes)
+}
+
+// SetEntityTypes sets the EntityTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetEntityTypes(entityTypes []string) {
+	c.EntityTypes = entityTypes
+	c.require(contentPolicyRuleRequestFieldEntityTypes)
+}
+
+// SetPatterns sets the Patterns field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyRuleRequest) SetPatterns(patterns []string) {
+	c.Patterns = patterns
+	c.require(contentPolicyRuleRequestFieldPatterns)
 }
 
 // SetPermittedExamples sets the PermittedExamples field and marks it as non-optional;
@@ -16942,6 +17139,30 @@ func (c *ContentPolicyRuleRequest) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", c)
+}
+
+// The rule action. The supported values are exclude and include.
+// The include action is experimental and gated.
+type ContentPolicyRuleRequestAction string
+
+const (
+	ContentPolicyRuleRequestActionExclude ContentPolicyRuleRequestAction = "exclude"
+	ContentPolicyRuleRequestActionInclude ContentPolicyRuleRequestAction = "include"
+)
+
+func NewContentPolicyRuleRequestActionFromString(s string) (ContentPolicyRuleRequestAction, error) {
+	switch s {
+	case "exclude":
+		return ContentPolicyRuleRequestActionExclude, nil
+	case "include":
+		return ContentPolicyRuleRequestActionInclude, nil
+	}
+	var t ContentPolicyRuleRequestAction
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ContentPolicyRuleRequestAction) Ptr() *ContentPolicyRuleRequestAction {
+	return &c
 }
 
 var (
@@ -17158,7 +17379,7 @@ var (
 type CustomInstruction struct {
 	// logical key for identifying the instruction
 	Name string `json:"name" url:"name"`
-	// the actual instruction text
+	// the domain knowledge text
 	Text string `json:"text" url:"text"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -18989,7 +19210,7 @@ var (
 type EdgeListFilters struct {
 	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
 	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	// Experimental. Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
 	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
 	// Filter results by temporal values.
 	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
@@ -20098,25 +20319,27 @@ var (
 	episodeFieldContentPolicy     = big.NewInt(1 << 1)
 	episodeFieldCreatedAt         = big.NewInt(1 << 2)
 	episodeFieldDocumentID        = big.NewInt(1 << 3)
-	episodeFieldGraphUUID         = big.NewInt(1 << 4)
-	episodeFieldMetadata          = big.NewInt(1 << 5)
-	episodeFieldProcessed         = big.NewInt(1 << 6)
-	episodeFieldReferenceTime     = big.NewInt(1 << 7)
-	episodeFieldRelevance         = big.NewInt(1 << 8)
-	episodeFieldRole              = big.NewInt(1 << 9)
-	episodeFieldRoleName          = big.NewInt(1 << 10)
-	episodeFieldScore             = big.NewInt(1 << 11)
-	episodeFieldSource            = big.NewInt(1 << 12)
-	episodeFieldSourceDescription = big.NewInt(1 << 13)
-	episodeFieldThreadUUID        = big.NewInt(1 << 14)
-	episodeFieldUserUUID          = big.NewInt(1 << 15)
-	episodeFieldUUID              = big.NewInt(1 << 16)
+	episodeFieldExpiredAt         = big.NewInt(1 << 4)
+	episodeFieldGraphUUID         = big.NewInt(1 << 5)
+	episodeFieldMetadata          = big.NewInt(1 << 6)
+	episodeFieldProcessed         = big.NewInt(1 << 7)
+	episodeFieldReferenceTime     = big.NewInt(1 << 8)
+	episodeFieldRelevance         = big.NewInt(1 << 9)
+	episodeFieldRole              = big.NewInt(1 << 10)
+	episodeFieldRoleName          = big.NewInt(1 << 11)
+	episodeFieldScore             = big.NewInt(1 << 12)
+	episodeFieldSource            = big.NewInt(1 << 13)
+	episodeFieldSourceDescription = big.NewInt(1 << 14)
+	episodeFieldThreadUUID        = big.NewInt(1 << 15)
+	episodeFieldUserUUID          = big.NewInt(1 << 16)
+	episodeFieldUUID              = big.NewInt(1 << 17)
+	episodeFieldWaitStatus        = big.NewInt(1 << 18)
 )
 
 type Episode struct {
 	// The raw content of the episode.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
-	// The content policy state of the episode, present only on a graph with a
+	// Experimental. The content policy state of the episode, present only on a graph with a
 	// bound content policy rule.
 	ContentPolicy *EpisodeContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
 	// The time Zep received the episode.
@@ -20124,6 +20347,11 @@ type Episode struct {
 	// The developer-assigned identifier of the document this episode belongs to,
 	// present only for episodes added to a document.
 	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
+	// The time when Zep stopped the processing of the episode because the
+	// episode waited for more than 7 days. An expired episode is not in the
+	// graph. Add the episode again to process it. The field is omitted for an
+	// episode that did not expire.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
 	// The unique identifier of the graph this episode belongs to.
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	// Custom metadata associated with the episode.
@@ -20159,6 +20387,10 @@ type Episode struct {
 	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the episode.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// Why an episode that is not processed waits. The field is present when
+	// the episode has waited for more than 24 hours, and when the episode
+	// expired. It is omitted for a processed episode.
+	WaitStatus *EpisodeWaitStatus `json:"wait_status,omitempty" url:"wait_status,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -20193,6 +20425,13 @@ func (e *Episode) GetDocumentID() *string {
 		return nil
 	}
 	return e.DocumentID
+}
+
+func (e *Episode) GetExpiredAt() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ExpiredAt
 }
 
 func (e *Episode) GetGraphUUID() *string {
@@ -20286,6 +20525,13 @@ func (e *Episode) GetUUID() *string {
 	return e.UUID
 }
 
+func (e *Episode) GetWaitStatus() *EpisodeWaitStatus {
+	if e == nil {
+		return nil
+	}
+	return e.WaitStatus
+}
+
 func (e *Episode) GetExtraProperties() map[string]interface{} {
 	if e == nil {
 		return nil
@@ -20328,6 +20574,13 @@ func (e *Episode) SetCreatedAt(createdAt *string) {
 func (e *Episode) SetDocumentID(documentID *string) {
 	e.DocumentID = documentID
 	e.require(episodeFieldDocumentID)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetExpiredAt(expiredAt *string) {
+	e.ExpiredAt = expiredAt
+	e.require(episodeFieldExpiredAt)
 }
 
 // SetGraphUUID sets the GraphUUID field and marks it as non-optional;
@@ -20421,6 +20674,13 @@ func (e *Episode) SetUUID(uuid *string) {
 	e.require(episodeFieldUUID)
 }
 
+// SetWaitStatus sets the WaitStatus field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *Episode) SetWaitStatus(waitStatus *EpisodeWaitStatus) {
+	e.WaitStatus = waitStatus
+	e.require(episodeFieldWaitStatus)
+}
+
 func (e *Episode) UnmarshalJSON(data []byte) error {
 	type unmarshaler Episode
 	var value unmarshaler
@@ -20484,6 +20744,8 @@ type EpisodeContentPolicy struct {
 	// The evaluation status. pending means the evaluation has not finished,
 	// complete means every candidate was evaluated and the graph batch was
 	// written, and failed means ingestion retries were exhausted.
+	// not_evaluated means Zep processed the episode without an evaluation, for
+	// example because the account had no content policy entitlement.
 	Status *EpisodeContentPolicyStatus `json:"status,omitempty" url:"status,omitempty"`
 	// Whether at least one derived candidate matched a rule. Once true, it
 	// stays true.
@@ -20641,12 +20903,15 @@ func (e *EpisodeContentPolicy) String() string {
 // The evaluation status. pending means the evaluation has not finished,
 // complete means every candidate was evaluated and the graph batch was
 // written, and failed means ingestion retries were exhausted.
+// not_evaluated means Zep processed the episode without an evaluation, for
+// example because the account had no content policy entitlement.
 type EpisodeContentPolicyStatus string
 
 const (
-	EpisodeContentPolicyStatusPending  EpisodeContentPolicyStatus = "pending"
-	EpisodeContentPolicyStatusComplete EpisodeContentPolicyStatus = "complete"
-	EpisodeContentPolicyStatusFailed   EpisodeContentPolicyStatus = "failed"
+	EpisodeContentPolicyStatusPending      EpisodeContentPolicyStatus = "pending"
+	EpisodeContentPolicyStatusComplete     EpisodeContentPolicyStatus = "complete"
+	EpisodeContentPolicyStatusFailed       EpisodeContentPolicyStatus = "failed"
+	EpisodeContentPolicyStatusNotEvaluated EpisodeContentPolicyStatus = "not_evaluated"
 )
 
 func NewEpisodeContentPolicyStatusFromString(s string) (EpisodeContentPolicyStatus, error) {
@@ -20657,6 +20922,8 @@ func NewEpisodeContentPolicyStatusFromString(s string) (EpisodeContentPolicyStat
 		return EpisodeContentPolicyStatusComplete, nil
 	case "failed":
 		return EpisodeContentPolicyStatusFailed, nil
+	case "not_evaluated":
+		return EpisodeContentPolicyStatusNotEvaluated, nil
 	}
 	var t EpisodeContentPolicyStatus
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -20829,7 +21096,7 @@ var (
 )
 
 type EpisodeListFilters struct {
-	// When true, include only episodes that a content policy flagged. When
+	// Experimental. When true, include only episodes that a content policy flagged. When
 	// false, include only episodes that no content policy flagged. The
 	// project setting include_policy_violating_episodes must be on.
 	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
@@ -21086,6 +21353,31 @@ func (e *EpisodePage) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type EpisodeWaitStatus string
+
+const (
+	EpisodeWaitStatusAccountRateLimitReached   EpisodeWaitStatus = "account_rate_limit_reached"
+	EpisodeWaitStatusWaitingForEarlierEpisodes EpisodeWaitStatus = "waiting_for_earlier_episodes"
+	EpisodeWaitStatusProcessingDelayed         EpisodeWaitStatus = "processing_delayed"
+)
+
+func NewEpisodeWaitStatusFromString(s string) (EpisodeWaitStatus, error) {
+	switch s {
+	case "account_rate_limit_reached":
+		return EpisodeWaitStatusAccountRateLimitReached, nil
+	case "waiting_for_earlier_episodes":
+		return EpisodeWaitStatusWaitingForEarlierEpisodes, nil
+	case "processing_delayed":
+		return EpisodeWaitStatusProcessingDelayed, nil
+	}
+	var t EpisodeWaitStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EpisodeWaitStatus) Ptr() *EpisodeWaitStatus {
+	return &e
+}
+
 var (
 	errorBodyFieldCode      = big.NewInt(1 << 0)
 	errorBodyFieldDetails   = big.NewInt(1 << 1)
@@ -21250,7 +21542,7 @@ type GraphContentPolicyRequest struct {
 	// is the current project revision.
 	ProjectRevision *int `json:"project_revision,omitempty" url:"project_revision,omitempty"`
 	// Rules to add for this graph. A rule that the project policy already has,
-	// with the same category key and description, is ignored.
+	// with the same effective rule identity is ignored.
 	Rules []*ContentPolicyRuleRequest `json:"rules,omitempty" url:"rules,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
@@ -22223,6 +22515,311 @@ func (i *ImportedTraceReference) String() string {
 }
 
 var (
+	inclusionRuleFieldCondition = big.NewInt(1 << 0)
+	inclusionRuleFieldEffect    = big.NewInt(1 << 1)
+	inclusionRuleFieldName      = big.NewInt(1 << 2)
+	inclusionRuleFieldTarget    = big.NewInt(1 << 3)
+	inclusionRuleFieldTypes     = big.NewInt(1 << 4)
+)
+
+type InclusionRule struct {
+	// Condition is a natural-language test; an empty value matches every applicable candidate.
+	Condition *string `json:"condition,omitempty" url:"condition,omitempty"`
+	// Effect includes or excludes matching candidates.
+	Effect *InclusionRuleEffect `json:"effect,omitempty" url:"effect,omitempty"`
+	// Name uniquely identifies the rule within its scope.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Target selects entity candidates or fact candidates.
+	Target *InclusionRuleTarget `json:"target,omitempty" url:"target,omitempty"`
+	// Types limits the rule to these ontology types and their subtypes.
+	Types []string `json:"types,omitempty" url:"types,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *InclusionRule) GetCondition() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Condition
+}
+
+func (i *InclusionRule) GetEffect() *InclusionRuleEffect {
+	if i == nil {
+		return nil
+	}
+	return i.Effect
+}
+
+func (i *InclusionRule) GetName() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Name
+}
+
+func (i *InclusionRule) GetTarget() *InclusionRuleTarget {
+	if i == nil {
+		return nil
+	}
+	return i.Target
+}
+
+func (i *InclusionRule) GetTypes() []string {
+	if i == nil {
+		return nil
+	}
+	return i.Types
+}
+
+func (i *InclusionRule) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *InclusionRule) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetCondition sets the Condition field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *InclusionRule) SetCondition(condition *string) {
+	i.Condition = condition
+	i.require(inclusionRuleFieldCondition)
+}
+
+// SetEffect sets the Effect field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *InclusionRule) SetEffect(effect *InclusionRuleEffect) {
+	i.Effect = effect
+	i.require(inclusionRuleFieldEffect)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *InclusionRule) SetName(name *string) {
+	i.Name = name
+	i.require(inclusionRuleFieldName)
+}
+
+// SetTarget sets the Target field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *InclusionRule) SetTarget(target *InclusionRuleTarget) {
+	i.Target = target
+	i.require(inclusionRuleFieldTarget)
+}
+
+// SetTypes sets the Types field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *InclusionRule) SetTypes(types []string) {
+	i.Types = types
+	i.require(inclusionRuleFieldTypes)
+}
+
+func (i *InclusionRule) UnmarshalJSON(data []byte) error {
+	type unmarshaler InclusionRule
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InclusionRule(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InclusionRule) MarshalJSON() ([]byte, error) {
+	type embed InclusionRule
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *InclusionRule) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+// Effect includes or excludes matching candidates.
+type InclusionRuleEffect string
+
+const (
+	InclusionRuleEffectInclude InclusionRuleEffect = "include"
+	InclusionRuleEffectExclude InclusionRuleEffect = "exclude"
+)
+
+func NewInclusionRuleEffectFromString(s string) (InclusionRuleEffect, error) {
+	switch s {
+	case "include":
+		return InclusionRuleEffectInclude, nil
+	case "exclude":
+		return InclusionRuleEffectExclude, nil
+	}
+	var t InclusionRuleEffect
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (i InclusionRuleEffect) Ptr() *InclusionRuleEffect {
+	return &i
+}
+
+// Target selects entity candidates or fact candidates.
+type InclusionRuleTarget string
+
+const (
+	InclusionRuleTargetEntity InclusionRuleTarget = "entity"
+	InclusionRuleTargetFact   InclusionRuleTarget = "fact"
+)
+
+func NewInclusionRuleTargetFromString(s string) (InclusionRuleTarget, error) {
+	switch s {
+	case "entity":
+		return InclusionRuleTargetEntity, nil
+	case "fact":
+		return InclusionRuleTargetFact, nil
+	}
+	var t InclusionRuleTarget
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (i InclusionRuleTarget) Ptr() *InclusionRuleTarget {
+	return &i
+}
+
+var (
+	inclusionRulesFieldInclusionRules = big.NewInt(1 << 0)
+	inclusionRulesFieldInherited      = big.NewInt(1 << 1)
+)
+
+type InclusionRules struct {
+	// InclusionRules replaces the complete rule set at this scope.
+	InclusionRules []*InclusionRule `json:"inclusion_rules,omitempty" url:"inclusion_rules,omitempty"`
+	// Inherited identifies a graph that uses project defaults.
+	Inherited *bool `json:"inherited,omitempty" url:"inherited,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *InclusionRules) GetInclusionRules() []*InclusionRule {
+	if i == nil {
+		return nil
+	}
+	return i.InclusionRules
+}
+
+func (i *InclusionRules) GetInherited() *bool {
+	if i == nil {
+		return nil
+	}
+	return i.Inherited
+}
+
+func (i *InclusionRules) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *InclusionRules) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetInclusionRules sets the InclusionRules field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *InclusionRules) SetInclusionRules(inclusionRules []*InclusionRule) {
+	i.InclusionRules = inclusionRules
+	i.require(inclusionRulesFieldInclusionRules)
+}
+
+// SetInherited sets the Inherited field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *InclusionRules) SetInherited(inherited *bool) {
+	i.Inherited = inherited
+	i.require(inclusionRulesFieldInherited)
+}
+
+func (i *InclusionRules) UnmarshalJSON(data []byte) error {
+	type unmarshaler InclusionRules
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InclusionRules(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InclusionRules) MarshalJSON() ([]byte, error) {
+	type embed InclusionRules
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *InclusionRules) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+var (
 	ingestionTraceFieldCreatedAt = big.NewInt(1 << 0)
 	ingestionTraceFieldError     = big.NewInt(1 << 1)
 	ingestionTraceFieldInput     = big.NewInt(1 << 2)
@@ -22409,6 +23006,162 @@ func (i *IngestionTrace) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	ingestionTraceCandidateOutcomeFieldCandidateUUID = big.NewInt(1 << 0)
+	ingestionTraceCandidateOutcomeFieldExtractedUUID = big.NewInt(1 << 1)
+	ingestionTraceCandidateOutcomeFieldOutcome       = big.NewInt(1 << 2)
+)
+
+type IngestionTraceCandidateOutcome struct {
+	// The UUID of the candidate node or edge.
+	CandidateUUID *string `json:"candidate_uuid,omitempty" url:"candidate_uuid,omitempty"`
+	// The UUID of the extracted node or edge.
+	ExtractedUUID *string `json:"extracted_uuid,omitempty" url:"extracted_uuid,omitempty"`
+	// The outcome of the comparison.
+	Outcome *IngestionTraceCandidateOutcomeOutcome `json:"outcome,omitempty" url:"outcome,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceCandidateOutcome) GetCandidateUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.CandidateUUID
+}
+
+func (i *IngestionTraceCandidateOutcome) GetExtractedUUID() *string {
+	if i == nil {
+		return nil
+	}
+	return i.ExtractedUUID
+}
+
+func (i *IngestionTraceCandidateOutcome) GetOutcome() *IngestionTraceCandidateOutcomeOutcome {
+	if i == nil {
+		return nil
+	}
+	return i.Outcome
+}
+
+func (i *IngestionTraceCandidateOutcome) GetExtraProperties() map[string]interface{} {
+	if i == nil {
+		return nil
+	}
+	return i.extraProperties
+}
+
+func (i *IngestionTraceCandidateOutcome) require(field *big.Int) {
+	next := new(big.Int)
+	if i.explicitFields != nil {
+		next.Set(i.explicitFields)
+	}
+	next.Or(next, field)
+	i.explicitFields = next
+}
+
+// SetCandidateUUID sets the CandidateUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceCandidateOutcome) SetCandidateUUID(candidateUUID *string) {
+	i.CandidateUUID = candidateUUID
+	i.require(ingestionTraceCandidateOutcomeFieldCandidateUUID)
+}
+
+// SetExtractedUUID sets the ExtractedUUID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceCandidateOutcome) SetExtractedUUID(extractedUUID *string) {
+	i.ExtractedUUID = extractedUUID
+	i.require(ingestionTraceCandidateOutcomeFieldExtractedUUID)
+}
+
+// SetOutcome sets the Outcome field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceCandidateOutcome) SetOutcome(outcome *IngestionTraceCandidateOutcomeOutcome) {
+	i.Outcome = outcome
+	i.require(ingestionTraceCandidateOutcomeFieldOutcome)
+}
+
+func (i *IngestionTraceCandidateOutcome) UnmarshalJSON(data []byte) error {
+	type unmarshaler IngestionTraceCandidateOutcome
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = IngestionTraceCandidateOutcome(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+	i.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *IngestionTraceCandidateOutcome) MarshalJSON() ([]byte, error) {
+	type embed IngestionTraceCandidateOutcome
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*i),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, i.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (i *IngestionTraceCandidateOutcome) String() string {
+	if i == nil {
+		return "<nil>"
+	}
+	if len(i.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(i.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+// The outcome of the comparison.
+type IngestionTraceCandidateOutcomeOutcome string
+
+const (
+	IngestionTraceCandidateOutcomeOutcomeDuplicate       IngestionTraceCandidateOutcomeOutcome = "duplicate"
+	IngestionTraceCandidateOutcomeOutcomeNotDuplicate    IngestionTraceCandidateOutcomeOutcome = "not_duplicate"
+	IngestionTraceCandidateOutcomeOutcomeContradicts     IngestionTraceCandidateOutcomeOutcome = "contradicts"
+	IngestionTraceCandidateOutcomeOutcomeNotContradicted IngestionTraceCandidateOutcomeOutcome = "not_contradicted"
+	IngestionTraceCandidateOutcomeOutcomeSameEntity      IngestionTraceCandidateOutcomeOutcome = "same_entity"
+	IngestionTraceCandidateOutcomeOutcomeDifferentEntity IngestionTraceCandidateOutcomeOutcome = "different_entity"
+)
+
+func NewIngestionTraceCandidateOutcomeOutcomeFromString(s string) (IngestionTraceCandidateOutcomeOutcome, error) {
+	switch s {
+	case "duplicate":
+		return IngestionTraceCandidateOutcomeOutcomeDuplicate, nil
+	case "not_duplicate":
+		return IngestionTraceCandidateOutcomeOutcomeNotDuplicate, nil
+	case "contradicts":
+		return IngestionTraceCandidateOutcomeOutcomeContradicts, nil
+	case "not_contradicted":
+		return IngestionTraceCandidateOutcomeOutcomeNotContradicted, nil
+	case "same_entity":
+		return IngestionTraceCandidateOutcomeOutcomeSameEntity, nil
+	case "different_entity":
+		return IngestionTraceCandidateOutcomeOutcomeDifferentEntity, nil
+	}
+	var t IngestionTraceCandidateOutcomeOutcome
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (i IngestionTraceCandidateOutcomeOutcome) Ptr() *IngestionTraceCandidateOutcomeOutcome {
+	return &i
 }
 
 var (
@@ -23922,17 +24675,21 @@ func (i *IngestionTraceNodeResolution) String() string {
 }
 
 var (
-	ingestionTraceOutputFieldEdgeInvalidations = big.NewInt(1 << 0)
-	ingestionTraceOutputFieldEdges             = big.NewInt(1 << 1)
-	ingestionTraceOutputFieldExtractedEdges    = big.NewInt(1 << 2)
-	ingestionTraceOutputFieldExtractedNodes    = big.NewInt(1 << 3)
-	ingestionTraceOutputFieldNewEdges          = big.NewInt(1 << 4)
-	ingestionTraceOutputFieldNodeDuplicates    = big.NewInt(1 << 5)
-	ingestionTraceOutputFieldNodeResolutions   = big.NewInt(1 << 6)
-	ingestionTraceOutputFieldNodes             = big.NewInt(1 << 7)
+	ingestionTraceOutputFieldCandidateOutcomes = big.NewInt(1 << 0)
+	ingestionTraceOutputFieldEdgeInvalidations = big.NewInt(1 << 1)
+	ingestionTraceOutputFieldEdges             = big.NewInt(1 << 2)
+	ingestionTraceOutputFieldExtractedEdges    = big.NewInt(1 << 3)
+	ingestionTraceOutputFieldExtractedNodes    = big.NewInt(1 << 4)
+	ingestionTraceOutputFieldNewEdges          = big.NewInt(1 << 5)
+	ingestionTraceOutputFieldNodeDuplicates    = big.NewInt(1 << 6)
+	ingestionTraceOutputFieldNodeResolutions   = big.NewInt(1 << 7)
+	ingestionTraceOutputFieldNodes             = big.NewInt(1 << 8)
 )
 
 type IngestionTraceOutput struct {
+	// The outcomes that the step recorded for each extracted and candidate pair.
+	// Present for resolve_nodes and resolve_edges and empty for the other steps.
+	CandidateOutcomes []*IngestionTraceCandidateOutcome `json:"candidate_outcomes,omitempty" url:"candidate_outcomes,omitempty"`
 	// The existing edges that the resolved edges invalidated. Present for resolve_edges and empty for
 	// the other steps.
 	EdgeInvalidations []*IngestionTraceEdgeInvalidation `json:"edge_invalidations,omitempty" url:"edge_invalidations,omitempty"`
@@ -23964,6 +24721,13 @@ type IngestionTraceOutput struct {
 
 	extraProperties map[string]interface{}
 	rawJSON         json.RawMessage
+}
+
+func (i *IngestionTraceOutput) GetCandidateOutcomes() []*IngestionTraceCandidateOutcome {
+	if i == nil {
+		return nil
+	}
+	return i.CandidateOutcomes
 }
 
 func (i *IngestionTraceOutput) GetEdgeInvalidations() []*IngestionTraceEdgeInvalidation {
@@ -24036,6 +24800,13 @@ func (i *IngestionTraceOutput) require(field *big.Int) {
 	}
 	next.Or(next, field)
 	i.explicitFields = next
+}
+
+// SetCandidateOutcomes sets the CandidateOutcomes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (i *IngestionTraceOutput) SetCandidateOutcomes(candidateOutcomes []*IngestionTraceCandidateOutcome) {
+	i.CandidateOutcomes = candidateOutcomes
+	i.require(ingestionTraceOutputFieldCandidateOutcomes)
 }
 
 // SetEdgeInvalidations sets the EdgeInvalidations field and marks it as non-optional;
@@ -24382,12 +25153,15 @@ func (i *IngestionTraceProtectedAttributeConflict) String() string {
 type IngestionTraceStatus string
 
 const (
+	IngestionTraceStatusPending  IngestionTraceStatus = "pending"
 	IngestionTraceStatusRecorded IngestionTraceStatus = "recorded"
 	IngestionTraceStatusFailed   IngestionTraceStatus = "failed"
 )
 
 func NewIngestionTraceStatusFromString(s string) (IngestionTraceStatus, error) {
 	switch s {
+	case "pending":
+		return IngestionTraceStatusPending, nil
 	case "recorded":
 		return IngestionTraceStatusRecorded, nil
 	case "failed":
@@ -24530,6 +25304,214 @@ func (i *Instructions) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", i)
+}
+
+var (
+	knowledgeEntryFieldName = big.NewInt(1 << 0)
+	knowledgeEntryFieldText = big.NewInt(1 << 1)
+)
+
+type KnowledgeEntry struct {
+	// The name identifies the entry within its scope.
+	Name string `json:"name" url:"name"`
+	// The text describes a term, an alias, or another domain fact.
+	Text string `json:"text" url:"text"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (k *KnowledgeEntry) GetName() string {
+	if k == nil {
+		return ""
+	}
+	return k.Name
+}
+
+func (k *KnowledgeEntry) GetText() string {
+	if k == nil {
+		return ""
+	}
+	return k.Text
+}
+
+func (k *KnowledgeEntry) GetExtraProperties() map[string]interface{} {
+	if k == nil {
+		return nil
+	}
+	return k.extraProperties
+}
+
+func (k *KnowledgeEntry) require(field *big.Int) {
+	next := new(big.Int)
+	if k.explicitFields != nil {
+		next.Set(k.explicitFields)
+	}
+	next.Or(next, field)
+	k.explicitFields = next
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (k *KnowledgeEntry) SetName(name string) {
+	k.Name = name
+	k.require(knowledgeEntryFieldName)
+}
+
+// SetText sets the Text field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (k *KnowledgeEntry) SetText(text string) {
+	k.Text = text
+	k.require(knowledgeEntryFieldText)
+}
+
+func (k *KnowledgeEntry) UnmarshalJSON(data []byte) error {
+	type unmarshaler KnowledgeEntry
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*k = KnowledgeEntry(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *k)
+	if err != nil {
+		return err
+	}
+	k.extraProperties = extraProperties
+	k.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (k *KnowledgeEntry) MarshalJSON() ([]byte, error) {
+	type embed KnowledgeEntry
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*k),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, k.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (k *KnowledgeEntry) String() string {
+	if k == nil {
+		return "<nil>"
+	}
+	if len(k.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(k.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(k); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", k)
+}
+
+var (
+	knowledgeResponseFieldInherited = big.NewInt(1 << 0)
+	knowledgeResponseFieldKnowledge = big.NewInt(1 << 1)
+)
+
+type KnowledgeResponse struct {
+	// Inherited is true when the graph uses the project entries.
+	Inherited *bool `json:"inherited,omitempty" url:"inherited,omitempty"`
+	// The domain knowledge entries in effect at this scope.
+	Knowledge []*KnowledgeEntry `json:"knowledge,omitempty" url:"knowledge,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (k *KnowledgeResponse) GetInherited() *bool {
+	if k == nil {
+		return nil
+	}
+	return k.Inherited
+}
+
+func (k *KnowledgeResponse) GetKnowledge() []*KnowledgeEntry {
+	if k == nil {
+		return nil
+	}
+	return k.Knowledge
+}
+
+func (k *KnowledgeResponse) GetExtraProperties() map[string]interface{} {
+	if k == nil {
+		return nil
+	}
+	return k.extraProperties
+}
+
+func (k *KnowledgeResponse) require(field *big.Int) {
+	next := new(big.Int)
+	if k.explicitFields != nil {
+		next.Set(k.explicitFields)
+	}
+	next.Or(next, field)
+	k.explicitFields = next
+}
+
+// SetInherited sets the Inherited field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (k *KnowledgeResponse) SetInherited(inherited *bool) {
+	k.Inherited = inherited
+	k.require(knowledgeResponseFieldInherited)
+}
+
+// SetKnowledge sets the Knowledge field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (k *KnowledgeResponse) SetKnowledge(knowledge []*KnowledgeEntry) {
+	k.Knowledge = knowledge
+	k.require(knowledgeResponseFieldKnowledge)
+}
+
+func (k *KnowledgeResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler KnowledgeResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*k = KnowledgeResponse(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *k)
+	if err != nil {
+		return err
+	}
+	k.extraProperties = extraProperties
+	k.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (k *KnowledgeResponse) MarshalJSON() ([]byte, error) {
+	type embed KnowledgeResponse
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*k),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, k.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (k *KnowledgeResponse) String() string {
+	if k == nil {
+		return "<nil>"
+	}
+	if len(k.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(k.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(k); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", k)
 }
 
 var (
@@ -26084,7 +27066,7 @@ var (
 type NodeListFilters struct {
 	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
 	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	// Experimental. Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
 	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
 	// Filter results by temporal values.
 	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
@@ -29015,7 +29997,7 @@ var (
 type SearchFilters struct {
 	// Include edges connected to any of these node UUIDs. Node search does not support this filter.
 	ConnectedNodeUUIDs []string `json:"connected_node_uuids,omitempty" url:"connected_node_uuids,omitempty"`
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	// Experimental. Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
 	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
 	// Filter results by temporal values.
 	DateFilters *DateFilters `json:"date_filters,omitempty" url:"date_filters,omitempty"`
@@ -29277,6 +30259,93 @@ func (s *SearchFilters) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SearchFilters) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	if len(s.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+var (
+	setKnowledgeRequestFieldKnowledge = big.NewInt(1 << 0)
+)
+
+type SetKnowledgeRequest struct {
+	// The complete set of domain knowledge entries. An empty list clears the scope.
+	Knowledge []*KnowledgeEntry `json:"knowledge,omitempty" url:"knowledge,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (s *SetKnowledgeRequest) GetKnowledge() []*KnowledgeEntry {
+	if s == nil {
+		return nil
+	}
+	return s.Knowledge
+}
+
+func (s *SetKnowledgeRequest) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return s.extraProperties
+}
+
+func (s *SetKnowledgeRequest) require(field *big.Int) {
+	next := new(big.Int)
+	if s.explicitFields != nil {
+		next.Set(s.explicitFields)
+	}
+	next.Or(next, field)
+	s.explicitFields = next
+}
+
+// SetKnowledge sets the Knowledge field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (s *SetKnowledgeRequest) SetKnowledge(knowledge []*KnowledgeEntry) {
+	s.Knowledge = knowledge
+	s.require(setKnowledgeRequestFieldKnowledge)
+}
+
+func (s *SetKnowledgeRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler SetKnowledgeRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SetKnowledgeRequest(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+	s.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SetKnowledgeRequest) MarshalJSON() ([]byte, error) {
+	type embed SetKnowledgeRequest
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, s.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (s *SetKnowledgeRequest) String() string {
 	if s == nil {
 		return "<nil>"
 	}
@@ -31974,7 +33043,7 @@ var (
 )
 
 type TaskResult struct {
-	// The content policy outcome of the task.
+	// Experimental. The content policy outcome of the task.
 	ContentPolicy *TaskResultContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
 	// The UUID of the edge that the task wrote.
 	EdgeUUID *string `json:"edge_uuid,omitempty" url:"edge_uuid,omitempty"`
@@ -32548,7 +33617,7 @@ var (
 )
 
 type TaskResultEpisode struct {
-	// The content policy state of the episode.
+	// Experimental. The content policy state of the episode.
 	ContentPolicy *TaskResultContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
 	// The UUID of the episode of the message.
 	EpisodeUUID *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`

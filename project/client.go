@@ -83,7 +83,7 @@ func (c *Client) Update(
 	return response.Body, nil
 }
 
-// Returns the current content policy revision of the project. A new graph binds this revision at creation.
+// Experimental: the request, the response, and the behavior of this operation can change. Returns the current content policy revision of the project. A new graph binds this revision at creation.
 //
 // Example:
 //
@@ -104,7 +104,7 @@ func (c *Client) GetContentPolicy(
 	return response.Body, nil
 }
 
-// Replaces the project content policy and creates a new immutable revision. Graphs that already exist keep the revision they bound. An empty policy (no categories and no rules) removes the content policy for new graphs.
+// Experimental: this operation and the new rule fields can change. The typed rule fields are in private preview and are available only to enabled accounts. Replaces the project content policy and creates a new immutable revision. Graphs that already exist keep the revision they bound. For example, {"categories":[{"key":"health"}],"rules":[{"category_key":"health","action":"exclude","entity_types":["Person"],"condition":"The statement names a person's health condition.","prohibited_examples":["Jordan has a chronic back condition."],"patterns":["diagnosed with"]}]}.
 //
 // Example:
 //
@@ -129,7 +129,7 @@ func (c *Client) SetContentPolicy(
 	return response.Body, nil
 }
 
-// Lists every revision of the project content policy, newest first, including revision 0.
+// Experimental: the request, the response, and the behavior of this operation can change. Lists every revision of the project content policy, newest first, including revision 0.
 //
 // Example:
 //
@@ -198,6 +198,8 @@ func (c *Client) ListContentPolicyRevisions(
 	return pager.GetPage(ctx, request.Cursor)
 }
 
+// Experimental: the request, the response, and the behavior of this operation can change.
+//
 // Example:
 //
 //	client.Project.GetContentPolicyRevision(
@@ -213,6 +215,52 @@ func (c *Client) GetContentPolicyRevision(
 	response, err := c.WithRawResponse.GetContentPolicyRevision(
 		ctx,
 		revisionUUID,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Returns the project rules, for example {"inclusion_rules":[],"inherited":false}.
+//
+// Example:
+//
+//	client.Project.GetInclusionRules(
+//	    context.TODO(),
+//	)
+func (c *Client) GetInclusionRules(
+	ctx context.Context,
+	opts ...option.RequestOption,
+) (*zep.InclusionRules, error) {
+	response, err := c.WithRawResponse.GetInclusionRules(
+		ctx,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Replaces the project rules. Request: {"inclusion_rules":[]}. Response: {"inclusion_rules":[],"inherited":false}.
+//
+// Example:
+//
+//	request := &zep.InclusionRules{}
+//	client.Project.SetInclusionRules(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) SetInclusionRules(
+	ctx context.Context,
+	request *zep.InclusionRules,
+	opts ...option.IdempotentRequestOption,
+) (*zep.InclusionRules, error) {
+	response, err := c.WithRawResponse.SetInclusionRules(
+		ctx,
+		request,
 		opts...,
 	)
 	if err != nil {
@@ -253,6 +301,55 @@ func (c *Client) SetInstructions(
 	opts ...option.IdempotentRequestOption,
 ) (*zep.Instructions, error) {
 	response, err := c.WithRawResponse.SetInstructions(
+		ctx,
+		request,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Returns the domain knowledge in effect at this scope. The knowledge_api account flag must be enabled.
+// Response example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}],"inherited":false}
+//
+// Example:
+//
+//	client.Project.GetKnowledge(
+//	    context.TODO(),
+//	)
+func (c *Client) GetKnowledge(
+	ctx context.Context,
+	opts ...option.RequestOption,
+) (*zep.KnowledgeResponse, error) {
+	response, err := c.WithRawResponse.GetKnowledge(
+		ctx,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Replaces the complete set of domain knowledge entries at this scope. The knowledge_api account flag must be enabled.
+// Response example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}],"inherited":false}
+// Request example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}]}
+//
+// Example:
+//
+//	request := &zep.SetKnowledgeRequest{}
+//	client.Project.SetKnowledge(
+//	    context.TODO(),
+//	    request,
+//	)
+func (c *Client) SetKnowledge(
+	ctx context.Context,
+	request *zep.SetKnowledgeRequest,
+	opts ...option.IdempotentRequestOption,
+) (*zep.KnowledgeResponse, error) {
+	response, err := c.WithRawResponse.SetKnowledge(
 		ctx,
 		request,
 		opts...,
