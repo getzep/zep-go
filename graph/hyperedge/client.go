@@ -267,6 +267,9 @@ func (c *Client) Update(
 // Adds one member edge to an existing hyperedge. The new member inherits the
 // hyperedge's fact and timestamps and joins its episodes, so only its own
 // name and node pair are supplied.
+// The response contains the UUID that Zep assigned and the name and nodes that you supplied.
+// It does not contain the shared fact or timestamps of the hyperedge.
+// To read them, use graph.hyperedge.get.
 //
 // Example:
 //

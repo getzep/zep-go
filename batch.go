@@ -394,24 +394,27 @@ var (
 	batchItemFieldContentPolicy = big.NewInt(1 << 0)
 	batchItemFieldCreatedAt     = big.NewInt(1 << 1)
 	batchItemFieldEpisodeUUID   = big.NewInt(1 << 2)
-	batchItemFieldGraphUUID     = big.NewInt(1 << 3)
-	batchItemFieldSequenceIndex = big.NewInt(1 << 4)
-	batchItemFieldSourceUUID    = big.NewInt(1 << 5)
-	batchItemFieldStatus        = big.NewInt(1 << 6)
-	batchItemFieldThreadUUID    = big.NewInt(1 << 7)
-	batchItemFieldType          = big.NewInt(1 << 8)
-	batchItemFieldUserUUID      = big.NewInt(1 << 9)
-	batchItemFieldUUID          = big.NewInt(1 << 10)
+	batchItemFieldError         = big.NewInt(1 << 3)
+	batchItemFieldGraphUUID     = big.NewInt(1 << 4)
+	batchItemFieldSequenceIndex = big.NewInt(1 << 5)
+	batchItemFieldSourceUUID    = big.NewInt(1 << 6)
+	batchItemFieldStatus        = big.NewInt(1 << 7)
+	batchItemFieldThreadUUID    = big.NewInt(1 << 8)
+	batchItemFieldType          = big.NewInt(1 << 9)
+	batchItemFieldUserUUID      = big.NewInt(1 << 10)
+	batchItemFieldUUID          = big.NewInt(1 << 11)
 )
 
 type BatchItem struct {
-	// The content policy state of the item's episode, present only on a graph
+	// Experimental. The content policy state of the item's episode, present only on a graph
 	// with a bound content policy rule and only once the item is processed.
 	ContentPolicy *EpisodeContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
 	// The time the item was appended to the batch.
 	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The identifier of the episode created for this item, equal to source_uuid.
 	EpisodeUUID *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
+	// The reason the item failed and the action to take. Present only when status is failed.
+	Error *BatchItemError `json:"error,omitempty" url:"error,omitempty"`
 	// The graph the item's episode is or will be ingested into.
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	// The item's position within the batch, in the order it was appended.
@@ -458,6 +461,13 @@ func (b *BatchItem) GetEpisodeUUID() *string {
 		return nil
 	}
 	return b.EpisodeUUID
+}
+
+func (b *BatchItem) GetError() *BatchItemError {
+	if b == nil {
+		return nil
+	}
+	return b.Error
 }
 
 func (b *BatchItem) GetGraphUUID() *string {
@@ -551,6 +561,13 @@ func (b *BatchItem) SetCreatedAt(createdAt *string) {
 func (b *BatchItem) SetEpisodeUUID(episodeUUID *string) {
 	b.EpisodeUUID = episodeUUID
 	b.require(batchItemFieldEpisodeUUID)
+}
+
+// SetError sets the Error field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItem) SetError(error_ *BatchItemError) {
+	b.Error = error_
+	b.require(batchItemFieldError)
 }
 
 // SetGraphUUID sets the GraphUUID field and marks it as non-optional;
@@ -649,6 +666,138 @@ func (b *BatchItem) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+var (
+	batchItemErrorFieldCode    = big.NewInt(1 << 0)
+	batchItemErrorFieldMessage = big.NewInt(1 << 1)
+)
+
+type BatchItemError struct {
+	// The reason the item failed.
+	Code *BatchItemErrorCode `json:"code,omitempty" url:"code,omitempty"`
+	// The explanation of the failure and the action to take.
+	Message *string `json:"message,omitempty" url:"message,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (b *BatchItemError) GetCode() *BatchItemErrorCode {
+	if b == nil {
+		return nil
+	}
+	return b.Code
+}
+
+func (b *BatchItemError) GetMessage() *string {
+	if b == nil {
+		return nil
+	}
+	return b.Message
+}
+
+func (b *BatchItemError) GetExtraProperties() map[string]interface{} {
+	if b == nil {
+		return nil
+	}
+	return b.extraProperties
+}
+
+func (b *BatchItemError) require(field *big.Int) {
+	next := new(big.Int)
+	if b.explicitFields != nil {
+		next.Set(b.explicitFields)
+	}
+	next.Or(next, field)
+	b.explicitFields = next
+}
+
+// SetCode sets the Code field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemError) SetCode(code *BatchItemErrorCode) {
+	b.Code = code
+	b.require(batchItemErrorFieldCode)
+}
+
+// SetMessage sets the Message field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (b *BatchItemError) SetMessage(message *string) {
+	b.Message = message
+	b.require(batchItemErrorFieldMessage)
+}
+
+func (b *BatchItemError) UnmarshalJSON(data []byte) error {
+	type unmarshaler BatchItemError
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BatchItemError(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+	b.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BatchItemError) MarshalJSON() ([]byte, error) {
+	type embed BatchItemError
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, b.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (b *BatchItemError) String() string {
+	if b == nil {
+		return "<nil>"
+	}
+	if len(b.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(b.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type BatchItemErrorCode string
+
+const (
+	BatchItemErrorCodeRateLimited      BatchItemErrorCode = "rate_limited"
+	BatchItemErrorCodeItemTooLarge     BatchItemErrorCode = "item_too_large"
+	BatchItemErrorCodeProcessingFailed BatchItemErrorCode = "processing_failed"
+	BatchItemErrorCodeExpired          BatchItemErrorCode = "expired"
+)
+
+func NewBatchItemErrorCodeFromString(s string) (BatchItemErrorCode, error) {
+	switch s {
+	case "rate_limited":
+		return BatchItemErrorCodeRateLimited, nil
+	case "item_too_large":
+		return BatchItemErrorCodeItemTooLarge, nil
+	case "processing_failed":
+		return BatchItemErrorCodeProcessingFailed, nil
+	case "expired":
+		return BatchItemErrorCodeExpired, nil
+	}
+	var t BatchItemErrorCode
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BatchItemErrorCode) Ptr() *BatchItemErrorCode {
+	return &b
 }
 
 var (

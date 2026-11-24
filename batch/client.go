@@ -180,7 +180,7 @@ func (c *Client) Delete(
 //	request := &zep.BatchListItemsRequest{}
 //	client.Batch.ListItems(
 //	    context.TODO(),
-//	    "batch_uuid",
+//	    "366ac0d2-69b5-4140-89e8-15d025a33340",
 //	    request,
 //	)
 func (c *Client) ListItems(
@@ -253,13 +253,20 @@ func (c *Client) ListItems(
 //	request := &zep.AddBatchItemsRequest{
 //	    Items: []*zep.BatchItemInput{
 //	        &zep.BatchItemInput{
+//	            Data: zep.String(
+//	                "A sample item.",
+//	            ),
+//	            DataType: zep.BatchItemInputDataTypeText.Ptr(),
+//	            GraphUUID: zep.String(
+//	                "815f9d31-eef0-4201-90e6-02c1e6f16e90",
+//	            ),
 //	            Type: zep.BatchItemInputTypeGraphEpisode,
 //	        },
 //	    },
 //	}
 //	client.Batch.AddItems(
 //	    context.TODO(),
-//	    "batch_uuid",
+//	    "366ac0d2-69b5-4140-89e8-15d025a33340",
 //	    request,
 //	)
 func (c *Client) AddItems(

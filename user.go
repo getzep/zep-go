@@ -21,7 +21,7 @@ var (
 )
 
 type CreateUserRequest struct {
-	// Content policy additions for the user's graph. The graph binds the
+	// Experimental. Content policy additions for the user's graph. The graph binds the
 	// current project content policy plus these additions, and the binding
 	// does not change after creation.
 	ContentPolicy *GraphContentPolicyRequest `json:"content_policy,omitempty" url:"-"`

@@ -17,7 +17,7 @@ var (
 )
 
 type CreateGraphRequest struct {
-	// Content policy additions for the graph. The graph binds the current
+	// Experimental. Content policy additions for the graph. The graph binds the current
 	// project content policy plus these additions, and the binding does not
 	// change after creation.
 	ContentPolicy *GraphContentPolicyRequest `json:"content_policy,omitempty" url:"-"`
@@ -503,9 +503,13 @@ type GraphQueryRequest struct {
 	GraphUUIDs []string `json:"graph_uuids" url:"-"`
 	// Optional caller guidance for the answer. The agent treats it as untrusted text.
 	Guidance *string `json:"guidance,omitempty" url:"-"`
-	// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
+	// The retrieval mode. The default is fast.
+	// Fast mode is optimized for latency. It retrieves the context for multi-hop queries.
+	// The query runs at most 3 search rounds. A BYOM project needs a decision model for fast mode.
+	// A BYOC deployment needs a decision model (SystemOne or Gemini Decisions) for fast mode.
+	// Deep mode runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode.
 	Mode *GraphQueryRequestMode `json:"mode,omitempty" url:"-"`
-	// The natural-language question about the graph.
+	// The natural-language query for the graph.
 	Query  string `json:"query" url:"-"`
 	stream bool
 
@@ -601,9 +605,13 @@ type GraphQueryStreamRequest struct {
 	GraphUUIDs []string `json:"graph_uuids" url:"-"`
 	// Optional caller guidance for the answer. The agent treats it as untrusted text.
 	Guidance *string `json:"guidance,omitempty" url:"-"`
-	// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
+	// The retrieval mode. The default is fast.
+	// Fast mode is optimized for latency. It retrieves the context for multi-hop queries.
+	// The query runs at most 3 search rounds. A BYOM project needs a decision model for fast mode.
+	// A BYOC deployment needs a decision model (SystemOne or Gemini Decisions) for fast mode.
+	// Deep mode runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode.
 	Mode *GraphQueryRequestMode `json:"mode,omitempty" url:"-"`
-	// The natural-language question about the graph.
+	// The natural-language query for the graph.
 	Query  string `json:"query" url:"-"`
 	stream bool
 
@@ -1491,8 +1499,9 @@ var (
 	contentPolicyEventFieldDropReason   = big.NewInt(1 << 3)
 	contentPolicyEventFieldEpisodeUUID  = big.NewInt(1 << 4)
 	contentPolicyEventFieldID           = big.NewInt(1 << 5)
-	contentPolicyEventFieldRevision     = big.NewInt(1 << 6)
-	contentPolicyEventFieldRuleIDs      = big.NewInt(1 << 7)
+	contentPolicyEventFieldMatchedBy    = big.NewInt(1 << 6)
+	contentPolicyEventFieldRevision     = big.NewInt(1 << 7)
+	contentPolicyEventFieldRuleIDs      = big.NewInt(1 << 8)
 )
 
 type ContentPolicyEvent struct {
@@ -1503,13 +1512,14 @@ type ContentPolicyEvent struct {
 	CategoryKeys []string `json:"category_keys,omitempty" url:"category_keys,omitempty"`
 	// The time of the decision.
 	DecidedAt *string `json:"decided_at,omitempty" url:"decided_at,omitempty"`
-	// Why the artifact was dropped: match, indeterminate, oversize, or
-	// dependent.
+	// Why the artifact was dropped: match, indeterminate, oversize, dependent, or not_included.
 	DropReason *ContentPolicyEventDropReason `json:"drop_reason,omitempty" url:"drop_reason,omitempty"`
 	// The episode the decision belongs to.
 	EpisodeUUID *string `json:"episode_uuid,omitempty" url:"episode_uuid,omitempty"`
 	// The opaque identifier of the event.
 	ID *string `json:"id,omitempty" url:"id,omitempty"`
+	// The match mechanisms. The list is empty for a not_included event.
+	MatchedBy []ContentPolicyMatchedBy `json:"matched_by,omitempty" url:"matched_by,omitempty"`
 	// The project revision number of the policy the graph bound.
 	Revision *int `json:"revision,omitempty" url:"revision,omitempty"`
 	// The identifiers of the rules that matched.
@@ -1562,6 +1572,13 @@ func (c *ContentPolicyEvent) GetID() *string {
 		return nil
 	}
 	return c.ID
+}
+
+func (c *ContentPolicyEvent) GetMatchedBy() []ContentPolicyMatchedBy {
+	if c == nil {
+		return nil
+	}
+	return c.MatchedBy
 }
 
 func (c *ContentPolicyEvent) GetRevision() *int {
@@ -1634,6 +1651,13 @@ func (c *ContentPolicyEvent) SetEpisodeUUID(episodeUUID *string) {
 func (c *ContentPolicyEvent) SetID(id *string) {
 	c.ID = id
 	c.require(contentPolicyEventFieldID)
+}
+
+// SetMatchedBy sets the MatchedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContentPolicyEvent) SetMatchedBy(matchedBy []ContentPolicyMatchedBy) {
+	c.MatchedBy = matchedBy
+	c.require(contentPolicyEventFieldMatchedBy)
 }
 
 // SetRevision sets the Revision field and marks it as non-optional;
@@ -1734,8 +1758,7 @@ func (c ContentPolicyEventArtifactKind) Ptr() *ContentPolicyEventArtifactKind {
 	return &c
 }
 
-// Why the artifact was dropped: match, indeterminate, oversize, or
-// dependent.
+// Why the artifact was dropped: match, indeterminate, oversize, dependent, or not_included.
 type ContentPolicyEventDropReason string
 
 const (
@@ -1743,6 +1766,7 @@ const (
 	ContentPolicyEventDropReasonIndeterminate ContentPolicyEventDropReason = "indeterminate"
 	ContentPolicyEventDropReasonOversize      ContentPolicyEventDropReason = "oversize"
 	ContentPolicyEventDropReasonDependent     ContentPolicyEventDropReason = "dependent"
+	ContentPolicyEventDropReasonNotIncluded   ContentPolicyEventDropReason = "not_included"
 )
 
 func NewContentPolicyEventDropReasonFromString(s string) (ContentPolicyEventDropReason, error) {
@@ -1755,6 +1779,8 @@ func NewContentPolicyEventDropReasonFromString(s string) (ContentPolicyEventDrop
 		return ContentPolicyEventDropReasonOversize, nil
 	case "dependent":
 		return ContentPolicyEventDropReasonDependent, nil
+	case "not_included":
+		return ContentPolicyEventDropReasonNotIncluded, nil
 	}
 	var t ContentPolicyEventDropReason
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -2017,6 +2043,31 @@ func (c *ContentPolicyEventPage) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", c)
+}
+
+type ContentPolicyMatchedBy string
+
+const (
+	ContentPolicyMatchedByType      ContentPolicyMatchedBy = "type"
+	ContentPolicyMatchedByPattern   ContentPolicyMatchedBy = "pattern"
+	ContentPolicyMatchedByCondition ContentPolicyMatchedBy = "condition"
+)
+
+func NewContentPolicyMatchedByFromString(s string) (ContentPolicyMatchedBy, error) {
+	switch s {
+	case "type":
+		return ContentPolicyMatchedByType, nil
+	case "pattern":
+		return ContentPolicyMatchedByPattern, nil
+	case "condition":
+		return ContentPolicyMatchedByCondition, nil
+	}
+	var t ContentPolicyMatchedBy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ContentPolicyMatchedBy) Ptr() *ContentPolicyMatchedBy {
+	return &c
 }
 
 var (
@@ -2482,26 +2533,28 @@ var (
 	contextEpisodeFieldContentPolicy     = big.NewInt(1 << 1)
 	contextEpisodeFieldCreatedAt         = big.NewInt(1 << 2)
 	contextEpisodeFieldDocumentID        = big.NewInt(1 << 3)
-	contextEpisodeFieldGraphUUID         = big.NewInt(1 << 4)
-	contextEpisodeFieldMetadata          = big.NewInt(1 << 5)
-	contextEpisodeFieldProcessed         = big.NewInt(1 << 6)
-	contextEpisodeFieldReferenceTime     = big.NewInt(1 << 7)
-	contextEpisodeFieldRelevance         = big.NewInt(1 << 8)
-	contextEpisodeFieldRole              = big.NewInt(1 << 9)
-	contextEpisodeFieldRoleName          = big.NewInt(1 << 10)
-	contextEpisodeFieldScore             = big.NewInt(1 << 11)
-	contextEpisodeFieldSelectionRank     = big.NewInt(1 << 12)
-	contextEpisodeFieldSource            = big.NewInt(1 << 13)
-	contextEpisodeFieldSourceDescription = big.NewInt(1 << 14)
-	contextEpisodeFieldThreadUUID        = big.NewInt(1 << 15)
-	contextEpisodeFieldUserUUID          = big.NewInt(1 << 16)
-	contextEpisodeFieldUUID              = big.NewInt(1 << 17)
+	contextEpisodeFieldExpiredAt         = big.NewInt(1 << 4)
+	contextEpisodeFieldGraphUUID         = big.NewInt(1 << 5)
+	contextEpisodeFieldMetadata          = big.NewInt(1 << 6)
+	contextEpisodeFieldProcessed         = big.NewInt(1 << 7)
+	contextEpisodeFieldReferenceTime     = big.NewInt(1 << 8)
+	contextEpisodeFieldRelevance         = big.NewInt(1 << 9)
+	contextEpisodeFieldRole              = big.NewInt(1 << 10)
+	contextEpisodeFieldRoleName          = big.NewInt(1 << 11)
+	contextEpisodeFieldScore             = big.NewInt(1 << 12)
+	contextEpisodeFieldSelectionRank     = big.NewInt(1 << 13)
+	contextEpisodeFieldSource            = big.NewInt(1 << 14)
+	contextEpisodeFieldSourceDescription = big.NewInt(1 << 15)
+	contextEpisodeFieldThreadUUID        = big.NewInt(1 << 16)
+	contextEpisodeFieldUserUUID          = big.NewInt(1 << 17)
+	contextEpisodeFieldUUID              = big.NewInt(1 << 18)
+	contextEpisodeFieldWaitStatus        = big.NewInt(1 << 19)
 )
 
 type ContextEpisode struct {
 	// The raw content of the episode.
 	Content *string `json:"content,omitempty" url:"content,omitempty"`
-	// The content policy state of the episode, present only on a graph with a
+	// Experimental. The content policy state of the episode, present only on a graph with a
 	// bound content policy rule.
 	ContentPolicy *EpisodeContentPolicy `json:"content_policy,omitempty" url:"content_policy,omitempty"`
 	// The time Zep received the episode.
@@ -2509,6 +2562,11 @@ type ContextEpisode struct {
 	// The developer-assigned identifier of the document this episode belongs to,
 	// present only for episodes added to a document.
 	DocumentID *string `json:"document_id,omitempty" url:"document_id,omitempty"`
+	// The time when Zep stopped the processing of the episode because the
+	// episode waited for more than 7 days. An expired episode is not in the
+	// graph. Add the episode again to process it. The field is omitted for an
+	// episode that did not expire.
+	ExpiredAt *string `json:"expired_at,omitempty" url:"expired_at,omitempty"`
 	// The unique identifier of the graph this episode belongs to.
 	GraphUUID *string `json:"graph_uuid,omitempty" url:"graph_uuid,omitempty"`
 	// Custom metadata associated with the episode.
@@ -2547,6 +2605,10 @@ type ContextEpisode struct {
 	UserUUID *string `json:"user_uuid,omitempty" url:"user_uuid,omitempty"`
 	// The unique identifier of the episode.
 	UUID *string `json:"uuid,omitempty" url:"uuid,omitempty"`
+	// Why an episode that is not processed waits. The field is present when
+	// the episode has waited for more than 24 hours, and when the episode
+	// expired. It is omitted for a processed episode.
+	WaitStatus *EpisodeWaitStatus `json:"wait_status,omitempty" url:"wait_status,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -2581,6 +2643,13 @@ func (c *ContextEpisode) GetDocumentID() *string {
 		return nil
 	}
 	return c.DocumentID
+}
+
+func (c *ContextEpisode) GetExpiredAt() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ExpiredAt
 }
 
 func (c *ContextEpisode) GetGraphUUID() *string {
@@ -2681,6 +2750,13 @@ func (c *ContextEpisode) GetUUID() *string {
 	return c.UUID
 }
 
+func (c *ContextEpisode) GetWaitStatus() *EpisodeWaitStatus {
+	if c == nil {
+		return nil
+	}
+	return c.WaitStatus
+}
+
 func (c *ContextEpisode) GetExtraProperties() map[string]interface{} {
 	if c == nil {
 		return nil
@@ -2723,6 +2799,13 @@ func (c *ContextEpisode) SetCreatedAt(createdAt *string) {
 func (c *ContextEpisode) SetDocumentID(documentID *string) {
 	c.DocumentID = documentID
 	c.require(contextEpisodeFieldDocumentID)
+}
+
+// SetExpiredAt sets the ExpiredAt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextEpisode) SetExpiredAt(expiredAt *string) {
+	c.ExpiredAt = expiredAt
+	c.require(contextEpisodeFieldExpiredAt)
 }
 
 // SetGraphUUID sets the GraphUUID field and marks it as non-optional;
@@ -2821,6 +2904,13 @@ func (c *ContextEpisode) SetUserUUID(userUUID *string) {
 func (c *ContextEpisode) SetUUID(uuid *string) {
 	c.UUID = uuid
 	c.require(contextEpisodeFieldUUID)
+}
+
+// SetWaitStatus sets the WaitStatus field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ContextEpisode) SetWaitStatus(waitStatus *EpisodeWaitStatus) {
+	c.WaitStatus = waitStatus
+	c.require(contextEpisodeFieldWaitStatus)
 }
 
 func (c *ContextEpisode) UnmarshalJSON(data []byte) error {
@@ -4109,7 +4199,7 @@ var (
 )
 
 type EpisodeSearchFilters struct {
-	// Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
+	// Experimental. Match episodes by their content-policy result. Supported only on episode search when the project setting include_policy_violating_episodes is true.
 	ContentPolicyViolated *bool `json:"content_policy_violated,omitempty" url:"content_policy_violated,omitempty"`
 	// Filter results by the episode's own stored metadata.
 	MetadataFilters *MetadataFilterGroup `json:"metadata_filters,omitempty" url:"metadata_filters,omitempty"`
@@ -6795,16 +6885,19 @@ func (g *GraphQueryReasoningEvent) String() string {
 }
 
 var (
-	graphQueryResponseFieldAnswer    = big.NewInt(1 << 0)
-	graphQueryResponseFieldCitations = big.NewInt(1 << 1)
-	graphQueryResponseFieldResults   = big.NewInt(1 << 2)
-	graphQueryResponseFieldTruncated = big.NewInt(1 << 3)
+	graphQueryResponseFieldAnswer       = big.NewInt(1 << 0)
+	graphQueryResponseFieldAnswerStatus = big.NewInt(1 << 1)
+	graphQueryResponseFieldCitations    = big.NewInt(1 << 2)
+	graphQueryResponseFieldResults      = big.NewInt(1 << 3)
+	graphQueryResponseFieldTruncated    = big.NewInt(1 << 4)
 )
 
 type GraphQueryResponse struct {
 	// The answer with citation handles removed. Present only when the
 	// request sets generate_answer to true.
 	Answer *string `json:"answer,omitempty" url:"answer,omitempty"`
+	// The outcome of the answer: answered, partial (the answer covers only part of the question), or refused (the records do not answer the question). Present only when the request sets generate_answer to true.
+	AnswerStatus *GraphQueryResponseAnswerStatus `json:"answer_status,omitempty" url:"answer_status,omitempty"`
 	// The UUIDs of the graph items cited by the answer. The lists are empty
 	// when the response has no answer.
 	Citations *GraphQueryCitations `json:"citations,omitempty" url:"citations,omitempty"`
@@ -6825,6 +6918,13 @@ func (g *GraphQueryResponse) GetAnswer() *string {
 		return nil
 	}
 	return g.Answer
+}
+
+func (g *GraphQueryResponse) GetAnswerStatus() *GraphQueryResponseAnswerStatus {
+	if g == nil {
+		return nil
+	}
+	return g.AnswerStatus
 }
 
 func (g *GraphQueryResponse) GetCitations() *GraphQueryCitations {
@@ -6869,6 +6969,13 @@ func (g *GraphQueryResponse) require(field *big.Int) {
 func (g *GraphQueryResponse) SetAnswer(answer *string) {
 	g.Answer = answer
 	g.require(graphQueryResponseFieldAnswer)
+}
+
+// SetAnswerStatus sets the AnswerStatus field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GraphQueryResponse) SetAnswerStatus(answerStatus *GraphQueryResponseAnswerStatus) {
+	g.AnswerStatus = answerStatus
+	g.require(graphQueryResponseFieldAnswerStatus)
 }
 
 // SetCitations sets the Citations field and marks it as non-optional;
@@ -6932,6 +7039,32 @@ func (g *GraphQueryResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", g)
+}
+
+// The outcome of the answer: answered, partial (the answer covers only part of the question), or refused (the records do not answer the question). Present only when the request sets generate_answer to true.
+type GraphQueryResponseAnswerStatus string
+
+const (
+	GraphQueryResponseAnswerStatusAnswered GraphQueryResponseAnswerStatus = "answered"
+	GraphQueryResponseAnswerStatusPartial  GraphQueryResponseAnswerStatus = "partial"
+	GraphQueryResponseAnswerStatusRefused  GraphQueryResponseAnswerStatus = "refused"
+)
+
+func NewGraphQueryResponseAnswerStatusFromString(s string) (GraphQueryResponseAnswerStatus, error) {
+	switch s {
+	case "answered":
+		return GraphQueryResponseAnswerStatusAnswered, nil
+	case "partial":
+		return GraphQueryResponseAnswerStatusPartial, nil
+	case "refused":
+		return GraphQueryResponseAnswerStatusRefused, nil
+	}
+	var t GraphQueryResponseAnswerStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (g GraphQueryResponseAnswerStatus) Ptr() *GraphQueryResponseAnswerStatus {
+	return &g
 }
 
 var (
@@ -8598,7 +8731,11 @@ func (g GraphListRequestOrderBy) Ptr() *GraphListRequestOrderBy {
 	return &g
 }
 
-// The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
+// The retrieval mode. The default is fast.
+// Fast mode is optimized for latency. It retrieves the context for multi-hop queries.
+// The query runs at most 3 search rounds. A BYOM project needs a decision model for fast mode.
+// A BYOC deployment needs a decision model (SystemOne or Gemini Decisions) for fast mode.
+// Deep mode runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode.
 type GraphQueryRequestMode string
 
 const (
