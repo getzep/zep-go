@@ -216,6 +216,52 @@ func TestProjectGetContentPolicyRevisionWithWireMock(
 	VerifyRequestCount(t, "TestProjectGetContentPolicyRevisionWithWireMock", "GET", "/project/content-policy/revisions/revision_uuid", nil, 1)
 }
 
+func TestProjectGetInclusionRulesWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	_, invocationErr := client.Project.GetInclusionRules(
+		context.TODO(),
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestProjectGetInclusionRulesWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestProjectGetInclusionRulesWithWireMock", "GET", "/project/inclusion-rules", nil, 1)
+}
+
+func TestProjectSetInclusionRulesWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.InclusionRules{}
+	_, invocationErr := client.Project.SetInclusionRules(
+		context.TODO(),
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestProjectSetInclusionRulesWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestProjectSetInclusionRulesWithWireMock", "PUT", "/project/inclusion-rules", nil, 1)
+}
+
 func TestProjectGetInstructionsWithWireMock(
 	t *testing.T,
 ) {
@@ -260,6 +306,52 @@ func TestProjectSetInstructionsWithWireMock(
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
 	VerifyRequestCount(t, "TestProjectSetInstructionsWithWireMock", "PUT", "/project/instructions", nil, 1)
+}
+
+func TestProjectGetKnowledgeWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	_, invocationErr := client.Project.GetKnowledge(
+		context.TODO(),
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestProjectGetKnowledgeWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestProjectGetKnowledgeWithWireMock", "GET", "/project/knowledge", nil, 1)
+}
+
+func TestProjectSetKnowledgeWithWireMock(
+	t *testing.T,
+) {
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
+	client := client.NewClient(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithAPIKey("test-value"),
+	)
+	request := &zep.SetKnowledgeRequest{}
+	_, invocationErr := client.Project.SetKnowledge(
+		context.TODO(),
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestProjectSetKnowledgeWithWireMock"}},
+		),
+	)
+
+	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestProjectSetKnowledgeWithWireMock", "PUT", "/project/knowledge", nil, 1)
 }
 
 func TestProjectGetObservationSteeringWithWireMock(

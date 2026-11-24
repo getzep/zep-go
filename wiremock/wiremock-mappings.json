@@ -378,8 +378,8 @@
       }
     },
     {
-      "id": "c5540d6c-1e26-488b-8540-a8629750cce7",
-      "name": "List batch items - default",
+      "id": "52a1394f-0e2d-49f7-b029-addd85bf5d23",
+      "name": "List batch items - Failed item",
       "request": {
         "urlPathTemplate": "/batches/{batch_uuid}/items",
         "method": "GET",
@@ -390,18 +390,18 @@
         },
         "pathParameters": {
           "batch_uuid": {
-            "equalTo": "batch_uuid"
+            "equalTo": "366ac0d2-69b5-4140-89e8-15d025a33340"
           }
         }
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"episode_uuid\": \"episode_uuid\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"sequence_index\": 1,\n      \"source_uuid\": \"source_uuid\",\n      \"status\": \"pending\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"type\": \"graph_episode\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"uuid\": \"9e185ca7-9677-4a02-bd1c-366d23422a5e\",\n      \"sequence_index\": 0,\n      \"type\": \"graph_episode\",\n      \"graph_uuid\": \"815f9d31-eef0-4201-90e6-02c1e6f16e90\",\n      \"source_uuid\": \"c39dd799-e05c-4375-ab63-07195ce548af\",\n      \"episode_uuid\": \"c39dd799-e05c-4375-ab63-07195ce548af\",\n      \"created_at\": \"2026-11-08T12:00:00Z\",\n      \"status\": \"failed\",\n      \"error\": {\n        \"code\": \"item_too_large\",\n        \"message\": \"This item is too large to process. Split the item into smaller items.\"\n      }\n    }\n  ],\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "c5540d6c-1e26-488b-8540-a8629750cce7",
+      "uuid": "52a1394f-0e2d-49f7-b029-addd85bf5d23",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -414,8 +414,8 @@
       }
     },
     {
-      "id": "6a34c0fe-50b5-44c9-9cc5-7a38d64f2bb6",
-      "name": "Add batch items - default",
+      "id": "51e622b8-6729-4347-b8f0-3f2852fa099b",
+      "name": "Add batch items - Pending item",
       "request": {
         "urlPathTemplate": "/batches/{batch_uuid}/items",
         "method": "POST",
@@ -426,18 +426,18 @@
         },
         "pathParameters": {
           "batch_uuid": {
-            "equalTo": "batch_uuid"
+            "equalTo": "366ac0d2-69b5-4140-89e8-15d025a33340"
           }
         }
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"episode_uuid\": \"episode_uuid\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"sequence_index\": 1,\n      \"source_uuid\": \"source_uuid\",\n      \"status\": \"pending\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"type\": \"graph_episode\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"rejected_items\": [\n    {\n      \"index\": 1,\n      \"reason\": \"graph not found\"\n    }\n  ]\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"uuid\": \"9e185ca7-9677-4a02-bd1c-366d23422a5e\",\n      \"sequence_index\": 0,\n      \"type\": \"graph_episode\",\n      \"graph_uuid\": \"815f9d31-eef0-4201-90e6-02c1e6f16e90\",\n      \"source_uuid\": \"c39dd799-e05c-4375-ab63-07195ce548af\",\n      \"episode_uuid\": \"c39dd799-e05c-4375-ab63-07195ce548af\",\n      \"created_at\": \"2026-11-08T12:00:00Z\",\n      \"status\": \"pending\"\n    }\n  ],\n  \"rejected_items\": []\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "6a34c0fe-50b5-44c9-9cc5-7a38d64f2bb6",
+      "uuid": "51e622b8-6729-4347-b8f0-3f2852fa099b",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -829,7 +829,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"answer\": \"answer\",\n  \"citations\": {\n    \"edge_uuids\": [\n      \"edge_uuids\"\n    ],\n    \"episode_uuids\": [\n      \"episode_uuids\"\n    ],\n    \"node_uuids\": [\n      \"node_uuids\"\n    ]\n  },\n  \"results\": {\n    \"edges\": [\n      {\n        \"created_at\": \"2024-01-15T10:30:00Z\",\n        \"expired_at\": \"2024-02-15T10:30:00Z\",\n        \"fact\": \"Acme Corp was founded in 2001.\",\n        \"graph_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d480\",\n        \"hyperedge_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d482\",\n        \"invalid_at\": \"2024-02-15T10:30:00Z\",\n        \"name\": \"FOUNDED\",\n        \"scope\": \"entity\",\n        \"source_node_labels\": [\n          \"Organization\"\n        ],\n        \"source_node_name\": \"Acme Corp\",\n        \"source_node_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d483\",\n        \"target_node_labels\": [\n          \"Organization\"\n        ],\n        \"target_node_name\": \"Globex\",\n        \"target_node_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d484\",\n        \"user_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d481\",\n        \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n        \"valid_at\": \"2024-01-15T10:30:00Z\"\n      }\n    ],\n    \"episodes\": [\n      {\n        \"content_policy\": {\n          \"category_keys\": [\n            \"health\"\n          ],\n          \"dropped_count\": 0,\n          \"retained_count\": 7,\n          \"revision\": 3,\n          \"violated\": false\n        }\n      }\n    ],\n    \"nodes\": [\n      {\n        \"created_at\": \"2024-01-15T10:30:00Z\",\n        \"graph_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d480\",\n        \"labels\": [\n          \"Organization\"\n        ],\n        \"name\": \"Acme Corp\",\n        \"summary\": \"Acme provides logistics services.\",\n        \"user_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d481\",\n        \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n      }\n    ],\n    \"observations\": [\n      {}\n    ],\n    \"thread_summaries\": [\n      {}\n    ]\n  },\n  \"truncated\": true\n}",
+        "body": "{\n  \"answer\": \"answer\",\n  \"answer_status\": \"answered\",\n  \"citations\": {\n    \"edge_uuids\": [\n      \"edge_uuids\"\n    ],\n    \"episode_uuids\": [\n      \"episode_uuids\"\n    ],\n    \"node_uuids\": [\n      \"node_uuids\"\n    ]\n  },\n  \"results\": {\n    \"edges\": [\n      {\n        \"created_at\": \"2024-01-15T10:30:00Z\",\n        \"expired_at\": \"2024-02-15T10:30:00Z\",\n        \"fact\": \"Acme Corp was founded in 2001.\",\n        \"graph_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d480\",\n        \"hyperedge_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d482\",\n        \"invalid_at\": \"2024-02-15T10:30:00Z\",\n        \"name\": \"FOUNDED\",\n        \"scope\": \"entity\",\n        \"source_node_labels\": [\n          \"Organization\"\n        ],\n        \"source_node_name\": \"Acme Corp\",\n        \"source_node_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d483\",\n        \"target_node_labels\": [\n          \"Organization\"\n        ],\n        \"target_node_name\": \"Globex\",\n        \"target_node_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d484\",\n        \"user_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d481\",\n        \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n        \"valid_at\": \"2024-01-15T10:30:00Z\"\n      }\n    ],\n    \"episodes\": [\n      {\n        \"content_policy\": {\n          \"category_keys\": [\n            \"health\"\n          ],\n          \"dropped_count\": 0,\n          \"retained_count\": 7,\n          \"revision\": 3,\n          \"violated\": false\n        },\n        \"expired_at\": \"2026-01-08T12:00:00Z\"\n      }\n    ],\n    \"nodes\": [\n      {\n        \"created_at\": \"2024-01-15T10:30:00Z\",\n        \"graph_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d480\",\n        \"labels\": [\n          \"Organization\"\n        ],\n        \"name\": \"Acme Corp\",\n        \"summary\": \"Acme provides logistics services.\",\n        \"user_uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d481\",\n        \"uuid\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n      }\n    ],\n    \"observations\": [\n      {}\n    ],\n    \"thread_summaries\": [\n      {}\n    ]\n  },\n  \"truncated\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1009,7 +1009,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"bound_at\": \"2026-09-22T05:10:00Z\",\n  \"categories\": [\n    {\n      \"description\": \"Facts about a person's medical conditions or treatment.\",\n      \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n      \"key\": \"health\"\n    }\n  ],\n  \"created_at\": \"2026-09-22T05:09:00Z\",\n  \"project_revision\": 3,\n  \"revision\": 3,\n  \"rules\": [\n    {\n      \"category_key\": \"health\",\n      \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n      \"permitted_examples\": [\n        \"Jane works at a diabetes research lab.\"\n      ],\n      \"prohibited_examples\": [\n        \"Jane was diagnosed with type 2 diabetes last year.\"\n      ]\n    }\n  ],\n  \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n}",
+        "body": "{\n  \"bound_at\": \"2026-09-22T05:10:00Z\",\n  \"categories\": [\n    {\n      \"description\": \"Facts about a person's medical conditions or treatment.\",\n      \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n      \"key\": \"health\"\n    }\n  ],\n  \"created_at\": \"2026-09-22T05:09:00Z\",\n  \"project_revision\": 3,\n  \"revision\": 3,\n  \"rules\": [\n    {\n      \"action\": \"exclude\",\n      \"category_key\": \"health\",\n      \"condition\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"edge_types\": [\n        \"WorksFor\"\n      ],\n      \"entity_types\": [\n        \"Person\"\n      ],\n      \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n      \"patterns\": [\n        \"diagnosed with\"\n      ],\n      \"permitted_examples\": [\n        \"Jane works at a diabetes research lab.\"\n      ],\n      \"prohibited_examples\": [\n        \"Jane was diagnosed with type 2 diabetes last year.\"\n      ]\n    }\n  ],\n  \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1045,7 +1045,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"artifact_kind\": \"entity\",\n      \"category_keys\": [\n        \"health\"\n      ],\n      \"decided_at\": \"2026-09-22T10:05:00Z\",\n      \"drop_reason\": \"match\",\n      \"episode_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n      \"id\": \"cpe_3f9a1c2b4d5e6f708192a3b4\",\n      \"revision\": 3,\n      \"rule_ids\": [\n        \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\"\n      ]\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 12\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"artifact_kind\": \"entity\",\n      \"category_keys\": [\n        \"health\"\n      ],\n      \"decided_at\": \"2026-09-22T10:05:00Z\",\n      \"drop_reason\": \"match\",\n      \"episode_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n      \"id\": \"cpe_3f9a1c2b4d5e6f708192a3b4\",\n      \"matched_by\": [\n        \"condition\"\n      ],\n      \"revision\": 3,\n      \"rule_ids\": [\n        \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\"\n      ]\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 12\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1081,12 +1081,84 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"context\": \"context\",\n  \"results\": {\n    \"edges\": [\n      {}\n    ],\n    \"episodes\": [\n      {\n        \"content_policy\": {\n          \"category_keys\": [\n            \"health\"\n          ],\n          \"dropped_count\": 0,\n          \"retained_count\": 7,\n          \"revision\": 3,\n          \"violated\": false\n        }\n      }\n    ],\n    \"nodes\": [\n      {\n        \"episode_uuids\": [\n          \"episode_uuids\"\n        ],\n        \"episode_uuids_truncated\": true\n      }\n    ],\n    \"observations\": [\n      {}\n    ],\n    \"thread_summaries\": [\n      {}\n    ]\n  },\n  \"truncated\": true\n}",
+        "body": "{\n  \"context\": \"context\",\n  \"results\": {\n    \"edges\": [\n      {}\n    ],\n    \"episodes\": [\n      {\n        \"content_policy\": {\n          \"category_keys\": [\n            \"health\"\n          ],\n          \"dropped_count\": 0,\n          \"retained_count\": 7,\n          \"revision\": 3,\n          \"violated\": false\n        },\n        \"expired_at\": \"2026-01-08T12:00:00Z\"\n      }\n    ],\n    \"nodes\": [\n      {\n        \"episode_uuids\": [\n          \"episode_uuids\"\n        ],\n        \"episode_uuids_truncated\": true\n      }\n    ],\n    \"observations\": [\n      {}\n    ],\n    \"thread_summaries\": [\n      {}\n    ]\n  },\n  \"truncated\": true\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
       "uuid": "fb269919-56bb-447f-8fab-97ffdf7d074a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "734bf724-1052-49d1-8da0-d0ba1caf9303",
+      "name": "Get graph inclusion rules - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/inclusion-rules",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inclusion_rules\": [\n    {\n      \"condition\": \"The person is an employee.\",\n      \"effect\": \"include\",\n      \"name\": \"Relevant people\",\n      \"target\": \"entity\",\n      \"types\": [\n        \"Person\"\n      ]\n    }\n  ],\n  \"inherited\": false\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "734bf724-1052-49d1-8da0-d0ba1caf9303",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0727406b-5e5c-4dac-8c47-ca82a39244bb",
+      "name": "Set graph inclusion rules - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/inclusion-rules",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inclusion_rules\": [\n    {\n      \"condition\": \"The person is an employee.\",\n      \"effect\": \"include\",\n      \"name\": \"Relevant people\",\n      \"target\": \"entity\",\n      \"types\": [\n        \"Person\"\n      ]\n    }\n  ],\n  \"inherited\": false\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0727406b-5e5c-4dac-8c47-ca82a39244bb",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -1159,6 +1231,78 @@
         }
       },
       "uuid": "07b0402a-3202-4685-a843-004719411e89",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "6ec2e69e-5079-4f5d-aa55-2ff17d75f1a6",
+      "name": "Get graph knowledge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/knowledge",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": false,\n  \"knowledge\": [\n    {\n      \"name\": \"CRM\",\n      \"text\": \"CRM means the Acme customer relationship management service.\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "6ec2e69e-5079-4f5d-aa55-2ff17d75f1a6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "1440c4e9-6207-4629-9621-f0afbf3e8018",
+      "name": "Set graph knowledge - default",
+      "request": {
+        "urlPathTemplate": "/graphs/{graph_uuid}/knowledge",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        },
+        "pathParameters": {
+          "graph_uuid": {
+            "equalTo": "graph_uuid"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": false,\n  \"knowledge\": [\n    {\n      \"name\": \"CRM\",\n      \"text\": \"CRM means the Acme customer relationship management service.\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "1440c4e9-6207-4629-9621-f0afbf3e8018",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -1405,7 +1549,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"expired_at\": \"2026-01-08T12:00:00Z\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\",\n      \"wait_status\": \"account_rate_limit_reached\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1710,7 +1854,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"categories\": [\n    {\n      \"description\": \"Facts about a person's medical conditions or treatment.\",\n      \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n      \"key\": \"health\"\n    }\n  ],\n  \"created_at\": \"2026-09-22T05:09:00Z\",\n  \"revision\": 3,\n  \"rules\": [\n    {\n      \"category_key\": \"health\",\n      \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n      \"permitted_examples\": [\n        \"Jane works at a diabetes research lab.\"\n      ],\n      \"prohibited_examples\": [\n        \"Jane was diagnosed with type 2 diabetes last year.\"\n      ]\n    }\n  ],\n  \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n}",
+        "body": "{\n  \"categories\": [\n    {\n      \"description\": \"Facts about a person's medical conditions or treatment.\",\n      \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n      \"key\": \"health\"\n    }\n  ],\n  \"created_at\": \"2026-09-22T05:09:00Z\",\n  \"revision\": 3,\n  \"rules\": [\n    {\n      \"action\": \"exclude\",\n      \"category_key\": \"health\",\n      \"condition\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"edge_types\": [\n        \"WorksFor\"\n      ],\n      \"entity_types\": [\n        \"Person\"\n      ],\n      \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n      \"patterns\": [\n        \"diagnosed with\"\n      ],\n      \"permitted_examples\": [\n        \"Jane works at a diabetes research lab.\"\n      ],\n      \"prohibited_examples\": [\n        \"Jane was diagnosed with type 2 diabetes last year.\"\n      ]\n    }\n  ],\n  \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1742,7 +1886,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"categories\": [\n    {\n      \"description\": \"Facts about a person's medical conditions or treatment.\",\n      \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n      \"key\": \"health\"\n    }\n  ],\n  \"created_at\": \"2026-09-22T05:09:00Z\",\n  \"revision\": 3,\n  \"rules\": [\n    {\n      \"category_key\": \"health\",\n      \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n      \"permitted_examples\": [\n        \"Jane works at a diabetes research lab.\"\n      ],\n      \"prohibited_examples\": [\n        \"Jane was diagnosed with type 2 diabetes last year.\"\n      ]\n    }\n  ],\n  \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n}",
+        "body": "{\n  \"categories\": [\n    {\n      \"description\": \"Facts about a person's medical conditions or treatment.\",\n      \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n      \"key\": \"health\"\n    }\n  ],\n  \"created_at\": \"2026-09-22T05:09:00Z\",\n  \"revision\": 3,\n  \"rules\": [\n    {\n      \"action\": \"exclude\",\n      \"category_key\": \"health\",\n      \"condition\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"edge_types\": [\n        \"WorksFor\"\n      ],\n      \"entity_types\": [\n        \"Person\"\n      ],\n      \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n      \"patterns\": [\n        \"diagnosed with\"\n      ],\n      \"permitted_examples\": [\n        \"Jane works at a diabetes research lab.\"\n      ],\n      \"prohibited_examples\": [\n        \"Jane was diagnosed with type 2 diabetes last year.\"\n      ]\n    }\n  ],\n  \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1773,7 +1917,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"categories\": [\n        {\n          \"description\": \"Facts about a person's medical conditions or treatment.\",\n          \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n          \"key\": \"health\"\n        }\n      ],\n      \"created_at\": \"2026-09-22T05:09:00Z\",\n      \"revision\": 3,\n      \"rules\": [\n        {\n          \"category_key\": \"health\",\n          \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n          \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n          \"permitted_examples\": [\n            \"Jane works at a diabetes research lab.\"\n          ],\n          \"prohibited_examples\": [\n            \"Jane was diagnosed with type 2 diabetes last year.\"\n          ]\n        }\n      ],\n      \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 4\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"categories\": [\n        {\n          \"description\": \"Facts about a person's medical conditions or treatment.\",\n          \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n          \"key\": \"health\"\n        }\n      ],\n      \"created_at\": \"2026-09-22T05:09:00Z\",\n      \"revision\": 3,\n      \"rules\": [\n        {\n          \"category_key\": \"health\",\n          \"condition\": \"Statements that a named person has a diagnosed medical condition.\",\n          \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n          \"edge_types\": [\n            \"WorksFor\"\n          ],\n          \"entity_types\": [\n            \"Person\"\n          ],\n          \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n          \"patterns\": [\n            \"diagnosed with\"\n          ],\n          \"permitted_examples\": [\n            \"Jane works at a diabetes research lab.\"\n          ],\n          \"prohibited_examples\": [\n            \"Jane was diagnosed with type 2 diabetes last year.\"\n          ]\n        }\n      ],\n      \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 4\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1810,12 +1954,75 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"categories\": [\n    {\n      \"description\": \"Facts about a person's medical conditions or treatment.\",\n      \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n      \"key\": \"health\"\n    }\n  ],\n  \"created_at\": \"2026-09-22T05:09:00Z\",\n  \"revision\": 3,\n  \"rules\": [\n    {\n      \"category_key\": \"health\",\n      \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n      \"permitted_examples\": [\n        \"Jane works at a diabetes research lab.\"\n      ],\n      \"prohibited_examples\": [\n        \"Jane was diagnosed with type 2 diabetes last year.\"\n      ]\n    }\n  ],\n  \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n}",
+        "body": "{\n  \"categories\": [\n    {\n      \"description\": \"Facts about a person's medical conditions or treatment.\",\n      \"id\": \"cat_01J8ZJ1P2Q3R4S5T6U7V8W9X0Y\",\n      \"key\": \"health\"\n    }\n  ],\n  \"created_at\": \"2026-09-22T05:09:00Z\",\n  \"revision\": 3,\n  \"rules\": [\n    {\n      \"action\": \"exclude\",\n      \"category_key\": \"health\",\n      \"condition\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"description\": \"Statements that a named person has a diagnosed medical condition.\",\n      \"edge_types\": [\n        \"WorksFor\"\n      ],\n      \"entity_types\": [\n        \"Person\"\n      ],\n      \"id\": \"rule_01J8ZJ1P2Q3R4S5T6U7V8W9X0Z\",\n      \"patterns\": [\n        \"diagnosed with\"\n      ],\n      \"permitted_examples\": [\n        \"Jane works at a diabetes research lab.\"\n      ],\n      \"prohibited_examples\": [\n        \"Jane was diagnosed with type 2 diabetes last year.\"\n      ]\n    }\n  ],\n  \"uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
       "uuid": "eb4800b4-94d8-469a-af33-537d955a3d3c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "10ec58ff-5321-432c-a348-2af253e5c3cc",
+      "name": "Get project inclusion rules - default",
+      "request": {
+        "urlPathTemplate": "/project/inclusion-rules",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inclusion_rules\": [\n    {\n      \"condition\": \"The person is an employee.\",\n      \"effect\": \"include\",\n      \"name\": \"Relevant people\",\n      \"target\": \"entity\",\n      \"types\": [\n        \"Person\"\n      ]\n    }\n  ],\n  \"inherited\": false\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "10ec58ff-5321-432c-a348-2af253e5c3cc",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "c377a17b-be66-4e7b-9bcc-a4cf653ecd59",
+      "name": "Set project inclusion rules - default",
+      "request": {
+        "urlPathTemplate": "/project/inclusion-rules",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inclusion_rules\": [\n    {\n      \"condition\": \"The person is an employee.\",\n      \"effect\": \"include\",\n      \"name\": \"Relevant people\",\n      \"target\": \"entity\",\n      \"types\": [\n        \"Person\"\n      ]\n    }\n  ],\n  \"inherited\": false\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c377a17b-be66-4e7b-9bcc-a4cf653ecd59",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -1879,6 +2086,69 @@
         }
       },
       "uuid": "dafef1ac-f35c-4952-ba0f-cef13e9b3c89",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "f0af4e5c-3095-4bd3-9398-b5ba06a01bd7",
+      "name": "Get project knowledge - default",
+      "request": {
+        "urlPathTemplate": "/project/knowledge",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": false,\n  \"knowledge\": [\n    {\n      \"name\": \"CRM\",\n      \"text\": \"CRM means the Acme customer relationship management service.\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "f0af4e5c-3095-4bd3-9398-b5ba06a01bd7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "c3db111f-a266-4858-a777-3825862e6ff2",
+      "name": "Set project knowledge - default",
+      "request": {
+        "urlPathTemplate": "/project/knowledge",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"inherited\": false,\n  \"knowledge\": [\n    {\n      \"name\": \"CRM\",\n      \"text\": \"CRM means the Acme customer relationship management service.\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c3db111f-a266-4858-a777-3825862e6ff2",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -2368,7 +2638,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"expired_at\": \"2026-01-08T12:00:00Z\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\",\n      \"wait_status\": \"account_rate_limit_reached\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6005,7 +6275,7 @@
       },
       "response": {
         "status": 202,
-        "body": "{\n  \"episode\": {\n    \"content\": \"content\",\n    \"content_policy\": {\n      \"category_keys\": [\n        \"health\"\n      ],\n      \"dropped_count\": 0,\n      \"retained_count\": 7,\n      \"revision\": 3,\n      \"status\": \"pending\",\n      \"violated\": false\n    },\n    \"created_at\": \"created_at\",\n    \"document_id\": \"document_id\",\n    \"graph_uuid\": \"graph_uuid\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"processed\": true,\n    \"reference_time\": \"reference_time\",\n    \"relevance\": 1.1,\n    \"role\": \"system\",\n    \"role_name\": \"role_name\",\n    \"score\": 1.1,\n    \"source\": \"text\",\n    \"source_description\": \"source_description\",\n    \"thread_uuid\": \"thread_uuid\",\n    \"user_uuid\": \"user_uuid\",\n    \"uuid\": \"uuid\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"failed_count\": 1,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false,\n        \"violated_count\": 2\n      },\n      \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n      \"edges\": [\n        {\n          \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n          \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n          \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n        }\n      ],\n      \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\",\n      \"episodes\": [\n        {\n          \"content_policy\": {\n            \"category_keys\": [\n              \"health\"\n            ],\n            \"dropped_count\": 0,\n            \"failed_count\": 1,\n            \"retained_count\": 7,\n            \"revision\": 3,\n            \"violated\": false,\n            \"violated_count\": 2\n          },\n          \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\"\n        }\n      ],\n      \"hyperedge_uuid\": \"d4e5f6a7-b8c9-4d0e-9f2a-3b4c5d6e7f80\",\n      \"skill_uuid\": \"e5f6a7b8-c9d0-4e1f-8a3b-4c5d6e7f8091\",\n      \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n      \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"pending\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
+        "body": "{\n  \"episode\": {\n    \"content\": \"content\",\n    \"content_policy\": {\n      \"category_keys\": [\n        \"health\"\n      ],\n      \"dropped_count\": 0,\n      \"retained_count\": 7,\n      \"revision\": 3,\n      \"status\": \"pending\",\n      \"violated\": false\n    },\n    \"created_at\": \"created_at\",\n    \"document_id\": \"document_id\",\n    \"expired_at\": \"2026-01-08T12:00:00Z\",\n    \"graph_uuid\": \"graph_uuid\",\n    \"metadata\": {\n      \"key\": \"value\"\n    },\n    \"processed\": true,\n    \"reference_time\": \"reference_time\",\n    \"relevance\": 1.1,\n    \"role\": \"system\",\n    \"role_name\": \"role_name\",\n    \"score\": 1.1,\n    \"source\": \"text\",\n    \"source_description\": \"source_description\",\n    \"thread_uuid\": \"thread_uuid\",\n    \"user_uuid\": \"user_uuid\",\n    \"uuid\": \"uuid\",\n    \"wait_status\": \"account_rate_limit_reached\"\n  },\n  \"task\": {\n    \"completed_at\": \"completed_at\",\n    \"created_at\": \"created_at\",\n    \"error\": {\n      \"code\": \"code\",\n      \"details\": {\n        \"key\": \"value\"\n      },\n      \"message\": \"message\",\n      \"param\": \"param\",\n      \"request_id\": \"request_id\"\n    },\n    \"progress\": {\n      \"stage\": \"stage\"\n    },\n    \"result\": {\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"failed_count\": 1,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false,\n        \"violated_count\": 2\n      },\n      \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n      \"edges\": [\n        {\n          \"edge_uuid\": \"7a1f3c2e-4b5d-4e6f-8a9b-0c1d2e3f4a5b\",\n          \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n          \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n        }\n      ],\n      \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\",\n      \"episodes\": [\n        {\n          \"content_policy\": {\n            \"category_keys\": [\n              \"health\"\n            ],\n            \"dropped_count\": 0,\n            \"failed_count\": 1,\n            \"retained_count\": 7,\n            \"revision\": 3,\n            \"violated\": false,\n            \"violated_count\": 2\n          },\n          \"episode_uuid\": \"f6a7b8c9-d0e1-4f2a-9b4c-5d6e7f8091a2\"\n        }\n      ],\n      \"hyperedge_uuid\": \"d4e5f6a7-b8c9-4d0e-9f2a-3b4c5d6e7f80\",\n      \"skill_uuid\": \"e5f6a7b8-c9d0-4e1f-8a3b-4c5d6e7f8091\",\n      \"source_node_uuid\": \"b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e\",\n      \"target_node_uuid\": \"c3d4e5f6-a7b8-4c9d-8e1f-2a3b4c5d6e7f\"\n    },\n    \"started_at\": \"started_at\",\n    \"status\": \"pending\",\n    \"type\": \"type\",\n    \"updated_at\": \"updated_at\",\n    \"uuid\": \"uuid\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6041,7 +6311,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"content\": \"content\",\n      \"content_policy\": {\n        \"category_keys\": [\n          \"health\"\n        ],\n        \"dropped_count\": 0,\n        \"retained_count\": 7,\n        \"revision\": 3,\n        \"violated\": false\n      },\n      \"created_at\": \"created_at\",\n      \"document_id\": \"document_id\",\n      \"expired_at\": \"2026-01-08T12:00:00Z\",\n      \"graph_uuid\": \"graph_uuid\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"processed\": true,\n      \"reference_time\": \"reference_time\",\n      \"relevance\": 1.1,\n      \"role\": \"system\",\n      \"role_name\": \"role_name\",\n      \"score\": 1.1,\n      \"source\": \"text\",\n      \"source_description\": \"source_description\",\n      \"thread_uuid\": \"thread_uuid\",\n      \"user_uuid\": \"user_uuid\",\n      \"uuid\": \"uuid\",\n      \"wait_status\": \"account_rate_limit_reached\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\",\n  \"total_size\": 1\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6080,7 +6350,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"content_policy\": {\n    \"category_keys\": [\n      \"health\"\n    ],\n    \"dropped_count\": 0,\n    \"retained_count\": 7,\n    \"revision\": 3,\n    \"status\": \"pending\",\n    \"violated\": false\n  },\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"reference_time\": \"reference_time\",\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"content_policy\": {\n    \"category_keys\": [\n      \"health\"\n    ],\n    \"dropped_count\": 0,\n    \"retained_count\": 7,\n    \"revision\": 3,\n    \"status\": \"pending\",\n    \"violated\": false\n  },\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"expired_at\": \"2026-01-08T12:00:00Z\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"reference_time\": \"reference_time\",\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\",\n  \"wait_status\": \"account_rate_limit_reached\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6158,7 +6428,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"content_policy\": {\n    \"category_keys\": [\n      \"health\"\n    ],\n    \"dropped_count\": 0,\n    \"retained_count\": 7,\n    \"revision\": 3,\n    \"status\": \"pending\",\n    \"violated\": false\n  },\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"reference_time\": \"reference_time\",\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\"\n}",
+        "body": "{\n  \"content\": \"content\",\n  \"content_policy\": {\n    \"category_keys\": [\n      \"health\"\n    ],\n    \"dropped_count\": 0,\n    \"retained_count\": 7,\n    \"revision\": 3,\n    \"status\": \"pending\",\n    \"violated\": false\n  },\n  \"created_at\": \"created_at\",\n  \"document_id\": \"document_id\",\n  \"expired_at\": \"2026-01-08T12:00:00Z\",\n  \"graph_uuid\": \"graph_uuid\",\n  \"metadata\": {\n    \"key\": \"value\"\n  },\n  \"processed\": true,\n  \"reference_time\": \"reference_time\",\n  \"relevance\": 1.1,\n  \"role\": \"system\",\n  \"role_name\": \"role_name\",\n  \"score\": 1.1,\n  \"source\": \"text\",\n  \"source_description\": \"source_description\",\n  \"thread_uuid\": \"thread_uuid\",\n  \"user_uuid\": \"user_uuid\",\n  \"uuid\": \"uuid\",\n  \"wait_status\": \"account_rate_limit_reached\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -6236,7 +6506,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"error\": \"error\",\n      \"input\": {\n        \"edge_types\": [\n          {\n            \"properties\": [\n              {\n                \"protected\": true\n              }\n            ]\n          }\n        ],\n        \"entity_types\": [\n          {\n            \"properties\": [\n              {\n                \"protected\": true\n              }\n            ]\n          }\n        ]\n      },\n      \"status\": \"recorded\",\n      \"step\": \"combined_extraction\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\"\n}",
+        "body": "{\n  \"items\": [\n    {\n      \"created_at\": \"created_at\",\n      \"error\": \"error\",\n      \"input\": {\n        \"edge_types\": [\n          {\n            \"properties\": [\n              {\n                \"protected\": true\n              }\n            ]\n          }\n        ],\n        \"entity_types\": [\n          {\n            \"properties\": [\n              {\n                \"protected\": true\n              }\n            ]\n          }\n        ]\n      },\n      \"output\": {\n        \"candidate_outcomes\": [\n          {\n            \"candidate_uuid\": \"00000000-0000-0000-0000-000000000002\",\n            \"extracted_uuid\": \"00000000-0000-0000-0000-000000000001\"\n          }\n        ]\n      },\n      \"status\": \"pending\",\n      \"step\": \"combined_extraction\",\n      \"uuid\": \"uuid\"\n    }\n  ],\n  \"next_cursor\": \"next_cursor\"\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -7050,6 +7320,6 @@
     }
   ],
   "meta": {
-    "total": 194
+    "total": 202
   }
 }

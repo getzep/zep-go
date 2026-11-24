@@ -801,7 +801,7 @@ client.Batch.Delete(
 request := &zep.BatchListItemsRequest{}
 client.Batch.ListItems(
     context.TODO(),
-    "batch_uuid",
+    "366ac0d2-69b5-4140-89e8-15d025a33340",
     request,
 )
 ```
@@ -862,13 +862,20 @@ client.Batch.ListItems(
 request := &zep.AddBatchItemsRequest{
     Items: []*zep.BatchItemInput{
         &zep.BatchItemInput{
+            Data: zep.String(
+                "A sample item.",
+            ),
+            DataType: zep.BatchItemInputDataTypeText.Ptr(),
+            GraphUUID: zep.String(
+                "815f9d31-eef0-4201-90e6-02c1e6f16e90",
+            ),
             Type: zep.BatchItemInputTypeGraphEpisode,
         },
     },
 }
 client.Batch.AddItems(
     context.TODO(),
-    "batch_uuid",
+    "366ac0d2-69b5-4140-89e8-15d025a33340",
     request,
 )
 ```
@@ -1269,7 +1276,7 @@ client.Graph.Create(
 
 **contentPolicy:** `*zep.GraphContentPolicyRequest` 
 
-Content policy additions for the graph. The graph binds the current
+Experimental. Content policy additions for the graph. The graph binds the current
 project content policy plus these additions, and the binding does not
 change after creation.
     
@@ -1442,7 +1449,7 @@ client.Graph.Lookup(
 <dl>
 <dd>
 
-Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
+Experimental. Smart Query retrieves multi-hop context from a graph in one call. Some agent tasks need multi-hop retrieval: the agent does not know in advance what to search for, so it must retrieve a record, learn from it, and then plan the next retrieval. Zep explores the graph with searches and graph traversals, and it uses the records from each retrieval round to plan the next round. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items and an `answer_status` of `answered`, `partial`, or `refused`. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: Optimized for latency. Retrieves the context for multi-hop queries. The query runs at most 3 search rounds. deep: Runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and available to every Zep account. The request, the response, the events, and the modes of the operation can change.
 </dd>
 </dl>
 </dd>
@@ -1508,7 +1515,13 @@ The default is false: the response has the records and no answer.
 <dl>
 <dd>
 
-**mode:** `*zep.GraphQueryRequestMode` — The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
+**mode:** `*zep.GraphQueryRequestMode` 
+
+The retrieval mode. The default is fast.
+Fast mode is optimized for latency. It retrieves the context for multi-hop queries.
+The query runs at most 3 search rounds. A BYOM project needs a decision model for fast mode.
+A BYOC deployment needs a decision model (SystemOne or Gemini Decisions) for fast mode.
+Deep mode runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode.
     
 </dd>
 </dl>
@@ -1516,7 +1529,7 @@ The default is false: the response has the records and no answer.
 <dl>
 <dd>
 
-**query:** `string` — The natural-language question about the graph.
+**query:** `string` — The natural-language query for the graph.
     
 </dd>
 </dl>
@@ -1548,7 +1561,7 @@ The default is false: the response has the records and no answer.
 <dl>
 <dd>
 
-Experimental. Retrieves the graph records for a natural-language question about a graph with a read-only retrieval loop. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. deep: A model plans its own searches. It can page through complete lists and read more records before it answers. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and in closed release. Zep enables the operation only for select accounts. The request, the response, the events, and the modes of the operation can change. A request from an account without access returns `404 not_found`. To get access, contact support@getzep.com.
+Experimental. Smart Query retrieves multi-hop context from a graph in one call. Some agent tasks need multi-hop retrieval: the agent does not know in advance what to search for, so it must retrieve a record, learn from it, and then plan the next retrieval. Zep explores the graph with searches and graph traversals, and it uses the records from each retrieval round to plan the next round. By default, the response has the retrieved records and no answer. Set `generate_answer` to `true` to also get an answer that a model writes from the records, with the cited graph items and an `answer_status` of `answered`, `partial`, or `refused`. Set `stream` to `true` to get the retrieval calls as server-sent events. The default mode is fast. fast: Optimized for latency. Retrieves the context for multi-hop queries. The query runs at most 3 search rounds. deep: Runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode. BYOM and BYOC projects can use fast mode when they have a configured decision model. Other projects can use fast mode without a decision model. BYOM and BYOC projects without a decision model must use deep mode. The operation is experimental and available to every Zep account. The request, the response, the events, and the modes of the operation can change.
 </dd>
 </dl>
 </dd>
@@ -1614,7 +1627,13 @@ The default is false: the response has the records and no answer.
 <dl>
 <dd>
 
-**mode:** `*zep.GraphQueryRequestMode` — The retrieval mode. The default is fast. fast: A decision model selects the types of search for each round and stops when it has enough context. The query runs at most 3 search rounds. A BYOM project or BYOC deployment also needs a SystemOne decision model for fast. deep: A model plans its own searches. It can page through complete lists and read more records before it answers.
+**mode:** `*zep.GraphQueryRequestMode` 
+
+The retrieval mode. The default is fast.
+Fast mode is optimized for latency. It retrieves the context for multi-hop queries.
+The query runs at most 3 search rounds. A BYOM project needs a decision model for fast mode.
+A BYOC deployment needs a decision model (SystemOne or Gemini Decisions) for fast mode.
+Deep mode runs more retrieval steps, so it can retrieve complete lists, such as the records for a count. It takes longer than fast mode.
     
 </dd>
 </dl>
@@ -1622,7 +1641,7 @@ The default is false: the response has the records and no answer.
 <dl>
 <dd>
 
-**query:** `string` — The natural-language question about the graph.
+**query:** `string` — The natural-language query for the graph.
     
 </dd>
 </dl>
@@ -1864,7 +1883,7 @@ client.Graph.Clone(
 <dl>
 <dd>
 
-Returns the content policy the graph bound at creation. The policy of a graph does not change after creation. A graph without a content policy returns revision 0 with no categories and no rules.
+Experimental: the request, the response, and the behavior of this operation can change. Returns the content policy the graph bound at creation. The policy of a graph does not change after creation. A graph without a content policy returns revision 0 with no categories and no rules.
 </dd>
 </dl>
 </dd>
@@ -1921,7 +1940,7 @@ client.Graph.GetContentPolicy(
 <dl>
 <dd>
 
-Lists the content policy decisions recorded for a graph, newest first. Each event carries identifiers only. A graph without a content policy returns an empty list.
+Experimental: the request, the response, and the behavior of this operation can change. Lists the content policy decisions recorded for a graph, newest first. Each event carries identifiers only. A graph without a content policy returns an empty list.
 </dd>
 </dl>
 </dd>
@@ -2090,6 +2109,130 @@ block.
 </dl>
 </details>
 
+<details><summary><code>client.Graph.GetInclusionRules(GraphUUID) -> *zep.InclusionRules</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the graph rules, for example {"inclusion_rules":[],"inherited":true}.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Graph.GetInclusionRules(
+    context.TODO(),
+    "graph_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — Graph UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Graph.SetInclusionRules(GraphUUID, request) -> *zep.InclusionRules</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replaces the graph rules. Request: {"inclusion_rules":[]}. Response: {"inclusion_rules":[],"inherited":true}.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.InclusionRules{}
+client.Graph.SetInclusionRules(
+    context.TODO(),
+    "graph_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — Graph UUID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.InclusionRules` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.Graph.GetInstructions(GraphUUID) -> *zep.Instructions</code></summary>
 <dl>
 <dd>
@@ -2175,6 +2318,133 @@ client.Graph.SetInstructions(
 <dd>
 
 **request:** `*zep.Instructions` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Graph.GetKnowledge(GraphUUID) -> *zep.KnowledgeResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the domain knowledge in effect at this scope. The knowledge_api account flag must be enabled.
+Response example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}],"inherited":false}
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Graph.GetKnowledge(
+    context.TODO(),
+    "graph_uuid",
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — The UUID of the graph or its user.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Graph.SetKnowledge(GraphUUID, request) -> *zep.KnowledgeResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replaces the complete set of domain knowledge entries at this scope. The knowledge_api account flag must be enabled.
+Response example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}],"inherited":false}
+Request example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}]}
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.SetKnowledgeRequest{}
+client.Graph.SetKnowledge(
+    context.TODO(),
+    "graph_uuid",
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**graphUUID:** `string` — The UUID of the graph or its user.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*zep.SetKnowledgeRequest` 
     
 </dd>
 </dl>
@@ -3525,7 +3795,7 @@ episodes that violated the policy.
 <dl>
 <dd>
 
-Returns the current content policy revision of the project. A new graph binds this revision at creation.
+Experimental: the request, the response, and the behavior of this operation can change. Returns the current content policy revision of the project. A new graph binds this revision at creation.
 </dd>
 </dl>
 </dd>
@@ -3566,7 +3836,7 @@ client.Project.GetContentPolicy(
 <dl>
 <dd>
 
-Replaces the project content policy and creates a new immutable revision. Graphs that already exist keep the revision they bound. An empty policy (no categories and no rules) removes the content policy for new graphs.
+Experimental: this operation and the new rule fields can change. The typed rule fields are in private preview and are available only to enabled accounts. Replaces the project content policy and creates a new immutable revision. Graphs that already exist keep the revision they bound. For example, {"categories":[{"key":"health"}],"rules":[{"category_key":"health","action":"exclude","entity_types":["Person"],"condition":"The statement names a person's health condition.","prohibited_examples":["Jordan has a chronic back condition."],"patterns":["diagnosed with"]}]}.
 </dd>
 </dl>
 </dd>
@@ -3635,7 +3905,7 @@ means no content policy.
 <dl>
 <dd>
 
-Lists every revision of the project content policy, newest first, including revision 0.
+Experimental: the request, the response, and the behavior of this operation can change. Lists every revision of the project content policy, newest first, including revision 0.
 </dd>
 </dl>
 </dd>
@@ -3693,6 +3963,20 @@ client.Project.ListContentPolicyRevisions(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Experimental: the request, the response, and the behavior of this operation can change.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -3721,6 +4005,105 @@ client.Project.GetContentPolicyRevision(
 <dd>
 
 **revisionUUID:** `string` — Revision UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Project.GetInclusionRules() -> *zep.InclusionRules</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the project rules, for example {"inclusion_rules":[],"inherited":false}.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Project.GetInclusionRules(
+    context.TODO(),
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Project.SetInclusionRules(request) -> *zep.InclusionRules</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replaces the project rules. Request: {"inclusion_rules":[]}. Response: {"inclusion_rules":[],"inherited":false}.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.InclusionRules{}
+client.Project.SetInclusionRules(
+    context.TODO(),
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `*zep.InclusionRules` 
     
 </dd>
 </dl>
@@ -3792,6 +4175,108 @@ client.Project.SetInstructions(
 <dd>
 
 **request:** `*zep.Instructions` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Project.GetKnowledge() -> *zep.KnowledgeResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the domain knowledge in effect at this scope. The knowledge_api account flag must be enabled.
+Response example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}],"inherited":false}
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Project.GetKnowledge(
+    context.TODO(),
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Project.SetKnowledge(request) -> *zep.KnowledgeResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replaces the complete set of domain knowledge entries at this scope. The knowledge_api account flag must be enabled.
+Response example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}],"inherited":false}
+Request example: {"knowledge":[{"name":"CRM","text":"CRM means the customer service."}]}
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &zep.SetKnowledgeRequest{}
+client.Project.SetKnowledge(
+    context.TODO(),
+    request,
+)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `*zep.SetKnowledgeRequest` 
     
 </dd>
 </dl>
@@ -5010,7 +5495,7 @@ client.TraceConnection.Delete(
 <dl>
 <dd>
 
-Verify changed settings before Zep stores them. Both providers accept 1 to 60 requests per minute and an optional retention window. Example request: `{"requests_per_minute":60,"retention_days":30}`.
+Verify changed settings before Zep stores them. A request that changes `api_url` must also include `credential`. Otherwise Zep returns `400 invalid_request`. Both providers accept 1 to 60 requests per minute and an optional retention window. Example request: `{"requests_per_minute":60,"retention_days":30}`.
 </dd>
 </dl>
 </dd>
@@ -5053,7 +5538,10 @@ client.TraceConnection.Update(
 <dl>
 <dd>
 
-**apiUrl:** `*string` — APIURL is the new custom provider endpoint, when supplied.
+**apiUrl:** `*string` 
+
+APIURL is the new custom provider endpoint, when supplied.
+A request that changes api_url must also include credential.
     
 </dd>
 </dl>
@@ -5984,7 +6472,7 @@ client.User.Create(
 
 **contentPolicy:** `*zep.GraphContentPolicyRequest` 
 
-Content policy additions for the user's graph. The graph binds the
+Experimental. Content policy additions for the user's graph. The graph binds the
 current project content policy plus these additions, and the binding
 does not change after creation.
     
@@ -13374,6 +13862,9 @@ client.Graph.Hyperedge.Update(
 Adds one member edge to an existing hyperedge. The new member inherits the
 hyperedge's fact and timestamps and joins its episodes, so only its own
 name and node pair are supplied.
+The response contains the UUID that Zep assigned and the name and nodes that you supplied.
+It does not contain the shared fact or timestamps of the hyperedge.
+To read them, use graph.hyperedge.get.
 </dd>
 </dl>
 </dd>

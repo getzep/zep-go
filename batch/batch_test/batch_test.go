@@ -185,7 +185,7 @@ func TestBatchListItemsWithWireMock(
 	request := &zep.BatchListItemsRequest{}
 	_, invocationErr := client.Batch.ListItems(
 		context.TODO(),
-		"batch_uuid",
+		"366ac0d2-69b5-4140-89e8-15d025a33340",
 		request,
 		option.WithHTTPHeader(
 			http.Header{"X-Test-Id": []string{"TestBatchListItemsWithWireMock"}},
@@ -193,7 +193,7 @@ func TestBatchListItemsWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestBatchListItemsWithWireMock", "GET", "/batches/batch_uuid/items", nil, 1)
+	VerifyRequestCount(t, "TestBatchListItemsWithWireMock", "GET", "/batches/366ac0d2-69b5-4140-89e8-15d025a33340/items", nil, 1)
 }
 
 func TestBatchAddItemsWithWireMock(
@@ -210,13 +210,20 @@ func TestBatchAddItemsWithWireMock(
 	request := &zep.AddBatchItemsRequest{
 		Items: []*zep.BatchItemInput{
 			&zep.BatchItemInput{
+				Data: zep.String(
+					"A sample item.",
+				),
+				DataType: zep.BatchItemInputDataTypeText.Ptr(),
+				GraphUUID: zep.String(
+					"815f9d31-eef0-4201-90e6-02c1e6f16e90",
+				),
 				Type: zep.BatchItemInputTypeGraphEpisode,
 			},
 		},
 	}
 	_, invocationErr := client.Batch.AddItems(
 		context.TODO(),
-		"batch_uuid",
+		"366ac0d2-69b5-4140-89e8-15d025a33340",
 		request,
 		option.WithHTTPHeader(
 			http.Header{"X-Test-Id": []string{"TestBatchAddItemsWithWireMock"}},
@@ -224,7 +231,7 @@ func TestBatchAddItemsWithWireMock(
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "TestBatchAddItemsWithWireMock", "POST", "/batches/batch_uuid/items", nil, 1)
+	VerifyRequestCount(t, "TestBatchAddItemsWithWireMock", "POST", "/batches/366ac0d2-69b5-4140-89e8-15d025a33340/items", nil, 1)
 }
 
 func TestBatchProcessWithWireMock(

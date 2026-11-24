@@ -735,6 +735,7 @@ var (
 
 type UpdateTraceConnectionRequest struct {
 	// APIURL is the new custom provider endpoint, when supplied.
+	// A request that changes api_url must also include credential.
 	ApiUrl *string `json:"api_url,omitempty" url:"-"`
 	// Credential is the new write-only provider credential, when supplied.
 	Credential *string `json:"credential,omitempty" url:"-"`
